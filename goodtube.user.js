@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.084
+// @version      2.085
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -884,6 +884,11 @@
 						else {
 							player.volume = 1;
 						}
+					}
+
+					// Theater mode (youtube shortcut doesn't work if we're in here)
+					if (keyPressed === 't') {
+						goodTube_shortcut('theater');
 					}
 
 					// No scroll
