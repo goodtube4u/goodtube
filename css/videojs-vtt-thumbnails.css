@@ -1,0 +1,7 @@
+/**
+ * pthumbnails
+ * @version 1.2.0
+ * @copyright 2020 Rigel Kent <sendmemail@rigelk.eu>
+ * @license MIT
+ */
+.video-js.vjs-vtt-thumbnails{display:block}.video-js .vjs-vtt-thumbnail-display{opacity:0;position:absolute;transition:opacity .5s;bottom:85%;pointer-events:none;box-shadow:0 0 7px rgba(0,0,0,0.6)}.video-js .vjs-vtt-thumbnail-time{position:absolute;bottom:0;transform:translateX(-50%);background:rgba(0,0,0,0.6);padding:0.5em;border-top-left-radius:10%;border-top-right-radius:10%}
