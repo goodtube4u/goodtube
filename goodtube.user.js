@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.085
+// @version      2.090
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -731,7 +731,8 @@
 		    pointer-events: none;
 	  	}
 
-	  	#goodTube_player_wrapper1.goodTube_mobile #goodTube_player_wrapper3 .video-js .vjs-theater-button {
+	  	#goodTube_player_wrapper1.goodTube_mobile #goodTube_player_wrapper3 .video-js .vjs-theater-button,
+	  	#goodTube_player_wrapper1.goodTube_mobile #goodTube_player_wrapper3 .video-js .vjs-miniplayer-button {
 				display: none !important;
 			}
 
@@ -1482,6 +1483,13 @@
 				// Pause the player
 				goodTube_player_pause(goodTube_player);
 			}
+
+			goodTube_player_pip = false;
+		});
+
+		// If we enter the picture in picture
+		addEventListener('enterpictureinpicture', (event) => {
+			goodTube_player_pip = true;
 		});
 	}
 
@@ -1489,12 +1497,35 @@
 	function goodTube_player_pipUpdate() {
 		// Support play and pause (but only attach these events once!)
 		if ("mediaSession" in navigator) {
+			// Play
 			navigator.mediaSession.setActionHandler("play", () => {
 				goodTube_player_play(goodTube_player);
 			});
+
+			// Pause
 			navigator.mediaSession.setActionHandler("pause", () => {
 				goodTube_player_pause(goodTube_player);
 			});
+
+			// Next track
+			if (goodTube_nextButton_enabled) {
+				navigator.mediaSession.setActionHandler("nexttrack", () => {
+					goodTube_nextVideo(true);
+				});
+			}
+			else {
+				navigator.mediaSession.setActionHandler('nexttrack', null);
+			}
+
+			// Prev track
+			if (goodTube_prevButton_enabled) {
+				navigator.mediaSession.setActionHandler("previoustrack", () => {
+					goodTube_prevVideo(true);
+				});
+			}
+			else {
+				navigator.mediaSession.setActionHandler('previoustrack', null);
+			}
 		}
 	}
 	// Do this every 100ms, this helps pip to always work!
@@ -2749,20 +2780,22 @@
 	}
 
 	// Show or hide the next and previous button
+	let goodTube_prevButton_enabled = false;
+	let goodTube_nextButton_enabled = true;
 	function goodTube_player_videojs_showHideNextPrevButtons() {
-		let prevButton_enabled = false;
-		let nextButton_enabled = true;
+		goodTube_prevButton_enabled = false;
+		goodTube_nextButton_enabled = true;
 
-		// For now, we don't show them in the miniplayer UNTIL it can be supported properly
-		if (goodTube_player_miniplayer) {
-			prevButton_enabled = false;
-			nextButton_enabled = false;
+		// Don't show next / prev in the miniplayer / pip unless we're viewing a video
+		if ((goodTube_player_miniplayer || goodTube_player_pip) && typeof goodTube_getParams['v'] === 'undefined') {
+			goodTube_prevButton_enabled = false;
+			goodTube_nextButton_enabled = false;
 		}
 		else {
 			// Mobile
 			if (window.location.href.indexOf('m.youtube') !== -1) {
-				// If we're viewing a playlist (or the miniplayer is on)
-				if (typeof goodTube_getParams['i'] !== 'undefined' || typeof goodTube_getParams['index'] !== 'undefined' || typeof goodTube_getParams['list'] !== 'undefined' || goodTube_player_miniplayer || goodTube_player_pip) {
+				// If we're viewing a playlist
+				if (typeof goodTube_getParams['i'] !== 'undefined' || typeof goodTube_getParams['index'] !== 'undefined' || typeof goodTube_getParams['list'] !== 'undefined') {
 					let playlist = document.querySelectorAll('ytm-playlist-panel-renderer ytm-playlist-panel-video-renderer, ytm-playlist-video-list-renderer ytm-playlist-video-renderer');
 
 					if (!playlist || playlist.length <= 0) {
@@ -2772,27 +2805,25 @@
 					// If the first video is NOT selected, enable previous
 					let firstItemSelected = playlist[0].getAttribute('aria-selected');
 					if (firstItemSelected === 'false') {
-						prevButton_enabled = true;
+						goodTube_prevButton_enabled = true;
 					}
 
 					// If the last video is NOT selected, enable previous
 					let lastItemSelected = playlist[playlist.length-1].getAttribute('aria-selected');
 					if (lastItemSelected === 'true') {
-						nextButton_enabled = false;
+						goodTube_nextButton_enabled = false;
 					}
 				}
 				// Otherwise we're not in a playlist, so if a previous video exists
 				else if (goodTube_videojs_previousVideo[goodTube_videojs_previousVideo.length - 2] && goodTube_videojs_previousVideo[goodTube_videojs_previousVideo.length - 2] !== window.location.href) {
 					// Enable the previous button
-					prevButton_enabled = true;
+					goodTube_prevButton_enabled = true;
 				}
-			}
-			// Otherwise if the miniplayer / pip is on, don't do anything
-			else if (goodTube_player_miniplayer || goodTube_player_pip) {
-				return;
 			}
 			// Desktop
 			else {
+				goodTube_nextButton_enabled = true;
+
 				// If we're viewing a playlist
 				if (typeof goodTube_getParams['i'] !== 'undefined' || typeof goodTube_getParams['index'] !== 'undefined' || typeof goodTube_getParams['list'] !== 'undefined') {
 					// If we're not viewing the first video in the playlist
@@ -2804,13 +2835,13 @@
 
 					if (playlist && !playlist[0].selected) {
 						// Enable the previous button
-						prevButton_enabled = true;
+						goodTube_prevButton_enabled = true;
 					}
 				}
 				// Otherwise we're not in a playlist, so if a previous video exists
 				else if (goodTube_videojs_previousVideo[goodTube_videojs_previousVideo.length - 2] && goodTube_videojs_previousVideo[goodTube_videojs_previousVideo.length - 2] !== window.location.href) {
 					// Enable the previous button
-					prevButton_enabled = true;
+					goodTube_prevButton_enabled = true;
 				}
 			}
 		}
@@ -2818,10 +2849,10 @@
 		// Show or hide the previous button
 		let prevButton = document.querySelector('.vjs-prev-button');
 		if (prevButton) {
-			if (!prevButton_enabled && !prevButton.classList.contains('goodTube_hidden')) {
+			if (!goodTube_prevButton_enabled && !prevButton.classList.contains('goodTube_hidden')) {
 				prevButton.classList.add('goodTube_hidden');
 			}
-			else if (prevButton_enabled && prevButton.classList.contains('goodTube_hidden')) {
+			else if (goodTube_prevButton_enabled && prevButton.classList.contains('goodTube_hidden')) {
 				prevButton.classList.remove('goodTube_hidden');
 			}
 		}
@@ -2829,10 +2860,10 @@
 		// Show or hide the next button
 		let nextButton = document.querySelector('.vjs-next-button');
 		if (nextButton) {
-			if (!nextButton_enabled && !nextButton.classList.contains('goodTube_hidden')) {
+			if (!goodTube_nextButton_enabled && !nextButton.classList.contains('goodTube_hidden')) {
 				nextButton.classList.add('goodTube_hidden');
 			}
-			else if (nextButton_enabled && nextButton.classList.contains('goodTube_hidden')) {
+			else if (goodTube_nextButton_enabled && nextButton.classList.contains('goodTube_hidden')) {
 				nextButton.classList.remove('goodTube_hidden');
 			}
 		}
@@ -3208,8 +3239,8 @@
 	function goodTube_prevVideo(pressedButton = false) {
 		// Mobile
 		if (window.location.href.indexOf('m.youtube') !== -1) {
-			// If we're viewing a playlist (or the miniplayer is on)
-			if (typeof goodTube_getParams['i'] !== 'undefined' || typeof goodTube_getParams['index'] !== 'undefined' || typeof goodTube_getParams['list'] !== 'undefined' || goodTube_player_miniplayer || goodTube_player_pip) {
+			// If we're viewing a playlist
+			if (typeof goodTube_getParams['i'] !== 'undefined' || typeof goodTube_getParams['index'] !== 'undefined' || typeof goodTube_getParams['list'] !== 'undefined') {
 				let playlist = document.querySelectorAll('ytm-playlist-panel-renderer ytm-playlist-panel-video-renderer, ytm-playlist-video-list-renderer ytm-playlist-video-renderer');
 				let selectedItem = document.querySelectorAll('ytm-playlist-panel-renderer ytm-playlist-panel-video-renderer[aria-selected="true"], ytm-playlist-video-list-renderer ytm-playlist-video-renderer[aria-selected="true"]');
 
@@ -3251,10 +3282,6 @@
 					}
 				}
 			}
-			// Otherwise if the miniplayer / pip is on, don't do anything
-			else if (goodTube_player_miniplayer || goodTube_player_pip) {
-				return;
-			}
 			// Otherwise we're not viewing a playlist, so if autoplay is on or we've pressed the prev button, and a previous video exists
 			else if ((goodTube_helper_getCookie('goodTube_autoplay') === 'on' || pressedButton) && goodTube_videojs_previousVideo[goodTube_videojs_previousVideo.length - 2] && goodTube_videojs_previousVideo[goodTube_videojs_previousVideo.length - 2] !== window.location.href) {
 				// Debug message
@@ -3271,8 +3298,8 @@
 		}
 		// Desktop
 		else {
-			// If we're viewing a playlist (or the miniplayer is on)
-			if (typeof goodTube_getParams['i'] !== 'undefined' || typeof goodTube_getParams['index'] !== 'undefined' || typeof goodTube_getParams['list'] !== 'undefined' || goodTube_player_miniplayer || goodTube_player_pip) {
+			// If we're viewing a playlist
+			if (typeof goodTube_getParams['i'] !== 'undefined' || typeof goodTube_getParams['index'] !== 'undefined' || typeof goodTube_getParams['list'] !== 'undefined') {
 				let playlist = document.querySelectorAll('.playlist-items ytd-playlist-panel-video-renderer');
 
 				// If we're not viewing the first video in the playlist
@@ -3298,10 +3325,6 @@
 					}, 0);
 				}
 			}
-			// Otherwise if the miniplayer / pip is on, don't do anything
-			else if (goodTube_player_miniplayer || goodTube_player_pip) {
-				return;
-			}
 			// Otherwise we're not viewing a playlist, so if autoplay is on or we've pressed the prev button, and a previous video exists
 			else if ((goodTube_helper_getCookie('goodTube_autoplay') === 'on' || pressedButton) && goodTube_videojs_previousVideo[goodTube_videojs_previousVideo.length - 2] && goodTube_videojs_previousVideo[goodTube_videojs_previousVideo.length - 2] !== window.location.href) {
 				// Debug message
@@ -3322,8 +3345,8 @@
 	function goodTube_nextVideo(pressedButton = false) {
 		// Mobile
 		if (window.location.href.indexOf('m.youtube') !== -1) {
-			// If we're viewing a playlist (or the miniplayer / pip is on)
-			if (typeof goodTube_getParams['i'] !== 'undefined' || typeof goodTube_getParams['index'] !== 'undefined' || typeof goodTube_getParams['list'] !== 'undefined' || goodTube_player_miniplayer || goodTube_player_pip) {
+			// If we're viewing a playlist
+			if (typeof goodTube_getParams['i'] !== 'undefined' || typeof goodTube_getParams['index'] !== 'undefined' || typeof goodTube_getParams['list'] !== 'undefined') {
 				let playlist = document.querySelectorAll('ytm-playlist-panel-renderer ytm-playlist-panel-video-renderer, ytm-playlist-video-list-renderer ytm-playlist-video-renderer');
 				let selectedItem = document.querySelectorAll('ytm-playlist-panel-renderer ytm-playlist-panel-video-renderer[aria-selected="true"], ytm-playlist-video-list-renderer ytm-playlist-video-renderer[aria-selected="true"]');
 
@@ -3365,10 +3388,6 @@
 					}
 				}
 			}
-			// Otherwise if the miniplayer / pip is on, don't do anything
-			else if (goodTube_player_miniplayer || goodTube_player_pip) {
-				return;
-			}
 			// Otherwise we're not viewing a playlist, so if autoplay is on, play the next autoplay video
 			else if (goodTube_helper_getCookie('goodTube_autoplay') === 'on' || pressedButton) {
 				// Debug message
@@ -3400,8 +3419,8 @@
 		}
 		// Desktop
 		else {
-			// If we're viewing a playlist (or the miniplayer is on)
-			if (typeof goodTube_getParams['i'] !== 'undefined' || typeof goodTube_getParams['index'] !== 'undefined' || typeof goodTube_getParams['list'] !== 'undefined' || goodTube_player_miniplayer || goodTube_player_pip) {
+			// If we're viewing a playlist
+			if (typeof goodTube_getParams['i'] !== 'undefined' || typeof goodTube_getParams['index'] !== 'undefined' || typeof goodTube_getParams['list'] !== 'undefined') {
 				let playlist = document.querySelectorAll('.playlist-items ytd-playlist-panel-video-renderer');
 
 				// If we're not viewing the last video in the playlist
@@ -3412,10 +3431,6 @@
 					}
 
 					goodTube_shortcut('next');
-				}
-				// Otherwise if the miniplayer / pip is on, don't do anything
-				else if (goodTube_player_miniplayer || goodTube_player_pip) {
-					return;
 				}
 				// Otherwise we're at the last video of the playlist,  so if autoplay is on or we've pressed the next button, play the next autoplay video
 				else if (goodTube_helper_getCookie('goodTube_autoplay') === 'on' || pressedButton) {
