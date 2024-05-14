@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.090
+// @version      2.091
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -273,25 +273,25 @@
 	// Hide all Youtube players
 	function goodTube_youtube_hidePlayers() {
 		// Hide the normal Youtube player
-		let regularPlayers = document.querySelectorAll('#player:not(.ytd-channel-video-player-renderer)');
+		let regularPlayers = document.querySelectorAll('#player:not(.ytd-channel-video-player-renderer):not(.goodTube_hidden)');
 		regularPlayers.forEach((element) => {
 			goodTube_helper_hideElement(element);
 		});
 
 		// Hide the mobile buttons
-		let mobileButtons = document.querySelectorAll('#player-control-container');
+		let mobileButtons = document.querySelectorAll('#player-control-container:not(.goodTube_hidden)');
 		mobileButtons.forEach((element) => {
 			goodTube_helper_hideElement(element);
 		});
 
 		// Remove the full screen Youtube player
-		let fullscreenPlayers = document.querySelectorAll('#full-bleed-container');
+		let fullscreenPlayers = document.querySelectorAll('#full-bleed-container:not(.goodTube_hidden)');
 		fullscreenPlayers.forEach((element) => {
 			goodTube_helper_hideElement(element);
 		});
 
 		// Hide the Youtube miniplayer
-		let miniPlayers = document.querySelectorAll('ytd-miniplayer');
+		let miniPlayers = document.querySelectorAll('ytd-miniplayer:not(.goodTube_hidden)');
 		miniPlayers.forEach((element) => {
 			goodTube_helper_hideElement(element);
 		});
@@ -1198,6 +1198,9 @@
 			apiEndpoint = goodTube_api_url+"/api/v1/videos/"+goodTube_getParams['v'];
 		}
 
+		// Set the current video ID (for use in goodTube_download() )
+		goodTube_currentVideoId = goodTube_getParams['v'];
+
 		// Get the video data
 		fetch(apiEndpoint)
 		.then(response => response.text())
@@ -1528,8 +1531,6 @@
 			}
 		}
 	}
-	// Do this every 100ms, this helps pip to always work!
-	setInterval(goodTube_player_pipUpdate, 100);
 
 	// Show or hide the picture in picture
 	function goodTube_player_pipShowHide() {
@@ -1569,8 +1570,6 @@
 			goodTube_player_miniplayer_video = goodTube_getParams['v'];
 		}
 	}
-	// Do this every 100ms, helps with sync issues
-	setInterval(goodTube_player_miniplayerUpdate, 100);
 
 	// Show or hide the miniplayer
 	function goodTube_player_miniplayerShowHide() {
@@ -1819,13 +1818,13 @@
 						{
 							label: "Download video",
 							clickHandler() {
-								window.open(goodTube_api_url+'/latest_version?id='+goodTube_getParams['v'], '_blank');
+								goodTube_download('video');
 							},
 						},
 						{
 							label: "Download audio",
 							clickHandler() {
-								window.open(goodTube_api_url+'/watch?v='+goodTube_getParams['v']+'&listen=true&raw=1', '_blank');
+								goodTube_download('audio');
 							},
 						},
 					],
@@ -3016,6 +3015,7 @@
 	let goodTube_previousUrl = false;
 	let goodTube_player = false;
 	let goodTube_getParams = false;
+	let goodTube_currentVideoId = false;
 
 	// API Endpoints
 	let goodTube_apis = [
@@ -3460,6 +3460,67 @@
 		}
 	}
 
+	// Download
+	function goodTube_download(type) {
+		let isAudioOnly = false;
+		if (type === 'audio') {
+			isAudioOnly = true;
+		}
+
+		// Mobile only supports h264, otherwise we use vp9
+		let vCodec = 'vp9';
+		if (window.location.href.indexOf('m.youtube') !== -1) {
+			vCodec = 'h264';
+		}
+
+		let jsonData = JSON.stringify({
+			'url': 'https://www.youtube.com/watch?v='+goodTube_currentVideoId,
+			'vCodec': vCodec,
+			'vQuality': 'max',
+			'filenamePattern': 'basic',
+			'isAudioOnly': isAudioOnly
+		});
+
+		fetch('https://co.wuk.sh/api/json/', {
+			method: 'POST',
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			body: jsonData
+		})
+		.then(response => response.text())
+		.then(data => {
+			// Turn data into JSON
+			data = JSON.parse(data);
+
+			// If the data is all good
+			if (typeof data['status'] !== 'undefined' && data['status'] !== 'error' && typeof data['url'] !== 'undefined' && data['url']) {
+				// Download the file
+				window.open(data['url'], '_self');
+			}
+			// Otherwise fallback
+			else {
+				if (type === 'audio') {
+					window.open(goodTube_api_url+'/watch?v='+goodTube_getParams['v']+'&listen=true&raw=1', '_blank');
+				}
+				else {
+					window.open(goodTube_api_url+'/latest_version?id='+goodTube_getParams['v'], '_blank');
+				}
+			}
+
+		})
+		.catch((error) => {
+			// If anything went wrong, fallback
+			if (type === 'audio') {
+				window.open(goodTube_api_url+'/watch?v='+goodTube_getParams['v']+'&listen=true&raw=1', '_blank');
+			}
+			else {
+				window.open(goodTube_api_url+'/latest_version?id='+goodTube_getParams['v'], '_blank');
+			}
+		});
+	}
+
 	// Check for updates
 	function goodTube_checkForUpdates() {
 		if (goodTube_stopUpdates) {
@@ -3701,6 +3762,21 @@
 			});
 		}
 
+		// Mute, pause and skip ads on all Youtube as much as possible
+		setInterval(goodTube_youtube_mutePauseSkipAds, 1);
+
+		// Run the GoodTube actions initally
+		setInterval(goodTube_actions, 1);
+
+		// Setup our next / prev buttons to show or hide every 100ms
+		setInterval(goodTube_player_videojs_showHideNextPrevButtons, 100);
+
+		// Sync pip properly
+		setInterval(goodTube_player_pipUpdate, 100);
+
+		// Sync miniplayer properly
+		setInterval(goodTube_player_miniplayerUpdate, 100);
+
 		// Hide ads, shorts, etc - init
 		goodTube_youtube_hideAdsShortsEtc_init();
 
@@ -3713,32 +3789,11 @@
 		// Mute, pause and skip ads on all Youtube initally
 		goodTube_youtube_mutePauseSkipAds();
 
-		// Mute, pause and skip ads on all Youtube as much as possible
-		setInterval(goodTube_youtube_mutePauseSkipAds, 1);
-
 		// Load required assets
 		goodTube_player_loadAssets();
 
 		// Init our player
 		goodTube_player_init();
-
-		// Run the GoodTube actions initally
-		goodTube_actions();
-
-		// Setup the GoodTube actions to run every time the DOM changes
-		let MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
-
-		let observer = new MutationObserver(function(mutations, observer) {
-			setTimeout(goodTube_actions, 0);
-		});
-
-		observer.observe(document, {
-			subtree: true,
-			attributes: true
-		});
-
-		// Setup our next / prev buttons to show or hide every 100ms
-		setInterval(goodTube_player_videojs_showHideNextPrevButtons, 100);
 
 		// Usage stats
 		goodTube_stats_unique();
