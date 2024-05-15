@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.092
+// @version      2.093
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -210,31 +210,6 @@
 				goodTube_helper_hideElement(element.closest('ytd-video-renderer'));
 			}
 		});
-	}
-
-	// Hide popups
-	function goodTube_youtube_hidePopups() {
-		let modalOverlay = document.querySelector("tp-yt-iron-overlay-backdrop");
-		let popup = document.querySelector(".style-scope ytd-enforcement-message-view-model");
-		let popupButton = document.getElementById("dismiss-button");
-
-		if (modalOverlay) {
-			modalOverlay.removeAttribute("opened");
-			modalOverlay.remove();
-		}
-
-		if (popup) {
-			if (popupButton) {
-				popupButton.click();
-			}
-
-			popup.remove();
-		}
-
-		if (modalOverlay || popup) {
-			let bodyStyle = document.body.style;
-			bodyStyle.setProperty('overflow-y', 'auto', 'important');
-		}
 	}
 
 	// Remove that annoying "Are you still watching" prompt
@@ -3638,9 +3613,6 @@
 	function goodTube_actions() {
 		// Hide youtube players
 		goodTube_youtube_hidePlayers();
-
-		// Hide Youtube popups
-		goodTube_youtube_hidePopups();
 
 		// Hide ads, shorts, etc - real time
 		goodTube_youtube_hideAdsShortsEtc_realTime();
