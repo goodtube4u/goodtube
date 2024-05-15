@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.091
+// @version      2.092
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -239,8 +239,9 @@
 
 	// Remove that annoying "Are you still watching" prompt
 	function goodTube_youtube_areYouStillWatching() {
-		let textElements = document.querySelectorAll('yt-confirm-dialog-renderer yt-formatted-string');
+		let textElements = document.querySelectorAll('yt-confirm-dialog-renderer yt-formatted-string:not(.goodTube_clicked)');
 		textElements.forEach((element) => {
+			element.classList.add('goodTube_clicked');
 			if (element.innerHTML.toLowerCase().indexOf('continue watching') !== -1) {
 				document.querySelector('yt-confirm-dialog-renderer button').click();
 			}
