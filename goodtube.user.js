@@ -411,7 +411,7 @@
 			/* Mobile video time */
 			#goodTube_videoTime {
 				position: absolute;
-				left: 16px;
+				left: 20px;
 				bottom: 72px;
 				font-size: 12px;
 				font-weight: 700;
