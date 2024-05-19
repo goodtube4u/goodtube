@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.103
+// @version      2.105
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -506,6 +506,56 @@
 				min-height: var(--ytd-watch-flexy-min-player-height);
 			}
 
+			@media (max-width: 1440px) and (min-width: 1016px) {
+				#goodTube_player_wrapper1:not(.goodTube_mobile) {
+					position: relative;
+					max-width: var(--ytd-watch-flexy-max-player-width);
+					min-width: var(--ytd-watch-flexy-min-player-width);
+					margin: 0 auto;
+				}
+
+				#goodTube_player_wrapper1:not(.goodTube_mobile) #goodTube_player_wrapper2 {
+					position: relative;
+					padding-top: calc(var(--ytd-watch-flexy-height-ratio) / var(--ytd-watch-flexy-width-ratio)* 100%);
+				}
+
+				#goodTube_player_wrapper1:not(.goodTube_mobile) #goodTube_player_wrapper3 {
+					box-sizing: border-box;
+					position: absolute;
+					top: 0;
+					right: 0;
+					bottom: 0;
+					left: 0;
+					height: auto;
+					min-height: 0;
+				}
+			}
+
+			@media (max-width: 780px) {
+				#goodTube_player_wrapper1:not(.goodTube_mobile) {
+					position: relative;
+					max-width: var(--ytd-watch-flexy-max-player-width);
+					min-width: var(--ytd-watch-flexy-min-player-width);
+					margin: 0 auto;
+				}
+
+				#goodTube_player_wrapper1:not(.goodTube_mobile) #goodTube_player_wrapper2 {
+					position: relative;
+					padding-top: calc(var(--ytd-watch-flexy-height-ratio) / var(--ytd-watch-flexy-width-ratio)* 100%);
+				}
+
+				#goodTube_player_wrapper1:not(.goodTube_mobile) #goodTube_player_wrapper3 {
+					box-sizing: border-box;
+					position: absolute;
+					top: 0;
+					right: 0;
+					bottom: 0;
+					left: 0;
+					height: auto;
+					min-height: 0;
+				}
+			}
+
 			#goodTube_player_wrapper1:not(.goodTube_mobile):not(.goodTube_miniplayer) #goodTube_player {
 				border-radius: 12px;
 			}
@@ -795,8 +845,13 @@
 				bottom: 0;
 				width: 100%;
 				height: 100%;
-				background: #000000;
+				background: transparent;
 				z-index: 1;
+			}
+
+			#goodTube_player_wrapper1.goodTube_mobile #goodTube_player,
+			#goodTube_player.vjs-loading {
+				background: #000000;
 			}
 
 			#goodTube_player:focus {
@@ -1247,6 +1302,12 @@
 
 		// Clear the player
 		goodTube_player_clear(player);
+
+		// Add a loading class (this gives a black background)
+		let goodTube_videojs_loadingElement = document.getElementById('goodTube_player');
+		if (!goodTube_videojs_loadingElement.classList.contains('vjs-loading')) {
+			goodTube_videojs_loadingElement.classList.add('vjs-loading');
+		}
 
 		// Only re-attempt to load the video data max configured retry attempts
 		goodTube_player_loadVideoDataAttempts++;
@@ -2374,6 +2435,12 @@
 			// Show current time (mobile only)
 			if (window.location.href.indexOf('m.youtube') !== -1) {
 				goodTube_helper_showElement(document.getElementById('goodTube_videoTime'));
+			}
+
+			// Remove the loading class (this removes the black background)
+			let goodTube_videojs_loadingElement = document.getElementById('goodTube_player');
+			if (goodTube_videojs_loadingElement.classList.contains('vjs-loading')) {
+				goodTube_videojs_loadingElement.classList.remove('vjs-loading');
 			}
 		});
 
