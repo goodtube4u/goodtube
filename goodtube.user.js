@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.102
+// @version      2.103
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -1814,15 +1814,9 @@
 			});
 		});
 
-		// Set inactivity timeout longer for mobile than desktop
-		let inactivityTimeout = 2000;
-		if (window.location.href.indexOf('m.youtube') !== -1) {
-			inactivityTimeout = 5000;
-		}
-
 		// Init the player
 		goodTube_videojs_player = videojs('goodTube_player', {
-			inactivityTimeout: inactivityTimeout,
+			inactivityTimeout: 3000,
 			controls: true,
 			autoplay: false,
 			preload: 'auto',
@@ -2139,6 +2133,50 @@
 			if (window.location.href.indexOf('m.youtube') === -1) {
 				goodTube_target.addEventListener('dblclick', function(event) {
 					document.querySelector('.vjs-fullscreen-control')?.click();
+				});
+			}
+
+			// Active and inactive control based on mouse movement (desktop only)
+			if (window.location.href.indexOf('m.youtube') === -1) {
+				// Mouse off make inactive
+				goodTube_target.addEventListener('mouseout', function(event) {
+					if (goodTube_target.classList.contains('vjs-user-active') && !goodTube_target.classList.contains('vjs-paused')) {
+						goodTube_target.classList.remove('vjs-user-active');
+						goodTube_target.classList.add('vjs-user-inactive');
+					}
+				});
+
+				// Mouse over make active
+				goodTube_target.addEventListener('mouseover', function(event) {
+					if (goodTube_target.classList.contains('vjs-user-inactive') && !goodTube_target.classList.contains('vjs-paused')) {
+						goodTube_target.classList.add('vjs-user-active');
+						goodTube_target.classList.remove('vjs-user-inactive');
+					}
+				});
+
+				// Click to play, don't make inactive (override video js default behavior)
+				goodTube_target.addEventListener('click', function(event) {
+					setTimeout(function() {
+						if (goodTube_target.classList.contains('vjs-user-inactive') && !goodTube_target.classList.contains('vjs-paused')) {
+							goodTube_target.classList.add('vjs-user-active');
+							goodTube_target.classList.remove('vjs-user-inactive');
+
+							// Set a timeout to make inactive (to replace video js default behavior)
+							window.goodTube_inactive_timeout = setTimeout(function() {
+								if (goodTube_target.classList.contains('vjs-user-active') && !goodTube_target.classList.contains('vjs-paused')) {
+									goodTube_target.classList.remove('vjs-user-active');
+									goodTube_target.classList.add('vjs-user-inactive');
+								}
+							}, 3000);
+						}
+					}, 1);
+				});
+
+				// If they move the mouse, remove our timeout to make inactive (return to video js default behavior)
+				goodTube_target.addEventListener('mousemove', function(event) {
+					if (typeof window.goodTube_inactive_timeout !== 'undefined') {
+						clearTimeout(window.goodTube_inactive_timeout);
+					}
 				});
 			}
 
