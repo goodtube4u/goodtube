@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.099
+// @version      2.100
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -408,6 +408,23 @@
 		// Add CSS styles for the player
 		let style = document.createElement('style');
 		style.textContent = `
+			.video-js .vjs-time-control {
+				order: 4;
+				font-size: 13px !important;
+    		padding-top: 5px !important;
+    		color: rgb(221, 221, 221) !important;
+		    text-shadow: 0 0 2px rgba(0, 0, 0, .5) !important;
+		    z-index: 1;
+			}
+
+			.video-js .vjs-current-time {
+				padding-right: 0 !important;
+			}
+
+			.video-js .vjs-duration {
+				padding-left: 0 !important;
+			}
+
 			/* Mobile video time */
 			#goodTube_videoTime {
 				position: absolute;
@@ -1800,6 +1817,9 @@
 				children: [
 					'playToggle',
 					'volumePanel',
+					'currentTimeDisplay',
+					'timeDivider',
+					'durationDisplay',
 					'progressControl',
 					'playbackRateMenuButton',
 					'subsCapsButton',
@@ -2637,45 +2657,75 @@
 				order: 3;
 			}
 
+			/* Hide time control on mobile */
+			html body #goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-time-control {
+				display: none !important;
+			}
+
+			/* Hide time control if screens too small */
+			@media (max-width: 1168px) and (min-width: 1017px) {
+				.video-js .vjs-time-control {
+					display: none !important;
+				}
+			}
+			@media (max-width: 742px) {
+				.video-js .vjs-time-control {
+					display: none !important;
+				}
+			}
+
+			/* Time control */
+			.video-js .vjs-time-control {
+				order: 4;
+				font-size: 13px !important;
+    		padding-top: 5px !important;
+    		color: rgb(221, 221, 221) !important;
+		    text-shadow: 0 0 2px rgba(0, 0, 0, .5) !important;
+			}
+
+			.video-js .vjs-current-time {
+				padding-right: 4px !important;
+			}
+
+			.video-js .vjs-duration {
+				padding-left: 4px !important;
+			}
+
 			.video-js .vjs-source-button {
 				margin-left: auto !important;
-				order: 3;
-			}
-
-			.video-js .vjs-download-button {
-				order: 4;
-			}
-
-			.video-js .vjs-autoplay-button {
 				order: 5;
 			}
 
-			.video-js .vjs-playback-rate {
+			.video-js .vjs-download-button {
 				order: 6;
 			}
 
-			.video-js .vjs-time-control {
+			.video-js .vjs-autoplay-button {
 				order: 7;
 			}
 
-			.video-js .vjs-subs-caps-button {
+			.video-js .vjs-playback-rate {
 				order: 8;
 			}
 
-			.video-js .vjs-quality-selector {
+			.video-js .vjs-subs-caps-button {
 				order: 9;
 			}
 
-			.video-js .vjs-miniplayer-button {
+			.video-js .vjs-quality-selector {
 				order: 10;
 			}
 
-			.video-js .vjs-theater-button {
+			.video-js .vjs-miniplayer-button {
 				order: 11;
 			}
 
-			.video-js .vjs-fullscreen-control {
+			.video-js .vjs-theater-button {
 				order: 12;
+			}
+
+			.video-js .vjs-fullscreen-control {
+				order: 13;
 			}
 
 			.video-js .vjs-control-bar {
@@ -2683,6 +2733,20 @@
 				flex-direction: row;
 				scrollbar-width: none;
 				height: 48px !important;
+				background: transparent !important;
+			}
+
+			.video-js .vjs-control-bar::before {
+				content: '';
+				position: absolute;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				height: 25%;
+		    background: linear-gradient(0deg, rgba(0, 0, 0, .8) 0%, rgba(0, 0, 0, .6) 20px, rgba(0, 0, 0, 0) 100%);
+				height: calc(var(--ytd-watch-flexy-max-player-height) / 3);
+				pointer-events: none;
+				min-height: 200px;
 			}
 
 			.video-js .vjs-menu .vjs-icon-placeholder {
@@ -2758,7 +2822,7 @@
 				line-height: 100%;
 			}
 
-			.video-js .vjs-control-bar * {
+			.video-js .vjs-control-bar *:not(.vjs-time-control) {
 				text-shadow: none !important;
 			}
 
