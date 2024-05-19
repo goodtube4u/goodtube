@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.098
+// @version      2.099
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -914,6 +914,9 @@
 						else {
 							player.volume = 0;
 						}
+
+						// No scroll
+						event.preventDefault();
 					}
 
 					// Volume up
@@ -924,15 +927,15 @@
 						else {
 							player.volume = 1;
 						}
+
+						// No scroll
+						event.preventDefault();
 					}
 
 					// Theater mode (youtube shortcut doesn't work if we're in here)
 					if (keyPressed === 't') {
 						goodTube_shortcut('theater');
 					}
-
-					// No scroll
-					event.preventDefault();
 				}
 
 				// Prev 5 seconds
@@ -1790,6 +1793,9 @@
 			width: '100%',
 			height: '100%',
 			playbackRates: [0.25, 0.5, 1, 1.25, 1.5, 1.75, 2],
+			userActions: {
+				doubleClick: false
+			},
 			controlBar: {
 				children: [
 					'playToggle',
@@ -1943,13 +1949,8 @@
 			// Expose the goodTube player
 			goodTube_player = document.querySelector('#goodTube_player video');
 
-
 			// Attach mobile seeking events
 			if (window.location.href.indexOf('m.youtube') !== -1) {
-				// Select the video js wrapper element
-				let goodTube_target = document.querySelector('#goodTube_player');
-
-
 				// Attach the backwards seek button
 				let goodTube_seekBackwards = document.createElement('div');
 				goodTube_seekBackwards.id = 'goodTube_seekBackwards';
@@ -2060,9 +2061,6 @@
 
 			// Attach mobile video time elements
 			if (window.location.href.indexOf('m.youtube') !== -1) {
-				// Select the video js wrapper element
-				let goodTube_target = document.querySelector('#goodTube_player');
-
 				// Attach the video time display
 				let goodTube_videoTime = document.createElement('div');
 				goodTube_videoTime.innerHTML = "<span id='goodTube_currentTime'></span> / <span id='goodTube_endTime'></span>"
@@ -2086,6 +2084,12 @@
 				}, 1);
 			}
 
+			// Double click to fullscreen (desktop only)
+			if (window.location.href.indexOf('m.youtube') === -1) {
+				goodTube_target.addEventListener('dblclick', function(event) {
+					document.querySelector('.vjs-fullscreen-control')?.click();
+				});
+			}
 
 			// Remove all title attributes from buttons, we don't want hover text
 			let buttons = document.querySelectorAll('#goodTube_player button');
