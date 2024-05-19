@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.097
+// @version      2.098
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -33,6 +33,19 @@
 
 	/* Helper functions
 	------------------------------------------------------------------------------------------ */
+	// Convert seconds to HH:MM:SS
+	function goodTube_helper_formatTime(secs) {
+		var sec_num = parseInt(secs, 10);
+		var hours = Math.floor(sec_num / 3600);
+		var minutes = Math.floor(sec_num / 60) % 60;
+		var seconds = sec_num % 60;
+
+		return [hours,minutes,seconds]
+		.map(v => v < 10 ? "0" + v : v)
+		.filter((v,i) => v !== "00" || i > 0)
+		.join(":");
+	}
+
 	// Find all HTML tags that match a regular expression
 	function goodTube_helper_tagMatches(regEx) {
 		return Array.prototype.slice.call(document.querySelectorAll('*')).filter(function(element) {
@@ -395,6 +408,32 @@
 		// Add CSS styles for the player
 		let style = document.createElement('style');
 		style.textContent = `
+			/* Mobile video time */
+			#goodTube_videoTime {
+				position: absolute;
+				left: 16px;
+				bottom: 72px;
+				font-size: 12px;
+				font-weight: 700;
+				z-index: 999;
+				color: #ffffff;
+				pointer-events: none;
+				opacity: 0;
+				transition: opacity .2s linear;
+			}
+
+			.vjs-user-active #goodTube_videoTime {
+				opacity: 1;
+			}
+
+			#goodTube_videoTime #goodTube_currentTime {
+			}
+
+			#goodTube_videoTime #goodTube_endTime {
+				opacity: .7;
+			}
+
+
 			/* Double tap or tap and hold elements for seeking on mobile */
 			#goodTube_seekBackwards {
 				position: absolute;
@@ -1466,6 +1505,11 @@
 		openMenuButtons.forEach((openMenuButton) => {
 			openMenuButton.classList.remove('vjs-menuOpen');
 		});
+
+		// Hide current time (mobile only)
+		if (window.location.href.indexOf('m.youtube') !== -1) {
+			goodTube_helper_hideElement(document.getElementById('goodTube_videoTime'));
+		}
 	}
 
 	// Hide the player
@@ -1896,6 +1940,7 @@
 				console.log('[GoodTube] Player loaded');
 			}
 
+			// Expose the goodTube player
 			goodTube_player = document.querySelector('#goodTube_player video');
 
 
@@ -1929,9 +1974,15 @@
 					}
 					// If it's just a normal tap
 					else {
-						// Add inactive state to see controls overlay
-						goodTube_target.classList.add('vjs-user-active');
-						goodTube_target.classList.remove('vjs-user-inactive');
+						// Swap to opposite state of active / inactive
+						if (goodTube_target.classList.contains('vjs-user-active')) {
+							goodTube_target.classList.remove('vjs-user-active');
+							goodTube_target.classList.add('vjs-user-inactive');
+						}
+						else {
+							goodTube_target.classList.add('vjs-user-active');
+							goodTube_target.classList.remove('vjs-user-inactive');
+						}
 					}
 
 					// Set the last tap time
@@ -1962,9 +2013,15 @@
 					}
 					// If it's just a normal tap
 					else {
-						// Add inactive state to see controls overlay
-						goodTube_target.classList.add('vjs-user-active');
-						goodTube_target.classList.remove('vjs-user-inactive');
+						// Swap to opposite state of active / inactive
+						if (goodTube_target.classList.contains('vjs-user-active')) {
+							goodTube_target.classList.remove('vjs-user-active');
+							goodTube_target.classList.add('vjs-user-inactive');
+						}
+						else {
+							goodTube_target.classList.add('vjs-user-active');
+							goodTube_target.classList.remove('vjs-user-inactive');
+						}
 					}
 
 					// Set the last tap time
@@ -1998,6 +2055,35 @@
 					// Set the playback rate to 1x (normal)
 					goodTube_player.playbackRate = 1;
 				});
+			}
+
+
+			// Attach mobile video time elements
+			if (window.location.href.indexOf('m.youtube') !== -1) {
+				// Select the video js wrapper element
+				let goodTube_target = document.querySelector('#goodTube_player');
+
+				// Attach the video time display
+				let goodTube_videoTime = document.createElement('div');
+				goodTube_videoTime.innerHTML = "<span id='goodTube_currentTime'></span> / <span id='goodTube_endTime'></span>"
+				goodTube_videoTime.id = 'goodTube_videoTime';
+				goodTube_target.append(goodTube_videoTime);
+
+				let currentTime = document.getElementById('goodTube_currentTime');
+				let endTime = document.getElementById('goodTube_endTime');
+
+				// Ensure the time display is always up to date
+				setInterval(function() {
+					let newCurrentTime = goodTube_helper_formatTime(goodTube_player.currentTime);
+					if (currentTime.innerHTML != newCurrentTime) {
+						currentTime.innerHTML = newCurrentTime;
+					}
+
+					let newEndTime = goodTube_helper_formatTime(goodTube_player.duration);
+					if (endTime.innerHTML != newEndTime) {
+						endTime.innerHTML = newEndTime;
+					}
+				}, 1);
 			}
 
 
@@ -2170,8 +2256,9 @@
 			goodTube_player_reloadVideoAttempts++;
 		});
 
-		// Autoplay the video once loaded data
+		// Once loaded data
 		goodTube_videojs_player.on('loadeddata', function() {
+			// Autoplay the video
 			// Only autoplay if the user hasn't paused the video prior to it loading
 			if (!goodTube_player.paused) {
 				goodTube_player_play(goodTube_player);
@@ -2190,6 +2277,11 @@
 
 			// Update the video js player
 			goodTube_player_videojs_update();
+
+			// Show current time (mobile only)
+			if (window.location.href.indexOf('m.youtube') !== -1) {
+				goodTube_helper_showElement(document.getElementById('goodTube_videoTime'));
+			}
 		});
 
 		// Play next video this video has ended
