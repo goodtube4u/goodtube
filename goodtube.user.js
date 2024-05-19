@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.101
+// @version      2.102
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -2082,6 +2082,18 @@
 						// Set playback rate to 2x (fast forward)
 						goodTube_player.playbackRate = 2;
 					}, 1000);
+				});
+
+				// On touch move
+				goodTube_target.addEventListener('touchmove', function(e) {
+					// Remove any pending timeouts to fast forward
+					if (goodTube_videojs_fastForward) {
+						clearTimeout(goodTube_videojs_fastForward);
+					}
+					goodTube_videojs_fastForward = false;
+
+					// Set the playback rate to 1x (normal)
+					goodTube_player.playbackRate = 1;
 				});
 
 				// On touch end
