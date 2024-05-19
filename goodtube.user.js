@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.096
+// @version      2.097
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -395,6 +395,25 @@
 		// Add CSS styles for the player
 		let style = document.createElement('style');
 		style.textContent = `
+			/* Double tap or tap and hold elements for seeking on mobile */
+			#goodTube_seekBackwards {
+				position: absolute;
+				top: 0;
+				left: 0;
+				bottom: 48px;
+				content: '';
+				width: 25%;
+			}
+
+			#goodTube_seekForwards {
+				position: absolute;
+				top: 0;
+				right: 0;
+				bottom: 48px;
+				content: '';
+				width: 25%;
+			}
+
 			/* Theater mode */
 			ytd-watch-flexy[theater] #goodTube_player_wrapper1:not(.goodTube_mobile) {
 				width: 100%;
@@ -1586,6 +1605,8 @@
 	let goodTube_videojs_previousVideo = [];
 	let goodTube_videojs_prevButton = false;
 	let goodTube_videojs_nextButton = true;
+	let goodTube_videojs_tapTimer = false;
+	let goodTube_videojs_fastForward = false;
 
 	// Init video js
 	function goodTube_player_videojs() {
@@ -1876,6 +1897,108 @@
 			}
 
 			goodTube_player = document.querySelector('#goodTube_player video');
+
+
+			// Attach mobile seeking events
+			if (window.location.href.indexOf('m.youtube') !== -1) {
+				// Select the video js wrapper element
+				let goodTube_target = document.querySelector('#goodTube_player');
+
+
+				// Attach the backwards seek button
+				let goodTube_seekBackwards = document.createElement('div');
+				goodTube_seekBackwards.id = 'goodTube_seekBackwards';
+				goodTube_target.append(goodTube_seekBackwards);
+
+				// Double tap event to seek backwards
+				goodTube_seekBackwards.onclick = function() {
+					// Get the time
+					var now = new Date().getTime();
+
+					// Check how long since last tap
+					var timesince = now - goodTube_videojs_tapTimer;
+
+					// If it's less than 600ms
+					if ((timesince < 600) && (timesince > 0)) {
+						// Remove active state and hide overlays (so you can see the video properly)
+						goodTube_target.classList.remove('vjs-user-active');
+						goodTube_target.classList.add('vjs-user-inactive');
+
+						// Seek backwards 10 seconds
+						goodTube_player.currentTime -= 10;
+					}
+					// If it's just a normal tap
+					else {
+						// Add inactive state to see controls overlay
+						goodTube_target.classList.add('vjs-user-active');
+						goodTube_target.classList.remove('vjs-user-inactive');
+					}
+
+					// Set the last tap time
+					goodTube_videojs_tapTimer = new Date().getTime();
+				}
+
+
+				// Attach the forwards seek button
+				let goodTube_seekForwards = document.createElement('div');
+				goodTube_seekForwards.id = 'goodTube_seekForwards';
+				goodTube_target.append(goodTube_seekForwards);
+
+				goodTube_seekForwards.onclick = function() {
+					// Get the time
+					var now = new Date().getTime();
+
+					// Check how long since last tap
+					var timesince = now - goodTube_videojs_tapTimer;
+
+					// If it's less than 600ms
+					if ((timesince < 600) && (timesince > 0)) {
+						// Remove active state and hide overlays (so you can see the video properly)
+						goodTube_target.classList.remove('vjs-user-active');
+						goodTube_target.classList.add('vjs-user-inactive');
+
+						// Seek forwards 5 seconds
+						goodTube_player.currentTime += 5;
+					}
+					// If it's just a normal tap
+					else {
+						// Add inactive state to see controls overlay
+						goodTube_target.classList.add('vjs-user-active');
+						goodTube_target.classList.remove('vjs-user-inactive');
+					}
+
+					// Set the last tap time
+					goodTube_videojs_tapTimer = new Date().getTime();
+				}
+
+
+				// Long press to fast forward
+
+				// On touch start
+				goodTube_target.addEventListener('touchstart', function(e) {
+					// Start fast forward after 1 second
+					goodTube_videojs_fastForward = setTimeout(function() {
+						// Remove active state and hide overlays (so you can see the video properly)
+						goodTube_target.classList.remove('vjs-user-active');
+						goodTube_target.classList.add('vjs-user-inactive');
+
+						// Set playback rate to 2x (fast forward)
+						goodTube_player.playbackRate = 2;
+					}, 1000);
+				});
+
+				// On touch end
+				goodTube_target.addEventListener('touchend', function(e) {
+					// Remove any pending timeouts to fast forward
+					if (goodTube_videojs_fastForward) {
+						clearTimeout(goodTube_videojs_fastForward);
+					}
+					goodTube_videojs_fastForward = false;
+
+					// Set the playback rate to 1x (normal)
+					goodTube_player.playbackRate = 1;
+				});
+			}
 
 
 			// Remove all title attributes from buttons, we don't want hover text
