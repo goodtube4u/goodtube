@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.100
+// @version      2.101
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -411,10 +411,10 @@
 			.video-js .vjs-time-control {
 				order: 4;
 				font-size: 13px !important;
-    		padding-top: 5px !important;
-    		color: rgb(221, 221, 221) !important;
-		    text-shadow: 0 0 2px rgba(0, 0, 0, .5) !important;
-		    z-index: 1;
+				padding-top: 5px !important;
+				color: rgb(221, 221, 221) !important;
+				text-shadow: 0 0 2px rgba(0, 0, 0, .5) !important;
+				z-index: 1;
 			}
 
 			.video-js .vjs-current-time {
@@ -515,7 +515,6 @@
 			}
 
 			#goodTube_player_wrapper3 {
-				background: #000000;
 				overflow: hidden;
 			}
 
@@ -846,10 +845,29 @@
 
 			setInterval(function() {
 				if (typeof goodTube_getParams['v'] !== 'undefined') {
-					let youtubeSize_element = document.querySelector('#player');
+					// Match width and height of mobile player
+					let youtubeSize_element = document.querySelector('.player-size.player-placeholder');
 					if (youtubeSize_element) {
-						player_wrapper1.style.height = youtubeSize_element.offsetHeight+'px';
-						player_wrapper1.style.width = youtubeSize_element.offsetWidth+'px';
+						if (youtubeSize_element.offsetHeight > 0) {
+							player_wrapper1.style.height = youtubeSize_element.offsetHeight+'px';
+							player_wrapper1.style.width = youtubeSize_element.offsetWidth+'px';
+						}
+						else {
+							youtubeSize_element = document.querySelector('#player');
+							if (youtubeSize_element.offsetHeight > 0) {
+								player_wrapper1.style.height = youtubeSize_element.offsetHeight+'px';
+								player_wrapper1.style.width = youtubeSize_element.offsetWidth+'px';
+							}
+						}
+					}
+
+					// Match sticky mode of mobile player
+					let youtubeSticky_element = document.querySelector('.player-container.sticky-player');
+					if (youtubeSticky_element) {
+						player_wrapper1.style.position = 'fixed';
+					}
+					else {
+						player_wrapper1.style.position = 'absolute';
 					}
 				}
 				else {
@@ -2507,10 +2525,6 @@
 				margin: 0;
 			}
 
-			.video-js.player-style-youtube .vjs-control-bar {
-				background: linear-gradient(rgba(0,0,0,0.1), rgba(0, 0, 0,0.5));
-			}
-
 			.video-js.player-style-youtube .vjs-slider {
 				background-color: rgba(255,255,255,0.2);
 			}
@@ -2678,9 +2692,9 @@
 			.video-js .vjs-time-control {
 				order: 4;
 				font-size: 13px !important;
-    		padding-top: 5px !important;
-    		color: rgb(221, 221, 221) !important;
-		    text-shadow: 0 0 2px rgba(0, 0, 0, .5) !important;
+				padding-top: 5px !important;
+				color: rgb(221, 221, 221) !important;
+				text-shadow: 0 0 2px rgba(0, 0, 0, .5) !important;
 			}
 
 			.video-js .vjs-current-time {
@@ -2742,11 +2756,17 @@
 				left: 0;
 				right: 0;
 				bottom: 0;
-				height: 25%;
-		    background: linear-gradient(0deg, rgba(0, 0, 0, .8) 0%, rgba(0, 0, 0, .6) 20px, rgba(0, 0, 0, 0) 100%);
-				height: calc(var(--ytd-watch-flexy-max-player-height) / 3);
+				background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAD1CAYAAACRFp+GAAAAAXNSR0IArs4c6QAAASpJREFUOE9lyOlHGAAcxvHuY63Wta3WsdWqdaz7vtfduoyZSBLJmCSSSCaSSBJJJIkk0h+Z7/Pm59Hz4sP3SUh4tUSeIIkMkkmR4qSSIs1JJ4MMUmQ6b0iR5bwlg2xS5DjvSJHr5JFBPikKnEIyeE+KD85HUhQ5xWTwiRQlTikpypxyMvhMii9OBSkqna9kUEWKaqeGDL6RotapI0W900AG30nR6DSRotlpIYNWUrQ57aTocDrJoIsU3U4PKXqdPjLoJ8WAM0gGQ6QYdn6QYsQZJYMxUow7E6SYdKbIYJoUP50ZUsw6c2QwTy7AL/gNf2ARlmAZVmAV1mAd/sI/2IBN2IJt2IFd2IN9+A8HcAhHcAwncApncA4XcAlXcA03cAt3cA8P8AhP8PwCakcyvVVFagcAAAAASUVORK5CYII=");
+				background-size: cover;
+				background-repeat: repeat-x;
+				background-position: bottom;
+				background-size: contain;
+				height: calc(var(--ytd-watch-flexy-max-player-height) / 2.5);
 				pointer-events: none;
-				min-height: 200px;
+			}
+			#goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-control-bar::before {
+				display: none;
+				content: none;
 			}
 
 			.video-js .vjs-menu .vjs-icon-placeholder {
