@@ -1687,7 +1687,8 @@
 	let goodTube_videojs_previousVideo = [];
 	let goodTube_videojs_prevButton = false;
 	let goodTube_videojs_nextButton = true;
-	let goodTube_videojs_tapTimer = false;
+	let goodTube_videojs_tapTimer_backwards = false;
+	let goodTube_videojs_tapTimer_forwards = false;
 	let goodTube_videojs_fastForward = false;
 
 	// Init video js
@@ -2000,7 +2001,7 @@
 					var now = new Date().getTime();
 
 					// Check how long since last tap
-					var timesince = now - goodTube_videojs_tapTimer;
+					var timesince = now - goodTube_videojs_tapTimer_backwards;
 
 					// If it's less than 600ms
 					if ((timesince < 600) && (timesince > 0)) {
@@ -2025,7 +2026,7 @@
 					}
 
 					// Set the last tap time
-					goodTube_videojs_tapTimer = new Date().getTime();
+					goodTube_videojs_tapTimer_backwards = new Date().getTime();
 				}
 
 
@@ -2039,7 +2040,7 @@
 					var now = new Date().getTime();
 
 					// Check how long since last tap
-					var timesince = now - goodTube_videojs_tapTimer;
+					var timesince = now - goodTube_videojs_tapTimer_forwards;
 
 					// If it's less than 600ms
 					if ((timesince < 600) && (timesince > 0)) {
@@ -2064,7 +2065,7 @@
 					}
 
 					// Set the last tap time
-					goodTube_videojs_tapTimer = new Date().getTime();
+					goodTube_videojs_tapTimer_forwards = new Date().getTime();
 				}
 
 
