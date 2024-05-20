@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.301
+// @version      2.500
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -480,13 +480,18 @@
 				background: #000000;
 				border-radius: 0;
 			}
+
 			ytd-watch-flexy[theater] #below {
-				margin-top: var(--ytd-watch-flexy-max-player-height) !important;
 				padding-top: 8px !important;
 			}
+
 			ytd-watch-flexy[theater] #secondary {
-				margin-top: var(--ytd-watch-flexy-max-player-height) !important;
 				padding-top: 16px !important;
+			}
+
+			ytd-watch-flexy[theater] #goodTube_player_wrapper1:not(.goodTube_mobile) #goodTube_player_wrapper3,
+			ytd-watch-flexy[theater] #goodTube_player_wrapper1:not(.goodTube_mobile) #goodTube_player_wrapper3 #goodTube_player {
+				border-radius: 0;
 			}
 
 			/* Desktop */
@@ -507,8 +512,11 @@
 
 			#goodTube_player_wrapper1:not(.goodTube_mobile) #goodTube_player_wrapper3 {
 				box-sizing: border-box;
-				height: var(--ytd-watch-flexy-max-player-height);
-				min-height: var(--ytd-watch-flexy-min-player-height);
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
 			}
 
 			#goodTube_player_wrapper1:not(.goodTube_mobile):not(.goodTube_miniplayer) #goodTube_player {
@@ -847,6 +855,22 @@
 		// Desktop
 		if (window.location.href.indexOf('m.youtube') === -1) {
 			youtubePageElement.before(player_wrapper1);
+
+			// Offset top of stuff when in theater mode
+			setInterval(function() {
+				let theaterElement = document.querySelector('ytd-watch-flexy[theater]');
+				let offsetElements = document.querySelectorAll('ytd-watch-flexy #below, ytd-watch-flexy #secondary');
+				if (theaterElement) {
+					offsetElements.forEach((element) => {
+						element.style.marginTop = player_wrapper1.offsetHeight+'px';
+					});
+				}
+				else {
+					offsetElements.forEach((element) => {
+						element.style.marginTop = '0';
+					});
+				}
+			}, 1);
 		}
 		// Mobile
 		else {
