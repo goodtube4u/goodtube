@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.500
+// @version      2.501
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -481,6 +481,11 @@
 				border-radius: 0;
 			}
 
+			ytd-watch-flexy:not(ytd-watch-flexy[theater]) #below,
+			ytd-watch-flexy:not(ytd-watch-flexy[theater]) #secondary {
+				margin-top: 0 !important;
+			}
+
 			ytd-watch-flexy[theater] #below {
 				padding-top: 8px !important;
 			}
@@ -857,20 +862,14 @@
 			youtubePageElement.before(player_wrapper1);
 
 			// Offset top of stuff when in theater mode
-			setInterval(function() {
-				let theaterElement = document.querySelector('ytd-watch-flexy[theater]');
-				let offsetElements = document.querySelectorAll('ytd-watch-flexy #below, ytd-watch-flexy #secondary');
-				if (theaterElement) {
+			window.addEventListener('resize', function(event) {
+				setTimeout(function() {
+					let offsetElements = document.querySelectorAll('ytd-watch-flexy[theater] #below, ytd-watch-flexy[theater] #secondary');
 					offsetElements.forEach((element) => {
 						element.style.marginTop = player_wrapper1.offsetHeight+'px';
 					});
-				}
-				else {
-					offsetElements.forEach((element) => {
-						element.style.marginTop = '0';
-					});
-				}
-			}, 1);
+				}, 0);
+			}, true);
 		}
 		// Mobile
 		else {
