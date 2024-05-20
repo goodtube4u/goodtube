@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.110
+// @version      2.200
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -504,6 +504,56 @@
 				box-sizing: border-box;
 				height: var(--ytd-watch-flexy-max-player-height);
 				min-height: var(--ytd-watch-flexy-min-player-height);
+			}
+
+			@media (max-width: 1440px) and (min-width: 1016px) {
+				ytd-watch-flexy:not(ytd-watch-flexy[theater]) #goodTube_player_wrapper1:not(.goodTube_mobile) {
+					position: relative;
+					max-width: var(--ytd-watch-flexy-max-player-width);
+					min-width: var(--ytd-watch-flexy-min-player-width);
+					margin: 0 auto;
+				}
+
+				ytd-watch-flexy:not(ytd-watch-flexy[theater]) #goodTube_player_wrapper1:not(.goodTube_mobile) #goodTube_player_wrapper2 {
+					position: relative;
+					padding-top: calc(var(--ytd-watch-flexy-height-ratio) / var(--ytd-watch-flexy-width-ratio)* 100%);
+				}
+
+				ytd-watch-flexy:not(ytd-watch-flexy[theater]) #goodTube_player_wrapper1:not(.goodTube_mobile) #goodTube_player_wrapper3 {
+					box-sizing: border-box;
+					position: absolute;
+					top: 0;
+					right: 0;
+					bottom: 0;
+					left: 0;
+					height: auto;
+					min-height: 0;
+				}
+			}
+
+			@media (max-width: 780px) {
+				ytd-watch-flexy:not(ytd-watch-flexy[theater]) #goodTube_player_wrapper1:not(.goodTube_mobile) {
+					position: relative;
+					max-width: var(--ytd-watch-flexy-max-player-width);
+					min-width: var(--ytd-watch-flexy-min-player-width);
+					margin: 0 auto;
+				}
+
+				ytd-watch-flexy:not(ytd-watch-flexy[theater]) #goodTube_player_wrapper1:not(.goodTube_mobile) #goodTube_player_wrapper2 {
+					position: relative;
+					padding-top: calc(var(--ytd-watch-flexy-height-ratio) / var(--ytd-watch-flexy-width-ratio)* 100%);
+				}
+
+				ytd-watch-flexy:not(ytd-watch-flexy[theater]) #goodTube_player_wrapper1:not(.goodTube_mobile) #goodTube_player_wrapper3 {
+					box-sizing: border-box;
+					position: absolute;
+					top: 0;
+					right: 0;
+					bottom: 0;
+					left: 0;
+					height: auto;
+					min-height: 0;
+				}
 			}
 
 			#goodTube_player_wrapper1:not(.goodTube_mobile):not(.goodTube_miniplayer) #goodTube_player {
