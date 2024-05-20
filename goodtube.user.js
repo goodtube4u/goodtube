@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.501
+// @version      2.502
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -862,14 +862,12 @@
 			youtubePageElement.before(player_wrapper1);
 
 			// Offset top of stuff when in theater mode
-			window.addEventListener('resize', function(event) {
-				setTimeout(function() {
-					let offsetElements = document.querySelectorAll('ytd-watch-flexy[theater] #below, ytd-watch-flexy[theater] #secondary');
-					offsetElements.forEach((element) => {
-						element.style.marginTop = player_wrapper1.offsetHeight+'px';
-					});
-				}, 0);
-			}, true);
+			setInterval(function() {
+				let offsetElements = document.querySelectorAll('ytd-watch-flexy[theater] #below, ytd-watch-flexy[theater] #secondary');
+				offsetElements.forEach((element) => {
+					element.style.marginTop = player_wrapper1.offsetHeight+'px';
+				});
+			}, 1);
 		}
 		// Mobile
 		else {
