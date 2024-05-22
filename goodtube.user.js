@@ -259,6 +259,21 @@
 		});
 	}
 
+	// Make the youtube player the lowest quality to save on bandwidth
+	function goodTube_youtube_lowestQuality() {
+		let youtubePlayer = document.getElementById('movie_player');
+
+		if (youtubePlayer && typeof youtubePlayer.setPlaybackQualityRange === 'function' && typeof youtubePlayer.getAvailableQualityData === 'function' && typeof youtubePlayer.getPlaybackQuality === 'function') {
+			let qualities = youtubePlayer.getAvailableQualityData();
+			let currentQuality = youtubePlayer.getPlaybackQuality();
+			let lowestQuality = qualities[qualities.length-1]['quality'];
+
+			if (currentQuality != lowestQuality) {
+				youtubePlayer.setPlaybackQualityRange(lowestQuality, lowestQuality);
+			}
+		}
+	}
+
 	// Hide all Youtube players
 	function goodTube_youtube_hidePlayers() {
 		// Hide the normal Youtube player
@@ -408,49 +423,6 @@
 		// Add CSS styles for the player
 		let style = document.createElement('style');
 		style.textContent = `
-			.video-js .vjs-time-control {
-				order: 4;
-				font-size: 13px !important;
-				padding-top: 5px !important;
-				color: rgb(221, 221, 221) !important;
-				text-shadow: 0 0 2px rgba(0, 0, 0, .5) !important;
-				z-index: 1;
-			}
-
-			.video-js .vjs-current-time {
-				padding-right: 0 !important;
-			}
-
-			.video-js .vjs-duration {
-				padding-left: 0 !important;
-			}
-
-			/* Mobile video time */
-			#goodTube_videoTime {
-				position: absolute;
-				left: 20px;
-				bottom: 72px;
-				font-size: 12px;
-				font-weight: 700;
-				z-index: 999;
-				color: #ffffff;
-				pointer-events: none;
-				opacity: 0;
-				transition: opacity .2s linear;
-			}
-
-			.vjs-user-active #goodTube_videoTime {
-				opacity: 1;
-			}
-
-			#goodTube_videoTime #goodTube_currentTime {
-			}
-
-			#goodTube_videoTime #goodTube_endTime {
-				opacity: .7;
-			}
-
-
 			/* Double tap or tap and hold elements for seeking on mobile */
 			#goodTube_seekBackwards {
 				position: absolute;
@@ -507,15 +479,9 @@
 			#goodTube_player_wrapper1:not(.goodTube_mobile) {
 				position: relative;
 				height: 0;
-				padding-top: var(--ytd-watch-flexy-comments-panel-max-height);
+				padding-top: min(var(--ytd-watch-flexy-max-player-height), (calc(var(--ytd-watch-flexy-height-ratio) / var(--ytd-watch-flexy-width-ratio) * 100%))) !important;
 				box-sizing: border-box;
-				min-height: 240px;
-			}
-
-			@media (max-width: 884px) {
-				#goodTube_player_wrapper1:not(.goodTube_mobile) {
-					padding-top: min(var(--ytd-watch-flexy-max-player-height), (calc(var(--ytd-watch-flexy-height-ratio) / var(--ytd-watch-flexy-width-ratio) * 100%))) !important;
-				}
+				min-height: var(--ytd-watch-flexy-min-player-height);
 			}
 
 			#goodTube_player_wrapper1:not(.goodTube_mobile) #goodTube_player_wrapper2 {
@@ -525,6 +491,7 @@
 				right: 0;
 				bottom: 0;
 				margin: 0 auto;
+				min-height: 240px;
 			}
 
 			#goodTube_player_wrapper1:not(.goodTube_mobile) #goodTube_player_wrapper3 {
@@ -534,6 +501,7 @@
 				left: 0;
 				right: 0;
 				bottom: 0;
+				min-height: 240px;
 			}
 
 			#goodTube_player_wrapper1:not(.goodTube_mobile):not(.goodTube_miniplayer) #goodTube_player {
@@ -644,7 +612,6 @@
 			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js #goodTube_miniplayer_expandButton:hover::after {
 				opacity: 1;
 			}
-
 
 			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js #goodTube_miniplayer_closeButton {
 				right: 0;
@@ -797,15 +764,15 @@
 				z-index: 1;
 			}
 
-			html body #goodTube_player_wrapper1.goodTube_mobile .video-js.vjs-paused:not(.vjs-user-inactive)::before,
-			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js.vjs-paused:not(.vjs-user-inactive)::before,
+			html body #goodTube_player_wrapper1.goodTube_mobile .video-js.vjs-paused::before,
+			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js.vjs-paused::before,
 			html body #goodTube_player_wrapper1.goodTube_mobile .video-js.vjs-user-active::before,
 			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js.vjs-user-active::before {
 				background: rgba(0,0,0,.6);
 			}
 
-			html body #goodTube_player_wrapper1.goodTube_mobile .video-js.vjs-user-inactive .vjs-control-bar,
-			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js.vjs-user-inactive .vjs-control-bar {
+			html body #goodTube_player_wrapper1.goodTube_mobile .video-js.vjs-user-inactive:not(.vjs-paused) .vjs-control-bar,
+			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js.vjs-user-inactive:not(.vjs-paused) .vjs-control-bar {
 				visibility: visible;
 				opacity: 0;
 				pointer-events: none;
@@ -2152,32 +2119,6 @@
 				});
 			}
 
-
-			// Attach mobile video time elements
-			if (window.location.href.indexOf('m.youtube') !== -1) {
-				// Attach the video time display
-				let goodTube_videoTime = document.createElement('div');
-				goodTube_videoTime.innerHTML = "<span id='goodTube_currentTime'></span> / <span id='goodTube_endTime'></span>"
-				goodTube_videoTime.id = 'goodTube_videoTime';
-				goodTube_target.append(goodTube_videoTime);
-
-				let currentTime = document.getElementById('goodTube_currentTime');
-				let endTime = document.getElementById('goodTube_endTime');
-
-				// Ensure the time display is always up to date
-				setInterval(function() {
-					let newCurrentTime = goodTube_helper_formatTime(goodTube_player.currentTime);
-					if (currentTime.innerHTML != newCurrentTime) {
-						currentTime.innerHTML = newCurrentTime;
-					}
-
-					let newEndTime = goodTube_helper_formatTime(goodTube_player.duration);
-					if (endTime.innerHTML != newEndTime) {
-						endTime.innerHTML = newEndTime;
-					}
-				}, 1);
-			}
-
 			// Double click to fullscreen (desktop only)
 			if (window.location.href.indexOf('m.youtube') === -1) {
 				goodTube_target.addEventListener('dblclick', function(event) {
@@ -2662,15 +2603,33 @@
 
 			.vjs-volume-control {
 				width: auto !important;
+				margin-right: 0 !important;
+
 			}
 
 			.video-js .vjs-volume-panel.vjs-volume-panel-horizontal {
 				transition: width .25s !important;
+				z-index: 999;
 			}
 
 			.video-js .vjs-volume-panel .vjs-volume-control.vjs-volume-horizontal {
 				transition: opacity .25s, width 1s !important;
 				min-width: 0 !important;
+				padding-right: 8px !important;
+				pointer-events: none;
+			}
+
+			.video-js .vjs-volume-panel {
+				margin-right: 6px !important;
+			}
+
+			.video-js .vjs-volume-panel.vjs-hover,
+			.video-js .vjs-volume-panel.vjs-slider-active {
+				margin-right: 16px !important;
+			}
+
+			.video-js .vjs-volume-panel.vjs-hover .vjs-volume-control.vjs-volume-horizontal {
+				pointer-events: all;
 			}
 
 			.vjs-volume-bar.vjs-slider-horizontal {
@@ -2750,7 +2709,7 @@
 				display: none;
 			}
 
-			.video-js .vjs-user-inactive {
+			.video-js .vjs-user-inactive:not(.vjs-paused) {
 				cursor: none;
 			}
 
@@ -2777,38 +2736,32 @@
 				order: 3;
 			}
 
-			/* Hide time control on mobile */
-			html body #goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-time-control {
-				display: none !important;
-			}
-
-			/* Hide time control if screens too small */
-			@media (max-width: 1168px) and (min-width: 1017px) {
-				.video-js .vjs-time-control {
-					display: none !important;
-				}
-			}
-			@media (max-width: 742px) {
-				.video-js .vjs-time-control {
-					display: none !important;
-				}
-			}
-
 			/* Time control */
-			.video-js .vjs-time-control {
+			html body #goodTube_player_wrapper1 .video-js .vjs-time-control {
+				font-family: "YouTube Noto", Roboto, Arial, Helvetica, sans-serif !important;
 				order: 4;
-				font-size: 13px !important;
-				padding-top: 5px !important;
+				font-size: 13.0691px !important;
+				padding-top: 4px !important;
 				color: rgb(221, 221, 221) !important;
 				text-shadow: 0 0 2px rgba(0, 0, 0, .5) !important;
+				min-width: 0 !important;
+				z-index: 1;
+			}
+
+			html body #goodTube_player_wrapper1 .video-js .vjs-time-control * {
+				min-width: 0 !important;
 			}
 
 			.video-js .vjs-current-time {
 				padding-right: 4px !important;
+				padding-left: 0 !important;
+				margin-left: 0 !important;
 			}
 
 			.video-js .vjs-duration {
 				padding-left: 4px !important;
+				padding-right: 5px !important;
+				margin-right: 0 !important;
 			}
 
 			.video-js .vjs-source-button {
@@ -2923,8 +2876,9 @@
 				min-width: 48px !important;
 			}
 
-			.video-js .vjs-control-bar > *:first-child {
-				padding-left: 12px !important;
+			#goodTube_player_wrapper1:not(goodTube_mobile) .video-js .vjs-control-bar > .vjs-play-control {
+				padding-left: 8px;
+   		 	box-sizing: content-box;
 			}
 
 			#goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-control:not(.vjs-progress-control) {
@@ -3129,11 +3083,11 @@
 			}
 
 			.video-js .vjs-control-bar .vjs-mute-control:not(.vjs-vol-0)::before {
-				content: 'Mute';
+				content: 'Mute (m)';
 			}
 
 			.video-js .vjs-control-bar .vjs-mute-control.vjs-vol-0::before {
-				content: 'Unmute';
+				content: 'Unmute (m)';
 			}
 
 			.video-js .vjs-control-bar > .vjs-playback-rate > .vjs-menu-button::before {
@@ -3161,15 +3115,15 @@
 			}
 
 			.video-js .vjs-control-bar > .vjs-miniplayer-button::before {
-				content: 'Miniplayer';
+				content: 'Miniplayer (i)';
 			}
 
 			.video-js .vjs-control-bar > .vjs-theater-button::before {
-				content: 'Theater mode';
+				content: 'Theater mode (t)';
 			}
 
 			.video-js .vjs-control-bar > .vjs-fullscreen-control::before {
-				content: 'Fullscreen';
+				content: 'Fullscreen (f)';
 				left: auto !important;
 				right: 12px !important;
 				transform: none !important;
@@ -3184,7 +3138,7 @@
 				background: rgba(0, 0, 0, .75);
 				border-radius: 4px;
 				font-size: 12px;
-				font-weight: 700;
+				font-weight: 600;
 				padding: 8px;
 				white-space: nowrap;
 				opacity: 0;
@@ -4162,6 +4116,9 @@
 	function goodTube_actions() {
 		// Hide youtube players
 		goodTube_youtube_hidePlayers();
+
+		// Make the youtube player the lowest quality to save on bandwidth
+		goodTube_youtube_lowestQuality();
 
 		// Hide ads, shorts, etc - real time
 		goodTube_youtube_hideAdsShortsEtc_realTime();
