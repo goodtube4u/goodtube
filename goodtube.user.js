@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.503
+// @version      2.504
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -266,10 +266,12 @@
 		if (youtubePlayer && typeof youtubePlayer.setPlaybackQualityRange === 'function' && typeof youtubePlayer.getAvailableQualityData === 'function' && typeof youtubePlayer.getPlaybackQuality === 'function') {
 			let qualities = youtubePlayer.getAvailableQualityData();
 			let currentQuality = youtubePlayer.getPlaybackQuality();
-			let lowestQuality = qualities[qualities.length-1]['quality'];
+			if (qualities.length && currentQuality) {
+				let lowestQuality = qualities[qualities.length-1]['quality'];
 
-			if (currentQuality != lowestQuality) {
-				youtubePlayer.setPlaybackQualityRange(lowestQuality, lowestQuality);
+				if (currentQuality != lowestQuality) {
+					youtubePlayer.setPlaybackQualityRange(lowestQuality, lowestQuality);
+				}
 			}
 		}
 	}
@@ -398,6 +400,9 @@
 	let goodTube_player_pip = false;
 	let goodTube_player_miniplayer = false;
 	let goodTube_player_miniplayer_video = false;
+	let goodTube_player_highestQuality = false;
+	let goodTube_player_selectedQuality = false;
+	let goodTube_player_manuallySelectedQuality = false;
 
 	// Init
 	function goodTube_player_init() {
@@ -815,6 +820,9 @@
 				text-align: center;
 				color: #ffffff;
 				font-size: 20px;
+				padding: 16px;
+				background: #000000;
+				border-radius: 8px;
 			}
 
 			#goodTube_error small {
@@ -1339,13 +1347,13 @@
 
 				// For each source
 				let i = 0;
-				let highestQuality_video = false;
+				goodTube_player_highestQuality = false;
 				sourceData.forEach((source) => {
 					// Format the data correctly
 					let source_src = false;
 					let source_type = false;
 					let source_label = false;
-					let source_videoQuality = false;
+					let source_quality = false;
 
 					if (goodTube_api_type === 1) {
 						source_src = goodTube_api_url+'/latest_version?id='+goodTube_getParams['v']+'&itag='+source['itag'];
@@ -1355,7 +1363,7 @@
 
 						source_type = source['type'];
 						source_label = source['qualityLabel'];
-						source_videoQuality = source['width'];
+						source_quality = parseFloat(source['resolution'].replace('p', '').replace('hd', ''));
 					}
 
 					// Only add the source to the player if the data is populated
@@ -1368,13 +1376,12 @@
 							video_element.setAttribute('type', source_type);
 							video_element.setAttribute('label', source_label);
 							video_element.setAttribute('video', true);
+							video_element.setAttribute('class', 'goodTube_source_'+source_quality);
 							player.appendChild(video_element);
 
 							// Keep track of the highest quality item
-							if (!highestQuality_video || source_videoQuality > highestQuality_video) {
-								player.querySelector('source[selected=true]')?.setAttribute('selected', false);
-								video_element.setAttribute('selected', true);
-								highestQuality_video = source_videoQuality;
+							if (!goodTube_player_highestQuality || source_quality > goodTube_player_highestQuality) {
+								goodTube_player_highestQuality = source_quality;
 							}
 						}
 					}
@@ -1382,6 +1389,23 @@
 					// Increment the loop
 					i++;
 				});
+
+
+				// If we've manually selected a quality, and it exists for this video, select it
+				if (goodTube_player_manuallySelectedQuality && player.querySelector('.goodTube_source_'+goodTube_player_manuallySelectedQuality)) {
+					player.querySelector('.goodTube_source_'+goodTube_player_manuallySelectedQuality).setAttribute('selected', true);
+
+					// Save the currently selected quality, this is used when we change quality to know weather or not the new quality has been manually selected
+					goodTube_player_selectedQuality = goodTube_player_manuallySelectedQuality;
+				}
+				// Otherwise select the highest quality source
+				else {
+					player.querySelector('.goodTube_source_'+goodTube_player_highestQuality)?.setAttribute('selected', true);
+
+					// Save the currently selected quality, this is used when we change quality to know weather or not the new quality has been manually selected
+					goodTube_player_selectedQuality = goodTube_player_highestQuality;
+				}
+
 
 				// Enable the videojs quality selector
 				let qualities = [];
@@ -1394,6 +1418,7 @@
 					});
 				});
 				goodTube_videojs_player.src(qualities);
+
 
 				// Play the video
 				setTimeout(function() {
@@ -2326,6 +2351,14 @@
 			// Otherwise that doesn't exist so get it from the selected source
 			else {
 				qualityLabel = goodTube_player.querySelector('source[selected=true]').getAttribute('label');
+			}
+
+			// If we've manually changed quality, remember it so the next video stays with the same quality
+			let newQuality = parseFloat(qualityLabel.replace('p', '').replace('hd', ''));
+
+			if (parseFloat(goodTube_player_selectedQuality) !== newQuality) {
+				goodTube_player_manuallySelectedQuality = newQuality;
+				goodTube_player_selectedQuality = newQuality;
 			}
 
 			// Debug message
