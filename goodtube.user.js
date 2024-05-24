@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.504
+// @version      2.505
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -1362,7 +1362,7 @@
 						}
 
 						source_type = source['type'];
-						source_label = source['qualityLabel'];
+						source_label = parseFloat(source['resolution'].replace('p', '').replace('hd', ''))+'p';
 						source_quality = parseFloat(source['resolution'].replace('p', '').replace('hd', ''));
 					}
 
