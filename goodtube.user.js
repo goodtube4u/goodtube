@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.508
+// @version      2.600
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -1333,9 +1333,6 @@
 			apiEndpoint = goodTube_api_url+"/api/v1/videos/"+goodTube_getParams['v'];
 		}
 
-		// Set the current video ID (for use in goodTube_download() )
-		goodTube_currentVideoId = goodTube_getParams['v'];
-
 		// Get the video data
 		fetch(apiEndpoint)
 		.then(response => response.text())
@@ -1628,11 +1625,6 @@
 		openMenuButtons.forEach((openMenuButton) => {
 			openMenuButton.classList.remove('vjs-menuOpen');
 		});
-
-		// Hide current time (mobile only)
-		if (window.location.href.indexOf('m.youtube') !== -1) {
-			goodTube_helper_hideElement(document.getElementById('goodTube_videoTime'));
-		}
 	}
 
 	// Hide the player
@@ -2195,20 +2187,22 @@
 				});
 			}
 
-			// Position timestamp (mobile only)
+			// Position timestamp every 100ms (mobile only)
 			if (window.location.href.indexOf('m.youtube') !== -1) {
-				let currentTime = document.querySelector('.vjs-current-time');
-				let divider = document.querySelector('.vjs-time-divider');
-				let duration = document.querySelector('.vjs-duration');
+				setInterval(function() {
+					let currentTime = document.querySelector('.vjs-current-time');
+					let divider = document.querySelector('.vjs-time-divider');
+					let duration = document.querySelector('.vjs-duration');
 
-				if (currentTime && divider && duration) {
-					let leftOffset = 16;
-					let padding = 4;
+					if (currentTime && divider && duration) {
+						let leftOffset = 16;
+						let padding = 4;
 
-					currentTime.style.left = leftOffset+'px';
-					divider.style.left = (leftOffset+currentTime.offsetWidth+padding)+'px';
-					duration.style.left = (leftOffset+currentTime.offsetWidth+divider.offsetWidth+padding+padding)+'px';
-				}
+						currentTime.style.left = leftOffset+'px';
+						divider.style.left = (leftOffset+currentTime.offsetWidth+padding)+'px';
+						duration.style.left = (leftOffset+currentTime.offsetWidth+divider.offsetWidth+padding+padding)+'px';
+					}
+				}, 100);
 			}
 
 			// Active and inactive control based on mouse movement (desktop only)
@@ -2467,11 +2461,6 @@
 
 			// Update the video js player
 			goodTube_player_videojs_update();
-
-			// Show current time (mobile only)
-			if (window.location.href.indexOf('m.youtube') !== -1) {
-				goodTube_helper_showElement(document.getElementById('goodTube_videoTime'));
-			}
 
 			// Remove the loading class (this removes the black background)
 			let goodTube_videojs_loadingElement = document.getElementById('goodTube_player');
@@ -3603,7 +3592,6 @@
 	let goodTube_previousUrl = false;
 	let goodTube_player = false;
 	let goodTube_getParams = false;
-	let goodTube_currentVideoId = false;
 	let goodTube_downloading = false;
 
 	// API Endpoints
@@ -4054,6 +4042,9 @@
 		// Show the downloading indicator
 		goodTube_player_videojs_showDownloading();
 
+		// Setup GET params
+		goodTube_getParams = goodTube_helper_parseGetParams();
+
 		// Mobile only supports h264, otherwise we use vp9
 		let vCodec = 'vp9';
 		if (window.location.href.indexOf('m.youtube') !== -1) {
@@ -4068,7 +4059,7 @@
 
 		// Setup options to call the API
 		let jsonData = JSON.stringify({
-			'url': 'https://www.youtube.com/watch?v='+goodTube_currentVideoId,
+			'url': 'https://www.youtube.com/watch?v='+goodTube_getParams['v'],
 			'vCodec': vCodec,
 			'vQuality': 'max',
 			'filenamePattern': 'basic',
