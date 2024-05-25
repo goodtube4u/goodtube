@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.506
+// @version      2.507
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -2078,8 +2078,8 @@
 					// Check how long since last tap
 					var timesince = now - goodTube_videojs_tapTimer_backwards;
 
-					// If it's less than 600ms
-					if ((timesince < 600) && (timesince > 0)) {
+					// If it's less than 400ms
+					if ((timesince < 400) && (timesince > 0)) {
 						// Remove active state and hide overlays (so you can see the video properly)
 						goodTube_target.classList.remove('vjs-user-active');
 						goodTube_target.classList.add('vjs-user-inactive');
@@ -2117,8 +2117,8 @@
 					// Check how long since last tap
 					var timesince = now - goodTube_videojs_tapTimer_forwards;
 
-					// If it's less than 600ms
-					if ((timesince < 600) && (timesince > 0)) {
+					// If it's less than 400ms
+					if ((timesince < 400) && (timesince > 0)) {
 						// Remove active state and hide overlays (so you can see the video properly)
 						goodTube_target.classList.remove('vjs-user-active');
 						goodTube_target.classList.add('vjs-user-inactive');
@@ -2189,6 +2189,22 @@
 				goodTube_target.addEventListener('dblclick', function(event) {
 					document.querySelector('.vjs-fullscreen-control')?.click();
 				});
+			}
+
+			// Position timestamp (mobile only)
+			if (window.location.href.indexOf('m.youtube') !== -1) {
+				let currentTime = document.querySelector('.vjs-current-time');
+				let divider = document.querySelector('.vjs-time-divider');
+				let duration = document.querySelector('.vjs-duration');
+
+				if (currentTime && divider && duration) {
+					let leftOffset = 16;
+					let padding = 4;
+
+					currentTime.style.left = leftOffset+'px';
+					divider.style.left = (leftOffset+currentTime.offsetWidth+padding)+'px';
+					duration.style.left = (leftOffset+currentTime.offsetWidth+divider.offsetWidth+padding+padding)+'px';
+				}
 			}
 
 			// Active and inactive control based on mouse movement (desktop only)
@@ -2753,6 +2769,11 @@
 				margin-right: 8px !important;
 			}
 
+			#goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-progress-control .vjs-progress-holder {
+				margin-left: 16px !important;
+				margin-right: 16px !important;
+			}
+
 			.video-js.player-style-youtube .vjs-control-bar > .vjs-spacer {
 				flex: 1;
 				order: 2;
@@ -2849,6 +2870,17 @@
 				padding-left: 4px !important;
 				padding-right: 5px !important;
 				margin-right: 0 !important;
+			}
+
+			#goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-time-control {
+				position: absolute;
+				top: calc(100% - 98px);
+				font-weight: 500;
+				pointer-events: none;
+			}
+
+			#goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-current-time {
+				color: #ffffff !important;
 			}
 
 			.video-js .vjs-source-button {
@@ -3233,6 +3265,12 @@
 				pointer-events: none;
 				text-shadow: none !important;
 				z-index: 1;
+			}
+
+			#goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-control-bar button.vjs-menu-button::before,
+			#goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-control-bar .vjs-button:not(.vjs-menu-button)::before {
+				display: none !important;
+				content: none !important;
 			}
 
 			.video-js .vjs-control-bar div.vjs-menu-button:not(.vjs-menuOpen) button.vjs-menu-button:hover::before,
