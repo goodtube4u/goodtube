@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.505
+// @version      2.506
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -428,6 +428,36 @@
 		// Add CSS styles for the player
 		let style = document.createElement('style');
 		style.textContent = `
+			/* Audio only view */
+			#goodTube_player_wrapper3.goodTube_audio {
+				background: #000000;
+				position: relative;
+			}
+
+			#goodTube_player_wrapper3.goodTube_audio .video-js::after {
+				content: '\\f107';
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				color: #ffffff;
+				font-family: VideoJS;
+				font-weight: 400;
+				font-style: normal;
+				font-size: 148px;
+				pointer-events: none;
+			}
+
+			@media (max-width: 768px) {
+				#goodTube_player_wrapper3.goodTube_audio .video-js::after {
+					font-size: 100px;
+				}
+			}
+
+			#goodTube_player_wrapper1.goodTube_mobile #goodTube_player_wrapper3.goodTube_audio .video-js::after {
+				font-size: 100px;
+			}
+
 			/* Double tap or tap and hold elements for seeking on mobile */
 			#goodTube_seekBackwards {
 				position: absolute;
@@ -1345,6 +1375,17 @@
 					console.log('[GoodTube] Video data loaded');
 				}
 
+				// Add audio only source
+				if (goodTube_api_type === 1) {
+					let audio_element = document.createElement('source');
+					audio_element.setAttribute('src', goodTube_api_url+"/watch?v="+goodTube_getParams['v']+'&raw=1&listen=1');
+					audio_element.setAttribute('type', 'audio/mp3');
+					audio_element.setAttribute('label', 'Audio');
+					audio_element.setAttribute('video', true);
+					audio_element.setAttribute('class', 'goodTube_source_audio');
+					player.appendChild(audio_element);
+				}
+
 				// For each source
 				let i = 0;
 				goodTube_player_highestQuality = false;
@@ -1389,7 +1430,6 @@
 					// Increment the loop
 					i++;
 				});
-
 
 				// If we've manually selected a quality, and it exists for this video, select it
 				if (goodTube_player_manuallySelectedQuality && player.querySelector('.goodTube_source_'+goodTube_player_manuallySelectedQuality)) {
@@ -2354,17 +2394,31 @@
 			}
 
 			// If we've manually changed quality, remember it so the next video stays with the same quality
-			let newQuality = parseFloat(qualityLabel.replace('p', '').replace('hd', ''));
+			let newQuality = qualityLabel.replace('p', '').replace('hd', '').replace(' ', '').toLowerCase();
 
-			if (parseFloat(goodTube_player_selectedQuality) !== newQuality) {
+			if (goodTube_player_selectedQuality !== newQuality) {
 				goodTube_player_manuallySelectedQuality = newQuality;
 				goodTube_player_selectedQuality = newQuality;
+			}
+
+			// Add expand and close miniplayer buttons
+			let goodTube_target = document.querySelector('#goodTube_player_wrapper3');
+
+			// If the quality is audio, add the audio style to the player
+			if (newQuality === 'audio') {
+				if (!goodTube_target.classList.contains('goodTube_audio')) {
+					goodTube_target.classList.add('goodTube_audio');
+				}
+			}
+			// Otherwise remove the audio style from the player
+			else if (goodTube_target.classList.contains('goodTube_audio')) {
+				goodTube_target.classList.remove('goodTube_audio');
 			}
 
 			// Debug message
 			if (goodTube_debug) {
 				if (goodTube_player_reloadVideoAttempts <= 1) {
-					console.log('[GoodTube] Loading video '+qualityLabel+'...');
+					console.log('[GoodTube] Loading quality '+qualityLabel+'...');
 				}
 			}
 
@@ -2388,7 +2442,7 @@
 
 			// Debug message
 			if (goodTube_debug) {
-				console.log('[GoodTube] Video loaded');
+				console.log('[GoodTube] Quality loaded');
 			}
 
 			// Update the video js player
@@ -2911,7 +2965,7 @@
 
 			#goodTube_player_wrapper1:not(goodTube_mobile) .video-js .vjs-control-bar > .vjs-play-control {
 				padding-left: 8px;
-   		 	box-sizing: content-box;
+				box-sizing: content-box;
 			}
 
 			#goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-control:not(.vjs-progress-control) {
