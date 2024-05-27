@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.814
+// @version      2.815
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -4775,19 +4775,40 @@
 
 	/*
 		Basic usage stats
-		Don't worry peeps! This is just a counter that totals unique users / how many videos were played with GoodTube.
-		It's only in here so I can have some fun and see how many people use this thing I made - no private info is tracked!!
-		Full details here: https://counterapi.dev/api/
+		Don't worry everyone - this is just a counter that totals unique users / how many videos were played with GoodTube.
+		It's only in here so I can have some fun and see how many people use this thing I made - no private info is tracked.
 	*/
 	function goodTube_stats_unique() {
-		if (!goodTube_helper_getCookie('goodTube_unique')) {
-			fetch('https://api.counterapi.dev/v1/goodtube/users/up/');
-			goodTube_helper_setCookie('goodTube_unique', 'true');
+		if (!goodTube_helper_getCookie('goodTube_unique_new')) {
+			// No longer works :(
+			// fetch('https://api.counterapi.dev/v1/goodtube/users/up/');
+
+			// New counter API
+			fetch("https://api.lyket.dev/v1/clap-buttons/goodtube/users/press", {
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+					"Authorization": 'Bearer pt_aa32dfa6765c4ac49ae96f6a423b02'
+				}
+			});
+
+			// Set a cookie to only count users once
+			goodTube_helper_setCookie('goodTube_unique_new', 'true');
 		}
 	}
 
 	function goodTube_stats_video() {
-		fetch('https://api.counterapi.dev/v1/goodtube/videos/up/');
+		// No longer works :(
+		//fetch('https://api.counterapi.dev/v1/goodtube/videos/up/');
+
+		// New counter API
+		fetch("https://api.lyket.dev/v1/clap-buttons/goodtube/videos/press", {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+				"Authorization": 'Bearer pt_aa32dfa6765c4ac49ae96f6a423b02'
+			}
+		});
 	}
 
 	// Init
