@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.808
+// @version      2.809
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -4233,7 +4233,13 @@
 
 				// Try again if we've hit the API rate limit
 				if (typeof data['status'] !== 'undefined' && data['status'] === 'rate-limit') {
-					goodTube_download(type, youtubeId, fileName);
+					if (typeof goodTube_pendingRetry['download_'+youtubeId] !== 'undefined') {
+						clearTimeout(goodTube_pendingRetry['download_'+youtubeId]);
+					}
+
+					goodTube_pendingRetry['download_'+youtubeId] = setTimeout(function() {
+						goodTube_download(type, youtubeId, fileName);
+					}, goodTube_retryDelay);
 
 					return;
 				}
@@ -4244,7 +4250,13 @@
 					// Try again if the API is down.
 					// There should be an error with the word 'api' in it.
 					if (typeof data['text'] !== 'undefined' && data['text'].toLowerCase().indexOf('api') !== -1) {
-						goodTube_download(type, youtubeId, fileName);
+						if (typeof goodTube_pendingRetry['download_'+youtubeId] !== 'undefined') {
+							clearTimeout(goodTube_pendingRetry['download_'+youtubeId]);
+						}
+
+						goodTube_pendingRetry['download_'+youtubeId] = setTimeout(function() {
+							goodTube_download(type, youtubeId, fileName);
+						}, goodTube_retryDelay);
 
 						return;
 					}
@@ -4260,7 +4272,13 @@
 							newCodec = 'h264';
 						}
 
-						goodTube_download(type, youtubeId, fileName, newCodec);
+						if (typeof goodTube_pendingRetry['download_'+youtubeId] !== 'undefined') {
+							clearTimeout(goodTube_pendingRetry['download_'+youtubeId]);
+						}
+
+						goodTube_pendingRetry['download_'+youtubeId] = setTimeout(function() {
+							goodTube_download(type, youtubeId, fileName, newCodec);
+						}, goodTube_retryDelay);
 
 						return;
 					}
