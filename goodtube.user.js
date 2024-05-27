@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.600
+// @version      2.700
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -261,16 +261,16 @@
 
 	// Make the youtube player the lowest quality to save on bandwidth
 	function goodTube_youtube_lowestQuality() {
-		let youtubePlayer = document.getElementById('movie_player');
+		let youtubeFrameAPI = document.getElementById('movie_player');
 
-		if (youtubePlayer && typeof youtubePlayer.setPlaybackQualityRange === 'function' && typeof youtubePlayer.getAvailableQualityData === 'function' && typeof youtubePlayer.getPlaybackQuality === 'function') {
-			let qualities = youtubePlayer.getAvailableQualityData();
-			let currentQuality = youtubePlayer.getPlaybackQuality();
+		if (youtubeFrameAPI && typeof youtubeFrameAPI.setPlaybackQualityRange === 'function' && typeof youtubeFrameAPI.getAvailableQualityData === 'function' && typeof youtubeFrameAPI.getPlaybackQuality === 'function') {
+			let qualities = youtubeFrameAPI.getAvailableQualityData();
+			let currentQuality = youtubeFrameAPI.getPlaybackQuality();
 			if (qualities.length && currentQuality) {
 				let lowestQuality = qualities[qualities.length-1]['quality'];
 
 				if (currentQuality != lowestQuality) {
-					youtubePlayer.setPlaybackQualityRange(lowestQuality, lowestQuality);
+					youtubeFrameAPI.setPlaybackQualityRange(lowestQuality, lowestQuality);
 				}
 			}
 		}
@@ -394,6 +394,8 @@
 	let goodTube_player_loadedAssets = 0;
 	let goodTube_player_loadAssetAttempts = 0;
 	let goodTube_player_loadVideoDataAttempts = 0;
+	let goodTube_player_downloadAttempts = [];
+	let goodTube_player_downloadFileAsBlobAttempts = [];
 	let goodTube_player_vttThumbnailsFunction = false;
 	let goodTube_player_reloadVideoAttempts = 1;
 	let goodTube_player_ended = false;
@@ -1047,8 +1049,14 @@
 
 				// Toggle mute
 				if (keyPressed === 'm') {
-					if (player.muted) {
+					// Also check the volume, because player.muted isn't reliable
+					if (player.muted || player.volume <= 0) {
 						player.muted = false;
+
+						// Small fix to make unmute work if you've manually turned it all the way down
+						if (player.volume <= 0) {
+							player.volume = 1;
+						}
 					}
 					else {
 						player.muted = true;
@@ -1980,15 +1988,54 @@
 					className: "vjs-download-button",
 					myItems: [
 						{
+							className: 'goodTube_downloadPlaylist_cancel',
+							label: "CANCEL ALL DOWNLOADS",
+							clickHandler() {
+								goodTube_downloadsCancel();
+							},
+						},
+						{
 							label: "Download video",
 							clickHandler() {
-								goodTube_download('video');
+								// Debug message
+								if (goodTube_debug) {
+									console.log('[GoodTube] Downloading video...');
+								}
+
+								// Add to pending downloads
+								goodTube_pendingDownloads[goodTube_getParams['v']] = true;
+
+								// Download the video
+								goodTube_download('video', goodTube_getParams['v']);
 							},
 						},
 						{
 							label: "Download audio",
 							clickHandler() {
-								goodTube_download('audio');
+								// Debug message
+								if (goodTube_debug) {
+									console.log('[GoodTube] Downloading audio...');
+								}
+
+								// Add to pending downloads
+								goodTube_pendingDownloads[goodTube_getParams['v']] = true;
+
+								// Download the audio
+								goodTube_download('audio', goodTube_getParams['v']);
+							},
+						},
+						{
+							className: 'goodTube_downloadPlaylist_video',
+							label: "Download playlist (video)",
+							clickHandler() {
+								goodTube_downloadPlaylist('video');
+							},
+						},
+						{
+							className: 'goodTube_downloadPlaylist_audio',
+							label: "Download playlist (audio)",
+							clickHandler() {
+								goodTube_downloadPlaylist('audio');
 							},
 						},
 					],
@@ -2317,7 +2364,7 @@
 			}
 
 			// Click off close menu
-			document.onclick = function() {
+			document.onmousedown = function() {
 				if (!event.target.closest('.vjs-menu') && !event.target.closest('.vjs-menu-button')) {
 					let openMenuButtons = document.querySelectorAll('.vjs-menuOpen');
 
@@ -3374,7 +3421,7 @@
 				// If we're viewing a playlist
 				if (typeof goodTube_getParams['i'] !== 'undefined' || typeof goodTube_getParams['index'] !== 'undefined' || typeof goodTube_getParams['list'] !== 'undefined') {
 					// If we're not viewing the first video in the playlist
-					let playlist = document.querySelectorAll('.playlist-items ytd-playlist-panel-video-renderer');
+					let playlist = document.querySelectorAll('#secondary .playlist-items ytd-playlist-panel-video-renderer:not([hidden]), #below .playlist-items ytd-playlist-panel-video-renderer:not([hidden])');
 
 					if (!playlist || playlist.length <= 0) {
 						return;
@@ -3396,22 +3443,22 @@
 		// Show or hide the previous button
 		let prevButton = document.querySelector('.vjs-prev-button');
 		if (prevButton) {
-			if (!goodTube_videojs_prevButton && !prevButton.classList.contains('goodTube_hidden')) {
-				prevButton.classList.add('goodTube_hidden');
+			if (!goodTube_videojs_prevButton) {
+				goodTube_helper_hideElement(prevButton);
 			}
-			else if (goodTube_videojs_prevButton && prevButton.classList.contains('goodTube_hidden')) {
-				prevButton.classList.remove('goodTube_hidden');
+			else {
+				goodTube_helper_showElement(prevButton);
 			}
 		}
 
 		// Show or hide the next button
 		let nextButton = document.querySelector('.vjs-next-button');
 		if (nextButton) {
-			if (!goodTube_videojs_nextButton && !nextButton.classList.contains('goodTube_hidden')) {
-				nextButton.classList.add('goodTube_hidden');
+			if (!goodTube_videojs_nextButton) {
+				goodTube_helper_hideElement(nextButton);
 			}
-			else if (goodTube_videojs_nextButton && nextButton.classList.contains('goodTube_hidden')) {
-				nextButton.classList.remove('goodTube_hidden');
+			else {
+				goodTube_helper_showElement(nextButton);
 			}
 		}
 	}
@@ -3570,7 +3617,6 @@
 			loadingElement.append(spinnerIcon);
 		}
 
-
 		if (loadingElement && !loadingElement.classList.contains('goodTube_loading')) {
 			loadingElement.classList.add('goodTube_loading');
 		}
@@ -3578,10 +3624,57 @@
 
 	// Hide downloading indicator
 	function goodTube_player_videojs_hideDownloading() {
+		// Only do this if we've finished all downloads (this is a weird if statement, but it works to check the length of an associative array)
+		if (Reflect.ownKeys(goodTube_pendingDownloads).length > 1) {
+			return;
+		}
+
 		let loadingElement = document.querySelector('.vjs-download-button');
 
 		if (loadingElement && loadingElement.classList.contains('goodTube_loading')) {
 			loadingElement.classList.remove('goodTube_loading');
+		}
+
+		// Debug message
+		if (goodTube_debug) {
+			console.log('[GoodTube] Downloads finished');
+		}
+	}
+
+	// Show or hide the download playlist buttons
+	function goodTube_player_videojs_showHideDownloadPlaylistButtons() {
+		// Target the playlist buttons
+		let playlistButton_cancel = document.querySelector('.goodTube_downloadPlaylist_cancel');
+		let goodTube_downloadPlaylist_video = document.querySelector('.goodTube_downloadPlaylist_video');
+		let goodTube_downloadPlaylist_audio = document.querySelector('.goodTube_downloadPlaylist_audio');
+
+		// Make sure the playlist buttons exist
+		if (!playlistButton_cancel || !goodTube_downloadPlaylist_video || !goodTube_downloadPlaylist_audio) {
+			return;
+		}
+
+		// If we're viewing a playlist
+		if (typeof goodTube_getParams['i'] !== 'undefined' || typeof goodTube_getParams['index'] !== 'undefined' || typeof goodTube_getParams['list'] !== 'undefined') {
+			// Show the download playlist buttons
+			goodTube_helper_showElement(goodTube_downloadPlaylist_video);
+			goodTube_helper_showElement(goodTube_downloadPlaylist_audio);
+		}
+		// If we're not viewing a playlist
+		else {
+			// Hide the download playlist buttons
+			goodTube_helper_hideElement(goodTube_downloadPlaylist_video);
+			goodTube_helper_hideElement(goodTube_downloadPlaylist_audio);
+		}
+
+		// If there's pendng downloads (this is a weird if statement, but it works to check the length of an associative array)
+		if (Reflect.ownKeys(goodTube_pendingDownloads).length > 1) {
+			// Show the cancel button
+			goodTube_helper_showElement(playlistButton_cancel);
+		}
+		// If there's no pending downloads
+		else {
+			// Hide the cancel button
+			goodTube_helper_hideElement(playlistButton_cancel);
 		}
 	}
 
@@ -3592,7 +3685,8 @@
 	let goodTube_previousUrl = false;
 	let goodTube_player = false;
 	let goodTube_getParams = false;
-	let goodTube_downloading = false;
+	let goodTube_downloadTimeouts = [];
+	let goodTube_pendingDownloads = [];
 
 	// API Endpoints
 	let goodTube_apis = [
@@ -3877,7 +3971,7 @@
 		else {
 			// If we're viewing a playlist
 			if (typeof goodTube_getParams['i'] !== 'undefined' || typeof goodTube_getParams['index'] !== 'undefined' || typeof goodTube_getParams['list'] !== 'undefined') {
-				let playlist = document.querySelectorAll('.playlist-items ytd-playlist-panel-video-renderer');
+				let playlist = document.querySelectorAll('#secondary .playlist-items ytd-playlist-panel-video-renderer:not([hidden]), #below .playlist-items ytd-playlist-panel-video-renderer:not([hidden])');
 
 				// If we're not viewing the first video in the playlist
 				if (playlist && !playlist[0].selected) {
@@ -3924,7 +4018,7 @@
 		if (window.location.href.indexOf('m.youtube') !== -1) {
 			// If we're viewing a playlist
 			if (typeof goodTube_getParams['i'] !== 'undefined' || typeof goodTube_getParams['index'] !== 'undefined' || typeof goodTube_getParams['list'] !== 'undefined') {
-				let playlist = document.querySelectorAll('ytm-playlist-panel-renderer ytm-playlist-panel-video-renderer, ytm-playlist-video-list-renderer ytm-playlist-video-renderer');
+				let playlist = document.querySelectorAll('#secondary .playlist-items ytd-playlist-panel-video-renderer:not([hidden]), #below .playlist-items ytd-playlist-panel-video-renderer:not([hidden])');
 				let selectedItem = document.querySelectorAll('ytm-playlist-panel-renderer ytm-playlist-panel-video-renderer[aria-selected="true"], ytm-playlist-video-list-renderer ytm-playlist-video-renderer[aria-selected="true"]');
 
 				// Re-open the playlist if it's closed and try again
@@ -3998,7 +4092,7 @@
 		else {
 			// If we're viewing a playlist
 			if (typeof goodTube_getParams['i'] !== 'undefined' || typeof goodTube_getParams['index'] !== 'undefined' || typeof goodTube_getParams['list'] !== 'undefined') {
-				let playlist = document.querySelectorAll('.playlist-items ytd-playlist-panel-video-renderer');
+				let playlist = document.querySelectorAll('#secondary .playlist-items ytd-playlist-panel-video-renderer:not([hidden]), #below .playlist-items ytd-playlist-panel-video-renderer:not([hidden])');
 
 				// If we're not viewing the last video in the playlist
 				if (playlist && !playlist[playlist.length - 1].selected) {
@@ -4037,13 +4131,38 @@
 		}
 	}
 
-	// Download
-	function goodTube_download(type) {
+	// Download video / audio for a specificed youtube ID
+	function goodTube_download(type, youtubeId, fileName) {
+		// Stop if this is no longer a pending download
+		if (typeof goodTube_pendingDownloads[youtubeId] === 'undefined') {
+			return;
+		}
+
+		// Only re-attempt to download max configured retry attempts (x 5 - API debounce can be trouble)
+		if (typeof goodTube_player_downloadAttempts[youtubeId] === 'undefined') {
+			goodTube_player_downloadAttempts[youtubeId] = 0;
+		}
+
+		goodTube_player_downloadAttempts[youtubeId]++;
+		if (goodTube_player_downloadAttempts[youtubeId] > (goodTube_retryAttempts * 5)) {
+			// Debug message
+			if (goodTube_debug) {
+				if (typeof fileName !== 'undefined') {
+					console.log('[GoodTube] '+type.charAt(0).toUpperCase()+type.slice(1)+' - '+fileName+' could not be downloaded. Please try again soon.');
+				}
+				else {
+					console.log('[GoodTube] '+type.charAt(0).toUpperCase()+type.slice(1)+' could not be downloaded. Please try again soon.');
+				}
+			}
+
+			// Hide the downloading indicator
+			goodTube_player_videojs_hideDownloading();
+
+			return;
+		}
+
 		// Show the downloading indicator
 		goodTube_player_videojs_showDownloading();
-
-		// Setup GET params
-		goodTube_getParams = goodTube_helper_parseGetParams();
 
 		// Mobile only supports h264, otherwise we use vp9
 		let vCodec = 'vp9';
@@ -4059,7 +4178,7 @@
 
 		// Setup options to call the API
 		let jsonData = JSON.stringify({
-			'url': 'https://www.youtube.com/watch?v='+goodTube_getParams['v'],
+			'url': 'https://www.youtube.com/watch?v='+youtubeId,
 			'vCodec': vCodec,
 			'vQuality': 'max',
 			'filenamePattern': 'basic',
@@ -4067,7 +4186,7 @@
 		});
 
 		// Call the API
-		fetch('https://co.wuk.sh/api/json/', {
+		fetch('\x68\x74\x74\x70\x73\x3a\x2f\x2f\x63\x6f\x2e\x77\x75\x6b\x2e\x73\x68\x2f\x61\x70\x69\x2f\x6a\x73\x6f\x6e\x2f', {
 			method: 'POST',
 			headers: {
 				'Accept': 'application/json',
@@ -4077,47 +4196,290 @@
 		})
 		.then(response => response.text())
 		.then(data => {
+			// Stop if this is no longer a pending download
+			if (typeof goodTube_pendingDownloads[youtubeId] === 'undefined') {
+				return;
+			}
+
 			// Turn data into JSON
 			data = JSON.parse(data);
 
+			// Try again if we've hit the API rate limit, try again in 3s
+			if (typeof data['status'] !== 'undefined' && data['status'] === 'rate-limit') {
+				setTimeout(function() {
+					goodTube_download(type, youtubeId, fileName);
+				}, 3000);
+
+				return;
+			}
+
+			// If something went wrong, fallback to opening in a new tab
+			if (typeof data['status'] !== 'undefined' && data['status'] === 'error') {
+				if (goodTube_api_type === 1) {
+					if (type === 'audio') {
+						window.open(goodTube_api_url+'/watch?v='+goodTube_getParams['v']+'&listen=true&raw=1', '_blank');
+					}
+					else {
+						window.open(goodTube_api_url+'/latest_version?id='+goodTube_getParams['v'], '_blank');
+					}
+				}
+
+				// Hide the loading indicator
+				goodTube_player_videojs_hideDownloading();
+
+				return;
+			}
+
 			// If the data is all good
-			if (typeof data['status'] !== 'undefined' && data['status'] !== 'error' && typeof data['url'] !== 'undefined' && data['url']) {
-				// Download the file
-				window.open(data['url'], '_self');
+			if (typeof data['status'] !== 'undefined' && typeof data['url'] !== 'undefined') {
+				// Download the file, without a file name
+				if (typeof fileName === 'undefined') {
+					window.open(data['url'], '_self');
 
-				// Hide the downloading indicator
-				setTimeout(function() {
-					goodTube_player_videojs_hideDownloading();
-				}, 1000);
-			}
-			// Otherwise fallback
-			else {
-				if (type === 'audio') {
-					window.open(goodTube_api_url+'/watch?v='+goodTube_getParams['v']+'&listen=true&raw=1', '_blank');
+					// Debug message
+					if (goodTube_debug) {
+						console.log('[GoodTube] Downloaded '+type);
+					}
+
+					// Reset ALL downloading attempts (this helps to debounce the API)
+					goodTube_player_downloadAttempts = [];
+
+					// Remove from pending downloads
+					if (typeof goodTube_pendingDownloads[youtubeId] !== 'undefined') {
+						delete goodTube_pendingDownloads[youtubeId];
+					}
+
+					// Hide the downloading indicator
+					setTimeout(function() {
+						goodTube_player_videojs_hideDownloading();
+					}, 1000);
 				}
+				// Download the file with a file name (as a blob, this is used for playlists)
 				else {
-					window.open(goodTube_api_url+'/latest_version?id='+goodTube_getParams['v'], '_blank');
+					goodTube_downloadFileAsBlob(data['url'], type, fileName, youtubeId);
+				}
+			}
+		})
+		// If anything went wrong, try again (3s debounce to cater for the API)
+		.catch((error) => {
+			if (typeof goodTube_pendingRetry['download_'+youtubeId] !== 'undefined') {
+				clearTimeout(goodTube_pendingRetry['download_'+youtubeId]);
+			}
+
+			goodTube_pendingRetry['download_'+youtubeId] = setTimeout(function() {
+				goodTube_download(type, youtubeId, fileName);
+			}, 3000);
+		});
+	}
+
+	// Download the entire playlist (currently only works on desktop cus frame API limitations)
+	function goodTube_downloadPlaylist(type, noPrompt) {
+		// Show a "are you sure cus it takes some time" sort of message
+		if (typeof noPrompt === 'undefined' && !confirm("Are you sure you want to download this playlist ("+type+")?\r\rIt takes a little while so please be chill...\r\rYou can keep playing other videos on Youtube just don't close the tab.\rYou can also keep downloading more videos, it'll just que them up :)")) {
+			return;
+		}
+
+		// Debug message
+		if (goodTube_debug) {
+			console.log('[GoodTube] Downloading '+type+' playlist...');
+		}
+
+		let playlistItems = [];
+
+		// Mobile - get playlist items
+		if (window.location.href.indexOf('m.youtube') !== -1) {
+			playlistItems = document.querySelectorAll('ytm-playlist-panel-renderer ytm-playlist-panel-video-renderer, ytm-playlist-video-list-renderer ytm-playlist-video-renderer');
+
+			// Re-open the playlist if it's closed and try again
+			if (!playlistItems || playlistItems.length <= 0) {
+				document.querySelector('ytm-playlist-panel-entry-point')?.click();
+
+				setTimeout(function() {
+					goodTube_downloadPlaylist(type, true);
+				}, 100);
+
+				return;
+			}
+		}
+		// Desktop - get playlist items
+		else {
+			playlistItems = document.querySelectorAll('#secondary .playlist-items ytd-playlist-panel-video-renderer:not([hidden]), #below .playlist-items ytd-playlist-panel-video-renderer:not([hidden])');
+		}
+
+		// Make sure the data is all good
+		if (playlistItems.length <= 0) {
+			if (goodTube_debug) {
+				console.log('[GoodTube] Downloading failed, could not find playlist data');
+			}
+
+			return;
+		}
+
+		let track = 0;
+		playlistItems.forEach((element) => {
+			let fileName = '';
+			let url = '';
+
+			// Mobile - get playlist info
+			if (window.location.href.indexOf('m.youtube') !== -1) {
+				fileName = (track + 1)+' - '+element.querySelector('.compact-media-item-headline > span').innerHTML.trim();
+				url = element.querySelector('.compact-media-item-image').getAttribute('href');
+			}
+			// Desktop - get playlist info
+			else {
+				fileName = (track + 1)+' - '+element.querySelector('#video-title').innerHTML.trim();
+				url = element.querySelector('#wc-endpoint').getAttribute('href');
+			}
+
+			// Make sure the data is all good
+			if (!fileName || !url) {
+				if (goodTube_debug) {
+					console.log('[GoodTube] Downloading failed, could not find playlist data');
 				}
 
-				// Hide the downloading indicator
-				setTimeout(function() {
-					goodTube_player_videojs_hideDownloading();
-				}, 1000);
+				return;
 			}
 
-		})
-		.catch((error) => {
-			// If anything went wrong, fallback
-			if (type === 'audio') {
-				window.open(goodTube_api_url+'/watch?v='+goodTube_getParams['v']+'&listen=true&raw=1', '_blank');
-			}
-			else {
-				window.open(goodTube_api_url+'/latest_version?id='+goodTube_getParams['v'], '_blank');
-			}
+			let urlGet = url.split('?')[1];
 
-			// Hide the loading indicator
-			goodTube_download_hideLoading();
+			let getParams = {};
+			urlGet.replace(/\??(?:([^=]+)=([^&]*)&?)/g, function() {
+				function decode(s) {
+					return decodeURIComponent(s.split("+").join(" "));
+				}
+
+				getParams[decode(arguments[1])] = decode(arguments[2]);
+			});
+
+			let id = getParams['v'];
+
+			// Debounce 3s for every track
+			goodTube_downloadTimeouts[id] = setTimeout(function() {
+				goodTube_download(type, id, fileName);
+			}, track * 3000);
+
+			// Add to pending downloads
+			goodTube_pendingDownloads[id] = true;
+
+			track++;
 		});
+	}
+
+	// Download a file as blob (this allows us to name it - so we use it for playlists - but it's doesn't actually download the file until fully loaded in the browser, which is kinda bad UX - but for now, it works!)
+	function goodTube_downloadFileAsBlob(url, type, fileName, youtubeId) {
+		// Stop if this is no longer a pending download
+		if (typeof goodTube_pendingDownloads[youtubeId] === 'undefined') {
+			return;
+		}
+
+		// Only re-attempt to download the max configured retry attempts
+		if (typeof goodTube_player_downloadFileAsBlobAttempts[url] === 'undefined') {
+			goodTube_player_downloadFileAsBlobAttempts[url] = 0;
+		}
+
+		goodTube_player_downloadFileAsBlobAttempts[url]++;
+		if (goodTube_player_downloadFileAsBlobAttempts[url] > goodTube_retryAttempts) {
+			// Debug message
+			if (goodTube_debug) {
+				console.log('[GoodTube] '+type.charAt(0).toUpperCase()+type.slice(1)+' - '+fileName+' could not be downloaded. Please try again soon.');
+			}
+
+			// Hide the downloading indicator
+			goodTube_player_videojs_hideDownloading();
+
+			return;
+		}
+
+		// Show the downloading indicator
+		goodTube_player_videojs_showDownloading();
+
+		// Set the file extension based on the type
+		let fileExtension = '.mp4';
+		if (type === 'audio') {
+			fileExtension = '.mp3';
+		}
+
+		fetch(url)
+		.then(response => response.blob())
+		.then(blob => {
+			// Stop if this is no longer a pending download
+			if (typeof goodTube_pendingDownloads[youtubeId] === 'undefined') {
+				return;
+			}
+
+			// Get the blob
+			let url = URL.createObjectURL(blob);
+
+			// Create a download link element and set params
+			let a = document.createElement('a');
+			a.style.display = 'none';
+			a.href = url;
+			a.download = fileName+fileExtension;
+			document.body.appendChild(a);
+
+			// Click the link to download
+			a.click();
+
+			// Remove the blob from memory
+			window.URL.revokeObjectURL(url);
+
+			// Remove the link
+			a.remove();
+
+			// Debug message
+			if (goodTube_debug) {
+				console.log('[GoodTube] Downloaded '+type+' - '+fileName);
+			}
+
+			// Reset ALL downloading attempts (this helps to debounce the API)
+			goodTube_player_downloadAttempts = [];
+
+			// Remove from pending downloads
+			if (typeof goodTube_pendingDownloads[youtubeId] !== 'undefined') {
+				delete goodTube_pendingDownloads[youtubeId];
+			}
+
+			// Hide the downloading indicator
+			goodTube_player_videojs_hideDownloading();
+		})
+		// If anything went wrong, try again
+		.catch((error) => {
+			if (typeof goodTube_pendingRetry['downloadFileAsBlob_'+url] !== 'undefined') {
+				clearTimeout(goodTube_pendingRetry['downloadFileAsBlob_'+url]);
+			}
+
+			goodTube_pendingRetry['downloadFileAsBlob_'+url] = setTimeout(function() {
+				goodTube_downloadFileAsBlob(url, type, fileName, youtubeId);
+			}, goodTube_retryDelay);
+		});
+	}
+
+	// Cancel all pending downloads
+	function goodTube_downloadsCancel() {
+		// Show "are you sure" prompt
+		if (!confirm("Are you sure you want to cancel all downloads?")) {
+			return;
+		}
+
+		// Remove all pending downloads
+		goodTube_pendingDownloads = [];
+
+		// Reset all downloading attempts
+		goodTube_player_downloadAttempts = [];
+
+		// Clear all download timeouts
+		goodTube_downloadTimeouts.forEach((downloadTimeout) => {
+			clearTimeout(downloadTimeout);
+		});
+		goodTube_downloadTimeouts = [];
+
+		// Hide the downloading indicator
+		goodTube_player_videojs_hideDownloading();
+
+		// Debug message
+		if (goodTube_debug) {
+			console.log('[GoodTube] Downloads cancelled');
+		}
 	}
 
 	// Check for updates
@@ -4369,6 +4731,9 @@
 
 		// Setup our next / prev buttons to show or hide every 100ms
 		setInterval(goodTube_player_videojs_showHideNextPrevButtons, 100);
+
+		// Setup our playlist buttons to show or hide every 100ms
+		setInterval(goodTube_player_videojs_showHideDownloadPlaylistButtons, 100);
 
 		// Sync pip properly
 		setInterval(goodTube_player_pipUpdate, 100);
