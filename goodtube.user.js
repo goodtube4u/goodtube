@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.805
+// @version      2.806
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -2035,11 +2035,6 @@
 							className: 'goodTube_downloadPlaylist_video',
 							label: "Download playlist (video)",
 							clickHandler() {
-								// Debug message
-								if (goodTube_debug) {
-									console.log('[GoodTube] Downloading video playlist...');
-								}
-
 								goodTube_downloadPlaylist('video');
 							},
 						},
@@ -2047,11 +2042,6 @@
 							className: 'goodTube_downloadPlaylist_audio',
 							label: "Download playlist (audio)",
 							clickHandler() {
-								// Debug message
-								if (goodTube_debug) {
-									console.log('[GoodTube] Downloading audio playlist...');
-								}
-
 								goodTube_downloadPlaylist('audio');
 							},
 						},
@@ -4332,6 +4322,11 @@
 		// Show a "are you sure cus it takes some time" sort of message
 		if (typeof noPrompt === 'undefined' && !confirm("Are you sure you want to download this playlist ("+type+")?\r\rIt takes a little while so please be chill...\r\rYou can keep playing other videos on Youtube just don't close the tab.\rYou can also keep downloading more videos, it'll just que them up :)")) {
 			return;
+		}
+
+		// Debug message
+		if (goodTube_debug && typeof noPrompt === 'undefined') {
+			console.log('[GoodTube] Downloading '+type+' playlist...');
 		}
 
 		let playlistItems = [];
