@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.810
+// @version      2.811
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -4175,8 +4175,8 @@
 		let delaySeconds = 0;
 		let currentTimeSeconds = new Date().getTime() / 1000;
 		let lastDownloadTimeSeconds = parseFloat(goodTube_helper_getCookie('goodTube_lastDownloadTimeSeconds'));
-		if (goodTube_lastDownloadTimeSeconds) {
-			delaySeconds = (3 - (currentTimeSeconds - goodTube_lastDownloadTimeSeconds));
+		if (lastDownloadTimeSeconds) {
+			delaySeconds = (3 - (currentTimeSeconds - lastDownloadTimeSeconds));
 
 			if (delaySeconds < 0) {
 				delaySeconds = 0;
