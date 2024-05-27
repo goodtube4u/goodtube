@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.809
+// @version      2.810
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -3643,7 +3643,7 @@
 		}
 
 		// Set the last download time in seconds to now
-		goodTube_lastDownloadTimeSeconds = new Date().getTime() / 1000;
+		goodTube_helper_setCookie('goodTube_lastDownloadTimeSeconds', (new Date().getTime() / 1000));
 
 		// Debug message
 		if (goodTube_debug && typeof hideMessage === 'undefined') {
@@ -3697,7 +3697,6 @@
 	let goodTube_getParams = false;
 	let goodTube_downloadTimeouts = [];
 	let goodTube_pendingDownloads = [];
-	let goodTube_lastDownloadTimeSeconds = false;
 
 	// API Endpoints
 	let goodTube_apis = [
@@ -4175,6 +4174,7 @@
 		// Delay calling the API 3s since it was last called
 		let delaySeconds = 0;
 		let currentTimeSeconds = new Date().getTime() / 1000;
+		let lastDownloadTimeSeconds = parseFloat(goodTube_helper_getCookie('goodTube_lastDownloadTimeSeconds'));
 		if (goodTube_lastDownloadTimeSeconds) {
 			delaySeconds = (3 - (currentTimeSeconds - goodTube_lastDownloadTimeSeconds));
 
@@ -4182,7 +4182,7 @@
 				delaySeconds = 0;
 			}
 		}
-		goodTube_lastDownloadTimeSeconds = currentTimeSeconds + delaySeconds;
+		goodTube_helper_setCookie('goodTube_lastDownloadTimeSeconds', (currentTimeSeconds + delaySeconds));
 
 		goodTube_downloadTimeouts[youtubeId] = setTimeout(function() {
 			// Show the downloading indicator
