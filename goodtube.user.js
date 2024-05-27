@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.703
+// @version      2.705
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -4139,7 +4139,7 @@
 	}
 
 	// Download video / audio for a specificed youtube ID
-	function goodTube_download(type, youtubeId, fileName) {
+	function goodTube_download(type, youtubeId, fileName, codec) {
 		// Stop if this is no longer a pending download
 		if (typeof goodTube_pendingDownloads[youtubeId] === 'undefined') {
 			return;
@@ -4173,6 +4173,9 @@
 
 		// Mobile only supports h264, otherwise we use vp9
 		let vCodec = 'vp9';
+		if (typeof codec !== 'undefined') {
+				vCodec = codec;
+		}
 		if (window.location.href.indexOf('m.youtube') !== -1) {
 			vCodec = 'h264';
 		}
@@ -4222,6 +4225,18 @@
 
 			// If something went wrong, fallback to opening in a new tab
 			if (typeof data['status'] !== 'undefined' && data['status'] === 'error') {
+
+				// Maybe there was an issue with the codec, try h264 (best support)
+				// There should be an error with the word 'settings' in it.
+				if (vCodec !== 'h264' && typeof data['text'] !== 'undefined' && data['text'].toLowerCase().indexOf('settings') !== -1) {
+					setTimeout(function() {
+						goodTube_download(type, youtubeId, fileName, 'h264');
+					}, 3000);
+
+					return;
+				}
+
+				// Otherwise, just fallback to opening it in a new tab
 				if (goodTube_api_type === 1) {
 					if (type === 'audio') {
 						window.open(goodTube_api_url+'/watch?v='+goodTube_getParams['v']+'&listen=true&raw=1', '_blank');
@@ -4241,6 +4256,7 @@
 			if (typeof data['status'] !== 'undefined' && typeof data['url'] !== 'undefined') {
 				// Download the file, without a file name (also just do this on mobile because we can't download blobs)
 				if (typeof fileName === 'undefined' || window.location.href.indexOf('m.youtube') !== -1) {
+					console.log('here3');
 					window.open(data['url'], '_self');
 
 					// Debug message
