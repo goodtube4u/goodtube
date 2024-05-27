@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.813
+// @version      2.814
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -4291,10 +4291,30 @@
 						else {
 							window.open(goodTube_api_url+'/latest_version?id='+goodTube_getParams['v'], '_blank');
 						}
+
+						// Debug message
+						if (goodTube_debug) {
+							if (typeof fileName !== 'undefined') {
+								console.log('[GoodTube] Opening download in new tab (normal way not working!) - '+type+' - '+fileName);
+							}
+							else {
+								console.log('[GoodTube] Opening download in new tab (normal way not working!) - '+type);
+							}
+						}
 					}
 
-					// Hide the loading indicator
-					goodTube_player_videojs_hideDownloading();
+					// Reset ALL downloading attempts (this helps to debounce the API)
+					goodTube_player_downloadAttempts = [];
+
+					// Remove from pending downloads
+					if (typeof goodTube_pendingDownloads[youtubeId] !== 'undefined') {
+						delete goodTube_pendingDownloads[youtubeId];
+					}
+
+					// Hide the downloading indicator
+					setTimeout(function() {
+						goodTube_player_videojs_hideDownloading();
+					}, 1000);
 
 					return;
 				}
