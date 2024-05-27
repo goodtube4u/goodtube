@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.801
+// @version      2.803
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -3642,6 +3642,8 @@
 			loadingElement.classList.remove('goodTube_loading');
 		}
 
+		goodTube_downloadDebounceTime = 0;
+
 		// Debug message
 		if (goodTube_debug) {
 			console.log('[GoodTube] Downloads finished');
@@ -4140,7 +4142,7 @@
 	}
 
 	// Download video / audio for a specificed youtube ID
-	function goodTube_download(type, youtubeId, fileName, codec) {
+	function goodTube_download(type, youtubeId, fileName, codec, debounceTime) {
 		// Stop if this is no longer a pending download
 		if (typeof goodTube_pendingDownloads[youtubeId] === 'undefined') {
 			return;
@@ -4215,18 +4217,18 @@
 			// Turn data into JSON
 			data = JSON.parse(data);
 
-			// Try again if we've hit the API rate limit, try again in 3s
+			// Try again if we've hit the API rate limit, try again in 10s
 			if (typeof data['status'] !== 'undefined' && data['status'] === 'rate-limit') {
-				goodTube_downloadDebounceTime += 3000;
+				goodTube_downloadDebounceTime += 10000;
 
 				setTimeout(function() {
-					goodTube_download(type, youtubeId, fileName);
+					goodTube_download(type, youtubeId, fileName, 'vp9', 10000);
 				}, goodTube_downloadDebounceTime);
 
 				return;
 			}
 
-			// If something went wrong, fallback to opening in a new tab
+			// If something went wrong
 			if (typeof data['status'] !== 'undefined' && data['status'] === 'error') {
 
 				// Maybe there was an issue with the codec, try av1 (better support), then h264 (best support)
@@ -4254,11 +4256,9 @@
 				if (goodTube_api_type === 1) {
 					if (type === 'audio') {
 						window.open(goodTube_api_url+'/watch?v='+goodTube_getParams['v']+'&listen=true&raw=1', '_blank');
-						console.log('what', data);
 					}
 					else {
 						window.open(goodTube_api_url+'/latest_version?id='+goodTube_getParams['v'], '_blank');
-						console.log('what', data);
 					}
 				}
 
@@ -4273,7 +4273,6 @@
 				// Download the file, without a file name (also just do this on mobile because we can't download blobs)
 				if (typeof fileName === 'undefined' || window.location.href.indexOf('m.youtube') !== -1) {
 					window.open(data['url'], '_self');
-					console.log('what', data);
 
 					// Debug message
 					if (goodTube_debug) {
@@ -4298,7 +4297,12 @@
 					goodTube_downloadFileAsBlob(data['url'], type, fileName, youtubeId);
 				}
 
-				goodTube_downloadDebounceTime -= 3000;
+				if (typeof debounceTime === 'undefined') {
+					goodTube_downloadDebounceTime -= 3000;
+				}
+				else {
+					goodTube_downloadDebounceTime -= debounceTime;
+				}
 			}
 		})
 		// If anything went wrong, try again (3s debounce to cater for the API)
