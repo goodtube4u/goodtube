@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.807
+// @version      2.808
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -4269,11 +4269,9 @@
 					if (goodTube_api_type === 1) {
 						if (type === 'audio') {
 							window.open(goodTube_api_url+'/watch?v='+goodTube_getParams['v']+'&listen=true&raw=1', '_blank');
-							console.log('errorrrr', data);
 						}
 						else {
 							window.open(goodTube_api_url+'/latest_version?id='+goodTube_getParams['v'], '_blank');
-							console.log('errorrrr', data);
 						}
 					}
 
@@ -4288,7 +4286,6 @@
 					// Download the file, without a file name (also just do this on mobile because we can't download blobs)
 					if (typeof fileName === 'undefined' || window.location.href.indexOf('m.youtube') !== -1) {
 						window.open(data['url'], '_self');
-						console.log('errorrrr', data);
 
 						// Debug message
 						if (goodTube_debug) {
