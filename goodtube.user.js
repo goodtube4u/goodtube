@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.700
+// @version      2.702
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -4232,8 +4232,8 @@
 
 			// If the data is all good
 			if (typeof data['status'] !== 'undefined' && typeof data['url'] !== 'undefined') {
-				// Download the file, without a file name
-				if (typeof fileName === 'undefined') {
+				// Download the file, without a file name (also just do this on mobile because we can't download blobs)
+				if (typeof fileName === 'undefined' || window.location.href.indexOf('m.youtube') !== -1) {
 					window.open(data['url'], '_self');
 
 					// Debug message
@@ -4254,7 +4254,7 @@
 						goodTube_player_videojs_hideDownloading();
 					}, 1000);
 				}
-				// Download the file with a file name (as a blob, this is used for playlists)
+				// Download the file with a file name (as a blob, this is used for playlists - DESKTOP ONLY)
 				else {
 					goodTube_downloadFileAsBlob(data['url'], type, fileName, youtubeId);
 				}
@@ -4280,7 +4280,7 @@
 		}
 
 		// Debug message
-		if (goodTube_debug) {
+		if (typeof noPrompt === 'undefined' && goodTube_debug) {
 			console.log('[GoodTube] Downloading '+type+' playlist...');
 		}
 
