@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.702
+// @version      2.703
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -51,6 +51,13 @@
 		return Array.prototype.slice.call(document.querySelectorAll('*')).filter(function(element) {
 			return element.tagName.match(regEx);
 		});
+	}
+
+	// Pad a number with leading zeros
+	function goodTube_helper_padNumber(num, size) {
+		num = num.toString();
+		while (num.length < size) num = "0" + num;
+		return num;
 	}
 
 	// Parse GET parameters
@@ -4322,12 +4329,12 @@
 
 			// Mobile - get playlist info
 			if (window.location.href.indexOf('m.youtube') !== -1) {
-				fileName = (track + 1)+' - '+element.querySelector('.compact-media-item-headline > span').innerHTML.trim();
+				fileName = goodTube_helper_padNumber((track + 1), 2)+' - '+element.querySelector('.compact-media-item-headline > span').innerHTML.trim();
 				url = element.querySelector('.compact-media-item-image').getAttribute('href');
 			}
 			// Desktop - get playlist info
 			else {
-				fileName = (track + 1)+' - '+element.querySelector('#video-title').innerHTML.trim();
+				fileName = goodTube_helper_padNumber((track + 1), 2)+' - '+element.querySelector('#video-title').innerHTML.trim();
 				url = element.querySelector('#wc-endpoint').getAttribute('href');
 			}
 
