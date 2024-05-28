@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.816
+// @version      2.817
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -963,8 +963,8 @@
 
 		// Listen for keyboard shortcuts
 		document.addEventListener('keydown', function(event) {
-			// Don't do anything if we're holding shift (this is often used when doing text selection)
-			if (event.shiftKey) {
+			// Don't do anything if we're holding shift or control, or we're not viewing a video
+			if (event.shiftKey || event.ctrlKey || typeof goodTube_getParams['v'] === 'undefined') {
 				return;
 			}
 
