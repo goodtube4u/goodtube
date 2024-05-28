@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.815
+// @version      2.816
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -2464,7 +2464,7 @@
 			// If we've manually changed quality, remember it so the next video stays with the same quality
 			let newQuality = qualityLabel.replace('p', '').replace('hd', '').replace(' ', '').toLowerCase();
 
-			if (goodTube_player_selectedQuality !== newQuality) {
+			if (parseFloat(goodTube_player_selectedQuality) !== parseFloat(newQuality)) {
 				goodTube_player_manuallySelectedQuality = newQuality;
 				goodTube_player_selectedQuality = newQuality;
 			}
