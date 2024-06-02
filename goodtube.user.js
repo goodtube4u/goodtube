@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.818
+// @version      2.819
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -772,19 +772,43 @@
 				justify-content: space-around;
 			}
 
-			@media (max-width: 1200px) and (min-width: 1017px) {
+			#primary {
+				min-width: 710px !important;
+			}
+
+			@media (max-width: 1100px) {
+				#primary {
+					min-width: 636px !important;
+				}
+
+				html body #goodTube_player_wrapper1:not(.goodTube_mobile) .video-js .vjs-control-bar {
+					zoom: .88;
+				}
+			}
+
+			@media (max-width: 1016px) {
+				#primary {
+					min-width: 0 !important;
+				}
+
+				html body #goodTube_player_wrapper1:not(.goodTube_mobile) .video-js .vjs-control-bar {
+					zoom: 1;
+				}
+			}
+
+			@media (max-width: 786px) {
 				html body #goodTube_player_wrapper1:not(.goodTube_mobile) .video-js .vjs-control-bar {
 					zoom: .9;
 				}
 			}
 
-			@media (max-width: 780px) {
+			@media (max-width: 715px) {
 				html body #goodTube_player_wrapper1:not(.goodTube_mobile) .video-js .vjs-control-bar {
-					zoom: .9;
+					zoom: .85;
 				}
 			}
 
-			@media (max-width: 700px) {
+			@media (max-width: 680px) {
 				html body #goodTube_player_wrapper1:not(.goodTube_mobile) .video-js .vjs-control-bar {
 					zoom: .8;
 				}
