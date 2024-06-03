@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.820
+// @version      2.821
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -772,44 +772,44 @@
 				justify-content: space-around;
 			}
 
-			#primary {
+			ytd-watch-flexy:not([theater]) #primary {
 				min-width: 721px !important;
 			}
 
 			@media (max-width: 1100px) {
-				#primary {
+				ytd-watch-flexy:not([theater]) #primary {
 					min-width: 636px !important;
 				}
 
-				html body #goodTube_player_wrapper1:not(.goodTube_mobile) .video-js .vjs-control-bar {
+				ytd-watch-flexy:not([theater]) #goodTube_player_wrapper1:not(.goodTube_mobile) .video-js .vjs-control-bar {
 					zoom: .88;
 				}
 			}
 
 			@media (max-width: 1016px) {
-				#primary {
+				ytd-watch-flexy:not([theater]) #primary {
 					min-width: 0 !important;
 				}
 
-				html body #goodTube_player_wrapper1:not(.goodTube_mobile) .video-js .vjs-control-bar {
+				ytd-watch-flexy:not([theater]) #goodTube_player_wrapper1:not(.goodTube_mobile) .video-js .vjs-control-bar {
 					zoom: 1;
 				}
 			}
 
 			@media (max-width: 786px) {
-				html body #goodTube_player_wrapper1:not(.goodTube_mobile) .video-js .vjs-control-bar {
+				ytd-watch-flexy:not([theater]) #goodTube_player_wrapper1:not(.goodTube_mobile) .video-js .vjs-control-bar {
 					zoom: .9;
 				}
 			}
 
 			@media (max-width: 715px) {
-				html body #goodTube_player_wrapper1:not(.goodTube_mobile) .video-js .vjs-control-bar {
+				ytd-watch-flexy:not([theater]) #goodTube_player_wrapper1:not(.goodTube_mobile) .video-js .vjs-control-bar {
 					zoom: .85;
 				}
 			}
 
 			@media (max-width: 680px) {
-				html body #goodTube_player_wrapper1:not(.goodTube_mobile) .video-js .vjs-control-bar {
+				ytd-watch-flexy:not([theater]) #goodTube_player_wrapper1:not(.goodTube_mobile) .video-js .vjs-control-bar {
 					zoom: .8;
 				}
 			}
