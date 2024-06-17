@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.902
+// @version      2.903
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -1804,7 +1804,7 @@
 
 			// If this video has chapters
 			if (typeof chaptersData['items'][0]['chapters']['chapters'] !== 'undefined' && chaptersData['items'][0]['chapters']['chapters'].length) {
-				chapters = chaptersData['items'][0]['chapters']['chapters'];
+				let chapters = chaptersData['items'][0]['chapters']['chapters'];
 
 				// Load them into the player
 				goodTube_player_loadChaptersFromData(player, chapters, totalDuration);
