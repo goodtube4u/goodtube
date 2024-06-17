@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.951
+// @version      2.952
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -639,6 +639,10 @@
 				height: 5px;
 				bottom: 2px;
 				opacity: 1;
+			}
+
+			#goodTube_player_wrapper1.goodTube_mobile .vjs-time-control .vjs-duration-display {
+				white-space: nowrap;
 			}
 
 			#goodTube_player_wrapper1.goodTube_mobile .vjs-time-control .vjs-duration-display::after {
