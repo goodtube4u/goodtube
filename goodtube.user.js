@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.821
+// @version      2.900
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -401,6 +401,7 @@
 	let goodTube_player_loadedAssets = 0;
 	let goodTube_player_loadAssetAttempts = 0;
 	let goodTube_player_loadVideoDataAttempts = 0;
+	let goodTube_player_loadChaptersAttempts = 0;
 	let goodTube_player_downloadAttempts = [];
 	let goodTube_player_downloadFileAsBlobAttempts = [];
 	let goodTube_player_vttThumbnailsFunction = false;
@@ -412,6 +413,8 @@
 	let goodTube_player_highestQuality = false;
 	let goodTube_player_selectedQuality = false;
 	let goodTube_player_manuallySelectedQuality = false;
+	let goodTube_updateChapters = false;
+	let goodTube_chapterTitleInterval = false;
 
 	// Init
 	function goodTube_player_init() {
@@ -437,6 +440,221 @@
 		// Add CSS styles for the player
 		let style = document.createElement('style');
 		style.textContent = `
+			/* Seek bar */
+			#goodTube_player_wrapper1 .vjs-progress-control {
+				position: absolute;
+				bottom: 48px;
+				left: 0;
+				right: 0;
+				width: 100%;
+				height: calc(24px + 3px);
+			}
+
+			#goodTube_player_wrapper1 .vjs-progress-control .vjs-slider {
+				margin: 0;
+				background: transparent;
+				position: absolute;
+				bottom: 3px;
+				left: 8px;
+				right: 8px;
+				top: auto;
+				transition: height .1s linear, bottom .1s linear;
+				z-index: 1;
+			}
+
+			#goodTube_player_wrapper1 .vjs-progress-control:hover .vjs-slider {
+				pointer-events: none;
+				height: 5px;
+				bottom: 2px;
+			}
+
+			#goodTube_player_wrapper1 .vjs-progress-control .vjs-slider .vjs-load-progress {
+				height: 100%;
+				background: rgba(255, 255, 255, .2);
+				transition: none;
+				position: static;
+				margin-bottom: -3px;
+				transition: margin .1s linear;
+			}
+
+			#goodTube_player_wrapper1 .vjs-progress-control:hover .vjs-slider .vjs-load-progress {
+				margin-bottom: -5px;
+			}
+
+			#goodTube_player_wrapper1 .vjs-progress-control .vjs-slider .vjs-load-progress .vjs-control-text {
+				display: none;
+			}
+
+			#goodTube_player_wrapper1 .vjs-progress-control .vjs-slider .vjs-load-progress > div {
+				background: transparent !important;
+			}
+
+			#goodTube_player_wrapper1 .vjs-progress-control .vjs-slider .vjs-play-progress {
+				background: transparent;
+				position: static;
+				z-index: 1;
+			}
+
+			#goodTube_player_wrapper1 .vjs-progress-control .vjs-slider .vjs-play-progress::before {
+				content: '';
+				background: #ff0000;
+				width: 100%;
+				height: 100%;
+				position: static;
+				display: block;
+			}
+
+			#goodTube_player_wrapper1 .vjs-progress-control .vjs-slider .vjs-play-progress::after {
+				content: '';
+				display: block;
+				float: right;
+				background: #ff0000;
+				border-radius: 50%;
+				opacity: 0;
+				width: 13px;
+				height: 13px;
+				right: -7px;
+				top: -8px;
+				transition: opacity .1s linear, top .1s linear;
+				position: relative;
+			}
+
+			#goodTube_player_wrapper1 .vjs-progress-control:hover .vjs-slider .vjs-play-progress::after {
+				opacity: 1;
+				top: -9px;
+			}
+
+
+			/* Without chapters */
+			#goodTube_player_wrapper1:not(.goodTube_hasChapters) .vjs-progress-control::before {
+				content: '';
+				position: absolute;
+				bottom: 3px;
+				left: 8px;
+				right: 8px;
+				height: 3px;
+				background: rgba(255, 255, 255, .2);
+				transition: height .1s linear, bottom .1s linear;
+			}
+
+			#goodTube_player_wrapper1:not(.goodTube_hasChapters) .vjs-progress-control:hover::before {
+				height: 5px;
+				bottom: 2px;
+			}
+
+
+			/* With chapters */
+			#goodTube_player_wrapper1.goodTube_hasChapters .vjs-progress-control .goodTube_chapters {
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				left: 8px;
+				right: 8px;
+			}
+
+			#goodTube_player_wrapper1.goodTube_hasChapters .vjs-progress-control .goodTube_chapters .goodTube_chapter {
+				height: 100%;
+				position: absolute;
+			}
+
+			#goodTube_player_wrapper1.goodTube_hasChapters .vjs-progress-control .goodTube_chapters .goodTube_chapter::before {
+				content: '';
+				background: rgba(255, 255, 255, .2);
+				position: absolute;
+				left: 0;
+				right: 2px;
+				bottom: 3px;
+				height: 3px;
+				transition: height .1s linear, bottom .1s linear, background .1s linear;
+			}
+
+			#goodTube_player_wrapper1.goodTube_hasChapters .vjs-progress-control .goodTube_chapters .goodTube_chapter.goodTube_redChapter::before {
+				background: #ff0000 !important;
+			}
+
+			#goodTube_player_wrapper1.goodTube_hasChapters .vjs-progress-control .goodTube_chapters .goodTube_chapter:last-child::before {
+				right: 0;
+			}
+
+			#goodTube_player_wrapper1.goodTube_hasChapters .vjs-progress-control:hover .goodTube_chapters .goodTube_chapter::before {
+				height: 5px;
+				bottom: 2px;
+			}
+
+			#goodTube_player_wrapper1.goodTube_hasChapters:not(.goodTube_mobile) .vjs-progress-control .goodTube_chapters .goodTube_chapter:hover::before {
+				height: 9px;
+				bottom: 0;
+				background: rgba(255, 255, 255, .4);
+			}
+
+			#goodTube_player_wrapper1.goodTube_hasChapters .vjs-progress-control .goodTube_markers {
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				pointer-events: none;
+			}
+
+			#goodTube_player_wrapper1.goodTube_hasChapters .vjs-progress-control .goodTube_marker {
+				width: 2px;
+				height: 100%;
+				position: absolute;
+				background: rgba(0, 0, 0, .2);
+				margin-left: -2px;
+			}
+
+			#goodTube_player_wrapper1.goodTube_hasChapters .vjs-progress-control .goodTube_marker.goodTube_showMarker {
+				background: rgba(0, 0, 0, .6);
+			}
+
+			#goodTube_player_wrapper1.goodTube_hasChapters .vjs-progress-control .goodTube_marker:last-child {
+				display: none;
+			}
+
+			#goodTube_player_wrapper1 .vjs-progress-control .vjs-mouse-display {
+				background: transparent;
+			}
+
+			#goodTube_player_wrapper1.goodTube_hasChapters .vjs-progress-control .vjs-mouse-display .vjs-time-tooltip::before {
+				content: attr(chapter-title);
+				display: block;
+				white-space: nowrap;
+				margin-bottom: 4px;
+			}
+
+			#goodTube_player_wrapper1 .vjs-progress-control .goodTube_hoverBar {
+				background: rgba(255, 255, 255, .4);
+				position: absolute;
+				bottom: 3px;
+				left: 8px;
+				height: 3px;
+				opacity: 0;
+				transition: height .1s linear, bottom .1s linear, opacity .1s linear;
+			}
+
+			#goodTube_player_wrapper1 .vjs-progress-control:hover .goodTube_hoverBar {
+				height: 5px;
+				bottom: 2px;
+				opacity: 1;
+			}
+
+			#goodTube_player_wrapper1.goodTube_mobile .vjs-time-control .vjs-duration-display::after {
+				content: attr(chapter-title);
+				display: inline-block;
+				color: #ffffff;
+				margin-left: 3px;
+			}
+
+			#goodTube_player_wrapper1.goodTube_mobile .vjs-progress-control .vjs-slider,
+			#goodTube_player_wrapper1.goodTube_mobile:not(.goodTube_hasChapters) .vjs-progress-control::before,
+			#goodTube_player_wrapper1.goodTube_hasChapters .vjs-progress-control .goodTube_chapters,
+			#goodTube_player_wrapper1 .vjs-progress-control .goodTube_hoverBar {
+				left: 16px;
+				right: 16px;
+			}
+
+
 			/* Audio only view */
 			#goodTube_player_wrapper3.goodTube_audio {
 				background: #000000;
@@ -755,13 +973,6 @@
 			html body #goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-next-button .vjs-icon-placeholder::before,
 			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js .vjs-next-button .vjs-icon-placeholder::before {
 				font-size: 32px !important;
-			}
-
-			html body #goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-progress-control,
-			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js .vjs-progress-control {
-				top: auto !important;
-				bottom: 26px !important;
-				height: 48px !important;
 			}
 
 			html body #goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-control-bar,
@@ -1397,9 +1608,10 @@
 			// Turn video data into JSON
 			let videoData = JSON.parse(data);
 
-			// Setup variables to hold the source data and subtitle data
+			// Setup variables to hold the data
 			let sourceData = false;
 			let subtitleData = false;
+			let storyboardData = false;
 
 			// Below populates the source data, also - if there's any issues with the source data, try again (after configured delay time)
 			let retry = false;
@@ -1411,6 +1623,7 @@
 				else {
 					sourceData = videoData['formatStreams'];
 					subtitleData = videoData['captions'];
+					storyboardData = videoData['storyboards'];
 				}
 			}
 
@@ -1524,54 +1737,25 @@
 				}, 1);
 
 				// Load the subtitles into the player
-				if (subtitleData) {
-					goodTube_player_loadSubtitles(player, subtitleData);
+				goodTube_player_loadSubtitles(player, subtitleData);
+
+				// Load the chapters into the player
+				// Debug message
+				if (goodTube_debug) {
+					console.log('[GoodTube] Loading chapters...');
 				}
 
-				// Load VTT storyboard thumbnails into the player (desktop only)
-				if (window.location.href.indexOf('m.youtube') === -1) {
-					// Store the core function so we can call it again, because this plugin overwrites it's actual function once loaded!
-					if (typeof goodTube_videojs_player.vttThumbnails === 'function') {
-						goodTube_player_vttThumbnailsFunction = goodTube_videojs_player.vttThumbnails;
-					}
+				goodTube_player_loadChapters(player, videoData['lengthSeconds']);
 
-					// Restore the core function
-					goodTube_videojs_player.vttThumbnails = goodTube_player_vttThumbnailsFunction;
-
-					// Remove the old thumbnails
-					document.querySelector('.vjs-vtt-thumbnail-display')?.remove();
-
-					// Load the new thumbnails
-
-					// Get 180px if we can!
-					let thumbsUrl = goodTube_api_url+'/api/v1/storyboards/'+goodTube_getParams['v'];
-
-					fetch(thumbsUrl+'?height=180')
-					.then(response => response.text())
-					.then(data => {
-						// Check if data exists, because 404 errors and such don't always call the below error catch!
-						if (data) {
-							goodTube_videojs_player.vttThumbnails({
-								src: thumbsUrl+'?height=180'
-							});
-						}
-						// If the data doesn't exist, fallback on 90px
-						else {
-							goodTube_videojs_player.vttThumbnails({
-								src: thumbsUrl+'?height=90'
-							});
-						}
-					})
-					.catch((error) => {
-						goodTube_videojs_player.vttThumbnails({
-							src: thumbsUrl+'?height=90'
-						});
-					});
+				// Load storyboards into the player (desktop only)
+				if (storyboardData && window.location.href.indexOf('m.youtube') === -1) {
+					goodTube_player_loadStoryboard(player, storyboardData);
 				}
 			}
 		})
 		// If there's any issues loading the video data, try again (after configured delay time)
 		.catch((error) => {
+			console.log(error);
 			if (typeof goodTube_pendingRetry['loadVideoData'] !== 'undefined') {
 				clearTimeout(goodTube_pendingRetry['loadVideoData']);
 			}
@@ -1580,6 +1764,285 @@
 				goodTube_player_loadVideo(player);
 			}, goodTube_retryDelay);
 		});
+	}
+
+	// Load chapters
+	function goodTube_player_loadChapters(player, totalDuration) {
+		// Remove the old chapters
+		document.querySelector('.goodTube_chapters')?.remove();
+		document.querySelector('.goodTube_markers')?.remove();
+		if (document.querySelector('#goodTube_player_wrapper1').classList.contains('goodTube_hasChapters')) {
+			document.querySelector('#goodTube_player_wrapper1').classList.remove('goodTube_hasChapters');
+		}
+		if (goodTube_updateChapters) {
+			clearInterval(goodTube_updateChapters);
+			goodTube_updateChapters = false;
+		}
+		if (goodTube_chapterTitleInterval) {
+			clearInterval(goodTube_chapterTitleInterval);
+			goodTube_chapterTitleInterval = false;
+			document.querySelector('#goodTube_player_wrapper1 .vjs-time-control .vjs-duration-display')?.setAttribute('chapter-title', '');
+		}
+
+		// Only re-attempt to load the chapters max configured retry attempts
+		goodTube_player_loadChaptersAttempts++;
+		if (goodTube_player_loadChaptersAttempts > goodTube_retryAttempts) {
+			// Debug message
+			if (goodTube_debug) {
+				console.log('[GoodTube] Chapters could not be loaded');
+			}
+
+			return;
+		}
+
+		// Create a variable to store the chapters
+		let chapters = false;
+
+		// Try to get the chapters from the UI
+		let uiChapters = Array.from(document.querySelectorAll("#panels ytd-engagement-panel-section-list-renderer:nth-child(2) #content ytd-macro-markers-list-renderer #contents ytd-macro-markers-list-item-renderer #endpoint #details"));
+
+		let withTitleAndTime = uiChapters.map((node) => ({
+			title: node.querySelector(".macro-markers")?.textContent,
+			time: node.querySelector("#time")?.textContent,
+		}));
+
+		let filtered = withTitleAndTime.filter(
+			(element) =>
+				element.title !== undefined &&
+				element.title !== null &&
+				element.time !== undefined &&
+				element.time !== null
+		);
+
+		chapters = [
+			...new Map(filtered.map((node) => [node.time, node])).values(),
+		];
+
+		// If we found the chapters data via the UI
+		if (chapters.length) {
+			// Load chapters into the player
+			goodTube_player_loadChaptersFromData(player, chapters, totalDuration);
+		}
+		// Otherwise we couldn't find chapters using the UI, so get them from a public youtube API (yt.lemnoslife.com)
+		else {
+			fetch('https://yt.lemnoslife.com/videos?part=chapters&id='+goodTube_getParams['v'])
+			.then(response => response.text())
+			.then(data => {
+				// Turn chapters data into JSON
+				let chaptersData = JSON.parse(data);
+
+				// If this video has chapters
+				if (typeof chaptersData['items'][0]['chapters']['chapters'] !== 'undefined' && chaptersData['items'][0]['chapters']['chapters'].length) {
+					chapters = chaptersData['items'][0]['chapters']['chapters'];
+
+					// Load them into the player
+					goodTube_player_loadChaptersFromData(player, chapters, totalDuration);
+				}
+				else {
+					// Debug message
+					if (goodTube_debug) {
+						console.log('[GoodTube] This video does not have chapters');
+					}
+				}
+
+				// Loading the API data for chapters worked, so let's allow more retries next time
+				goodTube_player_loadChaptersAttempts = 0;
+			})
+			// If there's any issues loading the chapters, try again (after configured delay time)
+			.catch((error) => {
+				console.log('error', error);
+				if (typeof goodTube_pendingRetry['loadChapters'] !== 'undefined') {
+					clearTimeout(goodTube_pendingRetry['loadChapters']);
+				}
+
+				goodTube_pendingRetry['loadChapters'] = setTimeout(function() {
+					goodTube_player_loadChapters(player);
+				}, goodTube_retryDelay);
+			});
+		}
+	}
+
+	function goodTube_player_loadChaptersFromData(player, chapters, totalDuration) {
+		// If there's no data, just return
+		if (!chapters.length) {
+			return;
+		}
+
+		// Create a container for our chapters
+		let chaptersContainer = document.createElement('div');
+		chaptersContainer.classList.add('goodTube_chapters');
+
+		let markersContainer = document.createElement('div');
+		markersContainer.classList.add('goodTube_markers');
+
+		// For each chapter
+		let i = 0;
+		chapters.forEach((chapter) => {
+			// Create a chapter element
+			let chapterDiv = document.createElement('div');
+			chapterDiv.classList.add('goodTube_chapter');
+			if (typeof chapters[i+1] !== 'undefined') {
+				if (typeof chapters[i+1]['time'] === 'number') {
+					chapterDiv.setAttribute('chapter-time', chapters[i+1]['time']);
+				}
+				else {
+					chapterDiv.setAttribute('chapter-time', chapters[i+1]['time'].split(':').reduce((acc,time) => (60 * acc) + +time));
+				}
+			}
+
+
+			// Create a marker element
+			let markerDiv = document.createElement('div');
+			markerDiv.classList.add('goodTube_marker');
+			if (typeof chapters[i+1] !== 'undefined') {
+				if (typeof chapters[i+1]['time'] === 'number') {
+					markerDiv.setAttribute('marker-time', chapters[i+1]['time']);
+				}
+				else {
+					markerDiv.setAttribute('marker-time', chapters[i+1]['time'].split(':').reduce((acc,time) => (60 * acc) + +time));
+				}
+			}
+
+			// Add a hover action to show the title in the tooltip (desktop only)
+			if (window.location.href.indexOf('m.youtube') === -1) {
+				chapterDiv.addEventListener('mouseover', function() {
+					document.querySelector('#goodTube_player_wrapper1 .vjs-progress-control .vjs-mouse-display .vjs-time-tooltip')?.setAttribute('chapter-title', chapter['title']);
+				});
+			}
+
+			// Position the chapter with CSS
+			// ------------------------------
+
+			// Convert the timestamp (HH:MM:SS) to seconds
+			let time = 0;
+			if (typeof chapter['time'] === 'number') {
+				time = chapter['time'];
+			}
+			else {
+				time = chapter['time'].split(':').reduce((acc,time) => (60 * acc) + +time);
+			}
+
+			// Get time as percentage. This is the starting point of this chapter.
+			let startingPercentage = (time / totalDuration) * 100;
+
+			// Set the starting point
+			chapterDiv.style.left = startingPercentage+'%';
+
+			// Get the starting point of the next chapter (HH:MM:SS) and convert it to seconds
+			// If there's no next chapter, use 100%
+			let nextChapterStart = totalDuration;
+			if (typeof chapters[i+1] !== 'undefined') {
+				if (typeof chapters[i+1]['time'] === 'number') {
+					nextChapterStart = chapters[i+1]['time'];
+				}
+				else {
+					nextChapterStart = chapters[i+1]['time'].split(':').reduce((acc,time) => (60 * acc) + +time);
+				}
+			}
+
+			// Get the starting point of the next chapter as percentage. This is the starting point of this chapter.
+			let endingPercentage = (nextChapterStart / totalDuration) * 100;
+
+			// Set the width to be the ending point MINUS the starting point (difference between them = length)
+			chapterDiv.style.width = (endingPercentage - startingPercentage)+'%';
+
+			// Position the marker
+			markerDiv.style.left = endingPercentage+'%';
+
+			// ------------------------------
+
+
+			// Add the chapter to the chapters container
+			chaptersContainer.appendChild(chapterDiv);
+
+			// Add the marker to the markers container
+			markersContainer.appendChild(markerDiv);
+
+			// Increment the loop
+			i++;
+		});
+
+		// Add an action to show the title next to the time duration (mobile only)
+		if (window.location.href.indexOf('m.youtube') !== -1) {
+			goodTube_chapterTitleInterval = setInterval(function() {
+				let currentPlayerTime = parseFloat(player.currentTime);
+				let currentChapterTitle = false;
+				chapters.forEach((chapter) => {
+					let chapterTime = false;
+
+					if (typeof chapter['time'] === 'number') {
+						chapterTime = chapter['time'];
+					}
+					else {
+						chapterTime = chapter['time'].split(':').reduce((acc,time) => (60 * acc) + +time);
+					}
+
+					if (parseFloat(currentPlayerTime) >= parseFloat(chapterTime)) {
+						currentChapterTitle = chapter['title'];
+					}
+				});
+
+				if (currentChapterTitle) {
+					document.querySelector('#goodTube_player_wrapper1 .vjs-time-control .vjs-duration-display')?.setAttribute('chapter-title', '· '+currentChapterTitle);
+				}
+			}, 10);
+		}
+
+		// Add the chapters container to the player
+		document.querySelector('#goodTube_player_wrapper1 .vjs-progress-control')?.appendChild(chaptersContainer);
+
+		// Add the markers container to the player
+		document.querySelector('#goodTube_player_wrapper1 .vjs-progress-control .vjs-play-progress')?.appendChild(markersContainer);
+
+		// Add chapters class to the player
+		if (!document.querySelector('#goodTube_player_wrapper1').classList.contains('goodTube_hasChapters')) {
+			document.querySelector('#goodTube_player_wrapper1').classList.add('goodTube_hasChapters');
+		}
+
+		// Update the chapters display as we play the video
+		goodTube_updateChapters = setInterval(function() {
+			// Hide markers that are before the current play position / red play bar
+			let markerElements = document.querySelectorAll('.goodTube_markers .goodTube_marker');
+
+			markerElements.forEach((element) => {
+				if (element.getAttribute('marker-time')) {
+					if (parseFloat(player.currentTime) >= parseFloat(element.getAttribute('marker-time'))) {
+						if (!element.classList.contains('goodTube_showMarker')) {
+							element.classList.add('goodTube_showMarker')
+						}
+					}
+					else {
+						if (element.classList.contains('goodTube_showMarker')) {
+							element.classList.remove('goodTube_showMarker')
+						}
+					}
+				}
+			});
+
+			// Make chapter hover RED for chapters that are before the current play position / red play bar
+			let chapterElements = document.querySelectorAll('.goodTube_chapters .goodTube_chapter');
+
+			chapterElements.forEach((element) => {
+				if (element.getAttribute('chapter-time')) {
+					if (parseFloat(player.currentTime) >= parseFloat(element.getAttribute('chapter-time'))) {
+						if (!element.classList.contains('goodTube_redChapter')) {
+							element.classList.add('goodTube_redChapter')
+						}
+					}
+					else {
+						if (element.classList.contains('goodTube_redChapter')) {
+							element.classList.remove('goodTube_redChapter')
+						}
+					}
+				}
+			});
+
+		}, 10);
+
+		// Debug message
+		if (goodTube_debug) {
+			console.log('[GoodTube] Chapters loaded');
+		}
 	}
 
 	// Load subtitles
@@ -1592,6 +2055,7 @@
 			});
 		}
 
+		// If subtitle data exists
 		if (subtitleData.length > 0) {
 			// Debug message
 			if (goodTube_debug) {
@@ -1629,6 +2093,51 @@
 			// Debug message
 			if (goodTube_debug) {
 				console.log('[GoodTube] Subtitles loaded');
+			}
+		}
+	}
+
+	// Load storyboard
+	function goodTube_player_loadStoryboard(player, storyboardData) {
+		// Remove the old thumbnails
+		document.querySelector('.vjs-vtt-thumbnail-display')?.remove();
+
+		// If storyboard data exists
+		if (storyboardData.length > 0) {
+			// Debug message
+			if (goodTube_debug) {
+				console.log('[GoodTube] Loading storyboard...');
+			}
+
+			// Go through each storyboard and find the highest quality
+			let highestQualityStoryboardUrl = false;
+			let highestQualityStoryboardWidth = 0;
+			storyboardData.forEach((storyboard) => {
+				if (storyboard['width'] > highestQualityStoryboardWidth) {
+					highestQualityStoryboardUrl = storyboard['url'];
+					highestQualityStoryboardWidth = parseFloat(storyboard['width']);
+				}
+			});
+
+			// If we have a storyboard to load
+			if (highestQualityStoryboardUrl) {
+				// Store the core vttThumbnails function so we can call it again, because this plugin overwrites it's actual function once loaded!
+				if (typeof goodTube_videojs_player.vttThumbnails === 'function') {
+					goodTube_player_vttThumbnailsFunction = goodTube_videojs_player.vttThumbnails;
+				}
+
+				// Restore the core function
+				goodTube_videojs_player.vttThumbnails = goodTube_player_vttThumbnailsFunction;
+
+				// Load the highest quality storyboard
+				goodTube_videojs_player.vttThumbnails({
+					src: goodTube_api_url+highestQualityStoryboardUrl
+				});
+
+				// Debug message
+				if (goodTube_debug) {
+					console.log('[GoodTube] Storyboard loaded');
+				}
 			}
 		}
 	}
@@ -1694,6 +2203,7 @@
 		goodTube_helper_showElement(player.closest('#goodTube_player_wrapper1'));
 	}
 
+	// Picture in picture
 	function goodTube_player_pipInit() {
 		// If we leave the picture in picture
 		addEventListener('leavepictureinpicture', (event) => {
@@ -1712,7 +2222,6 @@
 		});
 	}
 
-	// Init picture in picture
 	function goodTube_player_pipUpdate() {
 		// Support play and pause (but only attach these events once!)
 		if ("mediaSession" in navigator) {
@@ -1748,7 +2257,6 @@
 		}
 	}
 
-	// Show or hide the picture in picture
 	function goodTube_player_pipShowHide() {
 		if (goodTube_player_pip) {
 			document.exitPictureInPicture();
@@ -1765,7 +2273,7 @@
 		}
 	}
 
-	// Update the miniplayer
+	// Miniplayer
 	function goodTube_player_miniplayerUpdate() {
 		// This is needed to show it differently when we're off a video page, desktop only
 		if (window.location.href.indexOf('m.youtube') === -1) {
@@ -1787,7 +2295,6 @@
 		}
 	}
 
-	// Show or hide the miniplayer
 	function goodTube_player_miniplayerShowHide() {
 		// If we have real picture in picture, use that instead!
 		if (document.pictureInPictureEnabled) {
@@ -2752,43 +3259,6 @@
 			}
 
 			/* Youtube player style */
-			.video-js.player-style-youtube .vjs-progress-control {
-				height: 0;
-			}
-
-			.video-js.player-style-youtube .vjs-progress-control .vjs-progress-holder, .video-js.player-style-youtube .vjs-progress-control {
-				position: absolute;
-				right: 0;
-				left: 0;
-				width: 100%;
-				margin: 0;
-			}
-
-			.video-js.player-style-youtube .vjs-slider {
-				background-color: rgba(255,255,255,0.2);
-			}
-
-			.video-js.player-style-youtube .vjs-load-progress > div {
-				background-color: rgba(255,255,255,0.5);
-			}
-
-			.vjs-play-progress {
-				background-color: #ff0000 !important;
-			}
-
-			.vjs-play-progress::before {
-				color: #ff0000 !important;
-				display: none;
-			}
-
-			.vjs-progress-control:hover .vjs-play-progress::before {
-				display: block;
-			}
-
-			.video-js.player-style-youtube .vjs-progress-control:hover .vjs-progress-holder {
-				font-size: 15px !important;
-			}
-
 			.vjs-slider-horizontal .vjs-volume-level:before {
 				font-size: 14px !important;
 			}
@@ -2796,7 +3266,6 @@
 			.vjs-volume-control {
 				width: auto !important;
 				margin-right: 0 !important;
-
 			}
 
 			.video-js .vjs-volume-panel.vjs-volume-panel-horizontal {
@@ -2826,41 +3295,6 @@
 
 			.vjs-volume-bar.vjs-slider-horizontal {
 				min-width: 52px !important;
-			}
-
-			.video-js .vjs-slider {
-				background: rgba(255, 255, 255, .2) !important;
-			}
-
-			.video-js .vjs-load-progress {
-				background: none !important;
-			}
-
-			.video-js .vjs-load-progress > div {
-				background: transparent !important;
-			}
-
-			.video-js .vjs-load-progress {
-				background: rgba(255, 255, 255, .2) !important;
-			}
-
-			.video-js .vjs-progress-control {
-				position: absolute !important;
-				top: -26px !important;
-				left: 0 !important;
-				right: 0 !important;
-				bottom: auto !important;
-				width: 100% !important;
-			}
-
-			.video-js .vjs-progress-control .vjs-progress-holder {
-				margin-left: 8px !important;
-				margin-right: 8px !important;
-			}
-
-			#goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-progress-control .vjs-progress-holder {
-				margin-left: 16px !important;
-				margin-right: 16px !important;
 			}
 
 			.video-js.player-style-youtube .vjs-control-bar > .vjs-spacer {
@@ -2896,10 +3330,6 @@
 
 			.video-js.player-style-youtube .vjs-menu-button-popup .vjs-menu {
 				margin-bottom: 2em;
-			}
-
-			.video-js.player-style-youtube .vjs-progress-control .vjs-progress-holder, .video-js.player-style-youtube .vjs-progress-control {height: 5px;
-				margin-bottom: 10px;
 			}
 
 			.video-js ul.vjs-menu-content::-webkit-scrollbar {
@@ -3069,7 +3499,7 @@
 			}
 
 			.video-js .vjs-vtt-thumbnail-display {
-				bottom: calc(100% + 31px) !important;
+				bottom: calc(100% + 35px) !important;
 				border-radius: 12px !important;
 				overflow: hidden !important;
 				border: 2px solid #ffffff !important;
@@ -3131,7 +3561,10 @@
 			.video-js .vjs-mouse-display .vjs-time-tooltip {
 				background: none !important;
 				font-size: 12px !important;
-				top: -44px !important;
+				top: -50px !important;
+				text-shadow: 0 0 10px rgba(0, 0, 0, .5) !important;
+				font-family: "YouTube Noto", Roboto, Arial, Helvetica, sans-serif !important;
+				font-weight: 500 !important;
 			}
 
 			.video-js .vjs-menu-content {
@@ -3162,7 +3595,7 @@
 				color: #ffffff !important;
 			}
 
-			.video-js .vjs-menu li.vjs-menu-item:not(..vjs-selected):hover {
+			.video-js .vjs-menu li.vjs-menu-item:not(.vjs-selected):hover {
 				background-color: rgba(255, 255, 255, 0.75) !important;
 				color: rgba(49, 49, 51, 0.75) !important;
 				color: #ffffff !important;
@@ -3632,6 +4065,23 @@
 				}, delay);
 			});
 		});
+
+		// Add a hover bar to the DOM if we haven't alread (desktop only)
+		if (window.location.href.indexOf('m.youtube') === -1) {
+			if (!document.querySelector('.goodTube_hoverBar')) {
+				let hoverBar = document.createElement('div');
+				hoverBar.classList.add('goodTube_hoverBar');
+				document.querySelector('.video-js .vjs-progress-control').appendChild(hoverBar);
+
+				// Add actions to size the hover bar
+				document.querySelector('.video-js .vjs-progress-control').addEventListener('mousemove', function(event) {
+					window.requestAnimationFrame(function() {
+						hoverBar.style.width = document.querySelector('.video-js .vjs-progress-control .vjs-mouse-display').style.left;
+					});
+
+				});
+			}
+		}
 	}
 
 	// Show an error on screen
