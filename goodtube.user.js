@@ -1821,7 +1821,6 @@
 		})
 		// If there's any issues loading the chapters, try again (after configured delay time)
 		.catch((error) => {
-			console.log('error', error);
 			if (typeof goodTube_pendingRetry['loadChapters'] !== 'undefined') {
 				clearTimeout(goodTube_pendingRetry['loadChapters']);
 			}
