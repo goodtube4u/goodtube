@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.905
+// @version      2.950
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -416,6 +416,7 @@
 	let goodTube_updateChapters = false;
 	let goodTube_chapterTitleInterval = false;
 	let goodTube_previousChapters = false;
+	let goodTube_chaptersChangeInterval = false;
 
 	// Init
 	function goodTube_player_init() {
@@ -1756,7 +1757,6 @@
 		})
 		// If there's any issues loading the video data, try again (after configured delay time)
 		.catch((error) => {
-			console.log(error);
 			if (typeof goodTube_pendingRetry['loadVideoData'] !== 'undefined') {
 				clearTimeout(goodTube_pendingRetry['loadVideoData']);
 			}
@@ -1803,6 +1803,29 @@
 		// Try to get the chapters from the UI
 		let uiChapters = Array.from(document.querySelectorAll("#panels ytd-engagement-panel-section-list-renderer:nth-child(2) #content ytd-macro-markers-list-renderer #contents ytd-macro-markers-list-item-renderer #endpoint #details"));
 
+
+		// If the chapters from the UI change, reload the chapters. This is important.
+		// ----------------------------------------
+		if (goodTube_chaptersChangeInterval) {
+			clearInterval(goodTube_chaptersChangeInterval);
+		}
+
+		let prevUIChapters = JSON.stringify(document.querySelectorAll("#panels ytd-engagement-panel-section-list-renderer:nth-child(2) #content ytd-macro-markers-list-renderer #contents ytd-macro-markers-list-item-renderer #endpoint #details"));
+		goodTube_chaptersChangeInterval = setInterval(function() {
+			let chaptersInnerHTML = JSON.stringify(document.querySelectorAll("#panels ytd-engagement-panel-section-list-renderer:nth-child(2) #content ytd-macro-markers-list-renderer #contents ytd-macro-markers-list-item-renderer #endpoint #details"));
+
+			if (chaptersInnerHTML !== prevUIChapters) {
+				if (typeof goodTube_pendingRetry['loadChapters'] !== 'undefined') {
+					clearTimeout(goodTube_pendingRetry['loadChapters']);
+				}
+
+				prevUIChapters = chaptersInnerHTML;
+				goodTube_player_loadChaptersAttempts = 0;
+				goodTube_player_loadChapters(player, totalDuration);
+			}
+		}, 1000);
+		// ----------------------------------------
+
 		let withTitleAndTime = uiChapters.map((node) => ({
 			title: node.querySelector(".macro-markers")?.textContent,
 			time: node.querySelector("#time")?.textContent,
@@ -1822,23 +1845,8 @@
 
 		// If we found the chapters data via the UI
 		if (chapters.length) {
-			// If the chapters haven't changed, try again
-			if (chapters === goodTube_previousChapters) {
-				if (typeof goodTube_pendingRetry['loadChapters'] !== 'undefined') {
-					clearTimeout(goodTube_pendingRetry['loadChapters']);
-				}
-
-				goodTube_pendingRetry['loadChapters'] = setTimeout(function() {
-					goodTube_player_loadChapters(player, totalDuration);
-				}, goodTube_retryDelay);
-			}
-			// Otherwise we have new chapters
-			else {
-				goodTube_previousChapters = chapters;
-
-				// Load chapters into the player
-				goodTube_player_loadChaptersFromData(player, chapters, totalDuration);
-			}
+			// Load chapters into the player
+			goodTube_player_loadChaptersFromData(player, chapters, totalDuration);
 		}
 		// Get chapters from a public youtube API (yt.lemnoslife.com)
 		else {
@@ -1861,6 +1869,8 @@
 					if (goodTube_debug) {
 						console.log('[GoodTube] This video does not have chapters');
 					}
+
+					goodTube_previousChapters = false;
 				}
 
 				// Loading the API data for chapters worked, so let's allow more retries next time
