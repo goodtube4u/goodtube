@@ -7,7 +7,7 @@ What is GoodTube you ask? It's a little plugin for Youtube that;
 - Removes shorts.
 - Loads Youtube videos from different sources.
 - Removes unwanted search results ("You might also like this", "Other people also watched", etc).
-- Allows you to download the Audio or Video directly from a button at the bottom of the player!
+- Allows you to download the Audio / Video / Playlist in HD with the click of a button (at the bottom of the player).
 - View the full feature list [here](https://github.com/goodtube4u/goodtube?tab=readme-ov-file#features)
 
 **--- It works on both desktop and mobile ---**
@@ -121,6 +121,7 @@ I recommend using Orion Browser just like you would the Youtube app. Put it on y
 - The beloved algorithm / watch history and all that stuff still works.
 - Keyboard shortcuts work.
 - Subtitles work.
+- Chapters work.
 - Shorts are removed.
 - Unwated search results are removed.
 - Autoplay is supported.
@@ -128,13 +129,12 @@ I recommend using Orion Browser just like you would the Youtube app. Put it on y
 - Picture in picture / the miniplayer are supported.
 - Theater mode is supported.
 - Thumbnails for other recommended videos that pop up when a video finishes are removed (I really hate these, try without it's nice).
-- You can download the video or audio straight from the player! There's a little button at the bottom of the video to do it.
+- Allows you to download the Audio / Video / Playlist in HD with the click of a button (at the bottom of the player).
 - It'll tell you when there's an update and give you a little button that installs the latest version.
 
 ## Coming soon
 
-- Currently servers will not give 1080p. Working on it, should be available pretty soon.
-- Chapters are not yet supported, but again - working on it and should be done soon.
+- Currently servers will not give 1080p. Working on it.
 
 ## Why?
 Well lately I've been raging as Youtube have successfully stopped most adblockers from working (or they only work sometimes). You've probably been experiencing this same nightmare on and off.
