@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.950
+// @version      2.951
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -1868,6 +1868,22 @@
 					// Debug message
 					if (goodTube_debug) {
 						console.log('[GoodTube] This video does not have chapters');
+					}
+
+					// Remove the old chapters
+					document.querySelector('.goodTube_chapters')?.remove();
+					document.querySelector('.goodTube_markers')?.remove();
+					if (document.querySelector('#goodTube_player_wrapper1').classList.contains('goodTube_hasChapters')) {
+						document.querySelector('#goodTube_player_wrapper1').classList.remove('goodTube_hasChapters');
+					}
+					if (goodTube_updateChapters) {
+						clearInterval(goodTube_updateChapters);
+						goodTube_updateChapters = false;
+					}
+					if (goodTube_chapterTitleInterval) {
+						clearInterval(goodTube_chapterTitleInterval);
+						goodTube_chapterTitleInterval = false;
+						document.querySelector('#goodTube_player_wrapper1 .vjs-time-control .vjs-duration-display')?.setAttribute('chapter-title', '');
 					}
 
 					goodTube_previousChapters = false;
