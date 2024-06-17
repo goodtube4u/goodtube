@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.901
+// @version      2.902
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -1795,71 +1795,41 @@
 			return;
 		}
 
-		// Create a variable to store the chapters
-		let chapters = false;
+		// Get chapters from a public youtube API (yt.lemnoslife.com)
+		fetch('https://yt.lemnoslife.com/videos?part=chapters&id='+goodTube_getParams['v'])
+		.then(response => response.text())
+		.then(data => {
+			// Turn chapters data into JSON
+			let chaptersData = JSON.parse(data);
 
-		// Try to get the chapters from the UI
-		let uiChapters = Array.from(document.querySelectorAll("#panels ytd-engagement-panel-section-list-renderer:nth-child(2) #content ytd-macro-markers-list-renderer #contents ytd-macro-markers-list-item-renderer #endpoint #details"));
+			// If this video has chapters
+			if (typeof chaptersData['items'][0]['chapters']['chapters'] !== 'undefined' && chaptersData['items'][0]['chapters']['chapters'].length) {
+				chapters = chaptersData['items'][0]['chapters']['chapters'];
 
-		let withTitleAndTime = uiChapters.map((node) => ({
-			title: node.querySelector(".macro-markers")?.textContent,
-			time: node.querySelector("#time")?.textContent,
-		}));
-
-		let filtered = withTitleAndTime.filter(
-			(element) =>
-				element.title !== undefined &&
-				element.title !== null &&
-				element.time !== undefined &&
-				element.time !== null
-		);
-
-		chapters = [
-			...new Map(filtered.map((node) => [node.time, node])).values(),
-		];
-
-		// If we found the chapters data via the UI
-		if (chapters.length) {
-			// Load chapters into the player
-			goodTube_player_loadChaptersFromData(player, chapters, totalDuration);
-		}
-		// Otherwise we couldn't find chapters using the UI, so get them from a public youtube API (yt.lemnoslife.com)
-		else {
-			fetch('https://yt.lemnoslife.com/videos?part=chapters&id='+goodTube_getParams['v'])
-			.then(response => response.text())
-			.then(data => {
-				// Turn chapters data into JSON
-				let chaptersData = JSON.parse(data);
-
-				// If this video has chapters
-				if (typeof chaptersData['items'][0]['chapters']['chapters'] !== 'undefined' && chaptersData['items'][0]['chapters']['chapters'].length) {
-					chapters = chaptersData['items'][0]['chapters']['chapters'];
-
-					// Load them into the player
-					goodTube_player_loadChaptersFromData(player, chapters, totalDuration);
+				// Load them into the player
+				goodTube_player_loadChaptersFromData(player, chapters, totalDuration);
+			}
+			else {
+				// Debug message
+				if (goodTube_debug) {
+					console.log('[GoodTube] This video does not have chapters');
 				}
-				else {
-					// Debug message
-					if (goodTube_debug) {
-						console.log('[GoodTube] This video does not have chapters');
-					}
-				}
+			}
 
-				// Loading the API data for chapters worked, so let's allow more retries next time
-				goodTube_player_loadChaptersAttempts = 0;
-			})
-			// If there's any issues loading the chapters, try again (after configured delay time)
-			.catch((error) => {
-				console.log('error', error);
-				if (typeof goodTube_pendingRetry['loadChapters'] !== 'undefined') {
-					clearTimeout(goodTube_pendingRetry['loadChapters']);
-				}
+			// Loading the API data for chapters worked, so let's allow more retries next time
+			goodTube_player_loadChaptersAttempts = 0;
+		})
+		// If there's any issues loading the chapters, try again (after configured delay time)
+		.catch((error) => {
+			console.log('error', error);
+			if (typeof goodTube_pendingRetry['loadChapters'] !== 'undefined') {
+				clearTimeout(goodTube_pendingRetry['loadChapters']);
+			}
 
-				goodTube_pendingRetry['loadChapters'] = setTimeout(function() {
-					goodTube_player_loadChapters(player);
-				}, goodTube_retryDelay);
-			});
-		}
+			goodTube_pendingRetry['loadChapters'] = setTimeout(function() {
+				goodTube_player_loadChapters(player);
+			}, goodTube_retryDelay);
+		});
 	}
 
 	function goodTube_player_loadChaptersFromData(player, chapters, totalDuration) {
