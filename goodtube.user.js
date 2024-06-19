@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.963
+// @version      2.970
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -246,7 +246,7 @@
 	// Support timestamp links in comments
 	function goodTube_youtube_timestampLinks() {
 		// Links in video description and comments
-		let timestampLinks = document.querySelectorAll('#description a, ytd-comments .yt-core-attributed-string a');
+		let timestampLinks = document.querySelectorAll('#description a, ytd-comments .yt-core-attributed-string a, ytm-expandable-video-description-body-renderer a, .comment-content a');
 
 		// For each link
 		timestampLinks.forEach((element) => {
@@ -1759,7 +1759,7 @@
 					console.log('[GoodTube] Loading chapters...');
 				}
 
-				goodTube_player_loadChapters(player, videoData['lengthSeconds']);
+				goodTube_player_loadChapters(player, videoData['description'], videoData['lengthSeconds']);
 
 				// Load storyboards into the player (desktop only)
 				if (storyboardData && window.location.href.indexOf('m.youtube') === -1) {
@@ -1780,109 +1780,86 @@
 	}
 
 	// Load chapters
-	function goodTube_player_loadChapters(player, totalDuration) {
+	function goodTube_player_loadChapters(player, description, totalDuration) {
 		// Clear any existing chapters
 		goodTube_player_clearChapters();
 
-		// Only re-attempt to load the chapters max configured retry attempts
-		goodTube_player_loadChaptersAttempts++;
-		if (goodTube_player_loadChaptersAttempts > goodTube_retryAttempts) {
-			// Debug message
-			if (goodTube_debug) {
-				console.log('[GoodTube] Chapters could not be loaded');
-			}
-
-			return;
-		}
-
-
 		// Create a variable to store the chapters
-		let chapters = false;
+		let chapters = [];
 
-		// Try to get the chapters from the UI
-		let uiChapters = Array.from(document.querySelectorAll("#panels ytd-engagement-panel-section-list-renderer:nth-child(2) #content ytd-macro-markers-list-renderer #contents ytd-macro-markers-list-item-renderer #endpoint #details"));
+		// First up, try to get the chapters from the video description
+		let lines = description.split("\n");
+		let regex = /(\d{0,2}:?\d{1,2}:\d{2})/g;
 
+		for (let line of lines) {
+			const matches = line.match(regex);
+			if (matches) {
+				let ts = matches[0];
+				let title = line
+					.split(" ")
+					.filter((l) => !l.includes(ts))
+					.join(" ");
 
-		// If the chapters from the UI change, reload the chapters. This is important.
-		// ----------------------------------------
-		if (goodTube_chaptersChangeInterval) {
-			clearInterval(goodTube_chaptersChangeInterval);
+				chapters.push({
+					time: ts,
+					title: title,
+				});
+			}
 		}
 
-		let prevUIChapters = JSON.stringify(document.querySelectorAll("#panels ytd-engagement-panel-section-list-renderer:nth-child(2) #content ytd-macro-markers-list-renderer #contents ytd-macro-markers-list-item-renderer #endpoint #details"));
-		goodTube_chaptersChangeInterval = setInterval(function() {
-			let chaptersInnerHTML = JSON.stringify(document.querySelectorAll("#panels ytd-engagement-panel-section-list-renderer:nth-child(2) #content ytd-macro-markers-list-renderer #contents ytd-macro-markers-list-item-renderer #endpoint #details"));
 
-			if (chaptersInnerHTML !== prevUIChapters) {
-				if (typeof goodTube_pendingRetry['loadChapters'] !== 'undefined') {
-					clearTimeout(goodTube_pendingRetry['loadChapters']);
-				}
+		// If that didn't work, get them from the DOM (this works for desktop only)
+		if (chapters.length === 0) {
+			// Target the chapters in the DOM
+			let uiChapters = Array.from(document.querySelectorAll("#panels ytd-engagement-panel-section-list-renderer:nth-child(2) #content ytd-macro-markers-list-renderer #contents ytd-macro-markers-list-item-renderer #endpoint #details"));
 
-				prevUIChapters = chaptersInnerHTML;
-				goodTube_player_loadChaptersAttempts = 0;
-				goodTube_player_loadChapters(player, totalDuration);
+
+			// If the chapters from the DOM change, reload the chapters. This is important because it's async data that changes.
+			// ----------------------------------------
+			if (goodTube_chaptersChangeInterval) {
+				clearInterval(goodTube_chaptersChangeInterval);
 			}
-		}, 1000);
-		// ----------------------------------------
 
-		let withTitleAndTime = uiChapters.map((node) => ({
-			title: node.querySelector(".macro-markers")?.textContent,
-			time: node.querySelector("#time")?.textContent,
-		}));
+			let prevUIChapters = JSON.stringify(document.querySelectorAll("#panels ytd-engagement-panel-section-list-renderer:nth-child(2) #content ytd-macro-markers-list-renderer #contents ytd-macro-markers-list-item-renderer #endpoint #details"));
+			goodTube_chaptersChangeInterval = setInterval(function() {
+				let chaptersInnerHTML = JSON.stringify(document.querySelectorAll("#panels ytd-engagement-panel-section-list-renderer:nth-child(2) #content ytd-macro-markers-list-renderer #contents ytd-macro-markers-list-item-renderer #endpoint #details"));
 
-		let filtered = withTitleAndTime.filter(
-			(element) =>
-				element.title !== undefined &&
-				element.title !== null &&
-				element.time !== undefined &&
-				element.time !== null
-		);
+				if (chaptersInnerHTML !== prevUIChapters) {
+					prevUIChapters = chaptersInnerHTML;
+					goodTube_player_loadChapters(player, description, totalDuration);
+				}
+			}, 1000);
+			// ----------------------------------------
 
-		chapters = [
-			...new Map(filtered.map((node) => [node.time, node])).values(),
-		];
+			let withTitleAndTime = uiChapters.map((node) => ({
+				title: node.querySelector(".macro-markers")?.textContent,
+				time: node.querySelector("#time")?.textContent,
+			}));
 
-		// If we found the chapters data via the UI
-		if (chapters.length) {
+			let filtered = withTitleAndTime.filter(
+				(element) =>
+					element.title !== undefined &&
+					element.title !== null &&
+					element.time !== undefined &&
+					element.time !== null
+			);
+
+			chapters = [
+				...new Map(filtered.map((node) => [node.time, node])).values(),
+			];
+		}
+
+		// If we found the chapters data
+		if (chapters.length > 0) {
 			// Load chapters into the player
 			goodTube_player_loadChaptersFromData(player, chapters, totalDuration);
 		}
-		// Get chapters from a public youtube API (yt.lemnoslife.com)
+		// Otherwise this video does not have chapters
 		else {
-			// Get chapters from a public youtube API (yt.lemnoslife.com)
-			fetch('https://yt.lemnoslife.com/videos?part=chapters&id='+goodTube_getParams['v'])
-			.then(response => response.text())
-			.then(data => {
-				// Turn chapters data into JSON
-				let chaptersData = JSON.parse(data);
-
-				// If this video has chapters
-				if (typeof chaptersData['items'][0]['chapters']['chapters'] !== 'undefined' && chaptersData['items'][0]['chapters']['chapters'].length) {
-					let chapters = chaptersData['items'][0]['chapters']['chapters'];
-
-					// Load them into the player
-					goodTube_player_loadChaptersFromData(player, chapters, totalDuration);
-				}
-				else {
-					// Debug message
-					if (goodTube_debug) {
-						console.log('[GoodTube] This video does not have chapters');
-					}
-
-					// Clear any existing chapters
-					goodTube_player_clearChapters();
-				}
-			})
-			// If there's any issues loading the chapters, try again (after configured delay time)
-			.catch((error) => {
-				if (typeof goodTube_pendingRetry['loadChapters'] !== 'undefined') {
-					clearTimeout(goodTube_pendingRetry['loadChapters']);
-				}
-
-				goodTube_pendingRetry['loadChapters'] = setTimeout(function() {
-					goodTube_player_loadChapters(player, totalDuration);
-				}, goodTube_retryDelay);
-			});
+			// Debug message
+			if (goodTube_debug) {
+				console.log('[GoodTube] No chapters found');
+			}
 		}
 	}
 
@@ -2084,10 +2061,6 @@
 		if (goodTube_chaptersChangeInterval) {
 			clearInterval(goodTube_chaptersChangeInterval);
 			goodTube_chaptersChangeInterval = false;
-		}
-
-		if (typeof goodTube_pendingRetry['loadChapters'] !== 'undefined') {
-			clearTimeout(goodTube_pendingRetry['loadChapters']);
 		}
 
 		// Remove interface elements
