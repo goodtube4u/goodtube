@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.962
+// @version      2.963
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -334,22 +334,27 @@
 
 	// Mute, pause and skip ads on all Youtube videos
 	function goodTube_youtube_mutePauseSkipAds() {
+		// Always mute the youtube video - this helps to fix the audio flash on load
+		if (!goodTube_syncing || !goodTube_player) {
+			let youtubeFrameApi = document.querySelector('#movie_player');
+			if (youtubeFrameApi) {
+				youtubeFrameApi.mute();
+			}
+		}
+
+		// Always skip the ads as soon as possible by clicking the skip button
+		let skipButton = document.querySelector('.ytp-skip-ad-button');
+		if (skipButton) {
+			skipButton.click();
+		}
+
+		// Also pause and mute all videos on the page
 		let youtubeVideos = document.querySelectorAll('video:not(#goodTube_player):not(#goodTube_player_html5_api)');
 		youtubeVideos.forEach((element) => {
-			// Allow the inline / thumbnail hover player
+			// Don't touch the thumbnail hover player
 			if (!element.closest('#inline-player')) {
 				element.muted = true;
-
-				// If we're not syncing the videos, or our player hasn't loaded yet - pause the youtube player
-				if (!goodTube_syncing || !goodTube_player) {
-					element.pause();
-				}
-
-				// Always skip the ads by clicking the skip button
-				let skipButton = document.querySelector('.ytp-skip-ad-button');
-				if (skipButton) {
-					skipButton.click();
-				}
+				element.pause();
 			}
 		});
 	}
@@ -415,7 +420,6 @@
 	let goodTube_player_manuallySelectedQuality = false;
 	let goodTube_updateChapters = false;
 	let goodTube_chapterTitleInterval = false;
-	let goodTube_previousChapters = false;
 	let goodTube_chaptersChangeInterval = false;
 
 	// Init
@@ -1867,12 +1871,7 @@
 
 					// Clear any existing chapters
 					goodTube_player_clearChapters();
-
-					goodTube_previousChapters = false;
 				}
-
-				// Loading the API data for chapters worked, so let's allow more retries next time
-				goodTube_player_loadChaptersAttempts = 0;
 			})
 			// If there's any issues loading the chapters, try again (after configured delay time)
 			.catch((error) => {
@@ -2071,22 +2070,32 @@
 	}
 
 	function goodTube_player_clearChapters() {
-		document.querySelector('.goodTube_chapters')?.remove();
-		document.querySelector('.goodTube_markers')?.remove();
-		if (document.querySelector('#goodTube_player_wrapper1').classList.contains('goodTube_hasChapters')) {
-			document.querySelector('#goodTube_player_wrapper1').classList.remove('goodTube_hasChapters');
-		}
+		// Remove timeouts and intervals
 		if (goodTube_updateChapters) {
 			clearInterval(goodTube_updateChapters);
 			goodTube_updateChapters = false;
 		}
+
 		if (goodTube_chapterTitleInterval) {
 			clearInterval(goodTube_chapterTitleInterval);
 			goodTube_chapterTitleInterval = false;
-			document.querySelector('#goodTube_player_wrapper1 .vjs-time-control .vjs-duration-display')?.setAttribute('chapter-title', '');
 		}
+
 		if (goodTube_chaptersChangeInterval) {
 			clearInterval(goodTube_chaptersChangeInterval);
+			goodTube_chaptersChangeInterval = false;
+		}
+
+		if (typeof goodTube_pendingRetry['loadChapters'] !== 'undefined') {
+			clearTimeout(goodTube_pendingRetry['loadChapters']);
+		}
+
+		// Remove interface elements
+		document.querySelector('#goodTube_player_wrapper1 .vjs-time-control .vjs-duration-display')?.setAttribute('chapter-title', '');
+		document.querySelector('.goodTube_chapters')?.remove();
+		document.querySelector('.goodTube_markers')?.remove();
+		if (document.querySelector('#goodTube_player_wrapper1').classList.contains('goodTube_hasChapters')) {
+			document.querySelector('#goodTube_player_wrapper1').classList.remove('goodTube_hasChapters');
 		}
 	}
 
