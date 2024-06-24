@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.970
+// @version      2.971
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -4224,6 +4224,13 @@
 	let goodTube_apis = [
 		// FAST
 		{
+			'name': 'Acid (US)',
+			'type': 1,
+			'proxy': true,
+			'url': 'https://invidious.incogniweb.net'
+		},
+		// FAST
+		{
 			'name': 'Amethyst (DE)',
 			'type': 1,
 			'proxy': true,
@@ -4241,7 +4248,7 @@
 			'name': 'Goblin (AU)',
 			'type': 1,
 			'proxy': false,
-			'url': '//invidious.perennialte.ch'
+			'url': 'https://invidious.perennialte.ch'
 		},
 		// FAST
 		{
@@ -4257,13 +4264,6 @@
 			'proxy': true,
 			'url': 'https://invidious.privacyredirect.com'
 		},
-		// // FAST
-		// {
-		// 	'name': 'Asrai (DE)',
-		// 	'type': 1,
-		// 	'proxy': true,
-		// 	'url': 'https://iv.nboeck.de'
-		// },
 		// FAST
 		{
 			'name': 'Nymph (AT)',
@@ -4306,34 +4306,13 @@
 			'proxy': true,
 			'url': 'https://invidious.protokolla.fi'
 		},
-		// // MEDIUM
-		// {
-		// 	'name': 'Sonar (DE)',
-		// 	'type': 1,
-		// 	'proxy': true,
-		// 	'url': 'https://yt.cdaut.de'
-		// },
-		// // MEDIUM
-		// {
-		// 	'name': 'Cauldron (UA)',
-		// 	'type': 1,
-		// 	'proxy': true,
-		// 	'url': 'https://invidious.nerdvpn.de'
-		// },
-		// // SLOW
-		// {
-		// 	'name': 'Druid (DE)',
-		// 	'type': 1,
-		// 	'proxy': true,
-		// 	'url': 'https://invidious.projectsegfau.lt'
-		// },
-		// // SLOW
-		// {
-		// 	'name': 'Riot (US)',
-		// 	'type': 1,
-		// 	'proxy': true,
-		// 	'url': 'https://iv.ggtyler.dev'
-		// },
+		// SLOW
+		{
+			'name': 'Druid (DE)',
+			'type': 1,
+			'proxy': true,
+			'url': 'https://invidious.projectsegfau.lt'
+		}
 	];
 
 	// Set default API to a random server, this will help load on any one server
