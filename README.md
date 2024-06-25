@@ -3,18 +3,29 @@
 Hello and welcome! I'm glad you're here.
 
 What is GoodTube you ask? It's a little plugin for Youtube that;
-- Removes video and page ads.
-- Removes shorts.
+
+- REMOVES 100% OF PAGE AND VIDEO ADS.
+- Allows background play (so you can turn your phone screen off and keep listening).
+- Works on both desktop and mobile (ios and android).
+- Works in all major browsers are supported - Chrome, Firefox, Opera, etc.
 - Loads Youtube videos from different servers (in up to 1080p).
+- Allows you to download the Audio / Video / Entire Playlist in up to 8K quality with the click of a button (at the bottom of the player).
+- Removes shorts.
 - Removes unwanted search results ("You might also like this", "Other people also watched", etc).
-- Allows you to download the Audio / Video / Playlist in HD with the click of a button (at the bottom of the player).
-- View the full feature list [here](https://github.com/goodtube4u/goodtube?tab=readme-ov-file#features)
+- Removes thumbnails for other recommended videos that pop up when a video finishes (I really hate these, try without it's nice).
+- Keeps you up to date, prompting you to update the plugin directly from Youtube when there's a new release.
 
-**--- It works on both desktop and mobile ---**
+And it keeps the good stuff like;
 
-*Background play is also supported, so you can turn off your screen and keep listening!*
+- The beloved algorithm / watch history.
+- Keyboard shortcuts.
+- Subtitles.
+- Chapters.
+- Autoplay.
+- Playlists.
+- Picture in picture / the miniplayer.
+- Theater mode.
 
-All major browsers are supported - Chrome, Firefox, Opera, etc.
 
 It's easy to install too, all the instructions are below.
 
@@ -113,24 +124,6 @@ I recommend using Orion Browser just like you would the Youtube app. Put it on y
 *Please note: If you see a mostly blank screen on the Youtube homepage, don't worry! This is normal. Just search for something.*
 
 *Simply sign into Youtube and the homepage will be full of your favorite videos once again.*
-
-
-## Features
-
-- ZERO ADS.
-- The beloved algorithm / watch history and all that stuff still works.
-- Keyboard shortcuts work.
-- Subtitles work.
-- Chapters work.
-- Shorts are removed.
-- Unwated search results are removed.
-- Autoplay is supported.
-- Playlists are supported.
-- Picture in picture / the miniplayer are supported.
-- Theater mode is supported.
-- Thumbnails for other recommended videos that pop up when a video finishes are removed (I really hate these, try without it's nice).
-- Allows you to download the Audio / Video / Playlist in HD with the click of a button (at the bottom of the player).
-- It'll tell you when there's an update and give you a little button that installs the latest version.
 
 
 ## Why?
