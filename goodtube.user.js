@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      3.000
+// @version      3.002
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -4363,62 +4363,59 @@
 		},
 
 		{
-			'name': 'Amethyst (DE)',
+			'name': '360p - Amethyst (DE)',
 			'type': 1,
 			'proxy': true,
 			'url': 'https://yt.artemislena.eu'
 		},
 		{
-			'name': 'Goblin (AU)',
+			'name': '360p - Goblin (AU)',
 			'type': 1,
 			'proxy': false,
 			'url': 'https://invidious.perennialte.ch'
 		},
 		{
-			'name': 'Jade (SG)',
+			'name': '360p - Jade (SG)',
 			'type': 1,
 			'proxy': true,
 			'url': 'https://vid.lilay.dev'
 		},
 		{
-			'name': 'Nymph (AT)',
+			'name': '360p - Nymph (AT)',
 			'type': 1,
 			'proxy': true,
 			'url': 'https://invidious.private.coffee'
 		},
 		{
-			'name': 'Indigo (FI)',
+			'name': '360p - Indigo (FI)',
 			'type': 1,
 			'proxy': true,
 			'url': 'https://iv.datura.network'
 		},
-
 		{
-			'name': 'Raptor (US)',
+			'name': '360p - Raptor (US)',
 			'type': 1,
 			'proxy': true,
 			'url': 'https://invidious.drgns.space'
 		},
 		{
-			'name': 'Velvet (CL)',
+			'name': '360p - Velvet (CL)',
 			'type': 1,
 			'proxy': true,
 			'url': 'https://inv.nadeko.net'
 		},
 		{
-			'name': 'Druid (DE)',
+			'name': '360p - Druid (DE)',
 			'type': 1,
 			'proxy': true,
 			'url': 'https://invidious.projectsegfau.lt'
 		}
 	];
 
-	// Set default API to a random server, this will help load on any one server
-	let goodTube_api_randomServer = Math.floor(Math.random() * ((goodTube_apis.length - 1) - 0 + 1) + 0);
-	let goodTube_api_type = goodTube_apis[goodTube_api_randomServer]['type'];
-	let goodTube_api_proxy = goodTube_apis[goodTube_api_randomServer]['proxy'];
-	let goodTube_api_url = goodTube_apis[goodTube_api_randomServer]['url'];
-	let goodTube_api_name = goodTube_apis[goodTube_api_randomServer]['name'];
+	let goodTube_api_type = goodTube_apis[0]['type'];
+	let goodTube_api_proxy = goodTube_apis[0]['proxy'];
+	let goodTube_api_url = goodTube_apis[0]['url'];
+	let goodTube_api_name = goodTube_apis[0]['name'];
 
 	// Press shortcut
 	function goodTube_shortcut(shortcut) {
