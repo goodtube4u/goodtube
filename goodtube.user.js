@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.971
+// @version      3.000
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -397,7 +397,8 @@
 	let goodTube_pendingRetry = [];
 	let goodTube_player_restoreTime = 0;
 	let goodTube_player_assets = [
-		goodTube_github+'/js/videojs-core.js',
+		goodTube_github+'/js/video.min.js',
+		goodTube_github+'/js/videojs-hls-quality-selector.js',
 		goodTube_github+'/js/videojs-vtt-thumbnails.js',
 		goodTube_github+'/js/videojs-quality-selector.js',
 		goodTube_github+'/css/videojs-core.css',
@@ -1509,6 +1510,7 @@
 			}
 			// Otherwise load the next asset
 			else {
+				goodTube_player_loadAssetAttempts = 0;
 				goodTube_player_loadAsset(goodTube_player_assets[goodTube_player_loadedAssets]);
 			}
 		})
@@ -1611,7 +1613,7 @@
 		// Setup API endpoint to get video data from
 		let apiEndpoint = false;
 
-		if (goodTube_api_type === 1) {
+		if (goodTube_api_type === 1 || goodTube_api_type === 2) {
 			apiEndpoint = goodTube_api_url+"/api/v1/videos/"+goodTube_getParams['v'];
 		}
 
@@ -1627,7 +1629,7 @@
 			let subtitleData = false;
 			let storyboardData = false;
 
-			// Below populates the source data, also - if there's any issues with the source data, try again (after configured delay time)
+			// Below populates the source data - but first, if there's any issues with the source data, try again (after configured delay time)
 			let retry = false;
 
 			if (goodTube_api_type === 1) {
@@ -1640,6 +1642,17 @@
 					storyboardData = videoData['storyboards'];
 				}
 			}
+			else if (goodTube_api_type === 2) {
+				if (typeof videoData['dashUrl'] === 'undefined') {
+					retry = true;
+				}
+				else {
+					subtitleData = videoData['captions'];
+					storyboardData = videoData['storyboards'];
+				}
+			}
+
+
 
 			// Try again if data wasn't all good
 			if (retry) {
@@ -1660,8 +1673,68 @@
 					console.log('[GoodTube] Video data loaded');
 				}
 
-				// Add audio only source
+
+
+				if (goodTube_api_type === 2) {
+					// Format dash source data
+					let dashUrl = false;
+					let dashType = false;
+
+					// Add dash source
+					let proxyUrlPart = 'false';
+					if (goodTube_api_proxy) {
+						proxyUrlPart = 'true';
+					}
+
+					dashUrl = videoData.dashUrl+'?local='+proxyUrlPart+'&amp;unique_res=1';
+					dashType = 'application/dash+xml';
+
+					// Add the dash source
+					goodTube_videojs_player.src({
+						src: dashUrl,
+						type: dashType
+					});
+
+					// // Go through each quality and get the highest one
+					// let qualities = goodTube_videojs_player.qualityLevels();
+					// goodTube_player_highestQuality = false;
+					// qualities['levels_'].forEach((quality) => {
+					// 	if (goodTube_api_type === 1) {
+					// 		if (!goodTube_player_highestQuality || quality['height'] > goodTube_player_highestQuality) {
+					// 			goodTube_player_highestQuality = quality['height'];
+					// 		}
+					// 	}
+					// });
+
+					// console.log(goodTube_player_highestQuality);
+
+					// Show the correct quality menu item
+					let qualityButtons = document.querySelectorAll('.vjs-quality-selector');
+					if (qualityButtons.length === 2) {
+						qualityButtons[0].style.display = 'none';
+						qualityButtons[1].style.display = 'block';
+					}
+				}
+
+
+
 				if (goodTube_api_type === 1) {
+					// If we've manually selected a quality, and it exists for this video, select it
+					if (goodTube_player_manuallySelectedQuality && player.querySelector('.goodTube_source_'+goodTube_player_manuallySelectedQuality)) {
+						player.querySelector('.goodTube_source_'+goodTube_player_manuallySelectedQuality).setAttribute('selected', true);
+
+						// Save the currently selected quality, this is used when we change quality to know weather or not the new quality has been manually selected
+						goodTube_player_selectedQuality = goodTube_player_manuallySelectedQuality;
+					}
+					// Otherwise select the highest quality source
+					else {
+						player.querySelector('.goodTube_source_'+goodTube_player_highestQuality)?.setAttribute('selected', true);
+
+						// Save the currently selected quality, this is used when we change quality to know weather or not the new quality has been manually selected
+						goodTube_player_selectedQuality = goodTube_player_highestQuality;
+					}
+
+					// Add audio only source
 					let audio_element = document.createElement('source');
 					audio_element.setAttribute('src', goodTube_api_url+"/watch?v="+goodTube_getParams['v']+'&raw=1&listen=1');
 					audio_element.setAttribute('type', 'audio/mp3');
@@ -1669,19 +1742,17 @@
 					audio_element.setAttribute('video', true);
 					audio_element.setAttribute('class', 'goodTube_source_audio');
 					player.appendChild(audio_element);
-				}
 
-				// For each source
-				let i = 0;
-				goodTube_player_highestQuality = false;
-				sourceData.forEach((source) => {
-					// Format the data correctly
-					let source_src = false;
-					let source_type = false;
-					let source_label = false;
-					let source_quality = false;
+					// For each source
+					let i = 0;
+					goodTube_player_highestQuality = false;
+					sourceData.forEach((source) => {
+						// Format the data correctly
+						let source_src = false;
+						let source_type = false;
+						let source_label = false;
+						let source_quality = false;
 
-					if (goodTube_api_type === 1) {
 						source_src = goodTube_api_url+'/latest_version?id='+goodTube_getParams['v']+'&itag='+source['itag'];
 						if (goodTube_api_proxy) {
 							source_src = source_src+'&local=true';
@@ -1690,59 +1761,69 @@
 						source_type = source['type'];
 						source_label = parseFloat(source['resolution'].replace('p', '').replace('hd', ''))+'p';
 						source_quality = parseFloat(source['resolution'].replace('p', '').replace('hd', ''));
-					}
 
-					// Only add the source to the player if the data is populated
-					if (source_src && source_type && source_label) {
+						// Only add the source to the player if the data is populated
+						if (source_src && source_type && source_label) {
 
-						// Add video
-						if (source_type.toLowerCase().indexOf('video') !== -1) {
-							let video_element = document.createElement('source');
-							video_element.setAttribute('src', source_src);
-							video_element.setAttribute('type', source_type);
-							video_element.setAttribute('label', source_label);
-							video_element.setAttribute('video', true);
-							video_element.setAttribute('class', 'goodTube_source_'+source_quality);
-							player.appendChild(video_element);
+							// Add video
+							if (source_type.toLowerCase().indexOf('video') !== -1) {
+								let video_element = document.createElement('source');
+								video_element.setAttribute('src', source_src);
+								video_element.setAttribute('type', source_type);
+								video_element.setAttribute('label', source_label);
+								video_element.setAttribute('video', true);
+								video_element.setAttribute('class', 'goodTube_source_'+source_quality);
+								player.appendChild(video_element);
 
-							// Keep track of the highest quality item
-							if (!goodTube_player_highestQuality || source_quality > goodTube_player_highestQuality) {
-								goodTube_player_highestQuality = source_quality;
+								// Keep track of the highest quality item
+								if (!goodTube_player_highestQuality || source_quality > goodTube_player_highestQuality) {
+									goodTube_player_highestQuality = source_quality;
+								}
 							}
 						}
+
+						// Increment the loop
+						i++;
+					});
+
+					// If we've manually selected a quality, and it exists for this video, select it
+					if (goodTube_player_manuallySelectedQuality && player.querySelector('.goodTube_source_'+goodTube_player_manuallySelectedQuality)) {
+						player.querySelector('.goodTube_source_'+goodTube_player_manuallySelectedQuality).setAttribute('selected', true);
+
+						// Save the currently selected quality, this is used when we change quality to know weather or not the new quality has been manually selected
+						goodTube_player_selectedQuality = goodTube_player_manuallySelectedQuality;
+					}
+					// Otherwise select the highest quality source
+					else {
+						player.querySelector('.goodTube_source_'+goodTube_player_highestQuality)?.setAttribute('selected', true);
+
+						// Save the currently selected quality, this is used when we change quality to know weather or not the new quality has been manually selected
+						goodTube_player_selectedQuality = goodTube_player_highestQuality;
 					}
 
-					// Increment the loop
-					i++;
-				});
 
-				// If we've manually selected a quality, and it exists for this video, select it
-				if (goodTube_player_manuallySelectedQuality && player.querySelector('.goodTube_source_'+goodTube_player_manuallySelectedQuality)) {
-					player.querySelector('.goodTube_source_'+goodTube_player_manuallySelectedQuality).setAttribute('selected', true);
-
-					// Save the currently selected quality, this is used when we change quality to know weather or not the new quality has been manually selected
-					goodTube_player_selectedQuality = goodTube_player_manuallySelectedQuality;
-				}
-				// Otherwise select the highest quality source
-				else {
-					player.querySelector('.goodTube_source_'+goodTube_player_highestQuality)?.setAttribute('selected', true);
-
-					// Save the currently selected quality, this is used when we change quality to know weather or not the new quality has been manually selected
-					goodTube_player_selectedQuality = goodTube_player_highestQuality;
-				}
-
-
-				// Enable the videojs quality selector
-				let qualities = [];
-				player.querySelectorAll('source[video=true]').forEach((quality) => {
-					qualities.push({
-						src: quality.getAttribute('src'),
-						type: quality.getAttribute('type'),
-						label: quality.getAttribute('label'),
-						selected: quality.getAttribute('selected')
+					// Enable the videojs quality selector
+					let qualities = [];
+					player.querySelectorAll('source[video=true]').forEach((quality) => {
+						qualities.push({
+							src: quality.getAttribute('src'),
+							type: quality.getAttribute('type'),
+							label: quality.getAttribute('label'),
+							selected: quality.getAttribute('selected')
+						});
 					});
-				});
-				goodTube_videojs_player.src(qualities);
+
+					goodTube_videojs_player.src(qualities);
+
+
+					// Show the correct quality menu item
+					let qualityButtons = document.querySelectorAll('.vjs-quality-selector');
+					if (qualityButtons.length === 2) {
+						qualityButtons[1].style.display = 'none';
+						qualityButtons[0].style.display = 'block';
+					}
+				}
+
 
 
 				// Play the video
@@ -1769,6 +1850,7 @@
 		})
 		// If there's any issues loading the video data, try again (after configured delay time)
 		.catch((error) => {
+			console.log(error);
 			if (typeof goodTube_pendingRetry['loadVideoData'] !== 'undefined') {
 				clearTimeout(goodTube_pendingRetry['loadVideoData']);
 			}
@@ -2096,7 +2178,7 @@
 				let subtitle_url = false;
 				let subtitle_label = false;
 
-				if (goodTube_api_type === 1) {
+				if (goodTube_api_type === 1 || goodTube_api_type === 2) {
 					subtitle_url = goodTube_api_url+subtitle['url'];
 					subtitle_label = subtitle['label'];
 				}
@@ -2361,6 +2443,7 @@
 	let goodTube_videojs_tapTimer_backwards = false;
 	let goodTube_videojs_tapTimer_forwards = false;
 	let goodTube_videojs_fastForward = false;
+	let goodTube_qualityApi = false;
 
 	// Init video js
 	function goodTube_player_videojs() {
@@ -2659,6 +2742,9 @@
 		// After video JS has loaded
 		goodTube_videojs_player.on('ready', function() {
 			goodTube_videojs_player_loaded = true;
+
+			// Enable the qualities API
+			goodTube_qualityApi = goodTube_videojs_player.hlsQualitySelector();
 
 			// Add expand and close miniplayer buttons
 			let goodTube_target = document.querySelector('#goodTube_player');
@@ -3028,44 +3114,67 @@
 			// Enable the player
 			goodTube_player.classList.remove('goodTube_hidden');
 
-			let qualityLabel = '';
 
-			// Get the quality label from the quality select menu in the player
-			let qualityLabelMenuItem = document.querySelector('.vjs-quality-selector .vjs-menu .vjs-selected .vjs-menu-item-text');
-			if (qualityLabelMenuItem) {
-				qualityLabel = qualityLabelMenuItem.innerHTML;
-			}
-			// Otherwise that doesn't exist so get it from the selected source
-			else {
-				qualityLabel = goodTube_player.querySelector('source[selected=true]').getAttribute('label');
-			}
+			// Server 1 quality stuff
+			if (goodTube_api_type === 1) {
+				let qualityLabel = '';
 
-			// If we've manually changed quality, remember it so the next video stays with the same quality
-			let newQuality = qualityLabel.replace('p', '').replace('hd', '').replace(' ', '').toLowerCase();
+				// Get the quality label from the quality select menu in the player
+				let qualityLabelMenuItem = document.querySelector('.vjs-quality-selector .vjs-menu .vjs-selected .vjs-menu-item-text');
+				if (qualityLabelMenuItem) {
+					qualityLabel = qualityLabelMenuItem.innerHTML;
+				}
+				// Otherwise that doesn't exist so get it from the selected source
+				else {
+					qualityLabel = goodTube_player.querySelector('source[selected=true]').getAttribute('label');
+				}
 
-			if (parseFloat(goodTube_player_selectedQuality) !== parseFloat(newQuality)) {
-				goodTube_player_manuallySelectedQuality = newQuality;
-				goodTube_player_selectedQuality = newQuality;
-			}
+				// If we've manually changed quality, remember it so the next video stays with the same quality
+				let newQuality = qualityLabel.replace('p', '').replace('hd', '').replace(' ', '').toLowerCase();
 
-			// Add expand and close miniplayer buttons
-			let goodTube_target = document.querySelector('#goodTube_player_wrapper3');
+				if (parseFloat(goodTube_player_selectedQuality) !== parseFloat(newQuality)) {
+					goodTube_player_manuallySelectedQuality = newQuality;
+					goodTube_player_selectedQuality = newQuality;
+				}
 
-			// If the quality is audio, add the audio style to the player
-			if (newQuality === 'audio') {
-				if (!goodTube_target.classList.contains('goodTube_audio')) {
-					goodTube_target.classList.add('goodTube_audio');
+				// Target the outer wrapper
+				let goodTube_target = document.querySelector('#goodTube_player_wrapper3');
+
+				// If the quality is audio, add the audio style to the player
+				if (newQuality === 'audio') {
+					if (!goodTube_target.classList.contains('goodTube_audio')) {
+						goodTube_target.classList.add('goodTube_audio');
+					}
+				}
+				// Otherwise remove the audio style from the player
+				else if (goodTube_target.classList.contains('goodTube_audio')) {
+					goodTube_target.classList.remove('goodTube_audio');
+				}
+
+				// Debug message
+				if (goodTube_debug) {
+					if (goodTube_player_reloadVideoAttempts <= 1) {
+						console.log('[GoodTube] Loading quality '+qualityLabel+'...');
+					}
 				}
 			}
-			// Otherwise remove the audio style from the player
-			else if (goodTube_target.classList.contains('goodTube_audio')) {
-				goodTube_target.classList.remove('goodTube_audio');
-			}
 
-			// Debug message
-			if (goodTube_debug) {
-				if (goodTube_player_reloadVideoAttempts <= 1) {
-					console.log('[GoodTube] Loading quality '+qualityLabel+'...');
+
+			// Server type 2 (dash) quality stuff
+			else if (goodTube_api_type === 2) {
+				// Target the outer wrapper
+				let goodTube_target = document.querySelector('#goodTube_player_wrapper3');
+
+				// Remove any audio styles from the player
+				if (goodTube_target.classList.contains('goodTube_audio')) {
+					goodTube_target.classList.remove('goodTube_audio');
+				}
+
+				// Debug message
+				if (goodTube_debug) {
+					if (goodTube_player_reloadVideoAttempts <= 1) {
+						console.log('[GoodTube] Loading quality DASH...');
+					}
 				}
 			}
 
@@ -3272,7 +3381,7 @@
 				content: "\\f102";
 			}
 
-			.vjs-quality-selector .vjs-icon-placeholder:before {
+			.video-js .vjs-quality-selector .vjs-icon-placeholder:before {
 				content: "\\f114";
 			}
 
@@ -4222,91 +4331,80 @@
 
 	// API Endpoints
 	let goodTube_apis = [
-		// FAST
 		{
-			'name': 'Acid (US)',
-			'type': 1,
+			'name': 'HD - Acid (US)',
+			'type': 2,
 			'proxy': true,
 			'url': 'https://invidious.incogniweb.net'
 		},
-		// FAST
+		{
+			'name': 'HD - Sphynx (JP)',
+			'type': 2,
+			'proxy': true,
+			'url': 'https://invidious.jing.rocks'
+		},
+		{
+			'name': 'HD - 420 (FI)',
+			'type': 2,
+			'proxy': true,
+			'url': 'https://invidious.privacyredirect.com'
+		},
+		{
+			'name': 'HD - Onyx (FR)',
+			'type': 2,
+			'proxy': true,
+			'url': 'https://invidious.fdn.fr'
+		},
+		{
+			'name': 'HD - Obsidian (DE)',
+			'type':21,
+			'proxy': true,
+			'url': 'https://invidious.protokolla.fi'
+		},
+
 		{
 			'name': 'Amethyst (DE)',
 			'type': 1,
 			'proxy': true,
 			'url': 'https://yt.artemislena.eu'
 		},
-		// FAST
-		{
-			'name': 'Sphynx (JP)',
-			'type': 1,
-			'proxy': true,
-			'url': 'https://invidious.jing.rocks'
-		},
-		// FAST
 		{
 			'name': 'Goblin (AU)',
 			'type': 1,
 			'proxy': false,
 			'url': 'https://invidious.perennialte.ch'
 		},
-		// FAST
 		{
 			'name': 'Jade (SG)',
 			'type': 1,
 			'proxy': true,
 			'url': 'https://vid.lilay.dev'
 		},
-		// FAST
-		{
-			'name': '420 (FI)',
-			'type': 1,
-			'proxy': true,
-			'url': 'https://invidious.privacyredirect.com'
-		},
-		// FAST
 		{
 			'name': 'Nymph (AT)',
 			'type': 1,
 			'proxy': true,
 			'url': 'https://invidious.private.coffee'
 		},
-		// FAST
 		{
 			'name': 'Indigo (FI)',
 			'type': 1,
 			'proxy': true,
 			'url': 'https://iv.datura.network'
 		},
-		// FAST
-		{
-			'name': 'Onyx (FR)',
-			'type': 1,
-			'proxy': true,
-			'url': 'https://invidious.fdn.fr'
-		},
-		// MEDIUM
+
 		{
 			'name': 'Raptor (US)',
 			'type': 1,
 			'proxy': true,
 			'url': 'https://invidious.drgns.space'
 		},
-		// MEDIUM
 		{
 			'name': 'Velvet (CL)',
 			'type': 1,
 			'proxy': true,
 			'url': 'https://inv.nadeko.net'
 		},
-		// MEDIUM
-		{
-			'name': 'Obsidian (DE)',
-			'type': 1,
-			'proxy': true,
-			'url': 'https://invidious.protokolla.fi'
-		},
-		// SLOW
 		{
 			'name': 'Druid (DE)',
 			'type': 1,
@@ -4785,7 +4883,7 @@
 					}
 
 					// Otherwise, just fallback to opening it in a new tab
-					if (goodTube_api_type === 1) {
+					if (goodTube_api_type === 1 || goodTube_api_type === 2) {
 						if (type === 'audio') {
 							window.open(goodTube_api_url+'/watch?v='+goodTube_getParams['v']+'&listen=true&raw=1', '_blank');
 						}
@@ -5242,6 +5340,7 @@
 					}
 
 					goodTube_player_loadVideoDataAttempts = 0;
+					goodTube_player_restoreTime = 0;
 					goodTube_player_loadVideo(player);
 
 					// Usage stats
