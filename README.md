@@ -27,7 +27,7 @@ And it keeps the good stuff like;
 - Theater mode.
 
 
-It's easy to install too, all the instructions are below.
+It's easy to install too! All the instructions are below.
 
 Here's some screenshots:
 |  ![enter image description here](https://raw.githubusercontent.com/goodtube4u/goodtube/main/installation/demo-desktop.png)|  ![enter image description here](https://raw.githubusercontent.com/goodtube4u/goodtube/main/installation/demo-mobile.png)|
