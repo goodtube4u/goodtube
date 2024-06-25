@@ -5,7 +5,7 @@ Hello and welcome! I'm glad you're here.
 What is GoodTube you ask? It's a little plugin for Youtube that;
 - Removes video and page ads.
 - Removes shorts.
-- Loads Youtube videos from different sources.
+- Loads Youtube videos from different servers (in up to 1080p).
 - Removes unwanted search results ("You might also like this", "Other people also watched", etc).
 - Allows you to download the Audio / Video / Playlist in HD with the click of a button (at the bottom of the player).
 - View the full feature list [here](https://github.com/goodtube4u/goodtube?tab=readme-ov-file#features)
@@ -132,9 +132,6 @@ I recommend using Orion Browser just like you would the Youtube app. Put it on y
 - Allows you to download the Audio / Video / Playlist in HD with the click of a button (at the bottom of the player).
 - It'll tell you when there's an update and give you a little button that installs the latest version.
 
-## Coming soon
-
-- Currently servers will not give 1080p. Working on it.
 
 ## Why?
 Well lately I've been raging as Youtube have successfully stopped most adblockers from working (or they only work sometimes). You've probably been experiencing this same nightmare on and off.
