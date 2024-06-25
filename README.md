@@ -129,13 +129,12 @@ I recommend using Orion Browser just like you would the Youtube app. Put it on y
 ## Why?
 Well lately I've been raging as Youtube have successfully stopped most adblockers from working (or they only work sometimes). You've probably been experiencing this same nightmare on and off.
 
-If your adblocker is working, by all means use it, but if not - give this a try.
+I'm a programmer by trade so decided to try and fix this for everyone.
 
 I'll never pay a company that is slapping ads on one of the largest archives of music / film / art in the world and blackmailing me to remove them. They really have a social responsibility that isn't being taken seriously...
 
 So anyway, screw em. Install this little plugin and enjoy no ads 🎉
 
-This took around 3 weeks to create and a thousand black coffees. I do hope you enjoy it.
+This took around 5 weeks to create and a thousand black coffees. I do hope you enjoy it.
 
 Any questions, you can contact me at: goodtube4u@hotmail.com
-
