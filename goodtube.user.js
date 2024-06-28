@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      3.006
+// @version      3.010
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -1643,7 +1643,7 @@
 				}
 			}
 			else if (goodTube_api_type === 2) {
-				if (typeof videoData['dashUrl'] === 'undefined') {
+				if (typeof videoData['type'] === 'undefined' || (typeof videoData['dashUrl'] === 'undefined' && typeof videoData['hlsUrl'] === 'undefined')) {
 					retry = true;
 				}
 				else {
@@ -1674,7 +1674,6 @@
 				}
 
 
-
 				if (goodTube_api_type === 2) {
 					// Format dash source data
 					let dashUrl = false;
@@ -1686,8 +1685,16 @@
 						proxyUrlPart = 'true';
 					}
 
-					dashUrl = videoData.dashUrl+'?local='+proxyUrlPart+'&amp;unique_res=1';
-					dashType = 'application/dash+xml';
+					// HLS stream (for live videos)
+					if (videoData['type'] === 'livestream') {
+						dashUrl = videoData['hlsUrl']+'?local='+proxyUrlPart+'&amp;unique_res=1';
+						dashType = 'application/x-mpegURL';
+					}
+					// DASH stream (for all other videos)
+					else {
+						dashUrl = videoData['dashUrl']+'?local='+proxyUrlPart+'&amp;unique_res=1';
+						dashType = 'application/dash+xml';
+					}
 
 					// Add the dash source
 					goodTube_videojs_player.src({
@@ -1705,7 +1712,6 @@
 					// Select the highest DASH quality
 					goodTube_player_selectHighestDashQuality();
 				}
-
 
 
 				if (goodTube_api_type === 1) {
