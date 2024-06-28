@@ -49,14 +49,14 @@ https://github.com/goodtube4u/goodtube/raw/main/goodtube.user.js
 
 4. If you're using CHROME
 
-You also need to turn on developer mode for this extension. Check out the screenshots below for instructions.
+You need to turn on developer mode for this extension. Check out the screenshots below for instructions.
 
 ![enter image description here](https://raw.githubusercontent.com/goodtube4u/goodtube/main/installation/chrome.png)
 
 
 5. If you're using FIREFOX
 
-You need to change the setting in the screenshot below to enable autoplay.
+You need to enable autoplay. Check out the screenshot below for instructions.
 
 ![enter image description here](https://raw.githubusercontent.com/goodtube4u/goodtube/main/installation/firefox.png)
 
