@@ -35,23 +35,26 @@ Here's some screenshots:
 
 ## How to install on Desktop
 
-1. Install this browser extension "Tampermonkey":
+1. Disable your other adblockers! You can do this for Youtube only.
+
+
+2. Install this browser extension "Tampermonkey":
 
 https://www.tampermonkey.net/
 
 
-2. Once that's done, simply click on this link and press "Install":
+3. Once that's done, simply click on this link and press "Install":
 
 https://github.com/goodtube4u/goodtube/raw/main/goodtube.user.js
 
-3. If you're using CHROME
+4. If you're using CHROME
 
 You also need to turn on developer mode for this extension. You can do this easily; Go to 3 dots (top right) -> Extensions -> Manage Extensions -> Turn on the "Developer mode" toggle up the top right of the page.
 
 ![enter image description here](https://raw.githubusercontent.com/goodtube4u/goodtube/main/installation/chrome.png)
 
 
-4. If you're using FIREFOX
+5. If you're using FIREFOX
 
 You need to change the setting in the screenshot below to enable autoplay.
 
