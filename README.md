@@ -1,3 +1,4 @@
+
 # GoodTube
 
 Hello and welcome! I'm glad you're here.
@@ -26,8 +27,11 @@ And it keeps the good stuff like;
 - Picture in picture / the miniplayer.
 - Theater mode.
 
+It's easy to install too;
 
-It's easy to install too! All the instructions are below.
+ - [How to install on desktop](#how-to-install-on-desktop)
+ - [How to install on Android (mobile)](#how-to-install-on-android-mobile)
+ - [How to install on iOS / iPhone (mobile)](#how-to-install-on-ios-iphone-mobile)
 
 Here's some screenshots:
 |  ![enter image description here](https://raw.githubusercontent.com/goodtube4u/goodtube/main/installation/demo-desktop.png)|  ![enter image description here](https://raw.githubusercontent.com/goodtube4u/goodtube/main/installation/demo-mobile.png)|
@@ -112,7 +116,7 @@ I recommend using Firefox Nightly just like you would the Youtube app. Put it on
 *Simply sign into Youtube and the homepage will be full of your favorite videos once again.*
 
 
-## How to install on iPhone (mobile)
+## How to install on iOS / iPhone (mobile)
 
 This will take you a few minutes, because mobiles are generally sort of annoying...
 
