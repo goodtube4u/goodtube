@@ -26,6 +26,7 @@ And it keeps the good stuff like;
 - Playlists.
 - Picture in picture / the miniplayer.
 - Theater mode.
+- Live streams.
 
 It's easy to install too;
 
