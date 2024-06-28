@@ -49,7 +49,7 @@ https://github.com/goodtube4u/goodtube/raw/main/goodtube.user.js
 
 4. If you're using CHROME
 
-You also need to turn on developer mode for this extension. You can do this easily; Go to 3 dots (top right) -> Extensions -> Manage Extensions -> Turn on the "Developer mode" toggle up the top right of the page.
+You also need to turn on developer mode for this extension. Check out the screenshots below for instructions.
 
 ![enter image description here](https://raw.githubusercontent.com/goodtube4u/goodtube/main/installation/chrome.png)
 
