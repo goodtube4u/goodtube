@@ -1696,7 +1696,7 @@
 						dashType = 'application/dash+xml';
 					}
 
-					// Add the dash source
+					// Add the HLS or DASH source
 					goodTube_videojs_player.src({
 						src: dashUrl,
 						type: dashType
@@ -3207,7 +3207,7 @@
 				// Debug message
 				if (goodTube_debug) {
 					if (goodTube_player_reloadVideoAttempts <= 1) {
-						console.log('[GoodTube] Loading DASH qualities...');
+						console.log('[GoodTube] Loading qualities...');
 					}
 				}
 			}
