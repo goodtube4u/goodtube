@@ -2,7 +2,7 @@
 
 Hello and welcome! I'm glad you're here.
 
-What is GoodTube you ask? It's a little plugin for Youtube that;
+What is GoodTube you ask? It's a little plugin for Youtube (just works) and;
 
 - REMOVES 100% OF PAGE AND VIDEO ADS.
 - Allows background play (so you can turn your phone screen off and keep listening).
@@ -35,19 +35,28 @@ Here's some screenshots:
 
 ## How to install on Desktop
 
-Install this browser extension "Tampermonkey":
+1. Install this browser extension "Tampermonkey":
 
 https://www.tampermonkey.net/
 
-Once that's done, simply click on this link and press "Install":
+
+2. Once that's done, simply click on this link and press "Install":
 
 https://github.com/goodtube4u/goodtube/raw/main/goodtube.user.js
 
-That's it. You're good to go. Open up Youtube and happy days.
+3. If you're using CHROME
+You also need to turn on developer mode for this extension. You can do this easily; Go to 3 dots (top right) -> Extensions -> Manage Extensions -> Turn on the "Developer mode" toggle up the top right of the page.
 
-**Please note: If you're using Firefox, videos will not autoplay until you change the following setting:**
+![enter image description here](https://raw.githubusercontent.com/goodtube4u/goodtube/main/installation/chrome.png)
+
+
+4. If you're using FIREFOX
+You need to change the setting in the screenshot below to enable autoplay.
 
 ![enter image description here](https://raw.githubusercontent.com/goodtube4u/goodtube/main/installation/firefox.png)
+
+
+That's it. You're good to go. Open up Youtube and happy days.
 
 
 ## How to install on Android (mobile)
@@ -56,10 +65,10 @@ This will take you a few minutes, because mobiles are generally sort of annoying
 
 Just follow the steps below and I promise it'll work for you! :)
 
-**Pro tip - I've recently discovered that you can also install extensions on normal Firefox, so you may not need to download Firefox Nightly! Other than that, the steps are the same.**
-
 1. First off you'll need to install this app called "Firefox Nightly". You can find it on Google Play.
 (Basically it's an official release of Firefox, but it also allows you to install browser extensions.)
+
+**Pro tip - I've recently discovered that you can also install extensions on normal Firefox, so you may not need to download Firefox Nightly! Other than that, the steps are the same.**
 
 
 2. Once it's installed, open Firefox Nightly.
@@ -138,3 +147,5 @@ So anyway, screw em. Install this little plugin and enjoy no ads 🎉
 This took around 5 weeks to create and a thousand black coffees. I do hope you enjoy it.
 
 Any questions, you can contact me at: goodtube4u@hotmail.com
+
+I'm dedicated to helping every single user get this working, so really - if you have any problems at all hit me up!

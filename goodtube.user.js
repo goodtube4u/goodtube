@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      3.002
+// @version      3.004
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -2546,7 +2546,9 @@
 					goodTube_player_selectApi(menuItem.getAttribute('api'));
 
 					// Set the player time to be restored when the new server loads
-					goodTube_player_restoreTime = goodTube_player.currentTime;
+					if (goodTube_player.currentTime > 0) {
+						goodTube_player_restoreTime = goodTube_player.currentTime;
+					}
 
 					// Reload the video data
 
