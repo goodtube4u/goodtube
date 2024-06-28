@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      3.004
+// @version      3.005
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -1695,25 +1695,15 @@
 						type: dashType
 					});
 
-					// // Go through each quality and get the highest one
-					// let qualities = goodTube_videojs_player.qualityLevels();
-					// goodTube_player_highestQuality = false;
-					// qualities['levels_'].forEach((quality) => {
-					// 	if (goodTube_api_type === 1) {
-					// 		if (!goodTube_player_highestQuality || quality['height'] > goodTube_player_highestQuality) {
-					// 			goodTube_player_highestQuality = quality['height'];
-					// 		}
-					// 	}
-					// });
-
-					// console.log(goodTube_player_highestQuality);
-
 					// Show the correct quality menu item
 					let qualityButtons = document.querySelectorAll('.vjs-quality-selector');
 					if (qualityButtons.length === 2) {
 						qualityButtons[0].style.display = 'none';
 						qualityButtons[1].style.display = 'block';
 					}
+
+					// Select the highest DASH quality
+					goodTube_player_selectHighestDashQuality();
 				}
 
 
@@ -1859,6 +1849,33 @@
 				goodTube_player_loadVideo(player);
 			}, goodTube_retryDelay);
 		});
+	}
+
+	// Select highest DASH quality by default
+	function goodTube_player_selectHighestDashQuality() {
+		// Find and click the highest quality button (if it can't be found, this will call itself again until it works)
+		let qualityMenus = document.querySelectorAll('.vjs-quality-selector');
+		if (qualityMenus && typeof qualityMenus[1] !== 'undefined') {
+			let highestQualityButton = qualityMenus[1].querySelector('li:first-child');
+			if (highestQualityButton) {
+				highestQualityButton.click();
+
+				let highestQualityButtonText = highestQualityButton.querySelector('.vjs-menu-item-text').innerHTML;
+
+				// Debug message
+				if (goodTube_debug) {
+					console.log('[GoodTube] Selecting highest quality - '+highestQualityButtonText);
+				}
+			}
+			else {
+				setTimeout(goodTube_player_selectHighestDashQuality, 100);
+				return;
+			}
+		}
+		else {
+			setTimeout(goodTube_player_selectHighestDashQuality, 100);
+			return;
+		}
 	}
 
 	// Load chapters
@@ -2303,6 +2320,15 @@
 
 		// Clear any existing chapters
 		goodTube_player_clearChapters();
+
+		// Clear any DASH qualities
+		let qualityMenus = document.querySelectorAll('.vjs-quality-selector');
+		if (qualityMenus && typeof qualityMenus[1] !== 'undefined') {
+			let menuInner = qualityMenus[1].querySelector('ul');
+			if (menuInner) {
+				menuInner.innerHTML = '';
+			}
+		}
 	}
 
 	// Hide the player
@@ -3175,7 +3201,7 @@
 				// Debug message
 				if (goodTube_debug) {
 					if (goodTube_player_reloadVideoAttempts <= 1) {
-						console.log('[GoodTube] Loading quality DASH...');
+						console.log('[GoodTube] Loading DASH qualities...');
 					}
 				}
 			}
@@ -3200,7 +3226,12 @@
 
 			// Debug message
 			if (goodTube_debug) {
-				console.log('[GoodTube] Quality loaded');
+				if (goodTube_api_type === 1) {
+					console.log('[GoodTube] Quality loaded');
+				}
+				else if (goodTube_api_type === 2) {
+					console.log('[GoodTube] Qualities loaded');
+				}
 			}
 
 			// Update the video js player
