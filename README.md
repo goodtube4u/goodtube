@@ -128,7 +128,7 @@ Just follow the steps below and I promise it'll work for you! :)
 
 3. Go to Extensions.
 
-4. Install an extension called "Violentmonkey".
+4. Install an extension called "Violentmonkey" (do NOT try and use Tampermonkey instead, it doesn't work for iOS).
 
 5. Now go to the following webpage: https://github.com/goodtube4u/goodtube/raw/main/goodtube.user.js
 
