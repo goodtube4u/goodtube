@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      3.013
+// @version      3.015
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -1856,7 +1856,6 @@
 		})
 		// If there's any issues loading the video data, try again (after configured delay time)
 		.catch((error) => {
-			console.log(error);
 			if (typeof goodTube_pendingRetry['loadVideoData'] !== 'undefined') {
 				clearTimeout(goodTube_pendingRetry['loadVideoData']);
 			}
@@ -4406,9 +4405,21 @@
 		},
 		{
 			'name': 'HD - Obsidian (DE)',
-			'type':21,
+			'type': 2,
 			'proxy': true,
 			'url': 'https://invidious.protokolla.fi'
+		},
+		{
+			'name': 'HD - Indigo (FI)',
+			'type': 2,
+			'proxy': true,
+			'url': 'https://iv.datura.network'
+		},
+		{
+			'name': 'HD - Lilith (DE)',
+			'type': 2,
+			'proxy': true,
+			'url': 'https://iv.melmac.space'
 		},
 
 		{
@@ -4434,12 +4445,6 @@
 			'type': 1,
 			'proxy': true,
 			'url': 'https://invidious.private.coffee'
-		},
-		{
-			'name': '360p - Indigo (FI)',
-			'type': 1,
-			'proxy': true,
-			'url': 'https://iv.datura.network'
 		},
 		{
 			'name': '360p - Raptor (US)',
