@@ -4851,7 +4851,7 @@
 	// Download video / audio for a specificed youtube ID
 	function goodTube_download(type, youtubeId, fileName, codec) {
 		// TEMP FIX TO OPEN IN A NEW TAB, THANKS COBALT!?
-		alert('Sorry but the creator of "https://cobalt.tools" has decided we\'re not allowed to download stuff from them anymore! I am working on a solution.\r\rIn the meantime, you can help out by sending them some angry messages ;)');
+		alert('Sorry but the creator of "https://cobalt.tools" has decided we\'re not allowed to download stuff from them anymore! I am working on a solution.');
 		return;
 
 		// Stop if this is no longer a pending download
@@ -5076,7 +5076,7 @@
 	// Download the entire playlist (currently only works on desktop cus frame API limitations)
 	function goodTube_downloadPlaylist(type, noPrompt) {
 		// TEMP FIX TO OPEN IN A NEW TAB, THANKS COBALT!?
-		alert('Sorry but the creator of "https://cobalt.tools" has decided we\'re not allowed to download stuff from them anymore! I am working on a solution.\r\rIn the meantime, you can help out by sending them some angry messages ;)');
+		alert('Sorry but the creator of "https://cobalt.tools" has decided we\'re not allowed to download stuff from them anymore! I am working on a solution.');
 		return;
 
 		// Show a "are you sure cus it takes some time" sort of message
