@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      3.015
+// @version      3.016
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -2203,38 +2203,63 @@
 				console.log('[GoodTube] Loading subtitles...');
 			}
 
-			// For each subtitle
-			let previous_subtitle = false;
-			subtitleData.forEach((subtitle) => {
-				// Format the data
-				let subtitle_url = false;
-				let subtitle_label = false;
+			// Check the subtitle server works first of all
+			if (goodTube_api_type === 1 || goodTube_api_type === 2) {
+				let subtitleApi = goodTube_api_url;
 
-				if (goodTube_api_type === 1 || goodTube_api_type === 2) {
-					subtitle_url = goodTube_api_url+subtitle['url'];
-					subtitle_label = subtitle['label'];
-				}
+				fetch(goodTube_api_url+subtitleData[0]['url'])
+				.then(response => response.text())
+				.then(data => {
+					// If it failed, use a fallback API for the subtitles
+					if (data.indexOf('<html') !== -1) {
+						subtitleApi = 'https://yt.artemislena.eu';
+					}
 
-				// Ensure we have all the subtitle data AND don't load a subtitle with the same label twice (this helps Piped to load actual captions over auto-generated captions if both exist)
-				if (subtitle_url && subtitle_label && subtitle_label !== previous_subtitle) {
-					previous_subtitle = subtitle_label;
+					goodTube_player_loadSubtitlesAfterCheck(player, subtitleData, subtitleApi);
+				})
+				// If it failed, use a fallback API for the subtitles
+				.catch((error) => {
+					subtitleApi = 'https://yt.artemislena.eu';
 
-					// Capitalise the first letter of the label, this looks a bit better
-					subtitle_label = subtitle_label[0].toUpperCase() + subtitle_label.slice(1);
-
-					// Add the subtitle to videojs
-					goodTube_videojs_player.addRemoteTextTrack({
-						kind: 'captions',
-						language: subtitle_label,
-						src: subtitle_url
-					}, false);
-				}
-			});
-
-			// Debug message
-			if (goodTube_debug) {
-				console.log('[GoodTube] Subtitles loaded');
+					goodTube_player_loadSubtitlesAfterCheck(player, subtitleData, subtitleApi);
+				});
 			}
+
+		}
+	}
+
+	function goodTube_player_loadSubtitlesAfterCheck(player, subtitleData, subtitleApi) {
+		// For each subtitle
+		let previous_subtitle = false;
+		subtitleData.forEach((subtitle) => {
+			// Format the data
+			let subtitle_url = false;
+			let subtitle_label = false;
+
+			if (goodTube_api_type === 1 || goodTube_api_type === 2) {
+				subtitle_url = subtitleApi+subtitle['url'];
+				subtitle_label = subtitle['label'];
+			}
+
+			// Ensure we have all the subtitle data AND don't load a subtitle with the same label twice (this helps Piped to load actual captions over auto-generated captions if both exist)
+			if (subtitle_url && subtitle_label && subtitle_label !== previous_subtitle) {
+				previous_subtitle = subtitle_label;
+
+				// Capitalise the first letter of the label, this looks a bit better
+				subtitle_label = subtitle_label[0].toUpperCase() + subtitle_label.slice(1);
+
+				// Add the subtitle to videojs
+				goodTube_videojs_player.addRemoteTextTrack({
+					kind: 'captions',
+					language: subtitle_label,
+					src: subtitle_url
+				}, false);
+			}
+		});
+
+		// Debug message
+		if (goodTube_debug) {
+			console.log('[GoodTube] Subtitles loaded');
 		}
 	}
 
