@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      3.016
+// @version      3.017
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -2203,29 +2203,51 @@
 				console.log('[GoodTube] Loading subtitles...');
 			}
 
-			// Check the subtitle server works first of all
+			// Check the subtitle server works, if not fallback to a backup server
 			if (goodTube_api_type === 1 || goodTube_api_type === 2) {
-				let subtitleApi = goodTube_api_url;
-
-				fetch(goodTube_api_url+subtitleData[0]['url'])
-				.then(response => response.text())
-				.then(data => {
-					// If it failed, use a fallback API for the subtitles
-					if (data.indexOf('<html') !== -1) {
-						subtitleApi = 'https://yt.artemislena.eu';
-					}
-
-					goodTube_player_loadSubtitlesAfterCheck(player, subtitleData, subtitleApi);
-				})
-				// If it failed, use a fallback API for the subtitles
-				.catch((error) => {
-					subtitleApi = 'https://yt.artemislena.eu';
-
-					goodTube_player_loadSubtitlesAfterCheck(player, subtitleData, subtitleApi);
-				});
+				goodTube_subtitleServersIndex = 0;
+				goodTube_player_checkSubtitleServer(player, subtitleData, goodTube_api_url);
 			}
 
 		}
+	}
+
+	function goodTube_player_checkSubtitleServer(player, subtitleData, subtitleApi) {
+		// If our selected index will be greater than 0, the selected server failed to load the subtitles
+		// So we fallback to a configured subtitle server
+		if (goodTube_subtitleServersIndex > 0) {
+			// If we're out of fallback servers, show an error
+			if (typeof goodTube_subtitleServers[(goodTube_subtitleServersIndex-1)] === 'undefined') {
+				// Debug message
+				if (goodTube_debug) {
+					console.log('[GoodTube] Subtitles could not be loaded');
+				}
+
+				return;
+			}
+
+			// Otherwise select the next fallback server
+			subtitleApi = goodTube_subtitleServers[(goodTube_subtitleServersIndex-1)];
+		}
+		goodTube_subtitleServersIndex++;
+
+		fetch(subtitleApi+subtitleData[0]['url'])
+		.then(response => response.text())
+		.then(data => {
+			// If it failed, try again (with a fallback server)
+			if (data.substr(0,6) !== 'WEBVTT') {
+				goodTube_player_checkSubtitleServer(player, subtitleData, subtitleApi);
+			}
+			// If it worked, load the subtitles
+			else {
+				goodTube_player_loadSubtitlesAfterCheck(player, subtitleData, subtitleApi);
+			}
+		})
+		// If it failed, use a fallback API for the subtitles
+		.catch((error) => {
+			// If it failed, try again (with a fallback server)
+			goodTube_player_checkSubtitleServer(player, subtitleData, subtitleApi);
+		});
 	}
 
 	function goodTube_player_loadSubtitlesAfterCheck(player, subtitleData, subtitleApi) {
@@ -4401,6 +4423,16 @@
 	let goodTube_getParams = false;
 	let goodTube_downloadTimeouts = [];
 	let goodTube_pendingDownloads = [];
+
+	// API Subtitle servers
+	let goodTube_subtitleServersIndex = 0;
+	let goodTube_subtitleServers = [
+		'https://invidious.perennialte.ch',
+		'https://yt.artemislena.eu',
+		'https://invidious.jing.rocks',
+		'https://invidious.privacyredirect.com',
+		'https://invidious.fdn.fr'
+	]
 
 	// API Endpoints
 	let goodTube_apis = [
