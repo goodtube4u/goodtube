@@ -1,7 +1,7 @@
 
 # GoodTube
 
-Hello and welcome! I'm glad you're here.
+Hello and welcome! I'm glad you're here. Please note this is not open source and I the comment to contant me for source code is a lie.
 
 What is GoodTube you ask? It's a little plugin for Youtube (just works) and;
 
