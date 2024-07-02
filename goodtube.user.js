@@ -1,18 +1,5587 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      3.031
+// @version      3.050
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
-// @include      /^https:\/\/[A-Za-z]o[A-Za-z][A-Za-z][A-Za-z]t\.[A-Za-z]o[A-Za-z][A-Za-z]s\/.*$/
 // @match        https://*.youtube.com/*
 // @icon         https://cdn-icons-png.flaticon.com/256/1384/1384060.png
 // @run-at       document-start
 // @grant        none
 // @updateURL    https://github.com/goodtube4u/goodtube/raw/main/goodtube.user.js
 // @downloadURL  https://github.com/goodtube4u/goodtube/raw/main/goodtube.user.js
+// @noframes
 // ==/UserScript==
 
-// This code has been minified for performance reasons.
-// If you're interested in the source code, send me a message! :)
-(function(_0x50f692,_0x4a2b4f){const _0x260146=_0x229c,_0x15567e=_0x50f692();while(!![]){try{const _0x3e65a9=-parseInt(_0x260146(0x22e))/0x1*(parseInt(_0x260146(0xe2))/0x2)+-parseInt(_0x260146(0x136))/0x3+-parseInt(_0x260146(0x114))/0x4+-parseInt(_0x260146(0x130))/0x5+parseInt(_0x260146(0xea))/0x6*(parseInt(_0x260146(0x288))/0x7)+parseInt(_0x260146(0x234))/0x8+parseInt(_0x260146(0xf5))/0x9*(parseInt(_0x260146(0x272))/0xa);if(_0x3e65a9===_0x4a2b4f)break;else _0x15567e['push'](_0x15567e['shift']());}catch(_0x51fcf1){_0x15567e['push'](_0x15567e['shift']());}}}(_0x5c4e,0x5c904),(function(){'use strict';const _0x493fa8=_0x229c;let _0x15a0cc=_0x493fa8(0x212),_0x4d1abc=0x1f4,_0xdb4af5=0x5,_0x3ad6db=!![];function _0x186b74(_0x583730){const _0x470d06=_0x493fa8;var _0x3a2a95=parseInt(_0x583730,0xa),_0x3da98e=Math[_0x470d06(0x156)](_0x3a2a95/0xe10),_0x29d6f0=Math[_0x470d06(0x156)](_0x3a2a95/0x3c)%0x3c,_0x3ab5d9=_0x3a2a95%0x3c;return[_0x3da98e,_0x29d6f0,_0x3ab5d9]['map'](_0x165d44=>_0x165d44<0xa?'0'+_0x165d44:_0x165d44)[_0x470d06(0xd6)]((_0x546a3a,_0x150bfb)=>_0x546a3a!=='00'||_0x150bfb>0x0)[_0x470d06(0x19b)](':');}function _0x3ecf85(_0xb1d307){const _0x53a3d=_0x493fa8;return Array[_0x53a3d(0x1e6)][_0x53a3d(0x1c9)][_0x53a3d(0xf7)](document[_0x53a3d(0x1c7)]('*'))[_0x53a3d(0xd6)](function(_0x2397d3){const _0x6561ca=_0x53a3d;return _0x2397d3[_0x6561ca(0x240)]['match'](_0xb1d307);});}function _0x357f2c(_0x45e0a2,_0x3ef582){const _0x14f99e=_0x493fa8;_0x45e0a2=_0x45e0a2[_0x14f99e(0x1e3)]();while(_0x45e0a2[_0x14f99e(0x1ff)]<_0x3ef582)_0x45e0a2='0'+_0x45e0a2;return _0x45e0a2;}function _0x12f155(){const _0x2e54e4=_0x493fa8;let _0x6c640a={};return document['location'][_0x2e54e4(0x273)][_0x2e54e4(0x23c)](/\??(?:([^=]+)=([^&]*)&?)/g,function(){function _0x576213(_0x273568){const _0x3e9dea=_0x229c;return decodeURIComponent(_0x273568[_0x3e9dea(0x224)]('+')[_0x3e9dea(0x19b)]('\x20'));}_0x6c640a[_0x576213(arguments[0x1])]=_0x576213(arguments[0x2]);}),_0x6c640a;}function _0x486ec5(_0x3d3f43,_0x2e87f3){const _0x408999=_0x493fa8;document['cookie']=_0x3d3f43+'='+encodeURIComponent(_0x2e87f3)+_0x408999(0x203)+0x18f*0x18*0x3c*0x3c+_0x408999(0x1b3);}function _0x11620f(_0x51d7a6){const _0x975c47=_0x493fa8;let _0x4d6d2d=document[_0x975c47(0x1bc)]['split'](';');for(let _0x2a858a=0x0;_0x2a858a<_0x4d6d2d[_0x975c47(0x1ff)];_0x2a858a++){let _0xfd1b52=_0x4d6d2d[_0x2a858a][_0x975c47(0x224)]('=');if(_0x51d7a6==_0xfd1b52[0x0][_0x975c47(0x17e)]())return decodeURIComponent(_0xfd1b52[0x1]);}return null;}function _0x4ed88d(){const _0x17d142=_0x493fa8;let _0x4b3de1=document[_0x17d142(0x1d4)](_0x17d142(0x294));_0x4b3de1[_0x17d142(0x279)]='\x0a\x09\x09\x09.goodTube_hidden\x20{\x0a\x09\x09\x09\x09position:\x20fixed\x20!important;\x0a\x09\x09\x09\x09pointer-events:\x20none\x20!important;\x0a\x09\x09\x09\x09top:\x20-999px\x20!important;\x0a\x09\x09\x09\x09left:\x20-999px\x20!important;\x0a\x09\x09\x09\x09opacity:\x200\x20!important;\x0a\x09\x09\x09}\x0a\x09\x09',document[_0x17d142(0x1f4)][_0x17d142(0x1b9)](_0x4b3de1);}function _0x51bee4(_0x1a7fa5){const _0x68f423=_0x493fa8;_0x1a7fa5&&!_0x1a7fa5[_0x68f423(0x10e)][_0x68f423(0x285)]('goodTube_hidden')&&_0x1a7fa5[_0x68f423(0x10e)]['add'](_0x68f423(0x1b2));}function _0x410dd8(_0x6d8a55){const _0x29f4cc=_0x493fa8;_0x6d8a55&&_0x6d8a55[_0x29f4cc(0x10e)][_0x29f4cc(0x285)](_0x29f4cc(0x1b2))&&_0x6d8a55[_0x29f4cc(0x10e)][_0x29f4cc(0x190)](_0x29f4cc(0x1b2));}let _0x3879db=!![],_0x2c296d=0x0;function _0x333c6b(){const _0x3c084d=_0x493fa8;let _0xcb3b7c=document['createElement']('style');_0xcb3b7c['textContent']=_0x3c084d(0x207),document[_0x3c084d(0x1f4)][_0x3c084d(0x1b9)](_0xcb3b7c),_0x3ad6db&&console[_0x3c084d(0x1ab)](_0x3c084d(0x120));}function _0x21c203(){const _0x93097d=_0x493fa8;if(window[_0x93097d(0x16a)][_0x93097d(0x10d)]['indexOf']('@')!==-0x1)return;let _0x481826=document[_0x93097d(0x1c7)]('a');_0x481826[_0x93097d(0x23d)](_0x105838=>{const _0x2ac112=_0x93097d;_0x105838[_0x2ac112(0x10d)][_0x2ac112(0xf9)](_0x2ac112(0x198))!==-0x1&&(_0x51bee4(_0x105838),_0x51bee4(_0x105838[_0x2ac112(0x261)](_0x2ac112(0x22a))));});}function _0x45f392(){const _0x2476b5=_0x493fa8;let _0x32866e=document[_0x2476b5(0x1c7)](_0x2476b5(0x135));_0x32866e[_0x2476b5(0x23d)](_0x18842a=>{const _0x5343d5=_0x2476b5;_0x18842a[_0x5343d5(0x10e)][_0x5343d5(0x1c1)](_0x5343d5(0x13b)),_0x18842a[_0x5343d5(0x145)][_0x5343d5(0x26d)]()[_0x5343d5(0xf9)]('continue\x20watching')!==-0x1&&document['querySelector']('yt-confirm-dialog-renderer\x20button')[_0x5343d5(0x22d)]();});}function _0x375e37(){const _0x37298e=_0x493fa8;let _0x157c06=document['querySelectorAll'](_0x37298e(0x282));_0x157c06['forEach'](_0x4e3af4=>{const _0x210c75=_0x37298e;!_0x4e3af4[_0x210c75(0x10e)]['contains'](_0x210c75(0x29f))&&_0x4e3af4[_0x210c75(0xcd)](_0x210c75(0x10d))&&_0x4e3af4[_0x210c75(0xcd)](_0x210c75(0x10d))[_0x210c75(0xf9)](_0x4dc611['v'])!==-0x1&&_0x4e3af4[_0x210c75(0xcd)](_0x210c75(0x10d))[_0x210c75(0xf9)]('t=')!==-0x1&&(_0x4e3af4['classList'][_0x210c75(0x1c1)](_0x210c75(0x29f)),_0x4e3af4[_0x210c75(0x11c)](_0x210c75(0x22d),function(){const _0x35f48e=_0x210c75;let _0x26a4db=_0x4e3af4[_0x35f48e(0xcd)]('href')[_0x35f48e(0x224)]('t=');if(typeof _0x26a4db[0x1]!==_0x35f48e(0x238)){let _0x31f70d=_0x26a4db[0x1][_0x35f48e(0x23c)]('s','');_0x3b5f8f(_0x13c1a0,_0x31f70d);}}));});}function _0x519e79(){const _0x190fee=_0x493fa8;let _0x528463=document[_0x190fee(0x1cd)](_0x190fee(0x164));if(_0x528463&&typeof _0x528463[_0x190fee(0x103)]===_0x190fee(0x15f)&&typeof _0x528463[_0x190fee(0x11a)]===_0x190fee(0x15f)&&typeof _0x528463['getPlaybackQuality']===_0x190fee(0x15f)){let _0x47695a=_0x528463[_0x190fee(0x11a)](),_0x5daf60=_0x528463['getPlaybackQuality']();if(_0x47695a[_0x190fee(0x1ff)]&&_0x5daf60){let _0xe453c6=_0x47695a[_0x47695a[_0x190fee(0x1ff)]-0x1]['quality'];_0x5daf60!=_0xe453c6&&_0x528463[_0x190fee(0x103)](_0xe453c6,_0xe453c6);}}}function _0x159c27(){const _0x57f183=_0x493fa8;let _0x2dc41e=document[_0x57f183(0x1c7)](_0x57f183(0x232));_0x2dc41e[_0x57f183(0x23d)](_0x49c593=>{_0x51bee4(_0x49c593);});let _0x2ae755=document['querySelectorAll'](_0x57f183(0x174));_0x2ae755[_0x57f183(0x23d)](_0x305933=>{_0x51bee4(_0x305933);});let _0x4a3e6e=document[_0x57f183(0x1c7)](_0x57f183(0xc5));_0x4a3e6e[_0x57f183(0x23d)](_0x509736=>{_0x51bee4(_0x509736);});let _0x4ba20b=document[_0x57f183(0x1c7)]('ytd-miniplayer:not(.goodTube_hidden)');_0x4ba20b['forEach'](_0x57a568=>{_0x51bee4(_0x57a568);});let _0x40ab10=![];window[_0x57f183(0x16a)][_0x57f183(0x10d)][_0x57f183(0xf9)](_0x57f183(0x274))===-0x1?(_0x40ab10=document[_0x57f183(0x1b6)](_0x57f183(0x192)),_0x40ab10&&_0x40ab10[_0x57f183(0xcd)](_0x57f183(0x11f))===_0x57f183(0x253)&&_0x40ab10['click']()):(_0x40ab10=document[_0x57f183(0x1b6)](_0x57f183(0x108)),_0x40ab10&&_0x40ab10[_0x57f183(0x22d)]());}function _0x1b05cd(){const _0x1227ca=_0x493fa8;if(!_0x3879db||!_0x13c1a0){let _0x47a282=document[_0x1227ca(0x1b6)](_0x1227ca(0xe1));_0x47a282&&_0x47a282[_0x1227ca(0x105)]();}let _0x5932ef=document[_0x1227ca(0x1b6)](_0x1227ca(0xdb));_0x5932ef&&_0x5932ef['click']();let _0x3fcec8=document[_0x1227ca(0x1c7)](_0x1227ca(0x267));_0x3fcec8[_0x1227ca(0x23d)](_0x53f214=>{const _0x5375b7=_0x1227ca;!_0x53f214[_0x5375b7(0x261)](_0x5375b7(0x188))&&(_0x53f214[_0x5375b7(0x168)]=!![],_0x53f214[_0x5375b7(0x16f)]());});}function _0x2da834(){const _0x39a70b=_0x493fa8;let _0xa10719=document[_0x39a70b(0x1b6)](_0x39a70b(0x14e));if(_0xa10719&&_0x20be4e&&typeof _0x4dc611['v']!==_0x39a70b(0x238)){let _0x1d6cf0=_0x13c1a0[_0x39a70b(0x248)];if(_0x1d6cf0===_0x2c296d&&parseFloat(_0x1d6cf0)>0x0)return;_0x2c296d=_0x1d6cf0,_0xa10719['currentTime']=_0x1d6cf0,_0x3879db=!![],_0xa10719[_0x39a70b(0xfc)](),setTimeout(function(){const _0x23422e=_0x39a70b;_0xa10719[_0x23422e(0x16f)](),_0x3879db=![];},0xa);}}let _0x15a732=[],_0x95a33b=0x0,_0x7bcaad=[_0x15a0cc+_0x493fa8(0xd5),_0x15a0cc+'/js/videojs-hls-quality-selector.js',_0x15a0cc+_0x493fa8(0x18c),_0x15a0cc+_0x493fa8(0x251),_0x15a0cc+_0x493fa8(0x146),_0x15a0cc+'/css/videojs-vtt-thumbnails.css'],_0x28ed82=0x0,_0x1d2108=0x0,_0x5d4349=0x0,_0x4f3dae=0x0,_0x161b3f=[],_0x5332a2=![],_0x28dda0=0x1,_0x405a63=![],_0xdf1f5c=![],_0xa199ab=![],_0x37b756=![],_0x22a0b0=![],_0x37cec0=![],_0x3e3ea8=![],_0x17423a=![],_0x1355b0=![],_0x3d131c=![];function _0x3670d0(){const _0x1e6665=_0x493fa8;let _0x25e20c=![];window[_0x1e6665(0x16a)]['href'][_0x1e6665(0xf9)](_0x1e6665(0x274))===-0x1?_0x25e20c=document[_0x1e6665(0x1cd)](_0x1e6665(0x121)):_0x25e20c=document[_0x1e6665(0x1b6)](_0x1e6665(0x237));if(!_0x25e20c||_0x28ed82<_0x7bcaad[_0x1e6665(0x1ff)]){setTimeout(function(){_0x3670d0();},0x0);return;}let _0x3fc684=document['createElement'](_0x1e6665(0x294));_0x3fc684[_0x1e6665(0x279)]=_0x1e6665(0x12b),document[_0x1e6665(0x1f4)]['appendChild'](_0x3fc684);let _0x23f709=document[_0x1e6665(0x1d4)]('div');_0x23f709['id']=_0x1e6665(0x281);let _0x3d9e0f=document[_0x1e6665(0x1d4)](_0x1e6665(0x21d));_0x3d9e0f['id']=_0x1e6665(0x132);let _0x279729=document[_0x1e6665(0x1d4)]('div');_0x279729['id']='goodTube_player_wrapper3';window[_0x1e6665(0x16a)][_0x1e6665(0x10d)]['indexOf'](_0x1e6665(0x274))===-0x1?(_0x25e20c[_0x1e6665(0x297)](_0x23f709),setInterval(function(){const _0x121481=_0x1e6665;let _0x592e03=document[_0x121481(0x1c7)]('ytd-watch-flexy[theater]\x20#below,\x20ytd-watch-flexy[theater]\x20#secondary');_0x592e03[_0x121481(0x23d)](_0x5f1680=>{const _0x5bb484=_0x121481;_0x5f1680[_0x5bb484(0x294)]['marginTop']=_0x23f709['offsetHeight']+'px';});},0x1)):(_0x23f709[_0x1e6665(0x10e)][_0x1e6665(0x1c1)](_0x1e6665(0x100)),_0x25e20c['appendChild'](_0x23f709),setInterval(function(){const _0x2a5e70=_0x1e6665;if(typeof _0x4dc611['v']!==_0x2a5e70(0x238)){let _0x4c4e49=document['querySelector'](_0x2a5e70(0x184));_0x4c4e49&&(_0x4c4e49['offsetHeight']>0x0?(_0x23f709[_0x2a5e70(0x294)][_0x2a5e70(0x187)]=_0x4c4e49[_0x2a5e70(0x15d)]+'px',_0x23f709[_0x2a5e70(0x294)][_0x2a5e70(0x20b)]=_0x4c4e49[_0x2a5e70(0x205)]+'px'):(_0x4c4e49=document['querySelector']('#player'),_0x4c4e49['offsetHeight']>0x0&&(_0x23f709['style'][_0x2a5e70(0x187)]=_0x4c4e49[_0x2a5e70(0x15d)]+'px',_0x23f709[_0x2a5e70(0x294)]['width']=_0x4c4e49[_0x2a5e70(0x205)]+'px')));let _0x40e7ea=document['querySelector'](_0x2a5e70(0x1ed));_0x40e7ea?_0x23f709['style'][_0x2a5e70(0x144)]=_0x2a5e70(0x227):_0x23f709[_0x2a5e70(0x294)][_0x2a5e70(0x144)]=_0x2a5e70(0xfb);}else _0x23f709[_0x2a5e70(0x294)]['height']='0',_0x23f709[_0x2a5e70(0x294)]['width']='0';},0x1));_0x23f709[_0x1e6665(0x1b9)](_0x3d9e0f),_0x3d9e0f['appendChild'](_0x279729);let _0x19e502=document[_0x1e6665(0x1d4)](_0x1e6665(0xcc));_0x19e502['id']=_0x1e6665(0x239),_0x19e502[_0x1e6665(0x10e)][_0x1e6665(0x1c1)](_0x1e6665(0x1f1)),_0x19e502[_0x1e6665(0x252)]=!![],_0x19e502['setAttribute'](_0x1e6665(0x26c),'1'),_0x279729[_0x1e6665(0x1b9)](_0x19e502),_0x13c1a0=_0x19e502,_0x959f50(),_0x111627(),setInterval(_0x2da834,0x2710),document[_0x1e6665(0x11c)]('keydown',function(_0x5b546c){const _0x31d778=_0x1e6665;if(_0x5b546c[_0x31d778(0x24c)]||_0x5b546c['ctrlKey']||typeof _0x4dc611['v']===_0x31d778(0x238))return;let _0xf47cdc=_0x5b546c[_0x31d778(0x219)],_0x398c0c=![],_0x2cab29=![];_0xf47cdc&&(typeof _0xf47cdc[_0x31d778(0x177)]!==_0x31d778(0x238)&&(_0x398c0c=_0xf47cdc[_0x31d778(0x177)]['toLowerCase']()),typeof _0xf47cdc[_0x31d778(0xcd)]!==_0x31d778(0x238)&&(_0x2cab29=_0xf47cdc[_0x31d778(0xcd)]('id')));if(!_0xf47cdc||_0x398c0c[_0x31d778(0xf9)](_0x31d778(0xe9))===-0x1&&_0x398c0c['indexOf'](_0x31d778(0xeb))===-0x1&&_0x398c0c[_0x31d778(0xf9)](_0x31d778(0x172))===-0x1&&_0x398c0c[_0x31d778(0xf9)](_0x31d778(0x160))===-0x1&&_0x398c0c[_0x31d778(0xf9)](_0x31d778(0x1d1))===-0x1&&_0x398c0c['indexOf']('legend')===-0x1&&_0x398c0c[_0x31d778(0xf9)]('datalist')===-0x1&&_0x398c0c['indexOf']('output')===-0x1&&_0x398c0c[_0x31d778(0xf9)](_0x31d778(0x1d6))===-0x1&&_0x398c0c[_0x31d778(0xf9)](_0x31d778(0x147))===-0x1&&_0x2cab29!==_0x31d778(0x231)){let _0x556867=_0x5b546c[_0x31d778(0x1c8)][_0x31d778(0x26d)]();_0xf47cdc&&typeof _0xf47cdc[_0x31d778(0x261)]!==_0x31d778(0x238)&&_0xf47cdc[_0x31d778(0x261)](_0x31d778(0x1a2))&&(_0x556867===_0x31d778(0x12e)&&(_0x19e502['volume']>=0.05?_0x19e502['volume']-=0.05:_0x19e502['volume']=0x0,_0x5b546c[_0x31d778(0x159)]()),_0x556867===_0x31d778(0x17f)&&(_0x19e502[_0x31d778(0x229)]<=0.95?_0x19e502[_0x31d778(0x229)]+=0.05:_0x19e502['volume']=0x1,_0x5b546c[_0x31d778(0x159)]()),_0x556867==='t'&&document['querySelector'](_0x31d778(0x237))[_0x31d778(0x27a)]());_0x556867==='arrowleft'&&(_0x19e502[_0x31d778(0x248)]-=0x5);_0x556867==='arrowright'&&(_0x19e502[_0x31d778(0x248)]+=0x5);_0x556867==='\x20'&&(_0x19e502[_0x31d778(0x185)]||_0x19e502[_0x31d778(0x1de)]?_0x19e502[_0x31d778(0xfc)]():_0x19e502[_0x31d778(0x16f)]());_0x556867==='m'&&(_0x19e502[_0x31d778(0x168)]||_0x19e502[_0x31d778(0x229)]<=0x0?(_0x19e502[_0x31d778(0x168)]=![],_0x19e502[_0x31d778(0x229)]<=0x0&&(_0x19e502['volume']=0x1)):_0x19e502['muted']=!![]);_0x556867==='i'&&(_0x5b546c['stopImmediatePropagation'](),_0xf0bf21());if(_0x556867==='f')document[_0x31d778(0x1b6)](_0x31d778(0x214))?.[_0x31d778(0x22d)]();else{if(_0x556867==='j')_0x19e502[_0x31d778(0x248)]-=0xa;else{if(_0x556867==='l')_0x19e502[_0x31d778(0x248)]+=0xa;else{if(_0x556867==='home')_0x19e502[_0x31d778(0x248)]=0x0;else{if(_0x556867===_0x31d778(0x102))_0x19e502[_0x31d778(0x248)]+=_0x19e502[_0x31d778(0x24a)];else{if(_0x556867==='>'){if(parseFloat(_0x19e502[_0x31d778(0x13f)])==0.25)_0x19e502[_0x31d778(0x13f)]=0.5;else{if(parseFloat(_0x19e502[_0x31d778(0x13f)])==0.5)_0x19e502[_0x31d778(0x13f)]=0.75;else{if(parseFloat(_0x19e502[_0x31d778(0x13f)])==0.75)_0x19e502[_0x31d778(0x13f)]=0x1;else{if(parseFloat(_0x19e502[_0x31d778(0x13f)])==0x1)_0x19e502[_0x31d778(0x13f)]=1.25;else{if(parseFloat(_0x19e502[_0x31d778(0x13f)])==1.25)_0x19e502[_0x31d778(0x13f)]=1.5;else{if(parseFloat(_0x19e502[_0x31d778(0x13f)])==1.5)_0x19e502[_0x31d778(0x13f)]=1.75;else parseFloat(_0x19e502[_0x31d778(0x13f)])==1.75&&(_0x19e502[_0x31d778(0x13f)]=0x2);}}}}}}else{if(_0x556867==='<'){if(parseFloat(_0x19e502[_0x31d778(0x13f)])==0.5)_0x19e502['playbackRate']=0.25;else{if(parseFloat(_0x19e502[_0x31d778(0x13f)])==0.75)_0x19e502[_0x31d778(0x13f)]=0.5;else{if(parseFloat(_0x19e502['playbackRate'])==0x1)_0x19e502[_0x31d778(0x13f)]=0.75;else{if(parseFloat(_0x19e502['playbackRate'])==1.25)_0x19e502[_0x31d778(0x13f)]=0x1;else{if(parseFloat(_0x19e502[_0x31d778(0x13f)])==1.5)_0x19e502[_0x31d778(0x13f)]=1.25;else{if(parseFloat(_0x19e502[_0x31d778(0x13f)])==1.75)_0x19e502[_0x31d778(0x13f)]=1.5;else parseFloat(_0x19e502['playbackRate'])==0x2&&(_0x19e502[_0x31d778(0x13f)]=1.75);}}}}}}}}}}}}if(_0x556867==='0')_0x19e502[_0x31d778(0x248)]=0x0;else{if(_0x556867==='1')_0x19e502[_0x31d778(0x248)]=_0x19e502[_0x31d778(0x24a)]/0x64*0xa;else{if(_0x556867==='2')_0x19e502['currentTime']=_0x19e502[_0x31d778(0x24a)]/0x64*0x14;else{if(_0x556867==='3')_0x19e502[_0x31d778(0x248)]=_0x19e502[_0x31d778(0x24a)]/0x64*0x1e;else{if(_0x556867==='4')_0x19e502[_0x31d778(0x248)]=_0x19e502[_0x31d778(0x24a)]/0x64*0x28;else{if(_0x556867==='5')_0x19e502[_0x31d778(0x248)]=_0x19e502['duration']/0x64*0x32;else{if(_0x556867==='6')_0x19e502[_0x31d778(0x248)]=_0x19e502[_0x31d778(0x24a)]/0x64*0x3c;else{if(_0x556867==='7')_0x19e502[_0x31d778(0x248)]=_0x19e502[_0x31d778(0x24a)]/0x64*0x46;else{if(_0x556867==='8')_0x19e502[_0x31d778(0x248)]=_0x19e502['duration']/0x64*0x50;else _0x556867==='9'&&(_0x19e502['currentTime']=_0x19e502[_0x31d778(0x24a)]/0x64*0x5a);}}}}}}}}}},!![]),window[_0x1e6665(0x16a)][_0x1e6665(0x10d)][_0x1e6665(0xf9)](_0x1e6665(0x274))!==-0x1&&_0xaf1156(_0x13c1a0,0x1);}function _0x59d8c9(){_0x3ad6db&&console['log']('[GoodTube]\x20Loading\x20player\x20assets...'),_0x1d2108=0x0,_0x5a0caa(_0x7bcaad[_0x28ed82]);}function _0x5a0caa(_0x48050d){const _0x4a7075=_0x493fa8;_0x1d2108++;if(_0x1d2108>_0xdb4af5){_0x3ad6db&&console[_0x4a7075(0x1ab)](_0x4a7075(0x28f));return;}fetch(_0x48050d)['then'](_0x578df4=>_0x578df4[_0x4a7075(0x1d3)]())[_0x4a7075(0x206)](_0x3612a3=>{const _0x235338=_0x4a7075;let _0x24f549=![];if(_0x48050d[_0x235338(0xf9)](_0x235338(0x151))!==-0x1)_0x24f549=document[_0x235338(0x1d4)](_0x235338(0x152));else _0x48050d[_0x235338(0xf9)]('/css/')!==-0x1&&(_0x24f549=document[_0x235338(0x1d4)](_0x235338(0x294)));_0x24f549[_0x235338(0x145)]=_0x3612a3,document[_0x235338(0x1f4)]['appendChild'](_0x24f549),_0x28ed82++,_0x28ed82>=_0x7bcaad[_0x235338(0x1ff)]?_0x3ad6db&&console['log'](_0x235338(0x1ad)):(_0x1d2108=0x0,_0x5a0caa(_0x7bcaad[_0x28ed82]));})[_0x4a7075(0x14b)](_0x270c3d=>{const _0x1b02b9=_0x4a7075;typeof _0x15a732[_0x1b02b9(0x286)]!==_0x1b02b9(0x238)&&clearTimeout(_0x15a732[_0x1b02b9(0x286)]),_0x15a732['loadAsset']=setTimeout(function(){_0x5a0caa(_0x48050d);},_0x4d1abc);});}function _0x214c45(_0xfe2256){const _0x2ddf04=_0x493fa8;_0x4e8441[_0x2ddf04(0x23d)](_0x49363e=>{const _0x83082c=_0x2ddf04;_0xfe2256==_0x49363e[_0x83082c(0x1a8)]&&(_0x293312=_0x49363e[_0x83082c(0x28e)],_0x321664=_0x49363e[_0x83082c(0x1b8)],_0x545a3c=_0x49363e['url'],_0x6571da=_0x49363e[_0x83082c(0x17c)],_0x486ec5('goodTube_api',_0xfe2256));});}function _0x43878d(_0x5ebc68){_0x5ebc68['pause']();}function _0x48e14d(_0x4cac1a){const _0x5e559b=_0x493fa8;_0x4cac1a[_0x5e559b(0xfc)]();}function _0xaf1156(_0x148d21,_0x3aa061){const _0x4624e6=_0x493fa8;_0x148d21[_0x4624e6(0x229)]=_0x3aa061;}function _0x3b5f8f(_0x4aafea,_0x28d91b){const _0x152349=_0x493fa8;_0x4aafea[_0x152349(0x248)]=_0x28d91b;}function _0x5170e5(_0x5f4d80){const _0x50946d=_0x493fa8;if(typeof _0x4dc611['v']===_0x50946d(0x238)){_0x50934e=[];return;}_0x28dda0=0x1;typeof _0x15a732[_0x50946d(0x118)]!=='undefined'&&clearTimeout(_0x15a732[_0x50946d(0x118)]);typeof _0x15a732[_0x50946d(0x295)]!=='undefined'&&clearTimeout(_0x15a732['loadVideoData']);_0x33f012(_0x5f4d80);let _0x44b6d6=document[_0x50946d(0x1cd)]('goodTube_player');!_0x44b6d6[_0x50946d(0x10e)][_0x50946d(0x285)](_0x50946d(0x217))&&_0x44b6d6[_0x50946d(0x10e)][_0x50946d(0x1c1)](_0x50946d(0x217));_0x5d4349++;if(_0x5d4349>_0xdb4af5){_0x3d2d23();_0x3ad6db&&console['log']('[GoodTube]\x20Video\x20data\x20could\x20not\x20be\x20loaded\x20-\x20please\x20select\x20another\x20video\x20source');return;}let _0x4caa90=_0x5f4d80[_0x50946d(0x1c7)](_0x50946d(0x27e));_0x4caa90[_0x50946d(0x23d)](_0x26d550=>{const _0x4cd64b=_0x50946d;_0x26d550[_0x4cd64b(0x190)]();});let _0x338008=![];(_0x293312===0x1||_0x293312===0x2)&&(_0x338008=_0x545a3c+_0x50946d(0x292)+_0x4dc611['v']),fetch(_0x338008)[_0x50946d(0x206)](_0x1e275b=>_0x1e275b[_0x50946d(0x1d3)]())[_0x50946d(0x206)](_0xf5e484=>{const _0x520da1=_0x50946d;let _0x2c13bb=JSON[_0x520da1(0x1f5)](_0xf5e484),_0xf8b4b3=![],_0x94d582=![],_0x59acb6=![],_0x4cdbbc=![];if(_0x293312===0x1)typeof _0x2c13bb['formatStreams']===_0x520da1(0x238)?_0x4cdbbc=!![]:(_0xf8b4b3=_0x2c13bb['formatStreams'],_0x94d582=_0x2c13bb['captions'],_0x59acb6=_0x2c13bb[_0x520da1(0x1c4)]);else _0x293312===0x2&&(typeof _0x2c13bb[_0x520da1(0x28e)]==='undefined'||typeof _0x2c13bb[_0x520da1(0x201)]===_0x520da1(0x238)&&typeof _0x2c13bb[_0x520da1(0x24f)]==='undefined'?_0x4cdbbc=!![]:(_0x94d582=_0x2c13bb[_0x520da1(0x1c2)],_0x59acb6=_0x2c13bb[_0x520da1(0x1c4)]));if(_0x4cdbbc){typeof _0x15a732[_0x520da1(0x295)]!==_0x520da1(0x238)&&clearTimeout(_0x15a732['loadVideoData']);_0x15a732[_0x520da1(0x295)]=setTimeout(function(){_0x5170e5(_0x5f4d80);},_0x4d1abc);return;}else{_0x3ad6db&&console[_0x520da1(0x1ab)]('[GoodTube]\x20Video\x20data\x20loaded');if(_0x293312===0x2){let _0x4c2f38=![],_0x53df7f=![],_0xd90805=_0x520da1(0x11d);_0x321664&&(_0xd90805=_0x520da1(0x253));_0x2c13bb[_0x520da1(0x28e)]===_0x520da1(0x29e)?(_0x4c2f38=_0x2c13bb['hlsUrl']+'?local='+_0xd90805+'&amp;unique_res=1',_0x53df7f=_0x520da1(0x199)):(_0x4c2f38=_0x2c13bb[_0x520da1(0x201)]+'?local='+_0xd90805+_0x520da1(0x27d),_0x53df7f=_0x520da1(0x119));_0xb149cb[_0x520da1(0x167)]({'src':_0x4c2f38,'type':_0x53df7f});let _0x47a7c7=document[_0x520da1(0x1c7)]('.vjs-quality-selector');_0x47a7c7[_0x520da1(0x1ff)]===0x2&&(_0x47a7c7[0x0][_0x520da1(0x294)][_0x520da1(0x230)]='none',_0x47a7c7[0x1]['style'][_0x520da1(0x230)]=_0x520da1(0x162)),_0x2fd81b();}if(_0x293312===0x1){_0x3e3ea8&&_0x5f4d80[_0x520da1(0x1b6)](_0x520da1(0x10c)+_0x3e3ea8)?(_0x5f4d80[_0x520da1(0x1b6)](_0x520da1(0x10c)+_0x3e3ea8)[_0x520da1(0xc7)](_0x520da1(0x270),!![]),_0x37cec0=_0x3e3ea8):(_0x5f4d80[_0x520da1(0x1b6)](_0x520da1(0x10c)+_0x22a0b0)?.[_0x520da1(0xc7)](_0x520da1(0x270),!![]),_0x37cec0=_0x22a0b0);let _0x5130de=document[_0x520da1(0x1d4)](_0x520da1(0x27e));_0x5130de['setAttribute']('src',_0x545a3c+'/watch?v='+_0x4dc611['v']+_0x520da1(0xe0)),_0x5130de[_0x520da1(0xc7)](_0x520da1(0x28e),'audio/mp3'),_0x5130de['setAttribute'](_0x520da1(0xeb),_0x520da1(0x1a0)),_0x5130de[_0x520da1(0xc7)](_0x520da1(0xcc),!![]),_0x5130de[_0x520da1(0xc7)](_0x520da1(0xc3),_0x520da1(0x29a)),_0x5f4d80['appendChild'](_0x5130de);let _0xec4577=0x0;_0x22a0b0=![],_0xf8b4b3[_0x520da1(0x23d)](_0x317346=>{const _0x4555de=_0x520da1;let _0x397a81=![],_0x2b3376=![],_0xeebdd5=![],_0x3a537a=![];_0x397a81=_0x545a3c+_0x4555de(0x107)+_0x4dc611['v']+_0x4555de(0x23f)+_0x317346[_0x4555de(0x254)];_0x321664&&(_0x397a81=_0x397a81+_0x4555de(0xff));_0x2b3376=_0x317346[_0x4555de(0x28e)],_0xeebdd5=parseFloat(_0x317346[_0x4555de(0x283)][_0x4555de(0x23c)]('p','')['replace']('hd',''))+'p',_0x3a537a=parseFloat(_0x317346[_0x4555de(0x283)]['replace']('p','')['replace']('hd',''));if(_0x397a81&&_0x2b3376&&_0xeebdd5){if(_0x2b3376[_0x4555de(0x26d)]()[_0x4555de(0xf9)]('video')!==-0x1){let _0x1e6f1=document[_0x4555de(0x1d4)](_0x4555de(0x27e));_0x1e6f1[_0x4555de(0xc7)](_0x4555de(0x167),_0x397a81),_0x1e6f1[_0x4555de(0xc7)]('type',_0x2b3376),_0x1e6f1[_0x4555de(0xc7)]('label',_0xeebdd5),_0x1e6f1[_0x4555de(0xc7)](_0x4555de(0xcc),!![]),_0x1e6f1[_0x4555de(0xc7)](_0x4555de(0xc3),_0x4555de(0x278)+_0x3a537a),_0x5f4d80[_0x4555de(0x1b9)](_0x1e6f1),(!_0x22a0b0||_0x3a537a>_0x22a0b0)&&(_0x22a0b0=_0x3a537a);}}_0xec4577++;});_0x3e3ea8&&_0x5f4d80[_0x520da1(0x1b6)](_0x520da1(0x10c)+_0x3e3ea8)?(_0x5f4d80[_0x520da1(0x1b6)](_0x520da1(0x10c)+_0x3e3ea8)['setAttribute']('selected',!![]),_0x37cec0=_0x3e3ea8):(_0x5f4d80[_0x520da1(0x1b6)](_0x520da1(0x10c)+_0x22a0b0)?.['setAttribute'](_0x520da1(0x270),!![]),_0x37cec0=_0x22a0b0);let _0x34b301=[];_0x5f4d80['querySelectorAll'](_0x520da1(0x1af))[_0x520da1(0x23d)](_0x4c8a3b=>{const _0x344ae3=_0x520da1;_0x34b301['push']({'src':_0x4c8a3b[_0x344ae3(0xcd)](_0x344ae3(0x167)),'type':_0x4c8a3b[_0x344ae3(0xcd)](_0x344ae3(0x28e)),'label':_0x4c8a3b[_0x344ae3(0xcd)](_0x344ae3(0xeb)),'selected':_0x4c8a3b[_0x344ae3(0xcd)](_0x344ae3(0x270))});}),_0xb149cb[_0x520da1(0x167)](_0x34b301);let _0x174a50=document[_0x520da1(0x1c7)](_0x520da1(0x271));_0x174a50[_0x520da1(0x1ff)]===0x2&&(_0x174a50[0x1][_0x520da1(0x294)][_0x520da1(0x230)]=_0x520da1(0x173),_0x174a50[0x0]['style'][_0x520da1(0x230)]=_0x520da1(0x162));}setTimeout(function(){_0x48e14d(_0x5f4d80);},0x1),_0x3f7edd(_0x5f4d80,_0x94d582),_0x3ad6db&&console[_0x520da1(0x1ab)](_0x520da1(0x1ef)),_0x256ff9(_0x5f4d80,_0x2c13bb[_0x520da1(0x20e)],_0x2c13bb[_0x520da1(0x113)]),_0x59acb6&&window[_0x520da1(0x16a)][_0x520da1(0x10d)][_0x520da1(0xf9)]('m.youtube')===-0x1&&_0x458716(_0x5f4d80,_0x59acb6);}})[_0x50946d(0x14b)](_0xe7e7e0=>{const _0x2cf8ab=_0x50946d;typeof _0x15a732[_0x2cf8ab(0x295)]!=='undefined'&&clearTimeout(_0x15a732[_0x2cf8ab(0x295)]),_0x15a732[_0x2cf8ab(0x295)]=setTimeout(function(){_0x5170e5(_0x5f4d80);},_0x4d1abc);});}function _0x2fd81b(){const _0x3b167d=_0x493fa8;let _0x243318=document['querySelectorAll'](_0x3b167d(0x271));if(_0x243318&&typeof _0x243318[0x1]!==_0x3b167d(0x238)){let _0x34f604=_0x243318[0x1][_0x3b167d(0x1b6)](_0x3b167d(0x112));if(_0x34f604){_0x34f604['click']();let _0x2220ce=_0x34f604[_0x3b167d(0x1b6)]('.vjs-menu-item-text')[_0x3b167d(0x145)];_0x3ad6db&&console[_0x3b167d(0x1ab)]('[GoodTube]\x20Selecting\x20highest\x20quality\x20-\x20'+_0x2220ce);}else{setTimeout(_0x2fd81b,0x64);return;}}else{setTimeout(_0x2fd81b,0x64);return;}}function _0x256ff9(_0x1db3f3,_0x43b94e,_0x3df26e){const _0x1f3543=_0x493fa8;_0x361ad2();let _0x1dc932=[],_0x571638=_0x43b94e['split']('\x0a'),_0x11cb7c=/(\d{0,2}:?\d{1,2}:\d{2})/g;for(let _0x8590df of _0x571638){const _0x2a2639=_0x8590df[_0x1f3543(0x12d)](_0x11cb7c);if(_0x2a2639){let _0x4954c1=_0x2a2639[0x0],_0xcc19d5=_0x8590df[_0x1f3543(0x224)]('\x20')['filter'](_0x68a821=>!_0x68a821[_0x1f3543(0x1d9)](_0x4954c1))['join']('\x20');_0x1dc932[_0x1f3543(0x260)]({'time':_0x4954c1,'title':_0xcc19d5});}}if(_0x1dc932['length']===0x0){let _0x464971=Array[_0x1f3543(0x2a0)](document[_0x1f3543(0x1c7)]('#panels\x20ytd-engagement-panel-section-list-renderer:nth-child(2)\x20#content\x20ytd-macro-markers-list-renderer\x20#contents\x20ytd-macro-markers-list-item-renderer\x20#endpoint\x20#details'));_0x3d131c&&clearInterval(_0x3d131c);let _0x2e169d=JSON['stringify'](document[_0x1f3543(0x1c7)]('#panels\x20ytd-engagement-panel-section-list-renderer:nth-child(2)\x20#content\x20ytd-macro-markers-list-renderer\x20#contents\x20ytd-macro-markers-list-item-renderer\x20#endpoint\x20#details'));_0x3d131c=setInterval(function(){const _0x26c989=_0x1f3543;let _0x313078=JSON[_0x26c989(0x20f)](document['querySelectorAll'](_0x26c989(0x263)));_0x313078!==_0x2e169d&&(_0x2e169d=_0x313078,_0x256ff9(_0x1db3f3,_0x43b94e,_0x3df26e));},0x3e8);let _0x5cfb20=_0x464971['map'](_0x10c835=>({'title':_0x10c835['querySelector'](_0x1f3543(0x28b))?.['textContent'],'time':_0x10c835[_0x1f3543(0x1b6)](_0x1f3543(0x1e5))?.['textContent']})),_0x11414a=_0x5cfb20[_0x1f3543(0xd6)](_0x806fc9=>_0x806fc9[_0x1f3543(0x131)]!==undefined&&_0x806fc9[_0x1f3543(0x131)]!==null&&_0x806fc9[_0x1f3543(0x21f)]!==undefined&&_0x806fc9[_0x1f3543(0x21f)]!==null);_0x1dc932=[...new Map(_0x11414a[_0x1f3543(0x109)](_0x53d129=>[_0x53d129['time'],_0x53d129]))[_0x1f3543(0x23b)]()];}_0x1dc932[_0x1f3543(0x1ff)]>0x0?_0x11bafa(_0x1db3f3,_0x1dc932,_0x3df26e):_0x3ad6db&&console['log'](_0x1f3543(0x19f));}function _0x11bafa(_0x25715a,_0x5d89b5,_0xa17009){const _0x7c9b4b=_0x493fa8;if(!_0x5d89b5[_0x7c9b4b(0x1ff)])return;let _0x125d80=document[_0x7c9b4b(0x1d4)]('div');_0x125d80[_0x7c9b4b(0x10e)][_0x7c9b4b(0x1c1)](_0x7c9b4b(0x27f));let _0x20ac4a=document[_0x7c9b4b(0x1d4)](_0x7c9b4b(0x21d));_0x20ac4a[_0x7c9b4b(0x10e)][_0x7c9b4b(0x1c1)](_0x7c9b4b(0x1f0));let _0x5a6170=0x0;_0x5d89b5[_0x7c9b4b(0x23d)](_0x123594=>{const _0x4cc17d=_0x7c9b4b;let _0x3ab652=document[_0x4cc17d(0x1d4)](_0x4cc17d(0x21d));_0x3ab652['classList']['add']('goodTube_chapter');typeof _0x5d89b5[_0x5a6170+0x1]!==_0x4cc17d(0x238)&&(typeof _0x5d89b5[_0x5a6170+0x1][_0x4cc17d(0x21f)]==='number'?_0x3ab652[_0x4cc17d(0xc7)]('chapter-time',_0x5d89b5[_0x5a6170+0x1][_0x4cc17d(0x21f)]):_0x3ab652[_0x4cc17d(0xc7)](_0x4cc17d(0x216),_0x5d89b5[_0x5a6170+0x1]['time'][_0x4cc17d(0x224)](':')[_0x4cc17d(0x17a)]((_0xd1724b,_0x34631d)=>0x3c*_0xd1724b+ +_0x34631d)));let _0x1a703c=document[_0x4cc17d(0x1d4)]('div');_0x1a703c[_0x4cc17d(0x10e)][_0x4cc17d(0x1c1)](_0x4cc17d(0x1ae));typeof _0x5d89b5[_0x5a6170+0x1]!==_0x4cc17d(0x238)&&(typeof _0x5d89b5[_0x5a6170+0x1][_0x4cc17d(0x21f)]===_0x4cc17d(0x154)?_0x1a703c[_0x4cc17d(0xc7)](_0x4cc17d(0x1c3),_0x5d89b5[_0x5a6170+0x1][_0x4cc17d(0x21f)]):_0x1a703c['setAttribute']('marker-time',_0x5d89b5[_0x5a6170+0x1][_0x4cc17d(0x21f)][_0x4cc17d(0x224)](':')['reduce']((_0x29ec89,_0x137a83)=>0x3c*_0x29ec89+ +_0x137a83)));window[_0x4cc17d(0x16a)][_0x4cc17d(0x10d)]['indexOf']('m.youtube')===-0x1&&_0x3ab652['addEventListener'](_0x4cc17d(0x226),function(){const _0x3e37de=_0x4cc17d;document[_0x3e37de(0x1b6)](_0x3e37de(0x14d))?.[_0x3e37de(0xc7)](_0x3e37de(0xe5),_0x123594['title']);});let _0x548e47=0x0;typeof _0x123594['time']==='number'?_0x548e47=_0x123594[_0x4cc17d(0x21f)]:_0x548e47=_0x123594['time'][_0x4cc17d(0x224)](':')[_0x4cc17d(0x17a)]((_0x98998b,_0x571ab6)=>0x3c*_0x98998b+ +_0x571ab6);let _0xec8cad=_0x548e47/_0xa17009*0x64;_0x3ab652[_0x4cc17d(0x294)][_0x4cc17d(0xfa)]=_0xec8cad+'%';let _0x12c696=_0xa17009;typeof _0x5d89b5[_0x5a6170+0x1]!=='undefined'&&(typeof _0x5d89b5[_0x5a6170+0x1][_0x4cc17d(0x21f)]===_0x4cc17d(0x154)?_0x12c696=_0x5d89b5[_0x5a6170+0x1][_0x4cc17d(0x21f)]:_0x12c696=_0x5d89b5[_0x5a6170+0x1][_0x4cc17d(0x21f)][_0x4cc17d(0x224)](':')[_0x4cc17d(0x17a)]((_0x27222c,_0x26fe54)=>0x3c*_0x27222c+ +_0x26fe54));let _0x153f3d=_0x12c696/_0xa17009*0x64;_0x3ab652[_0x4cc17d(0x294)][_0x4cc17d(0x20b)]=_0x153f3d-_0xec8cad+'%',_0x1a703c[_0x4cc17d(0x294)][_0x4cc17d(0xfa)]=_0x153f3d+'%',_0x125d80[_0x4cc17d(0x1b9)](_0x3ab652),_0x20ac4a[_0x4cc17d(0x1b9)](_0x1a703c),_0x5a6170++;}),window[_0x7c9b4b(0x16a)][_0x7c9b4b(0x10d)][_0x7c9b4b(0xf9)](_0x7c9b4b(0x274))!==-0x1&&(_0x1355b0=setInterval(function(){const _0x28c852=_0x7c9b4b;let _0x1e1847=parseFloat(_0x25715a['currentTime']),_0xee7736=![];_0x5d89b5[_0x28c852(0x23d)](_0x131fb3=>{const _0x12a266=_0x28c852;let _0xcdbbc8=![];typeof _0x131fb3[_0x12a266(0x21f)]===_0x12a266(0x154)?_0xcdbbc8=_0x131fb3[_0x12a266(0x21f)]:_0xcdbbc8=_0x131fb3[_0x12a266(0x21f)]['split'](':')[_0x12a266(0x17a)]((_0x1eb77b,_0x3b24db)=>0x3c*_0x1eb77b+ +_0x3b24db),parseFloat(_0x1e1847)>=parseFloat(_0xcdbbc8)&&(_0xee7736=_0x131fb3['title']);}),_0xee7736&&document[_0x28c852(0x1b6)]('#goodTube_player_wrapper1\x20.vjs-time-control\x20.vjs-duration-display')?.[_0x28c852(0xc7)]('chapter-title','·\x20'+_0xee7736);},0xa)),document[_0x7c9b4b(0x1b6)](_0x7c9b4b(0x298))?.[_0x7c9b4b(0x1b9)](_0x125d80),document['querySelector'](_0x7c9b4b(0xec))?.[_0x7c9b4b(0x1b9)](_0x20ac4a),!document[_0x7c9b4b(0x1b6)](_0x7c9b4b(0x126))[_0x7c9b4b(0x10e)]['contains'](_0x7c9b4b(0x16d))&&document['querySelector']('#goodTube_player_wrapper1')[_0x7c9b4b(0x10e)][_0x7c9b4b(0x1c1)](_0x7c9b4b(0x16d)),_0x17423a=setInterval(function(){const _0x5eaea9=_0x7c9b4b;let _0xa6e5b4=document[_0x5eaea9(0x1c7)](_0x5eaea9(0x211));_0xa6e5b4[_0x5eaea9(0x23d)](_0x37db25=>{const _0x1c01c3=_0x5eaea9;_0x37db25['getAttribute']('marker-time')&&(parseFloat(_0x25715a[_0x1c01c3(0x248)])>=parseFloat(_0x37db25[_0x1c01c3(0xcd)](_0x1c01c3(0x1c3)))?!_0x37db25[_0x1c01c3(0x10e)][_0x1c01c3(0x285)](_0x1c01c3(0x193))&&_0x37db25[_0x1c01c3(0x10e)]['add'](_0x1c01c3(0x193)):_0x37db25[_0x1c01c3(0x10e)][_0x1c01c3(0x285)](_0x1c01c3(0x193))&&_0x37db25['classList'][_0x1c01c3(0x190)](_0x1c01c3(0x193)));});let _0x27f471=document[_0x5eaea9(0x1c7)](_0x5eaea9(0x195));_0x27f471[_0x5eaea9(0x23d)](_0x31ca86=>{const _0xfc9cbb=_0x5eaea9;_0x31ca86[_0xfc9cbb(0xcd)]('chapter-time')&&(parseFloat(_0x25715a[_0xfc9cbb(0x248)])>=parseFloat(_0x31ca86[_0xfc9cbb(0xcd)]('chapter-time'))?!_0x31ca86[_0xfc9cbb(0x10e)][_0xfc9cbb(0x285)]('goodTube_redChapter')&&_0x31ca86['classList'][_0xfc9cbb(0x1c1)](_0xfc9cbb(0x128)):_0x31ca86[_0xfc9cbb(0x10e)]['contains']('goodTube_redChapter')&&_0x31ca86[_0xfc9cbb(0x10e)][_0xfc9cbb(0x190)](_0xfc9cbb(0x128)));});},0xa),_0x3ad6db&&console[_0x7c9b4b(0x1ab)]('[GoodTube]\x20Chapters\x20loaded');}function _0x361ad2(){const _0x351703=_0x493fa8;_0x17423a&&(clearInterval(_0x17423a),_0x17423a=![]),_0x1355b0&&(clearInterval(_0x1355b0),_0x1355b0=![]),_0x3d131c&&(clearInterval(_0x3d131c),_0x3d131c=![]),document['querySelector']('#goodTube_player_wrapper1\x20.vjs-time-control\x20.vjs-duration-display')?.['setAttribute']('chapter-title',''),document['querySelector']('.goodTube_chapters')?.[_0x351703(0x190)](),document[_0x351703(0x1b6)](_0x351703(0x18e))?.[_0x351703(0x190)](),document['querySelector']('#goodTube_player_wrapper1')[_0x351703(0x10e)]['contains'](_0x351703(0x16d))&&document[_0x351703(0x1b6)]('#goodTube_player_wrapper1')[_0x351703(0x10e)][_0x351703(0x190)]('goodTube_hasChapters');}function _0x3f7edd(_0x226cf7,_0x3bdec4){const _0x49bb91=_0x493fa8;let _0x2df81b=_0xb149cb['remoteTextTracks']();typeof _0x2df81b[_0x49bb91(0x1d7)]!=='undefined'&&_0x2df81b[_0x49bb91(0x1d7)][_0x49bb91(0x23d)](_0x11c570=>{_0xb149cb['removeRemoteTextTrack'](_0x11c570);}),_0x3bdec4[_0x49bb91(0x1ff)]>0x0&&(_0x3ad6db&&console[_0x49bb91(0x1ab)](_0x49bb91(0x182)),(_0x293312===0x1||_0x293312===0x2)&&(_0x357a94=0x0,_0x37b575(_0x226cf7,_0x3bdec4,_0x545a3c)));}function _0x37b575(_0x518420,_0x45b1dd,_0x40031f){const _0x1731ef=_0x493fa8;if(_0x357a94>0x0){if(typeof _0x95e616[_0x357a94-0x1]===_0x1731ef(0x238)){_0x3ad6db&&console[_0x1731ef(0x1ab)]('[GoodTube]\x20Subtitles\x20could\x20not\x20be\x20loaded');return;}_0x40031f=_0x95e616[_0x357a94-0x1];}_0x357a94++,fetch(_0x40031f+_0x45b1dd[0x0][_0x1731ef(0x1a8)])[_0x1731ef(0x206)](_0x1951dd=>_0x1951dd[_0x1731ef(0x1d3)]())[_0x1731ef(0x206)](_0x357af2=>{const _0x3fbcc8=_0x1731ef;_0x357af2[_0x3fbcc8(0x153)](0x0,0x6)!==_0x3fbcc8(0xd7)?_0x37b575(_0x518420,_0x45b1dd,_0x40031f):_0x5b9e04(_0x518420,_0x45b1dd,_0x40031f);})['catch'](_0x14c2a4=>{_0x37b575(_0x518420,_0x45b1dd,_0x40031f);});}function _0x5b9e04(_0x1fdb6d,_0x5544b5,_0x1aa3fc){const _0x3bbf0c=_0x493fa8;let _0x3a0381=![];_0x5544b5[_0x3bbf0c(0x23d)](_0x2ca82b=>{const _0x14851c=_0x3bbf0c;let _0xd56fb5=![],_0xcf63f3=![];(_0x293312===0x1||_0x293312===0x2)&&(_0xd56fb5=_0x1aa3fc+_0x2ca82b[_0x14851c(0x1a8)],_0xcf63f3=_0x2ca82b[_0x14851c(0xeb)]),_0xd56fb5&&_0xcf63f3&&_0xcf63f3!==_0x3a0381&&(_0x3a0381=_0xcf63f3,_0xcf63f3=_0xcf63f3[0x0][_0x14851c(0x122)]()+_0xcf63f3['slice'](0x1),_0xb149cb[_0x14851c(0x1e0)]({'kind':_0x14851c(0x1c2),'language':_0xcf63f3,'src':_0xd56fb5},![]));}),_0x3ad6db&&console['log'](_0x3bbf0c(0x236));}function _0x458716(_0x7f1c6c,_0x33bfdd){const _0x5362de=_0x493fa8;document[_0x5362de(0x1b6)](_0x5362de(0x25e))?.[_0x5362de(0x190)]();if(_0x33bfdd[_0x5362de(0x1ff)]>0x0){_0x3ad6db&&console['log'](_0x5362de(0x25a));let _0xdb4bfc=![],_0x541c0e=0x0;_0x33bfdd[_0x5362de(0x23d)](_0x1e17af=>{const _0x18ca1f=_0x5362de;_0x1e17af['width']>_0x541c0e&&(_0xdb4bfc=_0x1e17af[_0x18ca1f(0x1a8)],_0x541c0e=parseFloat(_0x1e17af[_0x18ca1f(0x20b)]));}),_0xdb4bfc&&(typeof _0xb149cb['vttThumbnails']===_0x5362de(0x15f)&&(_0x5332a2=_0xb149cb['vttThumbnails']),_0xb149cb[_0x5362de(0x139)]=_0x5332a2,_0xb149cb[_0x5362de(0x139)]({'src':_0x545a3c+_0xdb4bfc}),_0x3ad6db&&console[_0x5362de(0x1ab)]('[GoodTube]\x20Storyboard\x20loaded'));}}function _0x494a88(_0x2e4d16){const _0x561d21=_0x493fa8;if(typeof _0x4dc611['v']==='undefined')return;typeof _0x15a732[_0x561d21(0x118)]!==_0x561d21(0x238)&&clearTimeout(_0x15a732[_0x561d21(0x118)]);if(_0x28dda0>_0xdb4af5){_0x3d2d23();_0x3ad6db&&console[_0x561d21(0x1ab)](_0x561d21(0xe3));return;}let _0x24b7a2=_0x2e4d16[_0x561d21(0x167)];_0x33f012(_0x2e4d16),setTimeout(function(){const _0x24ab8a=_0x561d21;_0x2e4d16[_0x24ab8a(0xc7)]('src',_0x24b7a2);},0x0);}function _0x33f012(_0x32eef1){const _0x27b8c0=_0x493fa8;_0x405a63=![],_0x46ce79(),_0x32eef1[_0x27b8c0(0x10e)][_0x27b8c0(0x1c1)](_0x27b8c0(0x1b2)),_0x32eef1[_0x27b8c0(0x248)]=0x0,_0x32eef1[_0x27b8c0(0x16f)]();let _0xcda1c=document['querySelectorAll'](_0x27b8c0(0x19d));_0xcda1c[_0x27b8c0(0x23d)](_0x17cd49=>{const _0x2b2571=_0x27b8c0;_0x17cd49[_0x2b2571(0x10e)][_0x2b2571(0x190)]('vjs-menuOpen');}),_0x361ad2();let _0x9924d8=document[_0x27b8c0(0x1c7)](_0x27b8c0(0x271));if(_0x9924d8&&typeof _0x9924d8[0x1]!==_0x27b8c0(0x238)){let _0x14e7ef=_0x9924d8[0x1][_0x27b8c0(0x1b6)]('ul');_0x14e7ef&&(_0x14e7ef[_0x27b8c0(0x145)]='');}}function _0x96e203(_0x520dc1){const _0x524d65=_0x493fa8;_0x51bee4(_0x520dc1[_0x524d65(0x261)](_0x524d65(0x126)));}function _0x354ffa(_0x27c0f9){const _0x3d39a9=_0x493fa8;_0x410dd8(_0x27c0f9[_0x3d39a9(0x261)](_0x3d39a9(0x126)));}function _0x959f50(){const _0x4bab2d=_0x493fa8;addEventListener(_0x4bab2d(0x1cf),_0x197510=>{const _0x577cc6=_0x4bab2d;typeof _0x4dc611['v']===_0x577cc6(0x238)&&_0x43878d(_0x13c1a0),_0xdf1f5c=![];}),addEventListener(_0x4bab2d(0x259),_0x46f2ea=>{_0xdf1f5c=!![];});}function _0x18580d(){const _0x570aeb=_0x493fa8;_0x570aeb(0xcb)in navigator&&(navigator[_0x570aeb(0xcb)]['setActionHandler'](_0x570aeb(0xfc),()=>{_0x48e14d(_0x13c1a0);}),navigator[_0x570aeb(0xcb)][_0x570aeb(0x200)](_0x570aeb(0x16f),()=>{_0x43878d(_0x13c1a0);}),_0x3ec7b6?navigator[_0x570aeb(0xcb)][_0x570aeb(0x200)](_0x570aeb(0x256),()=>{_0x52b36b(!![]);}):navigator[_0x570aeb(0xcb)][_0x570aeb(0x200)]('nexttrack',null),_0x43c898?navigator[_0x570aeb(0xcb)][_0x570aeb(0x200)](_0x570aeb(0x138),()=>{_0x40d741(!![]);}):navigator[_0x570aeb(0xcb)]['setActionHandler'](_0x570aeb(0x138),null));}function _0xc7c45(){const _0x485d5c=_0x493fa8;_0xdf1f5c?(document[_0x485d5c(0x262)](),_0xdf1f5c=![]):(_0x13c1a0[_0x485d5c(0x157)](),_0xdf1f5c=!![],_0xa199ab&&_0xf0bf21());}function _0x4da898(){const _0x420773=_0x493fa8;if(window[_0x420773(0x16a)][_0x420773(0x10d)][_0x420773(0xf9)](_0x420773(0x274))===-0x1){let _0x552253=document[_0x420773(0x1b6)](_0x420773(0x18b));_0x552253&&(typeof _0x4dc611['v']!=='undefined'?_0x552253[_0x420773(0x10e)][_0x420773(0x190)](_0x420773(0x241)):_0x552253[_0x420773(0x10e)][_0x420773(0x1c1)](_0x420773(0x241)));}typeof _0x4dc611['v']!==_0x420773(0x238)&&(_0x37b756=_0x4dc611['v']);}function _0xf0bf21(){const _0x26c53c=_0x493fa8;if(document['pictureInPictureEnabled']){_0xc7c45();return;}let _0x49f046=document['querySelector'](_0x26c53c(0x126));_0xa199ab?(_0x49f046[_0x26c53c(0x10e)]['remove']('goodTube_miniplayer'),_0xa199ab=![],typeof _0x4dc611['v']===_0x26c53c(0x238)&&_0x33f012(_0x13c1a0)):(_0x49f046[_0x26c53c(0x10e)][_0x26c53c(0x1c1)](_0x26c53c(0x241)),_0xa199ab=!![],_0x37b756=_0x4dc611['v']);}let _0xb149cb=![],_0x20be4e=![],_0x50934e=[],_0x43c898=![],_0x3ec7b6=!![],_0x5dc63e=![],_0x524662=![],_0x2ed0c9=![],_0x3546de=![];function _0x111627(){const _0x246709=_0x493fa8;_0x3ad6db&&console[_0x246709(0x1ab)]('[GoodTube]\x20Loading\x20player...');_0x4659ec(),_0x4dc611=_0x12f155();const _0x5c4b93=videojs[_0x246709(0x29b)]('MenuItem'),_0x4b600a=videojs[_0x246709(0x29b)](_0x246709(0x1ca));class _0x54015c extends _0x4b600a{['createItems'](){const _0x5c5b0c=_0x246709,_0x1b82e9=[],{myItems:_0x491bc4}=this[_0x5c5b0c(0x19c)];if(!Array[_0x5c5b0c(0x1e2)](_0x491bc4))_0x1b82e9;return _0x491bc4[_0x5c5b0c(0x23d)](({clickHandler:_0xc5378,..._0x47b08f})=>{const _0xee0c0f=_0x5c5b0c,_0x14c32c=new _0x5c4b93(this['player'](),_0x47b08f);_0xc5378&&(_0x14c32c[_0xee0c0f(0x299)]=_0xc5378),_0x1b82e9[_0xee0c0f(0x260)](_0x14c32c);}),_0x1b82e9;}[_0x246709(0x1eb)](){const _0x1322bc=_0x246709;return''+super[_0x1322bc(0x1eb)]();}}videojs[_0x246709(0x1ac)](_0x246709(0x1e7),_0x54015c),videojs[_0x246709(0x1ac)](_0x246709(0x1b5),_0x54015c),videojs[_0x246709(0x1ac)]('AutoplayButton',_0x54015c);const _0x22cc82=videojs[_0x246709(0x29b)]('Button');class _0xab9417 extends _0x22cc82{[_0x246709(0x299)](_0x4b6cb0){const _0x42e3cf=_0x246709;_0x4b6cb0[_0x42e3cf(0x223)](),_0x40d741(!![]);}}videojs[_0x246709(0x1ac)](_0x246709(0x28c),_0xab9417);class _0x3cc838 extends _0x22cc82{[_0x246709(0x299)](_0x5df1e8){const _0x35e336=_0x246709;_0x5df1e8[_0x35e336(0x223)](),_0x52b36b(!![]);}}videojs[_0x246709(0x1ac)](_0x246709(0x1cc),_0x3cc838);class _0x126006 extends _0x22cc82{[_0x246709(0x299)](_0x59aee2){_0x59aee2['stopImmediatePropagation'](),_0xf0bf21();}}videojs[_0x246709(0x1ac)]('MiniplayerButton',_0x126006);class _0x3136e8 extends _0x22cc82{[_0x246709(0x299)](_0x49a2ab){const _0x4709b5=_0x246709;_0x49a2ab[_0x4709b5(0x223)](),_0x36d6f6(_0x4709b5(0x155));}}videojs[_0x246709(0x1ac)]('TheaterButton',_0x3136e8);let _0x341564=[];_0x4e8441[_0x246709(0x23d)](_0x57ae04=>{const _0x15a7b4=_0x246709;_0x341564[_0x15a7b4(0x260)]({'label':_0x57ae04[_0x15a7b4(0x17c)],'clickHandler'(_0x5a1806){const _0x8ef171=_0x15a7b4;let _0x3578b7=_0x5a1806[_0x8ef171(0x13d)]['closest'](_0x8ef171(0x189));_0x3578b7['querySelector'](_0x8ef171(0xde))?.['classList'][_0x8ef171(0x190)](_0x8ef171(0x11b));let _0x1b3222=_0x5a1806[_0x8ef171(0x13d)][_0x8ef171(0x261)](_0x8ef171(0x25d));_0x1b3222[_0x8ef171(0x10e)][_0x8ef171(0x1c1)](_0x8ef171(0x11b)),_0x214c45(_0x1b3222[_0x8ef171(0xcd)](_0x8ef171(0x1b0)));_0x13c1a0['currentTime']>0x0&&(_0x95a33b=_0x13c1a0[_0x8ef171(0x248)]);_0x3ad6db&&console['log'](_0x8ef171(0x1ee)+_0x6571da+'...');let _0x13e794=0x0;window[_0x8ef171(0x16a)][_0x8ef171(0x10d)][_0x8ef171(0xf9)](_0x8ef171(0x274))!==-0x1&&(_0x13e794=0x190),setTimeout(function(){_0x5d4349=0x0,_0x5170e5(_0x13c1a0);},_0x13e794);}});}),_0xb149cb=videojs(_0x246709(0x239),{'inactivityTimeout':0xbb8,'controls':!![],'autoplay':![],'preload':_0x246709(0x12a),'width':_0x246709(0xfe),'height':'100%','playbackRates':[0.25,0.5,0x1,1.25,1.5,1.75,0x2],'userActions':{'doubleClick':![]},'controlBar':{'children':[_0x246709(0x1b4),_0x246709(0x1a1),_0x246709(0x1ea),_0x246709(0x191),_0x246709(0xf3),_0x246709(0x1e8),_0x246709(0x1a5),'subsCapsButton',_0x246709(0x243),_0x246709(0x106)],'NextButton':{'className':_0x246709(0xf1)},'PrevButton':{'className':_0x246709(0x16e)},'AutoplayButton':{'controlText':_0x246709(0x265),'className':'vjs-autoplay-button','myItems':[{'label':'Autoplay\x20off','clickHandler'(){const _0x482f16=_0x246709;let _0x53ae46=event[_0x482f16(0x13d)]['closest'](_0x482f16(0x189));_0x53ae46[_0x482f16(0x1b6)](_0x482f16(0xde))?.[_0x482f16(0x10e)][_0x482f16(0x190)](_0x482f16(0x11b));let _0x323f4e=event['target'][_0x482f16(0x261)](_0x482f16(0x25d));_0x323f4e[_0x482f16(0x10e)]['add'](_0x482f16(0x11b)),_0x486ec5(_0x482f16(0x1b7),'off');}},{'label':_0x246709(0x249),'clickHandler'(){const _0x1fbbef=_0x246709;let _0x42b702=event[_0x1fbbef(0x13d)]['closest'](_0x1fbbef(0x189));_0x42b702[_0x1fbbef(0x1b6)]('.vjs-selected')?.['classList']['remove']('vjs-selected');let _0x5bf7ce=event[_0x1fbbef(0x13d)][_0x1fbbef(0x261)](_0x1fbbef(0x25d));_0x5bf7ce[_0x1fbbef(0x10e)]['add'](_0x1fbbef(0x11b)),_0x486ec5('goodTube_autoplay','on');}}]},'SourceButton':{'controlText':_0x246709(0x20c),'className':'vjs-source-button','myItems':_0x341564},'DownloadButton':{'controlText':_0x246709(0xf6),'className':_0x246709(0x222),'myItems':[{'className':_0x246709(0x25c),'label':_0x246709(0x291),'clickHandler'(){_0x28473d();}},{'label':_0x246709(0x17b),'clickHandler'(){const _0x26df8e=_0x246709;_0x5b605f[_0x4dc611['v']]=!![],_0x219b18(_0x26df8e(0xcc),_0x4dc611['v']);}},{'label':'Download\x20audio','clickHandler'(){_0x5b605f[_0x4dc611['v']]=!![],_0x219b18('audio',_0x4dc611['v']);}},{'className':_0x246709(0xef),'label':'Download\x20playlist\x20(video)','clickHandler'(){_0x3045ee('video');}},{'className':'goodTube_downloadPlaylist_audio','label':_0x246709(0x1f6),'clickHandler'(){_0x3045ee('audio');}}]},'MiniplayerButton':{'className':_0x246709(0x225)},'TheaterButton':{'className':'vjs-theater-button'}}}),videojs['log'][_0x246709(0x1f8)](_0x246709(0x197)),videojs[_0x246709(0x180)](_0x246709(0x1ce),function(){const _0x1380d4=_0x246709;typeof _0x15a732['reloadVideo']!=='undefined'&&clearTimeout(_0x15a732[_0x1380d4(0x118)]),_0x15a732[_0x1380d4(0x118)]=setTimeout(function(){_0x494a88(_0x13c1a0);},_0x4d1abc),_0x16ba46();}),_0xb149cb['on'](_0x246709(0x22c),function(){const _0x4c2549=_0x246709;_0x20be4e=!![],_0x3546de=_0xb149cb[_0x4c2549(0x1db)]();let _0x160daf=document[_0x4c2549(0x1b6)](_0x4c2549(0x1a2));if(_0x160daf){let _0x3bdb07=document[_0x4c2549(0x1d4)](_0x4c2549(0x21d));_0x3bdb07['id']=_0x4c2549(0x1fd),_0x3bdb07['onclick']=function(){_0xf0bf21();},_0x160daf[_0x4c2549(0x1b9)](_0x3bdb07);let _0x4b47e5=document[_0x4c2549(0x1d4)](_0x4c2549(0x21d));_0x4b47e5['id']=_0x4c2549(0x1dc),_0x4b47e5[_0x4c2549(0x165)]=function(){const _0x2f878f=_0x4c2549;_0x37b756!==_0x4dc611['v']?window[_0x2f878f(0x16a)][_0x2f878f(0x10d)]=_0x2f878f(0xc6)+_0x37b756+_0x2f878f(0x21e)+parseFloat(_0x13c1a0['currentTime'])[_0x2f878f(0x25b)](0x0)+'s':_0xf0bf21();},_0x160daf[_0x4c2549(0x1b9)](_0x4b47e5);}_0x3ad6db&&console[_0x4c2549(0x1ab)](_0x4c2549(0x28d));_0x13c1a0=document[_0x4c2549(0x1b6)](_0x4c2549(0xcf));if(window[_0x4c2549(0x16a)][_0x4c2549(0x10d)][_0x4c2549(0xf9)](_0x4c2549(0x274))!==-0x1){let _0x36b2ed=document['createElement'](_0x4c2549(0x21d));_0x36b2ed['id']=_0x4c2549(0x13c),_0x160daf['append'](_0x36b2ed),_0x36b2ed[_0x4c2549(0x165)]=function(){const _0x49ecb4=_0x4c2549;var _0x38519e=new Date()[_0x49ecb4(0x24e)](),_0x4b8d43=_0x38519e-_0x5dc63e;_0x4b8d43<0x190&&_0x4b8d43>0x0?(_0x160daf[_0x49ecb4(0x10e)]['remove'](_0x49ecb4(0x2a1)),_0x160daf[_0x49ecb4(0x10e)][_0x49ecb4(0x1c1)](_0x49ecb4(0xd3)),_0x13c1a0['currentTime']-=0xa):_0x160daf[_0x49ecb4(0x10e)]['contains'](_0x49ecb4(0x2a1))?(_0x160daf[_0x49ecb4(0x10e)][_0x49ecb4(0x190)]('vjs-user-active'),_0x160daf['classList'][_0x49ecb4(0x1c1)]('vjs-user-inactive')):(_0x160daf[_0x49ecb4(0x10e)][_0x49ecb4(0x1c1)]('vjs-user-active'),_0x160daf['classList'][_0x49ecb4(0x190)](_0x49ecb4(0xd3))),_0x5dc63e=new Date()[_0x49ecb4(0x24e)]();};let _0x509d9b=document[_0x4c2549(0x1d4)](_0x4c2549(0x21d));_0x509d9b['id']=_0x4c2549(0x22b),_0x160daf[_0x4c2549(0x210)](_0x509d9b),_0x509d9b['onclick']=function(){const _0x50dcdf=_0x4c2549;var _0x3394aa=new Date()[_0x50dcdf(0x24e)](),_0x41d6a8=_0x3394aa-_0x524662;_0x41d6a8<0x190&&_0x41d6a8>0x0?(_0x160daf[_0x50dcdf(0x10e)][_0x50dcdf(0x190)](_0x50dcdf(0x2a1)),_0x160daf['classList'][_0x50dcdf(0x1c1)]('vjs-user-inactive'),_0x13c1a0[_0x50dcdf(0x248)]+=0x5):_0x160daf['classList']['contains'](_0x50dcdf(0x2a1))?(_0x160daf['classList'][_0x50dcdf(0x190)](_0x50dcdf(0x2a1)),_0x160daf[_0x50dcdf(0x10e)]['add']('vjs-user-inactive')):(_0x160daf[_0x50dcdf(0x10e)]['add']('vjs-user-active'),_0x160daf[_0x50dcdf(0x10e)][_0x50dcdf(0x190)](_0x50dcdf(0xd3))),_0x524662=new Date()[_0x50dcdf(0x24e)]();},_0x160daf[_0x4c2549(0x11c)](_0x4c2549(0x221),function(_0xcc82e5){_0x2ed0c9=setTimeout(function(){const _0x1c7173=_0x229c;_0x160daf[_0x1c7173(0x10e)][_0x1c7173(0x190)](_0x1c7173(0x2a1)),_0x160daf[_0x1c7173(0x10e)][_0x1c7173(0x1c1)](_0x1c7173(0xd3)),_0x13c1a0[_0x1c7173(0x13f)]=0x2;},0x3e8);}),_0x160daf[_0x4c2549(0x11c)](_0x4c2549(0x24d),function(_0x3bd8ac){const _0x5b76b1=_0x4c2549;_0x2ed0c9&&clearTimeout(_0x2ed0c9),_0x2ed0c9=![],_0x13c1a0[_0x5b76b1(0x13f)]=0x1;}),_0x160daf[_0x4c2549(0x11c)](_0x4c2549(0x129),function(_0x4c3eb6){const _0xa0eac1=_0x4c2549;_0x2ed0c9&&clearTimeout(_0x2ed0c9),_0x2ed0c9=![],_0x13c1a0[_0xa0eac1(0x13f)]=0x1;});}window[_0x4c2549(0x16a)][_0x4c2549(0x10d)][_0x4c2549(0xf9)](_0x4c2549(0x274))===-0x1&&_0x160daf[_0x4c2549(0x11c)](_0x4c2549(0x1c6),function(_0x11b98c){const _0x12c703=_0x4c2549;document[_0x12c703(0x1b6)](_0x12c703(0x214))?.[_0x12c703(0x22d)]();});window[_0x4c2549(0x16a)][_0x4c2549(0x10d)][_0x4c2549(0xf9)]('m.youtube')!==-0x1&&setInterval(function(){const _0x25b0a6=_0x4c2549;let _0x2d7049=document[_0x25b0a6(0x1b6)]('.vjs-current-time'),_0x2b13f0=document['querySelector'](_0x25b0a6(0x277)),_0x501976=document[_0x25b0a6(0x1b6)](_0x25b0a6(0x26f));if(_0x2d7049&&_0x2b13f0&&_0x501976){let _0x9a375a=0x10,_0x19a345=0x4;_0x2d7049[_0x25b0a6(0x294)][_0x25b0a6(0xfa)]=_0x9a375a+'px',_0x2b13f0['style'][_0x25b0a6(0xfa)]=_0x9a375a+_0x2d7049[_0x25b0a6(0x205)]+_0x19a345+'px',_0x501976[_0x25b0a6(0x294)][_0x25b0a6(0xfa)]=_0x9a375a+_0x2d7049['offsetWidth']+_0x2b13f0['offsetWidth']+_0x19a345+_0x19a345+'px';}},0x64);window[_0x4c2549(0x16a)][_0x4c2549(0x10d)]['indexOf'](_0x4c2549(0x274))===-0x1&&(_0x160daf[_0x4c2549(0x11c)]('mouseout',function(_0x184d7e){const _0x46920b=_0x4c2549;_0x160daf['classList'][_0x46920b(0x285)](_0x46920b(0x2a1))&&!_0x160daf[_0x46920b(0x10e)][_0x46920b(0x285)](_0x46920b(0x1bd))&&(_0x160daf['classList'][_0x46920b(0x190)](_0x46920b(0x2a1)),_0x160daf[_0x46920b(0x10e)][_0x46920b(0x1c1)](_0x46920b(0xd3)));}),_0x160daf['addEventListener'](_0x4c2549(0x226),function(_0x4f55d5){const _0xebc97e=_0x4c2549;_0x160daf[_0xebc97e(0x10e)]['contains'](_0xebc97e(0xd3))&&!_0x160daf['classList'][_0xebc97e(0x285)](_0xebc97e(0x1bd))&&(_0x160daf[_0xebc97e(0x10e)][_0xebc97e(0x1c1)](_0xebc97e(0x2a1)),_0x160daf[_0xebc97e(0x10e)][_0xebc97e(0x190)]('vjs-user-inactive'));}),_0x160daf[_0x4c2549(0x11c)](_0x4c2549(0x22d),function(_0x107114){setTimeout(function(){const _0x41232c=_0x229c;_0x160daf[_0x41232c(0x10e)][_0x41232c(0x285)]('vjs-user-inactive')&&!_0x160daf[_0x41232c(0x10e)][_0x41232c(0x285)](_0x41232c(0x1bd))&&(_0x160daf[_0x41232c(0x10e)]['add'](_0x41232c(0x2a1)),_0x160daf[_0x41232c(0x10e)][_0x41232c(0x190)](_0x41232c(0xd3)),window[_0x41232c(0x13a)]=setTimeout(function(){const _0x20a4f7=_0x41232c;_0x160daf[_0x20a4f7(0x10e)][_0x20a4f7(0x285)](_0x20a4f7(0x2a1))&&!_0x160daf[_0x20a4f7(0x10e)][_0x20a4f7(0x285)](_0x20a4f7(0x1bd))&&(_0x160daf[_0x20a4f7(0x10e)][_0x20a4f7(0x190)]('vjs-user-active'),_0x160daf[_0x20a4f7(0x10e)][_0x20a4f7(0x1c1)](_0x20a4f7(0xd3)));},0xbb8));},0x1);}),_0x160daf[_0x4c2549(0x11c)](_0x4c2549(0x1ec),function(_0x61e7c5){const _0x119e79=_0x4c2549;typeof window[_0x119e79(0x13a)]!==_0x119e79(0x238)&&clearTimeout(window[_0x119e79(0x13a)]);}));let _0x4cde4f=document[_0x4c2549(0x1c7)]('#goodTube_player\x20button');_0x4cde4f[_0x4c2549(0x23d)](_0xdc38fa=>{const _0x41ed44=_0x4c2549;_0xdc38fa['setAttribute'](_0x41ed44(0x131),'');});let _0x556ff1=_0x11620f(_0x4c2549(0x125));_0x556ff1&&_0x556ff1==parseFloat(_0x556ff1)&&_0xaf1156(_0x13c1a0,_0x556ff1);!_0x11620f(_0x4c2549(0x1b7))&&_0x486ec5(_0x4c2549(0x1b7),'on');let _0x3b9f6a=document[_0x4c2549(0x1b6)]('.vjs-autoplay-button');if(_0x3b9f6a){_0x3b9f6a['querySelector']('.vjs-menu\x20.vjs-selected')?.[_0x4c2549(0x10e)][_0x4c2549(0x190)](_0x4c2549(0x11b));let _0x1abd36=_0x3b9f6a[_0x4c2549(0x1c7)](_0x4c2549(0x21a));_0x11620f(_0x4c2549(0x1b7))==='on'?_0x1abd36[_0x1abd36[_0x4c2549(0x1ff)]-0x1]['classList'][_0x4c2549(0x1c1)](_0x4c2549(0x11b)):_0x1abd36[0x0]['classList'][_0x4c2549(0x1c1)](_0x4c2549(0x11b));}let _0x36ed60=document[_0x4c2549(0x1b6)]('.vjs-mute-control');_0x36ed60&&(_0x36ed60[_0x4c2549(0xd1)]=function(){const _0x5a6c9e=_0x4c2549;_0x13c1a0[_0x5a6c9e(0x168)]?_0xb149cb['muted'](![]):_0xb149cb[_0x5a6c9e(0x168)](!![]);},_0x36ed60[_0x4c2549(0x183)]=function(){const _0x83c4a4=_0x4c2549;_0x13c1a0['muted']?_0xb149cb[_0x83c4a4(0x168)](![]):_0xb149cb['muted'](!![]);});let _0x25a27c=document['querySelector'](_0x4c2549(0x27c));_0x25a27c&&(_0x25a27c[_0x4c2549(0x245)]('click',_0x10c90e,![]),_0x25a27c['addEventListener']('click',_0x10c90e,![]));document[_0x4c2549(0xd1)]=function(){const _0x143957=_0x4c2549;if(!event[_0x143957(0x13d)]['closest'](_0x143957(0x189))&&!event['target'][_0x143957(0x261)](_0x143957(0x1d5))){let _0x329b37=document[_0x143957(0x1c7)](_0x143957(0x19d));_0x329b37[_0x143957(0x23d)](_0xfc1b7b=>{const _0x4575a0=_0x143957;_0xfc1b7b[_0x4575a0(0x10e)][_0x4575a0(0x190)](_0x4575a0(0x15a));});}},document[_0x4c2549(0x183)]=function(){const _0x1801d8=_0x4c2549;if(!event['target'][_0x1801d8(0x261)](_0x1801d8(0x189))&&!event['target']['closest'](_0x1801d8(0x1d5))){let _0x1d2be3=document[_0x1801d8(0x1c7)]('.vjs-menuOpen');_0x1d2be3[_0x1801d8(0x23d)](_0x2a7d8f=>{const _0x33c468=_0x1801d8;_0x2a7d8f[_0x33c468(0x10e)][_0x33c468(0x190)](_0x33c468(0x15a));});}};let _0x5bc6f7=document[_0x4c2549(0x1b6)](_0x4c2549(0x2a2));_0x5bc6f7&&(_0x5bc6f7[_0x4c2549(0x165)]=function(){const _0x4eff85=_0x4c2549;_0x13c1a0['currentTime']===0x0&&_0x13c1a0[_0x4eff85(0x22d)]();},_0x5bc6f7[_0x4c2549(0x183)]=function(){const _0x2decf2=_0x4c2549;_0x13c1a0[_0x2decf2(0x248)]===0x0&&_0x13c1a0['click']();}),_0x16ba46();}),document['addEventListener'](_0x246709(0x15e),function(_0x56e30a){const _0x5c0b5f=_0x246709;if(_0x56e30a[_0x5c0b5f(0x148)]==0x1b){let _0x18578f=document[_0x5c0b5f(0x1c7)]('.vjs-menuOpen');_0x18578f['forEach'](_0x348e0a=>{const _0x57768a=_0x5c0b5f;_0x348e0a[_0x57768a(0x10e)][_0x57768a(0x190)](_0x57768a(0x15a));});}},!![]),_0xb149cb['on']('loadedmetadata',function(){const _0x5ee940=_0x246709;if(typeof _0x4dc611['t']!==_0x5ee940(0x238)){let _0x35b6a2=_0x4dc611['t'][_0x5ee940(0x23c)]('s','');_0x3b5f8f(_0x13c1a0,_0x35b6a2);}_0x95a33b>0x0&&_0x3b5f8f(_0x13c1a0,_0x95a33b),_0x13c1a0['focus']();}),_0xb149cb['on'](_0x246709(0xc8),function(){_0x2da834();}),_0xb149cb['on'](_0x246709(0x1e9),function(){const _0x43a5fc=_0x246709;_0x13c1a0[_0x43a5fc(0x10e)][_0x43a5fc(0x190)]('goodTube_hidden');if(_0x293312===0x1){let _0x4ad51b='',_0x1fa551=document[_0x43a5fc(0x1b6)](_0x43a5fc(0x179));_0x1fa551?_0x4ad51b=_0x1fa551[_0x43a5fc(0x145)]:_0x4ad51b=_0x13c1a0['querySelector'](_0x43a5fc(0xe6))['getAttribute'](_0x43a5fc(0xeb));let _0x2d7f65=_0x4ad51b[_0x43a5fc(0x23c)]('p','')[_0x43a5fc(0x23c)]('hd','')['replace']('\x20','')[_0x43a5fc(0x26d)]();parseFloat(_0x37cec0)!==parseFloat(_0x2d7f65)&&(_0x3e3ea8=_0x2d7f65,_0x37cec0=_0x2d7f65);let _0x24e8ba=document['querySelector'](_0x43a5fc(0x124));if(_0x2d7f65==='audio')!_0x24e8ba[_0x43a5fc(0x10e)][_0x43a5fc(0x285)]('goodTube_audio')&&_0x24e8ba['classList'][_0x43a5fc(0x1c1)](_0x43a5fc(0x1ba));else _0x24e8ba['classList'][_0x43a5fc(0x285)](_0x43a5fc(0x1ba))&&_0x24e8ba['classList'][_0x43a5fc(0x190)](_0x43a5fc(0x1ba));_0x3ad6db&&(_0x28dda0<=0x1&&console[_0x43a5fc(0x1ab)](_0x43a5fc(0x133)+_0x4ad51b+'...'));}else{if(_0x293312===0x2){let _0x9ff154=document[_0x43a5fc(0x1b6)](_0x43a5fc(0x124));_0x9ff154['classList'][_0x43a5fc(0x285)](_0x43a5fc(0x1ba))&&_0x9ff154['classList'][_0x43a5fc(0x190)]('goodTube_audio'),_0x3ad6db&&(_0x28dda0<=0x1&&console['log'](_0x43a5fc(0x19a)));}}_0x28dda0++;}),_0xb149cb['on'](_0x246709(0x24b),function(){const _0x16ec44=_0x246709;!_0x13c1a0[_0x16ec44(0x185)]&&_0x48e14d(_0x13c1a0);_0x28dda0=0x1;typeof _0x15a732[_0x16ec44(0x118)]!==_0x16ec44(0x238)&&clearTimeout(_0x15a732[_0x16ec44(0x118)]);if(_0x3ad6db){if(_0x293312===0x1)console[_0x16ec44(0x1ab)](_0x16ec44(0xe8));else _0x293312===0x2&&console[_0x16ec44(0x1ab)](_0x16ec44(0x202));}_0x16ba46();let _0x3a87e5=document[_0x16ec44(0x1cd)](_0x16ec44(0x239));_0x3a87e5['classList'][_0x16ec44(0x285)](_0x16ec44(0x217))&&_0x3a87e5[_0x16ec44(0x10e)][_0x16ec44(0x190)](_0x16ec44(0x217));}),_0xb149cb['on'](_0x246709(0x1de),function(){_0x405a63=!![],_0x2da834(),_0x52b36b();}),_0xb149cb['on'](_0x246709(0x12f),function(){const _0x378286=_0x246709;let _0x3690c2=_0x13c1a0[_0x378286(0x229)];_0x13c1a0[_0x378286(0x168)]&&(_0x3690c2=0x0),_0x486ec5(_0x378286(0x125),_0x3690c2);});}function _0x4659ec(){const _0x1f12fe=_0x493fa8;let _0x100dcf=document[_0x1f12fe(0x1d4)]('style');_0x100dcf[_0x1f12fe(0x279)]=_0x1f12fe(0x269),document['body'][_0x1f12fe(0x1b9)](_0x100dcf);}function _0x129d96(){const _0xa34f4=_0x493fa8;_0x11620f('goodTube_previous')==='true'?(_0x50934e[_0xa34f4(0xf4)](),_0x486ec5(_0xa34f4(0x17d),_0xa34f4(0x11d))):_0x50934e['push'](window['location'][_0xa34f4(0x10d)]);}function _0x21b950(){const _0x12bf35=_0x493fa8;_0x43c898=![],_0x3ec7b6=!![];if((_0xa199ab||_0xdf1f5c)&&typeof _0x4dc611['v']==='undefined')_0x43c898=![],_0x3ec7b6=![];else{if(window[_0x12bf35(0x16a)][_0x12bf35(0x10d)][_0x12bf35(0xf9)](_0x12bf35(0x274))!==-0x1){if(typeof _0x4dc611['i']!==_0x12bf35(0x238)||typeof _0x4dc611[_0x12bf35(0x117)]!==_0x12bf35(0x238)||typeof _0x4dc611['list']!==_0x12bf35(0x238)){let _0x18249b=document[_0x12bf35(0x1c7)](_0x12bf35(0xda));if(!_0x18249b||_0x18249b[_0x12bf35(0x1ff)]<=0x0)return;let _0x35ccb7=_0x18249b[0x0][_0x12bf35(0xcd)](_0x12bf35(0xd9));_0x35ccb7===_0x12bf35(0x11d)&&(_0x43c898=!![]);let _0x4b42f7=_0x18249b[_0x18249b[_0x12bf35(0x1ff)]-0x1][_0x12bf35(0xcd)](_0x12bf35(0xd9));_0x4b42f7===_0x12bf35(0x253)&&(_0x3ec7b6=![]);}else _0x50934e[_0x50934e[_0x12bf35(0x1ff)]-0x2]&&_0x50934e[_0x50934e[_0x12bf35(0x1ff)]-0x2]!==window[_0x12bf35(0x16a)][_0x12bf35(0x10d)]&&(_0x43c898=!![]);}else{_0x3ec7b6=!![];if(typeof _0x4dc611['i']!==_0x12bf35(0x238)||typeof _0x4dc611[_0x12bf35(0x117)]!==_0x12bf35(0x238)||typeof _0x4dc611['list']!=='undefined'){let _0x5132b8=document[_0x12bf35(0x1c7)]('#secondary\x20.playlist-items\x20ytd-playlist-panel-video-renderer:not([hidden]),\x20#below\x20.playlist-items\x20ytd-playlist-panel-video-renderer:not([hidden])');if(!_0x5132b8||_0x5132b8[_0x12bf35(0x1ff)]<=0x0)return;_0x5132b8&&!_0x5132b8[0x0][_0x12bf35(0x270)]&&(_0x43c898=!![]);}else _0x50934e[_0x50934e['length']-0x2]&&_0x50934e[_0x50934e[_0x12bf35(0x1ff)]-0x2]!==window['location']['href']&&(_0x43c898=!![]);}}let _0x3514f5=document[_0x12bf35(0x1b6)]('.vjs-prev-button');_0x3514f5&&(!_0x43c898?_0x51bee4(_0x3514f5):_0x410dd8(_0x3514f5));let _0x5412ad=document['querySelector'](_0x12bf35(0xe4));_0x5412ad&&(!_0x3ec7b6?_0x51bee4(_0x5412ad):_0x410dd8(_0x5412ad));}function _0x10c90e(){const _0x4bc418=_0x493fa8;let _0x4100e4=document[_0x4bc418(0x1b6)]('.vjs-play-control');_0x4100e4['classList'][_0x4bc418(0x285)](_0x4bc418(0x1df))?_0x48e14d(_0x13c1a0):_0x43878d(_0x13c1a0);}function _0x16ba46(){const _0x436a37=_0x493fa8;let _0x3c292c=document[_0x436a37(0x1c7)](_0x436a37(0x218));if(_0x3c292c){let _0x39d55e=0x0;_0x3c292c['forEach'](_0x94873e=>{const _0x4fbc32=_0x436a37;_0x94873e[_0x4fbc32(0xc7)](_0x4fbc32(0x1b0),_0x4e8441[_0x39d55e]['url']),_0x4e8441[_0x39d55e][_0x4fbc32(0x1a8)]===_0x545a3c&&_0x94873e[_0x4fbc32(0x10e)][_0x4fbc32(0x1c1)](_0x4fbc32(0x11b)),_0x39d55e++;});}let _0x1d0435=document['querySelectorAll'](_0x436a37(0x186));_0x1d0435['forEach'](_0x5e6606=>{const _0x18628d=_0x436a37;_0x5e6606[_0x18628d(0x165)]=function(){const _0x180d5f=_0x18628d;let _0x6b82d3=document[_0x180d5f(0x1c7)](_0x180d5f(0x19d));_0x6b82d3['forEach'](_0x443e31=>{const _0x4b6064=_0x180d5f;_0x443e31!=_0x5e6606['closest'](_0x4b6064(0x1fc))&&_0x443e31[_0x4b6064(0x10e)][_0x4b6064(0x190)](_0x4b6064(0x15a));});let _0x1be247=_0x5e6606[_0x180d5f(0x261)](_0x180d5f(0x1fc));_0x1be247&&(_0x1be247['classList'][_0x180d5f(0x285)]('vjs-menuOpen')?_0x1be247[_0x180d5f(0x10e)]['remove'](_0x180d5f(0x15a)):_0x1be247[_0x180d5f(0x10e)][_0x180d5f(0x1c1)](_0x180d5f(0x15a)));},_0x5e6606[_0x18628d(0x183)]=function(){const _0x55f371=_0x18628d;let _0x5b2830=document['querySelectorAll'](_0x55f371(0x19d));_0x5b2830['forEach'](_0x39ec34=>{const _0xaf0e77=_0x55f371;_0x39ec34!=_0x5e6606[_0xaf0e77(0x261)](_0xaf0e77(0x1fc))&&_0x39ec34['classList'][_0xaf0e77(0x190)](_0xaf0e77(0x15a));});let _0x348c94=_0x5e6606[_0x55f371(0x261)](_0x55f371(0x1fc));_0x348c94&&(_0x348c94['classList'][_0x55f371(0x285)](_0x55f371(0x15a))?_0x348c94['classList'][_0x55f371(0x190)](_0x55f371(0x15a)):_0x348c94[_0x55f371(0x10e)][_0x55f371(0x1c1)](_0x55f371(0x15a)));};});const _0x39986c=(_0xff823c,_0x3a6f2a)=>{const _0x922895=_0x436a37;let _0x781943=![];function _0x3e75bb(){_0x781943=![];}function _0x1bff27(){_0x781943=!![];}function _0x55cb0a(_0x2adac4){if(_0x781943)return;_0x3a6f2a(_0x2adac4);}function _0x10a192(_0x3aa973){_0x3a6f2a(_0x3aa973);}_0xff823c[_0x922895(0x11c)](_0x922895(0x221),_0x3e75bb),_0xff823c['addEventListener'](_0x922895(0x24d),_0x1bff27),_0xff823c[_0x922895(0x11c)](_0x922895(0x129),_0x55cb0a),_0xff823c['addEventListener'](_0x922895(0x22d),_0x10a192);};let _0x28d3e9=document[_0x436a37(0x1c7)]('.vjs-menu-item');_0x28d3e9[_0x436a37(0x23d)](_0x20c5a6=>{_0x39986c(_0x20c5a6,_0x3ee204=>{let _0x4a718e=0x0;window['location']['href']['indexOf']('m.youtube')!==-0x1&&(_0x4a718e=0x190),setTimeout(function(){const _0x49dfe0=_0x229c;let _0xc32c68=document[_0x49dfe0(0x1c7)]('.vjs-menuOpen');_0xc32c68[_0x49dfe0(0x23d)](_0x1e8f18=>{const _0x33f95a=_0x49dfe0;_0x1e8f18[_0x33f95a(0x10e)][_0x33f95a(0x190)]('vjs-menuOpen');});},_0x4a718e);});});if(window['location'][_0x436a37(0x10d)][_0x436a37(0xf9)](_0x436a37(0x274))===-0x1){if(!document[_0x436a37(0x1b6)]('.goodTube_hoverBar')){let _0x3b34d4=document[_0x436a37(0x1d4)](_0x436a37(0x21d));_0x3b34d4[_0x436a37(0x10e)][_0x436a37(0x1c1)](_0x436a37(0x15b)),document[_0x436a37(0x1b6)](_0x436a37(0x10f))[_0x436a37(0x1b9)](_0x3b34d4),document['querySelector'](_0x436a37(0x10f))['addEventListener'](_0x436a37(0x1ec),function(_0x5787a5){const _0x41c00a=_0x436a37;window[_0x41c00a(0x1c5)](function(){const _0x30efe3=_0x41c00a;_0x3b34d4[_0x30efe3(0x294)][_0x30efe3(0x20b)]=document[_0x30efe3(0x1b6)](_0x30efe3(0x246))['style']['left'];});});}}}function _0x3d2d23(){const _0x4621e4=_0x493fa8;let _0x5e5bc=document[_0x4621e4(0x1d4)](_0x4621e4(0x21d));_0x5e5bc[_0x4621e4(0xc7)]('id',_0x4621e4(0x293)),_0x5e5bc[_0x4621e4(0x145)]='Video\x20could\x20not\x20be\x20loaded.\x20Please\x20select\x20another\x20video\x20source.<br><small>There\x20is\x20a\x20button\x20for\x20this\x20at\x20the\x20bottom\x20of\x20the\x20player.</small>',player[_0x4621e4(0x1b9)](_0x5e5bc),document[_0x4621e4(0x1b6)](_0x4621e4(0x1a2))[_0x4621e4(0x1b9)](_0x5e5bc);}function _0x46ce79(){const _0x4796eb=_0x493fa8;let _0x3db516=document[_0x4796eb(0x1b6)](_0x4796eb(0xdc));_0x3db516&&_0x3db516[_0x4796eb(0x190)]();}let _0x958585=![],_0x20dcae=![],_0x13c1a0=![],_0x4dc611=![],_0x5b99b7=[],_0x357a94=0x0,_0x95e616=[_0x493fa8(0x10b),'https://yt.artemislena.eu',_0x493fa8(0x1a9),_0x493fa8(0xca),_0x493fa8(0x26a)],_0x4e8441=[{'name':_0x493fa8(0x1aa),'type':0x2,'proxy':!![],'url':_0x493fa8(0x258)},{'name':_0x493fa8(0x166),'type':0x2,'proxy':!![],'url':_0x493fa8(0x1a9)},{'name':_0x493fa8(0x1bb),'type':0x2,'proxy':!![],'url':_0x493fa8(0xca)},{'name':'HD\x20-\x20Onyx\x20(FR)','type':0x2,'proxy':!![],'url':_0x493fa8(0x26a)},{'name':_0x493fa8(0x143),'type':0x2,'proxy':!![],'url':_0x493fa8(0x20d)},{'name':_0x493fa8(0x1f2),'type':0x2,'proxy':!![],'url':_0x493fa8(0x257)},{'name':_0x493fa8(0x235),'type':0x2,'proxy':!![],'url':_0x493fa8(0x170)},{'name':_0x493fa8(0x196),'type':0x1,'proxy':!![],'url':_0x493fa8(0x28a)},{'name':_0x493fa8(0xdd),'type':0x1,'proxy':![],'url':_0x493fa8(0x10b)},{'name':_0x493fa8(0x1da),'type':0x1,'proxy':!![],'url':_0x493fa8(0x213)},{'name':'360p\x20-\x20Nymph\x20(AT)','type':0x1,'proxy':!![],'url':'https://invidious.private.coffee'},{'name':_0x493fa8(0xe7),'type':0x1,'proxy':!![],'url':_0x493fa8(0x11e)},{'name':_0x493fa8(0x178),'type':0x1,'proxy':!![],'url':_0x493fa8(0x22f)},{'name':_0x493fa8(0x1a6),'type':0x1,'proxy':!![],'url':_0x493fa8(0xf0)}],_0x293312=_0x4e8441[0x0][_0x493fa8(0x28e)],_0x321664=_0x4e8441[0x0][_0x493fa8(0x1b8)],_0x545a3c=_0x4e8441[0x0][_0x493fa8(0x1a8)],_0x6571da=_0x4e8441[0x0]['name'];function _0x36d6f6(_0x3ad280){const _0x4880c4=_0x493fa8;let _0x2a2571=![],_0x3f3a25=![],_0x22b08d=![];if(_0x3ad280==='next')_0x2a2571='n',_0x3f3a25=0x4e,_0x22b08d=!![];else{if(_0x3ad280===_0x4880c4(0x25f))_0x2a2571='p',_0x3f3a25=0x50,_0x22b08d=!![];else{if(_0x3ad280===_0x4880c4(0x155))_0x2a2571='t',_0x3f3a25=0x54,_0x22b08d=![];else{if(_0x3ad280===_0x4880c4(0xce))_0x2a2571='f',_0x3f3a25=0x46,_0x22b08d=![];else return;}}}let _0x13d568=![];_0x13d568=new window[(_0x4880c4(0x1e1))]('focus',{'bubbles':!![],'key':_0x2a2571,'keyCode':_0x3f3a25,'shiftKey':_0x22b08d,'charCode':0x0}),document['dispatchEvent'](_0x13d568),_0x13d568=new window[(_0x4880c4(0x1e1))](_0x4880c4(0x15e),{'bubbles':!![],'key':_0x2a2571,'keyCode':_0x3f3a25,'shiftKey':_0x22b08d,'charCode':0x0}),document['dispatchEvent'](_0x13d568),_0x13d568=new window[(_0x4880c4(0x1e1))](_0x4880c4(0x169),{'bubbles':!![],'key':_0x2a2571,'keyCode':_0x3f3a25,'shiftKey':_0x22b08d,'charCode':0x0}),document['dispatchEvent'](_0x13d568),_0x13d568=new window[(_0x4880c4(0x1e1))](_0x4880c4(0x16c),{'bubbles':!![],'key':_0x2a2571,'keyCode':_0x3f3a25,'shiftKey':_0x22b08d,'charCode':0x0}),document[_0x4880c4(0x14a)](_0x13d568),_0x13d568=new window[(_0x4880c4(0x1e1))]('input',{'bubbles':!![],'key':_0x2a2571,'keyCode':_0x3f3a25,'shiftKey':_0x22b08d,'charCode':0x0}),document['dispatchEvent'](_0x13d568),_0x13d568=new window[(_0x4880c4(0x1e1))](_0x4880c4(0x163),{'bubbles':!![],'key':_0x2a2571,'keyCode':_0x3f3a25,'shiftKey':_0x22b08d,'charCode':0x0}),document['dispatchEvent'](_0x13d568),_0x13d568=new window['KeyboardEvent'](_0x4880c4(0xc9),{'bubbles':!![],'key':_0x2a2571,'keyCode':_0x3f3a25,'shiftKey':_0x22b08d,'charCode':0x0}),document[_0x4880c4(0x14a)](_0x13d568);}function _0x40d741(_0x4c6b69=![]){const _0x3ad7ed=_0x493fa8;if(window['location'][_0x3ad7ed(0x10d)][_0x3ad7ed(0xf9)](_0x3ad7ed(0x274))!==-0x1){if(typeof _0x4dc611['i']!==_0x3ad7ed(0x238)||typeof _0x4dc611[_0x3ad7ed(0x117)]!==_0x3ad7ed(0x238)||typeof _0x4dc611[_0x3ad7ed(0x110)]!==_0x3ad7ed(0x238)){let _0x35ba7f=document[_0x3ad7ed(0x1c7)](_0x3ad7ed(0xda)),_0x1c1efc=document[_0x3ad7ed(0x1c7)](_0x3ad7ed(0x289));if(!_0x35ba7f||_0x35ba7f['length']<=0x0||!_0x1c1efc||_0x1c1efc[_0x3ad7ed(0x1ff)]<=0x0){document[_0x3ad7ed(0x1b6)](_0x3ad7ed(0x27b))?.[_0x3ad7ed(0x22d)](),setTimeout(function(){_0x40d741(!![]);},0x64);return;}let _0x3df00b=![],_0x5f896f=_0x35ba7f[0x0][_0x3ad7ed(0xcd)]('aria-selected');_0x5f896f===_0x3ad7ed(0x11d)&&(_0x3df00b=!![]);if(_0x3df00b){_0x3ad6db&&console[_0x3ad7ed(0x1ab)](_0x3ad7ed(0x149));let _0x576cbe=![];for(let _0x24e8b8=_0x35ba7f[_0x3ad7ed(0x1ff)]-0x1;_0x24e8b8>=0x0;_0x24e8b8--){if(_0x576cbe){_0x35ba7f[_0x24e8b8]['querySelector'](_0x3ad7ed(0x176))['click']();return;}_0x35ba7f[_0x24e8b8]['getAttribute'](_0x3ad7ed(0xd9))==='true'&&(_0x576cbe=!![]);}}}else(_0x11620f(_0x3ad7ed(0x1b7))==='on'||_0x4c6b69)&&_0x50934e[_0x50934e[_0x3ad7ed(0x1ff)]-0x2]&&_0x50934e[_0x50934e[_0x3ad7ed(0x1ff)]-0x2]!==window[_0x3ad7ed(0x16a)]['href']&&(_0x3ad6db&&console[_0x3ad7ed(0x1ab)](_0x3ad7ed(0x171)),setTimeout(function(){const _0x3fa5ed=_0x3ad7ed;_0x486ec5(_0x3fa5ed(0x17d),_0x3fa5ed(0x253)),window[_0x3fa5ed(0x29c)]['go'](-0x1);},0x0));}else{if(typeof _0x4dc611['i']!=='undefined'||typeof _0x4dc611[_0x3ad7ed(0x117)]!==_0x3ad7ed(0x238)||typeof _0x4dc611['list']!==_0x3ad7ed(0x238)){let _0x9657e4=document['querySelectorAll'](_0x3ad7ed(0x19e));if(_0x9657e4&&!_0x9657e4[0x0][_0x3ad7ed(0x270)])_0x3ad6db&&console[_0x3ad7ed(0x1ab)](_0x3ad7ed(0x149)),_0x36d6f6(_0x3ad7ed(0x25f));else(_0x11620f(_0x3ad7ed(0x1b7))==='on'||_0x4c6b69)&&_0x50934e[_0x50934e[_0x3ad7ed(0x1ff)]-0x2]&&_0x50934e[_0x50934e[_0x3ad7ed(0x1ff)]-0x2]!==window[_0x3ad7ed(0x16a)]['href']&&(_0x3ad6db&&console[_0x3ad7ed(0x1ab)](_0x3ad7ed(0x171)),setTimeout(function(){const _0x125788=_0x3ad7ed;_0x486ec5(_0x125788(0x17d),'true'),window[_0x125788(0x29c)]['go'](-0x1);},0x0));}else(_0x11620f('goodTube_autoplay')==='on'||_0x4c6b69)&&_0x50934e[_0x50934e['length']-0x2]&&_0x50934e[_0x50934e['length']-0x2]!==window[_0x3ad7ed(0x16a)][_0x3ad7ed(0x10d)]&&(_0x3ad6db&&console[_0x3ad7ed(0x1ab)](_0x3ad7ed(0x171)),setTimeout(function(){const _0x172b63=_0x3ad7ed;_0x486ec5(_0x172b63(0x17d),_0x172b63(0x253)),window[_0x172b63(0x29c)]['go'](-0x1);},0x0));}}function _0x52b36b(_0x3c6d75=![]){const _0x49717d=_0x493fa8;if(window[_0x49717d(0x16a)]['href'][_0x49717d(0xf9)](_0x49717d(0x274))!==-0x1){if(typeof _0x4dc611['i']!==_0x49717d(0x238)||typeof _0x4dc611[_0x49717d(0x117)]!=='undefined'||typeof _0x4dc611[_0x49717d(0x110)]!==_0x49717d(0x238)){let _0x4682ec=document[_0x49717d(0x1c7)]('#secondary\x20.playlist-items\x20ytd-playlist-panel-video-renderer:not([hidden]),\x20#below\x20.playlist-items\x20ytd-playlist-panel-video-renderer:not([hidden])'),_0x147312=document[_0x49717d(0x1c7)](_0x49717d(0x289));if(!_0x4682ec||_0x4682ec[_0x49717d(0x1ff)]<=0x0||!_0x147312||_0x147312[_0x49717d(0x1ff)]<=0x0){document[_0x49717d(0x1b6)](_0x49717d(0x27b))?.['click'](),setTimeout(function(){_0x52b36b(!![]);},0x64);return;}let _0x2235dd=![],_0x2e4b5e=_0x4682ec[_0x4682ec['length']-0x1][_0x49717d(0xcd)](_0x49717d(0xd9));_0x2e4b5e==='false'&&(_0x2235dd=!![]);if(_0x2235dd){_0x3ad6db&&console[_0x49717d(0x1ab)](_0x49717d(0xfd));let _0x2cfb14=![];for(let _0x3cfeaf=0x0;_0x3cfeaf<_0x4682ec['length'];_0x3cfeaf++){if(_0x2cfb14){_0x4682ec[_0x3cfeaf][_0x49717d(0x1b6)]('a.compact-media-item-image')[_0x49717d(0x22d)]();return;}_0x4682ec[_0x3cfeaf][_0x49717d(0xcd)](_0x49717d(0xd9))===_0x49717d(0x253)&&(_0x2cfb14=!![]);}}}else{if(_0x11620f(_0x49717d(0x1b7))==='on'||_0x3c6d75){_0x3ad6db&&console[_0x49717d(0x1ab)]('[GoodTube]\x20Autoplaying\x20next\x20video...');function _0x366f73(){const _0x555fe5=_0x49717d;_0x3b5f8f(_0x13c1a0,_0x13c1a0[_0x555fe5(0x24a)]),_0x2da834();let _0x39b068=document[_0x555fe5(0x1b6)](_0x555fe5(0x127));_0x39b068?_0x39b068[_0x555fe5(0x22d)]():setTimeout(_0x366f73,0x0);}setTimeout(_0x366f73,0x0);}}}else{if(typeof _0x4dc611['i']!==_0x49717d(0x238)||typeof _0x4dc611['index']!==_0x49717d(0x238)||typeof _0x4dc611[_0x49717d(0x110)]!==_0x49717d(0x238)){let _0x1bfe2c=document[_0x49717d(0x1c7)](_0x49717d(0x19e));if(_0x1bfe2c&&!_0x1bfe2c[_0x1bfe2c[_0x49717d(0x1ff)]-0x1][_0x49717d(0x270)])_0x3ad6db&&console['log']('[GoodTube]\x20Playing\x20next\x20video\x20in\x20playlist...'),_0x36d6f6('next');else(_0x11620f(_0x49717d(0x1b7))==='on'||_0x3c6d75)&&(_0x3ad6db&&console[_0x49717d(0x1ab)]('[GoodTube]\x20Autoplaying\x20next\x20video...'),setTimeout(function(){_0x36d6f6('next');},0x0));}else(_0x11620f('goodTube_autoplay')==='on'||_0x3c6d75)&&(_0x3ad6db&&console[_0x49717d(0x1ab)](_0x49717d(0x233)),setTimeout(function(){const _0x30a15e=_0x49717d;_0x36d6f6(_0x30a15e(0xd4));},0x0));}}function _0x51422f(){const _0x3e1f62=_0x493fa8;if(_0x958585)return;const _0x1a7e50=_0x15a0cc+_0x3e1f62(0x18f)+Date[_0x3e1f62(0x1fa)]();_0x3ad6db&&console[_0x3e1f62(0x1ab)](_0x3e1f62(0x111)),fetch(_0x1a7e50)[_0x3e1f62(0x206)](_0x294f0c=>_0x294f0c[_0x3e1f62(0x1d3)]())['then'](_0x205eac=>{const _0xb8be1b=_0x3e1f62,_0x106cfb=_0x205eac[_0xb8be1b(0x12d)](/@version\s+(\d+\.\d+)/);if(!_0x106cfb)return;const _0x32ac8e=parseFloat(GM_info[_0xb8be1b(0x152)][_0xb8be1b(0x1e4)]),_0x18706c=parseFloat(_0x106cfb[0x1]);if(_0x18706c<=_0x32ac8e){_0x3ad6db&&console['log'](_0xb8be1b(0x123));return;}if(parseFloat(localStorage[_0xb8be1b(0x1a4)](_0xb8be1b(0x250)))===_0x18706c)return;let _0x5f588a=document[_0xb8be1b(0x1d4)]('style');_0x5f588a[_0xb8be1b(0x279)]=_0xb8be1b(0x1d8),document[_0xb8be1b(0x1f4)][_0xb8be1b(0x1b9)](_0x5f588a),fetch(_0x15a0cc+'/js/sweetalert2@11.js')[_0xb8be1b(0x206)](_0x18ee8b=>_0x18ee8b['text']())[_0xb8be1b(0x206)](_0x476e2c=>{const _0x312e08=_0xb8be1b;let _0x426f21=document[_0x312e08(0x1d4)](_0x312e08(0x152));_0x426f21['innerHTML']=_0x476e2c,document[_0x312e08(0x1f4)][_0x312e08(0x1b9)](_0x426f21),Swal[_0x312e08(0x115)]({'position':_0x312e08(0x228),'backdrop':![],'title':_0x312e08(0xd8),'text':_0x312e08(0x134),'showCancelButton':!![],'showDenyButton':!![],'confirmButtonText':'Update','denyButtonText':_0x312e08(0xee),'cancelButtonText':'Close'})[_0x312e08(0x206)](_0x161566=>{const _0x53ea01=_0x312e08;if(_0x161566[_0x53ea01(0x1b1)])window[_0x53ea01(0x16a)]=_0x1a7e50;else _0x161566['isDenied']&&localStorage[_0x53ea01(0x18a)]('goodTube_stopUpdates',_0x18706c);});}),_0x3ad6db&&console[_0xb8be1b(0x1ab)](_0xb8be1b(0x116)+_0x18706c);})['catch'](_0x30d6d3=>{_0x958585=!![];}),_0x958585=!![];}function _0xe770b9(){const _0x1613ce=_0x493fa8;_0x159c27(),_0x519e79(),_0x21c203(),_0x45f392(),_0x375e37();let _0x35fa0e=_0x13c1a0;if(_0x28ed82>=_0x7bcaad[_0x1613ce(0x1ff)]&&_0x20be4e){let _0x385c30=_0x20dcae;_0x385c30&&(_0x385c30=_0x385c30['split']('#')[0x0]);let _0x2afc73=window[_0x1613ce(0x16a)]['href']['split']('#')[0x0];_0x2afc73&&(_0x2afc73=_0x2afc73[_0x1613ce(0x224)]('#')[0x0]);if(_0x385c30!==_0x2afc73){_0x4dc611=_0x12f155();if(typeof _0x4dc611['v']!==_0x1613ce(0x238))window['location'][_0x1613ce(0x10d)][_0x1613ce(0xf9)](_0x1613ce(0x274))!==-0x1&&_0x354ffa(_0x35fa0e),_0x3ad6db&&console['log'](_0x1613ce(0x255)),_0x129d96(),_0x3ad6db&&console[_0x1613ce(0x1ab)]('[GoodTube]\x20Loading\x20video\x20data\x20from\x20'+_0x6571da+_0x1613ce(0x1fe)),_0x5d4349=0x0,_0x95a33b=0x0,_0x5170e5(_0x35fa0e),_0x380b7e();else{if(!_0xa199ab&&!_0xdf1f5c){_0x33f012(_0x13c1a0);window[_0x1613ce(0x16a)]['href'][_0x1613ce(0xf9)](_0x1613ce(0x274))!==-0x1&&_0x96e203(_0x35fa0e);_0x50934e=[];for(let _0x303d48 in _0x15a732){_0x15a732[_0x1613ce(0x1bf)](_0x303d48)&&clearTimeout(_0x15a732[_0x303d48]);}}}_0x20dcae=window[_0x1613ce(0x16a)][_0x1613ce(0x10d)];}}}function _0x502089(){const _0x4aca36=_0x493fa8;!_0x11620f(_0x4aca36(0x242))&&(fetch('https://api.counterapi.dev/v1/goodtube/users/up/'),_0x486ec5(_0x4aca36(0x242),_0x4aca36(0x253)));}function _0x380b7e(){const _0x21621b=_0x493fa8;fetch(_0x21621b(0xdf));}function _0x1ee93c(){const _0x4763eb=_0x493fa8;_0x3ad6db&&(console[_0x4763eb(0x1ab)](_0x4763eb(0x1f3)),console[_0x4763eb(0x1ab)]('[GoodTube]\x20Initiating...'));let _0x199282=_0x11620f(_0x4763eb(0x1cb));_0x199282&&_0x4e8441[_0x4763eb(0x23d)](_0x3c638a=>{const _0x5f153b=_0x4763eb;_0x3c638a[_0x5f153b(0x1a8)]===_0x199282&&(_0x293312=_0x3c638a['type'],_0x321664=_0x3c638a[_0x5f153b(0x1b8)],_0x545a3c=_0x3c638a[_0x5f153b(0x1a8)],_0x6571da=_0x3c638a[_0x5f153b(0x17c)]);}),setInterval(_0x1b05cd,0x1),setInterval(_0xe770b9,0x1),setInterval(_0x21b950,0x64),setInterval(_0x18ce62,0x64),setInterval(_0x18580d,0x64),setInterval(_0x4da898,0x64),_0x333c6b(),_0x4ed88d(),_0x51422f(),_0x1b05cd(),_0x59d8c9(),_0x3670d0(),_0x502089();}let _0x5b605f={};function _0x2d0471(){const _0x503140=_0x493fa8;window['addEventListener'](_0x503140(0x13e),function(_0x998e64){const _0xace6bb=_0x503140;if(_0x998e64[_0xace6bb(0x220)]){let _0x1a3427=_0x998e64[_0xace6bb(0x220)];setTimeout(function(){const _0x573dab=_0xace6bb;let _0x15dd42=document[_0x573dab(0x1b6)](_0x573dab(0x1d2)+_0x1a3427[_0x573dab(0x23c)](/[!\"#$%&'\(\)\*\+,\.\/:;<=>\?\@\[\\\]\^`\{\|\}~]/g,''));_0x15dd42&&_0x15dd42[_0x573dab(0x190)]();},0x7530),delete _0x5b605f[_0x1a3427],Object[_0xace6bb(0x1d0)](_0x5b605f)[_0xace6bb(0x1ff)]<=0x0&&setTimeout(function(){_0x59fec0();},0x3e8);}});}function _0x418a56(){const _0x5ccdcf=_0x493fa8;let _0x50c04f=window[_0x5ccdcf(0x16a)][_0x5ccdcf(0x10d)]['split']('#'),_0x20036c=_0x50c04f[0x1][_0x5ccdcf(0x224)]('&'),_0x3c219d=decodeURIComponent(_0x20036c[0x0]),_0x2f167f=decodeURIComponent(_0x20036c[0x1]),_0x336406=decodeURIComponent(_0x20036c[0x2]),_0x2c0992=decodeURIComponent(_0x20036c[0x3]);_0x30a9d6(_0x3c219d,_0x2f167f,_0x336406,_0x2c0992);}function _0x30a9d6(_0x14f2bb,_0x3cda65,_0x31c12c,_0x235e2e){const _0x4156b6=_0x493fa8;let _0x1bf917=0x0,_0x5dea35=new Date()[_0x4156b6(0x24e)]()/0x3e8,_0x831ebf=parseFloat(_0x11620f(_0x4156b6(0x280)));_0x831ebf&&(_0x1bf917=0x3-(_0x5dea35-_0x831ebf),_0x1bf917<0x0&&(_0x1bf917=0x0)),_0x486ec5(_0x4156b6(0x280),_0x5dea35+_0x1bf917),_0x5b99b7[_0x3cda65]=setTimeout(function(){const _0x1b0014=_0x4156b6;let _0x3291bd=![];_0x14f2bb===_0x1b0014(0x16b)&&(_0x3291bd=!![]);let _0x420eff=JSON['stringify']({'url':_0x1b0014(0x104)+_0x3cda65,'vCodec':_0x235e2e,'vQuality':_0x1b0014(0x29d),'filenamePattern':_0x1b0014(0x158),'isAudioOnly':_0x3291bd});fetch(_0x1b0014(0x20a),{'method':_0x1b0014(0xed),'headers':{'Accept':'application/json','Content-Type':_0x1b0014(0x10a)},'body':_0x420eff})[_0x1b0014(0x206)](_0x4f8d6d=>_0x4f8d6d[_0x1b0014(0x1d3)]())['then'](_0x35e5d8=>{const _0x1b1a2f=_0x1b0014;_0x35e5d8=JSON[_0x1b1a2f(0x1f5)](_0x35e5d8);if(typeof _0x35e5d8[_0x1b1a2f(0x266)]!==_0x1b1a2f(0x238)&&_0x35e5d8[_0x1b1a2f(0x266)]===_0x1b1a2f(0x23a)){typeof _0x15a732[_0x1b1a2f(0x137)+_0x3cda65]!==_0x1b1a2f(0x238)&&clearTimeout(_0x15a732[_0x1b1a2f(0x137)+_0x3cda65]);_0x15a732[_0x1b1a2f(0x137)+_0x3cda65]=setTimeout(function(){_0x30a9d6(_0x14f2bb,_0x3cda65,_0x31c12c,_0x235e2e);},_0x4d1abc);return;}if(typeof _0x35e5d8['status']!==_0x1b1a2f(0x238)&&_0x35e5d8[_0x1b1a2f(0x266)]===_0x1b1a2f(0x1ce)){if(typeof _0x35e5d8[_0x1b1a2f(0x1d3)]!==_0x1b1a2f(0x238)&&_0x35e5d8[_0x1b1a2f(0x1d3)][_0x1b1a2f(0x26d)]()['indexOf'](_0x1b1a2f(0x1b0))!==-0x1){typeof _0x15a732[_0x1b1a2f(0x137)+_0x3cda65]!==_0x1b1a2f(0x238)&&clearTimeout(_0x15a732['download_'+_0x3cda65]);_0x15a732[_0x1b1a2f(0x137)+_0x3cda65]=setTimeout(function(){_0x30a9d6(_0x14f2bb,_0x3cda65,_0x31c12c,_0x235e2e);},_0x4d1abc);return;}if(_0x235e2e!==_0x1b1a2f(0x14c)&&typeof _0x35e5d8[_0x1b1a2f(0x1d3)]!==_0x1b1a2f(0x238)&&_0x35e5d8[_0x1b1a2f(0x1d3)][_0x1b1a2f(0x26d)]()[_0x1b1a2f(0xf9)](_0x1b1a2f(0x194))!==-0x1){let _0x2ebb3e=![];if(_0x235e2e===_0x1b1a2f(0x26b))_0x2ebb3e=_0x1b1a2f(0x296);else _0x235e2e===_0x1b1a2f(0x296)&&(_0x2ebb3e='h264');typeof _0x15a732['download_'+_0x3cda65]!=='undefined'&&clearTimeout(_0x15a732['download_'+_0x3cda65]);_0x15a732[_0x1b1a2f(0x137)+_0x3cda65]=setTimeout(function(){_0x30a9d6(_0x14f2bb,_0x3cda65,_0x31c12c,_0x2ebb3e);},_0x4d1abc);return;}_0x14f2bb==='audio'?window[_0x1b1a2f(0x21b)]('https://invidious.perennialte.ch/watch?v='+_0x3cda65+_0x1b1a2f(0x247),'_blank'):window[_0x1b1a2f(0x21b)](_0x1b1a2f(0x12c)+_0x3cda65,'_blank');_0x3ad6db&&(typeof _0x31c12c!==_0x1b1a2f(0x238)?console[_0x1b1a2f(0x1ab)](_0x1b1a2f(0x1dd)+_0x14f2bb+_0x1b1a2f(0x1a3)+_0x31c12c):console[_0x1b1a2f(0x1ab)](_0x1b1a2f(0x1dd)+_0x14f2bb));window['parent'][_0x1b1a2f(0x1a7)](_0x3cda65,'*');return;}if(typeof _0x35e5d8[_0x1b1a2f(0x266)]!==_0x1b1a2f(0x238)&&typeof _0x35e5d8[_0x1b1a2f(0x1a8)]!==_0x1b1a2f(0x238)){if(typeof _0x31c12c===_0x1b1a2f(0x238)||!_0x31c12c||window[_0x1b1a2f(0x16a)][_0x1b1a2f(0x10d)]['indexOf']('m.youtube')!==-0x1){let _0x55bb99=document[_0x1b1a2f(0x1d4)]('a');_0x55bb99[_0x1b1a2f(0x10d)]=_0x35e5d8['url'],document[_0x1b1a2f(0x237)]['appendChild'](_0x55bb99),_0x55bb99['click'](),window[_0x1b1a2f(0x275)]['postMessage'](_0x3cda65,'*'),_0x3ad6db&&console[_0x1b1a2f(0x1ab)](_0x1b1a2f(0x21c)+_0x14f2bb);}else _0x1fb056(_0x35e5d8[_0x1b1a2f(0x1a8)],_0x14f2bb,_0x31c12c,_0x3cda65);return;}})[_0x1b0014(0x14b)](_0x1f5619=>{const _0x3977b4=_0x1b0014;typeof _0x15a732[_0x3977b4(0x137)+_0x3cda65]!=='undefined'&&clearTimeout(_0x15a732[_0x3977b4(0x137)+_0x3cda65]),_0x15a732['download_'+_0x3cda65]=setTimeout(function(){_0x30a9d6(_0x14f2bb,_0x3cda65,_0x31c12c,_0x235e2e);},_0x4d1abc);});},_0x1bf917*0x3e8);}function _0x219b18(_0x41e226,_0x4141a3,_0x108668){const _0x254c03=_0x493fa8;if(typeof _0x5b605f[_0x4141a3]===_0x254c03(0x238))return;let _0x55c064=0x0,_0x349719=new Date()[_0x254c03(0x24e)]()/0x3e8,_0x347277=parseFloat(_0x11620f(_0x254c03(0x280)));_0x347277&&(_0x55c064=0x3-(_0x349719-_0x347277),_0x55c064<0x0&&(_0x55c064=0x0)),_0x486ec5(_0x254c03(0x280),_0x349719+_0x55c064),_0x4d7691(),_0x5b99b7[_0x4141a3]=setTimeout(function(){const _0x2339cd=_0x254c03;let _0x2d189e=_0x2339cd(0x26b);window['location']['href'][_0x2339cd(0xf9)](_0x2339cd(0x274))!==-0x1&&(_0x2d189e=_0x2339cd(0x14c));typeof _0x108668===_0x2339cd(0x238)&&(_0x108668='');let _0x13560b=document[_0x2339cd(0x1d4)](_0x2339cd(0x1f7));_0x13560b['classList'][_0x2339cd(0x1c1)](_0x2339cd(0xd2)),_0x13560b['id']=_0x4141a3[_0x2339cd(0x23c)](/[!\"#$%&'\(\)\*\+,\.\/:;<=>\?\@\[\\\]\^`\{\|\}~]/g,''),_0x13560b[_0x2339cd(0x294)][_0x2339cd(0x230)]='none',_0x13560b[_0x2339cd(0x167)]=_0x2339cd(0x290)+encodeURIComponent(_0x41e226)+'&'+encodeURIComponent(_0x4141a3)+'&'+encodeURIComponent(_0x108668)+'&'+encodeURIComponent(_0x2d189e),document[_0x2339cd(0x237)][_0x2339cd(0x1b9)](_0x13560b),_0x3ad6db&&(typeof _0x108668===_0x2339cd(0x238)?console[_0x2339cd(0x1ab)](_0x2339cd(0x161)+_0x41e226+_0x2339cd(0x1fe)):console[_0x2339cd(0x1ab)](_0x2339cd(0x161)+_0x41e226+_0x2339cd(0x1a3)+_0x108668+_0x2339cd(0x1fe)));},_0x55c064*0x3e8);}function _0x4d7691(){const _0x576b2f=_0x493fa8;let _0x87e042=document['querySelector'](_0x576b2f(0x244)),_0x26b490=document[_0x576b2f(0x1b6)]('.vjs-download-button\x20.goodTube_spinner');if(!_0x26b490){let _0x5ef83c=document[_0x576b2f(0x1d4)](_0x576b2f(0x21d));_0x5ef83c[_0x576b2f(0x10e)][_0x576b2f(0x1c1)]('goodTube_spinner'),_0x5ef83c['innerHTML']='<div></div><div></div>',_0x87e042[_0x576b2f(0x210)](_0x5ef83c);}_0x87e042&&!_0x87e042[_0x576b2f(0x10e)][_0x576b2f(0x285)](_0x576b2f(0x1fb))&&_0x87e042['classList'][_0x576b2f(0x1c1)](_0x576b2f(0x1fb));}function _0x59fec0(_0x396ccb){const _0x44d5ae=_0x493fa8;let _0x4e9687=document[_0x44d5ae(0x1b6)](_0x44d5ae(0x244));_0x4e9687&&_0x4e9687[_0x44d5ae(0x10e)]['contains'](_0x44d5ae(0x1fb))&&_0x4e9687[_0x44d5ae(0x10e)][_0x44d5ae(0x190)](_0x44d5ae(0x1fb)),_0x486ec5(_0x44d5ae(0x280),new Date()[_0x44d5ae(0x24e)]()/0x3e8),_0x3ad6db&&typeof _0x396ccb===_0x44d5ae(0x238)&&console[_0x44d5ae(0x1ab)](_0x44d5ae(0x1f9));}function _0x18ce62(){const _0x29f876=_0x493fa8;let _0x589668=document[_0x29f876(0x1b6)](_0x29f876(0xf8)),_0x5f38a8=document[_0x29f876(0x1b6)](_0x29f876(0x284)),_0x456ad9=document[_0x29f876(0x1b6)](_0x29f876(0x14f));if(!_0x589668||!_0x5f38a8||!_0x456ad9)return;typeof _0x4dc611['i']!=='undefined'||typeof _0x4dc611[_0x29f876(0x117)]!=='undefined'||typeof _0x4dc611['list']!=='undefined'?(_0x410dd8(_0x5f38a8),_0x410dd8(_0x456ad9)):(_0x51bee4(_0x5f38a8),_0x51bee4(_0x456ad9)),Object[_0x29f876(0x1d0)](_0x5b605f)[_0x29f876(0x1ff)]>0x0?_0x410dd8(_0x589668):_0x51bee4(_0x589668);}function _0x28473d(){const _0x75e192=_0x493fa8;if(!confirm(_0x75e192(0x140)))return;_0x5b605f=[];for(let _0x595dcc in _0x5b99b7){clearTimeout(_0x5b99b7[_0x595dcc]),delete _0x5b99b7[_0x595dcc];}let _0x30698d=document['querySelectorAll'](_0x75e192(0x175));_0x30698d['forEach'](_0x3600a9=>{const _0x526c3b=_0x75e192;_0x3600a9[_0x526c3b(0x190)]();}),_0x59fec0(!![]),_0x3ad6db&&console[_0x75e192(0x1ab)](_0x75e192(0x23e));}window[_0x493fa8(0x11c)](_0x493fa8(0x15c),function(_0x1e7e10){const _0x29d647=_0x493fa8;_0x486ec5(_0x29d647(0x280),new Date()[_0x29d647(0x24e)]()/0x3e8);});function _0x3045ee(_0x179ee8,_0x42f60d){const _0x1a1654=_0x493fa8;if(typeof _0x42f60d===_0x1a1654(0x238)&&!confirm(_0x1a1654(0x1c0)+_0x179ee8+_0x1a1654(0x181)))return;_0x3ad6db&&typeof _0x42f60d===_0x1a1654(0x238)&&console[_0x1a1654(0x1ab)](_0x1a1654(0x161)+_0x179ee8+_0x1a1654(0x209));let _0x48bbb8=[];if(window[_0x1a1654(0x16a)][_0x1a1654(0x10d)][_0x1a1654(0xf9)]('m.youtube')!==-0x1){_0x48bbb8=document['querySelectorAll'](_0x1a1654(0xda));if(!_0x48bbb8||_0x48bbb8[_0x1a1654(0x1ff)]<=0x0){document[_0x1a1654(0x1b6)]('ytm-playlist-panel-entry-point')?.[_0x1a1654(0x22d)](),setTimeout(function(){_0x3045ee(_0x179ee8,!![]);},0x64);return;}}else _0x48bbb8=document[_0x1a1654(0x1c7)](_0x1a1654(0x19e));if(_0x48bbb8[_0x1a1654(0x1ff)]<=0x0){_0x3ad6db&&console[_0x1a1654(0x1ab)]('[GoodTube]\x20Downloading\x20failed,\x20could\x20not\x20find\x20playlist\x20data');return;}let _0x104962=0x0;_0x48bbb8['forEach'](_0x3220a4=>{const _0x41ce17=_0x1a1654;let _0x45b0b1='',_0x2e58aa='';window[_0x41ce17(0x16a)][_0x41ce17(0x10d)][_0x41ce17(0xf9)](_0x41ce17(0x274))!==-0x1?(_0x45b0b1=_0x357f2c(_0x104962+0x1,0x2)+_0x41ce17(0x1a3)+_0x3220a4[_0x41ce17(0x1b6)](_0x41ce17(0x215))['innerHTML']['trim'](),_0x2e58aa=_0x3220a4['querySelector'](_0x41ce17(0x287))[_0x41ce17(0xcd)](_0x41ce17(0x10d))):(_0x45b0b1=_0x357f2c(_0x104962+0x1,0x2)+_0x41ce17(0x1a3)+_0x3220a4[_0x41ce17(0x1b6)]('#video-title')[_0x41ce17(0x145)][_0x41ce17(0x17e)](),_0x2e58aa=_0x3220a4[_0x41ce17(0x1b6)](_0x41ce17(0x1be))[_0x41ce17(0xcd)]('href'));if(!_0x45b0b1||!_0x2e58aa){_0x3ad6db&&console[_0x41ce17(0x1ab)](_0x41ce17(0x208));return;}let _0x2c7965=_0x2e58aa[_0x41ce17(0x224)]('?')[0x1],_0x223b01={};_0x2c7965['replace'](/\??(?:([^=]+)=([^&]*)&?)/g,function(){function _0x1238bd(_0x1e6ec5){const _0x320faf=_0x229c;return decodeURIComponent(_0x1e6ec5[_0x320faf(0x224)]('+')[_0x320faf(0x19b)]('\x20'));}_0x223b01[_0x1238bd(arguments[0x1])]=_0x1238bd(arguments[0x2]);});let _0x59ce02=_0x223b01['v'];_0x5b605f[_0x59ce02]=!![],_0x219b18(_0x179ee8,_0x59ce02,_0x45b0b1),_0x104962++;});}function _0x1fb056(_0x4d865b,_0x1c7720,_0x26b008,_0x2cd21c){const _0x1a52d1=_0x493fa8;typeof _0x161b3f[_0x4d865b]==='undefined'&&(_0x161b3f[_0x4d865b]=0x0);_0x161b3f[_0x4d865b]++;if(_0x161b3f[_0x4d865b]>_0xdb4af5){_0x3ad6db&&console[_0x1a52d1(0x1ab)](_0x1a52d1(0x142)+_0x1c7720[_0x1a52d1(0x101)](0x0)[_0x1a52d1(0x122)]()+_0x1c7720[_0x1a52d1(0x1c9)](0x1)+_0x1a52d1(0x1a3)+_0x26b008+_0x1a52d1(0x141));window[_0x1a52d1(0x275)][_0x1a52d1(0x1a7)](_0x2cd21c,'*');return;}let _0x1aa141=_0x1a52d1(0x150);_0x1c7720===_0x1a52d1(0x16b)&&(_0x1aa141=_0x1a52d1(0xd0)),fetch(_0x4d865b)[_0x1a52d1(0x206)](_0xe7065a=>_0xe7065a['blob']())[_0x1a52d1(0x206)](_0x5981fd=>{const _0x1f0b18=_0x1a52d1;let _0x131e69=URL['createObjectURL'](_0x5981fd),_0x512d90=document[_0x1f0b18(0x1d4)]('a');_0x512d90['style'][_0x1f0b18(0x230)]=_0x1f0b18(0x173),_0x512d90[_0x1f0b18(0x10d)]=_0x131e69,_0x512d90[_0x1f0b18(0x18d)]=_0x26b008+_0x1aa141,document[_0x1f0b18(0x237)][_0x1f0b18(0x1b9)](_0x512d90),_0x512d90[_0x1f0b18(0x22d)](),window[_0x1f0b18(0x264)][_0x1f0b18(0x204)](_0x131e69),_0x512d90['remove'](),_0x3ad6db&&console[_0x1f0b18(0x1ab)](_0x1f0b18(0x21c)+_0x1c7720+_0x1f0b18(0x1a3)+_0x26b008),window[_0x1f0b18(0x275)]['postMessage'](_0x2cd21c,'*');})['catch'](_0x475dc3=>{const _0x32b9=_0x1a52d1;typeof _0x15a732['downloadFileAsBlob_'+_0x4d865b]!==_0x32b9(0x238)&&clearTimeout(_0x15a732[_0x32b9(0x276)+_0x4d865b]),_0x15a732[_0x32b9(0x276)+_0x4d865b]=setTimeout(function(){_0x1fb056(_0x4d865b,_0x1c7720,_0x26b008,_0x2cd21c);},_0x4d1abc);});}if(window[_0x493fa8(0x16a)][_0x493fa8(0x10d)][_0x493fa8(0xf9)](_0x493fa8(0xf2))!==-0x1)window[_0x493fa8(0x26e)]===window[_0x493fa8(0xc4)]&&(_0x1ee93c(),document[_0x493fa8(0x11c)]('DOMContentLoaded',_0x2d0471));else window[_0x493fa8(0x16a)][_0x493fa8(0x10d)]['indexOf'](_0x493fa8(0x268))!==-0x1&&(window['top']!==window[_0x493fa8(0xc4)]&&_0x418a56());_0x486ec5('goodTube_lastDownloadTimeSeconds',0x0);}()));function _0x229c(_0x49264f,_0x142421){const _0x5c4ea2=_0x5c4e();return _0x229c=function(_0x229c3b,_0x301e6a){_0x229c3b=_0x229c3b-0xc3;let _0x370a26=_0x5c4ea2[_0x229c3b];return _0x370a26;},_0x229c(_0x49264f,_0x142421);}function _0x5c4e(){const _0x293e46=['.goodTube_source_','href','classList','.video-js\x20.vjs-progress-control','list','[GoodTube]\x20Checking\x20for\x20updates...','li:first-child','lengthSeconds','1061528pQEBpS','fire','[GoodTube]\x20New\x20version\x20found\x20-\x20','index','reloadVideo','application/dash+xml','getAvailableQualityData','vjs-selected','addEventListener','false','https://invidious.drgns.space','aria-checked','[GoodTube]\x20Ads\x20removed','below','toUpperCase','[GoodTube]\x20No\x20updates\x20found','#goodTube_player_wrapper3','goodTube_volume','#goodTube_player_wrapper1','.icon-button[aria-label=\x22Next\x20video\x22','goodTube_redChapter','touchend','auto','\x0a\x09\x09\x09#contentContainer.tp-yt-app-drawer[swipe-open].tp-yt-app-drawer::after\x20{\x0a\x09\x09\x09\x09display:\x20none\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09/*\x20Live\x20streams\x20*/\x0a\x09\x09\x09#goodTube_player_wrapper1\x20.vjs-live\x20.vjs-progress-control\x20{\x0a\x09\x09\x09\x09display:\x20block;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1\x20.vjs-live\x20.vjs-duration-display,\x0a\x09\x09\x09#goodTube_player_wrapper1\x20.vjs-live\x20.vjs-time-divider\x20{\x0a\x09\x09\x09\x09display:\x20none\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09/*\x20Seek\x20bar\x20*/\x0a\x09\x09\x09#goodTube_player_wrapper1\x20.vjs-progress-control\x20{\x0a\x09\x09\x09\x09position:\x20absolute;\x0a\x09\x09\x09\x09bottom:\x2048px;\x0a\x09\x09\x09\x09left:\x200;\x0a\x09\x09\x09\x09right:\x200;\x0a\x09\x09\x09\x09width:\x20100%;\x0a\x09\x09\x09\x09height:\x20calc(24px\x20+\x203px);\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1\x20.vjs-progress-control\x20.vjs-slider\x20{\x0a\x09\x09\x09\x09margin:\x200;\x0a\x09\x09\x09\x09background:\x20transparent;\x0a\x09\x09\x09\x09position:\x20absolute;\x0a\x09\x09\x09\x09bottom:\x203px;\x0a\x09\x09\x09\x09left:\x208px;\x0a\x09\x09\x09\x09right:\x208px;\x0a\x09\x09\x09\x09top:\x20auto;\x0a\x09\x09\x09\x09transition:\x20height\x20.1s\x20linear,\x20bottom\x20.1s\x20linear;\x0a\x09\x09\x09\x09z-index:\x201;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1\x20.vjs-progress-control:hover\x20.vjs-slider\x20{\x0a\x09\x09\x09\x09pointer-events:\x20none;\x0a\x09\x09\x09\x09height:\x205px;\x0a\x09\x09\x09\x09bottom:\x202px;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1\x20.vjs-progress-control\x20.vjs-slider\x20.vjs-load-progress\x20{\x0a\x09\x09\x09\x09height:\x20100%;\x0a\x09\x09\x09\x09background:\x20rgba(255,\x20255,\x20255,\x20.2);\x0a\x09\x09\x09\x09transition:\x20none;\x0a\x09\x09\x09\x09position:\x20static;\x0a\x09\x09\x09\x09margin-bottom:\x20-3px;\x0a\x09\x09\x09\x09transition:\x20margin\x20.1s\x20linear;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1\x20.vjs-progress-control:hover\x20.vjs-slider\x20.vjs-load-progress\x20{\x0a\x09\x09\x09\x09margin-bottom:\x20-5px;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1\x20.vjs-progress-control\x20.vjs-slider\x20.vjs-load-progress\x20.vjs-control-text\x20{\x0a\x09\x09\x09\x09display:\x20none;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1\x20.vjs-progress-control\x20.vjs-slider\x20.vjs-load-progress\x20>\x20div\x20{\x0a\x09\x09\x09\x09background:\x20transparent\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1\x20.vjs-progress-control\x20.vjs-slider\x20.vjs-play-progress\x20{\x0a\x09\x09\x09\x09background:\x20transparent;\x0a\x09\x09\x09\x09position:\x20static;\x0a\x09\x09\x09\x09z-index:\x201;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1\x20.vjs-progress-control\x20.vjs-slider\x20.vjs-play-progress::before\x20{\x0a\x09\x09\x09\x09content:\x20\x27\x27;\x0a\x09\x09\x09\x09background:\x20#ff0000;\x0a\x09\x09\x09\x09width:\x20100%;\x0a\x09\x09\x09\x09height:\x20100%;\x0a\x09\x09\x09\x09position:\x20static;\x0a\x09\x09\x09\x09display:\x20block;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1\x20.vjs-progress-control\x20.vjs-slider\x20.vjs-play-progress::after\x20{\x0a\x09\x09\x09\x09content:\x20\x27\x27;\x0a\x09\x09\x09\x09display:\x20block;\x0a\x09\x09\x09\x09float:\x20right;\x0a\x09\x09\x09\x09background:\x20#ff0000;\x0a\x09\x09\x09\x09border-radius:\x2050%;\x0a\x09\x09\x09\x09opacity:\x200;\x0a\x09\x09\x09\x09width:\x2013px;\x0a\x09\x09\x09\x09height:\x2013px;\x0a\x09\x09\x09\x09right:\x20-7px;\x0a\x09\x09\x09\x09top:\x20-8px;\x0a\x09\x09\x09\x09transition:\x20opacity\x20.1s\x20linear,\x20top\x20.1s\x20linear;\x0a\x09\x09\x09\x09position:\x20relative;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1\x20.vjs-progress-control:hover\x20.vjs-slider\x20.vjs-play-progress::after\x20{\x0a\x09\x09\x09\x09opacity:\x201;\x0a\x09\x09\x09\x09top:\x20-9px;\x0a\x09\x09\x09}\x0a\x0a\x0a\x09\x09\x09/*\x20Without\x20chapters\x20*/\x0a\x09\x09\x09#goodTube_player_wrapper1:not(.goodTube_hasChapters)\x20.vjs-progress-control::before\x20{\x0a\x09\x09\x09\x09content:\x20\x27\x27;\x0a\x09\x09\x09\x09position:\x20absolute;\x0a\x09\x09\x09\x09bottom:\x203px;\x0a\x09\x09\x09\x09left:\x208px;\x0a\x09\x09\x09\x09right:\x208px;\x0a\x09\x09\x09\x09height:\x203px;\x0a\x09\x09\x09\x09background:\x20rgba(255,\x20255,\x20255,\x20.2);\x0a\x09\x09\x09\x09transition:\x20height\x20.1s\x20linear,\x20bottom\x20.1s\x20linear;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1:not(.goodTube_hasChapters)\x20.vjs-progress-control:hover::before\x20{\x0a\x09\x09\x09\x09height:\x205px;\x0a\x09\x09\x09\x09bottom:\x202px;\x0a\x09\x09\x09}\x0a\x0a\x0a\x09\x09\x09/*\x20With\x20chapters\x20*/\x0a\x09\x09\x09#goodTube_player_wrapper1.goodTube_hasChapters\x20.vjs-progress-control\x20.goodTube_chapters\x20{\x0a\x09\x09\x09\x09position:\x20absolute;\x0a\x09\x09\x09\x09top:\x200;\x0a\x09\x09\x09\x09bottom:\x200;\x0a\x09\x09\x09\x09left:\x208px;\x0a\x09\x09\x09\x09right:\x208px;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1.goodTube_hasChapters\x20.vjs-progress-control\x20.goodTube_chapters\x20.goodTube_chapter\x20{\x0a\x09\x09\x09\x09height:\x20100%;\x0a\x09\x09\x09\x09position:\x20absolute;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1.goodTube_hasChapters\x20.vjs-progress-control\x20.goodTube_chapters\x20.goodTube_chapter::before\x20{\x0a\x09\x09\x09\x09content:\x20\x27\x27;\x0a\x09\x09\x09\x09background:\x20rgba(255,\x20255,\x20255,\x20.2);\x0a\x09\x09\x09\x09position:\x20absolute;\x0a\x09\x09\x09\x09left:\x200;\x0a\x09\x09\x09\x09right:\x202px;\x0a\x09\x09\x09\x09bottom:\x203px;\x0a\x09\x09\x09\x09height:\x203px;\x0a\x09\x09\x09\x09transition:\x20height\x20.1s\x20linear,\x20bottom\x20.1s\x20linear,\x20background\x20.1s\x20linear;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1.goodTube_hasChapters\x20.vjs-progress-control\x20.goodTube_chapters\x20.goodTube_chapter.goodTube_redChapter::before\x20{\x0a\x09\x09\x09\x09background:\x20#ff0000\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1.goodTube_hasChapters\x20.vjs-progress-control\x20.goodTube_chapters\x20.goodTube_chapter:last-child::before\x20{\x0a\x09\x09\x09\x09right:\x200;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1.goodTube_hasChapters\x20.vjs-progress-control:hover\x20.goodTube_chapters\x20.goodTube_chapter::before\x20{\x0a\x09\x09\x09\x09height:\x205px;\x0a\x09\x09\x09\x09bottom:\x202px;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1.goodTube_hasChapters:not(.goodTube_mobile)\x20.vjs-progress-control\x20.goodTube_chapters\x20.goodTube_chapter:hover::before\x20{\x0a\x09\x09\x09\x09height:\x209px;\x0a\x09\x09\x09\x09bottom:\x200;\x0a\x09\x09\x09\x09background:\x20rgba(255,\x20255,\x20255,\x20.4);\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1.goodTube_hasChapters\x20.vjs-progress-control\x20.goodTube_markers\x20{\x0a\x09\x09\x09\x09position:\x20absolute;\x0a\x09\x09\x09\x09top:\x200;\x0a\x09\x09\x09\x09left:\x200;\x0a\x09\x09\x09\x09right:\x200;\x0a\x09\x09\x09\x09bottom:\x200;\x0a\x09\x09\x09\x09pointer-events:\x20none;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1.goodTube_hasChapters\x20.vjs-progress-control\x20.goodTube_marker\x20{\x0a\x09\x09\x09\x09width:\x202px;\x0a\x09\x09\x09\x09height:\x20100%;\x0a\x09\x09\x09\x09position:\x20absolute;\x0a\x09\x09\x09\x09background:\x20rgba(0,\x200,\x200,\x20.2);\x0a\x09\x09\x09\x09margin-left:\x20-2px;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1.goodTube_hasChapters\x20.vjs-progress-control\x20.goodTube_marker.goodTube_showMarker\x20{\x0a\x09\x09\x09\x09background:\x20rgba(0,\x200,\x200,\x20.6);\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1.goodTube_hasChapters\x20.vjs-progress-control\x20.goodTube_marker:last-child\x20{\x0a\x09\x09\x09\x09display:\x20none;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1\x20.vjs-progress-control\x20.vjs-mouse-display\x20{\x0a\x09\x09\x09\x09background:\x20transparent;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1.goodTube_hasChapters\x20.vjs-progress-control\x20.vjs-mouse-display\x20.vjs-time-tooltip::before\x20{\x0a\x09\x09\x09\x09content:\x20attr(chapter-title);\x0a\x09\x09\x09\x09display:\x20block;\x0a\x09\x09\x09\x09white-space:\x20nowrap;\x0a\x09\x09\x09\x09margin-bottom:\x204px;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1\x20.vjs-progress-control\x20.goodTube_hoverBar\x20{\x0a\x09\x09\x09\x09background:\x20rgba(255,\x20255,\x20255,\x20.4);\x0a\x09\x09\x09\x09position:\x20absolute;\x0a\x09\x09\x09\x09bottom:\x203px;\x0a\x09\x09\x09\x09left:\x208px;\x0a\x09\x09\x09\x09height:\x203px;\x0a\x09\x09\x09\x09opacity:\x200;\x0a\x09\x09\x09\x09transition:\x20height\x20.1s\x20linear,\x20bottom\x20.1s\x20linear,\x20opacity\x20.1s\x20linear;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1\x20.vjs-progress-control:hover\x20.goodTube_hoverBar\x20{\x0a\x09\x09\x09\x09height:\x205px;\x0a\x09\x09\x09\x09bottom:\x202px;\x0a\x09\x09\x09\x09opacity:\x201;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1.goodTube_mobile\x20.vjs-time-control\x20.vjs-duration-display\x20{\x0a\x09\x09\x09\x09white-space:\x20nowrap;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1.goodTube_mobile\x20.vjs-time-control\x20.vjs-duration-display::after\x20{\x0a\x09\x09\x09\x09content:\x20attr(chapter-title);\x0a\x09\x09\x09\x09display:\x20inline-block;\x0a\x09\x09\x09\x09color:\x20#ffffff;\x0a\x09\x09\x09\x09margin-left:\x203px;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1.goodTube_mobile\x20.vjs-progress-control\x20.vjs-slider,\x0a\x09\x09\x09#goodTube_player_wrapper1.goodTube_mobile:not(.goodTube_hasChapters)\x20.vjs-progress-control::before,\x0a\x09\x09\x09#goodTube_player_wrapper1.goodTube_mobile.goodTube_hasChapters\x20.vjs-progress-control\x20.goodTube_chapters,\x0a\x09\x09\x09#goodTube_player_wrapper1.goodTube_mobile\x20.vjs-progress-control\x20.goodTube_hoverBar\x20{\x0a\x09\x09\x09\x09left:\x2016px;\x0a\x09\x09\x09\x09right:\x2016px;\x0a\x09\x09\x09}\x0a\x0a\x0a\x09\x09\x09/*\x20Audio\x20only\x20view\x20*/\x0a\x09\x09\x09#goodTube_player_wrapper3.goodTube_audio\x20{\x0a\x09\x09\x09\x09background:\x20#000000;\x0a\x09\x09\x09\x09position:\x20relative;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper3.goodTube_audio\x20.video-js::after\x20{\x0a\x09\x09\x09\x09content:\x20\x27\x5cf107\x27;\x0a\x09\x09\x09\x09position:\x20absolute;\x0a\x09\x09\x09\x09top:\x2050%;\x0a\x09\x09\x09\x09left:\x2050%;\x0a\x09\x09\x09\x09transform:\x20translate(-50%,\x20-50%);\x0a\x09\x09\x09\x09color:\x20#ffffff;\x0a\x09\x09\x09\x09font-family:\x20VideoJS;\x0a\x09\x09\x09\x09font-weight:\x20400;\x0a\x09\x09\x09\x09font-style:\x20normal;\x0a\x09\x09\x09\x09font-size:\x20148px;\x0a\x09\x09\x09\x09pointer-events:\x20none;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09@media\x20(max-width:\x20768px)\x20{\x0a\x09\x09\x09\x09#goodTube_player_wrapper3.goodTube_audio\x20.video-js::after\x20{\x0a\x09\x09\x09\x09\x09font-size:\x20100px;\x0a\x09\x09\x09\x09}\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1.goodTube_mobile\x20#goodTube_player_wrapper3.goodTube_audio\x20.video-js::after\x20{\x0a\x09\x09\x09\x09font-size:\x20100px;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09/*\x20Double\x20tap\x20or\x20tap\x20and\x20hold\x20elements\x20for\x20seeking\x20on\x20mobile\x20*/\x0a\x09\x09\x09#goodTube_seekBackwards\x20{\x0a\x09\x09\x09\x09position:\x20absolute;\x0a\x09\x09\x09\x09top:\x200;\x0a\x09\x09\x09\x09left:\x200;\x0a\x09\x09\x09\x09bottom:\x2048px;\x0a\x09\x09\x09\x09content:\x20\x27\x27;\x0a\x09\x09\x09\x09width:\x2025%;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_seekForwards\x20{\x0a\x09\x09\x09\x09position:\x20absolute;\x0a\x09\x09\x09\x09top:\x200;\x0a\x09\x09\x09\x09right:\x200;\x0a\x09\x09\x09\x09bottom:\x2048px;\x0a\x09\x09\x09\x09content:\x20\x27\x27;\x0a\x09\x09\x09\x09width:\x2025%;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09/*\x20Theater\x20mode\x20*/\x0a\x09\x09\x09ytd-watch-flexy[theater]\x20#goodTube_player_wrapper1:not(.goodTube_mobile)\x20{\x0a\x09\x09\x09\x09width:\x20100%;\x0a\x09\x09\x09\x09position:\x20absolute;\x0a\x09\x09\x09\x09top:\x2056px;\x0a\x09\x09\x09\x09left:\x200;\x0a\x09\x09\x09\x09right:\x200;\x0a\x09\x09\x09\x09background:\x20#000000;\x0a\x09\x09\x09\x09border-radius:\x200;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09ytd-watch-flexy:not(ytd-watch-flexy[theater])\x20#below,\x0a\x09\x09\x09ytd-watch-flexy:not(ytd-watch-flexy[theater])\x20#secondary\x20{\x0a\x09\x09\x09\x09margin-top:\x200\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09ytd-watch-flexy[theater]\x20#below\x20{\x0a\x09\x09\x09\x09padding-top:\x208px\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09ytd-watch-flexy[theater]\x20#secondary\x20{\x0a\x09\x09\x09\x09padding-top:\x2016px\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09ytd-watch-flexy[theater]\x20#goodTube_player_wrapper1:not(.goodTube_mobile)\x20{\x0a\x09\x09\x09\x09padding-top:\x20min(var(--ytd-watch-flexy-max-player-height),\x20(calc(var(--ytd-watch-flexy-height-ratio)\x20/\x20var(--ytd-watch-flexy-width-ratio)\x20*\x20100%)))\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09ytd-watch-flexy[theater]\x20#goodTube_player_wrapper1:not(.goodTube_mobile)\x20#goodTube_player_wrapper3,\x0a\x09\x09\x09ytd-watch-flexy[theater]\x20#goodTube_player_wrapper1:not(.goodTube_mobile)\x20#goodTube_player_wrapper3\x20#goodTube_player\x20{\x0a\x09\x09\x09\x09border-radius:\x200;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09/*\x20Desktop\x20*/\x0a\x09\x09\x09#goodTube_player_wrapper1:not(.goodTube_mobile)\x20{\x0a\x09\x09\x09\x09position:\x20relative;\x0a\x09\x09\x09\x09height:\x200;\x0a\x09\x09\x09\x09padding-top:\x20min(var(--ytd-watch-flexy-max-player-height),\x20(calc(var(--ytd-watch-flexy-height-ratio)\x20/\x20var(--ytd-watch-flexy-width-ratio)\x20*\x20100%)))\x20!important;\x0a\x09\x09\x09\x09box-sizing:\x20border-box;\x0a\x09\x09\x09\x09min-height:\x20var(--ytd-watch-flexy-min-player-height);\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1:not(.goodTube_mobile)\x20#goodTube_player_wrapper2\x20{\x0a\x09\x09\x09\x09position:\x20absolute;\x0a\x09\x09\x09\x09top:\x200;\x0a\x09\x09\x09\x09left:\x200;\x0a\x09\x09\x09\x09right:\x200;\x0a\x09\x09\x09\x09bottom:\x200;\x0a\x09\x09\x09\x09margin:\x200\x20auto;\x0a\x09\x09\x09\x09min-height:\x20240px;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1:not(.goodTube_mobile)\x20#goodTube_player_wrapper3\x20{\x0a\x09\x09\x09\x09box-sizing:\x20border-box;\x0a\x09\x09\x09\x09position:\x20absolute;\x0a\x09\x09\x09\x09top:\x200;\x0a\x09\x09\x09\x09left:\x200;\x0a\x09\x09\x09\x09right:\x200;\x0a\x09\x09\x09\x09bottom:\x200;\x0a\x09\x09\x09\x09min-height:\x20240px;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1:not(.goodTube_mobile):not(.goodTube_miniplayer)\x20#goodTube_player\x20{\x0a\x09\x09\x09\x09border-radius:\x2012px;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1.goodTube_miniplayer.goodTube_mobile\x20{\x0a\x09\x09\x09\x09position:\x20absolute\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper3\x20{\x0a\x09\x09\x09\x09overflow:\x20hidden;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1:not(.goodTube_mobile)\x20#goodTube_player_wrapper3\x20{\x0a\x09\x09\x09\x09border-radius:\x2012px;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09/*\x20Miniplayer\x20*/\x0a\x09\x09\x09#goodTube_player_wrapper1.goodTube_miniplayer\x20{\x0a\x09\x09\x09\x09z-index:\x20999\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1.goodTube_miniplayer\x20#goodTube_player_wrapper3\x20.video-js\x20{\x0a\x09\x09\x09\x09position:\x20fixed;\x0a\x09\x09\x09\x09bottom:\x2012px;\x0a\x09\x09\x09\x09right:\x2012px;\x0a\x09\x09\x09\x09width:\x20400px;\x0a\x09\x09\x09\x09max-width:\x20calc(100%\x20-\x2024px);\x0a\x09\x09\x09\x09min-height:\x200;\x0a\x09\x09\x09\x09padding-top:\x200;\x0a\x09\x09\x09\x09z-index:\x20999;\x0a\x09\x09\x09\x09height:\x20auto;\x0a\x09\x09\x09\x09left:\x20auto;\x0a\x09\x09\x09\x09aspect-ratio:\x2016\x20/\x209;\x0a\x09\x09\x09\x09top:\x20auto;\x0a\x09\x09\x09\x09border-radius:\x2012px;\x0a\x09\x09\x09\x09overflow:\x20hidden;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1.goodTube_miniplayer.goodTube_mobile\x20\x20#goodTube_player_wrapper3\x20.video-js\x20{\x0a\x09\x09\x09\x09bottom:\x2060px;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09ytd-watch-flexy.goodTube_miniplayer\x20{\x0a\x09\x09\x09\x09display:\x20block\x20!important;\x0a\x09\x09\x09\x09top:\x200;\x0a\x09\x09\x09\x09left:\x200;\x0a\x09\x09\x09\x09position:\x20fixed;\x0a\x09\x09\x09\x09z-index:\x20999;\x0a\x09\x09\x09\x09top:\x20-9999px;\x0a\x09\x09\x09\x09left:\x20-9999px;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1.goodTube_miniplayer\x20#goodTube_player_wrapper3\x20.video-js\x20.vjs-source-button,\x0a\x09\x09\x09#goodTube_player_wrapper1.goodTube_miniplayer\x20#goodTube_player_wrapper3\x20.video-js\x20.vjs-autoplay-button,\x0a\x09\x09\x09#goodTube_player_wrapper1.goodTube_miniplayer\x20#goodTube_player_wrapper3\x20.video-js\x20.vjs-miniplayer-button,\x0a\x09\x09\x09#goodTube_player_wrapper1.goodTube_miniplayer\x20#goodTube_player_wrapper3\x20.video-js\x20.vjs-theater-button\x20{\x0a\x09\x09\x09\x09display:\x20none\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_miniplayer\x20.video-js\x20#goodTube_miniplayer_closeButton,\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_miniplayer\x20.video-js\x20#goodTube_miniplayer_expandButton\x20{\x0a\x09\x09\x09\x09font-family:\x20VideoJS;\x0a\x09\x09\x09\x09font-weight:\x20400;\x0a\x09\x09\x09\x09font-style:\x20normal;\x0a\x09\x09\x09\x09cursor:\x20pointer;\x0a\x09\x09\x09\x09position:\x20absolute;\x0a\x09\x09\x09\x09top:\x200;\x0a\x09\x09\x09\x09width:\x2048px;\x0a\x09\x09\x09\x09height:\x2048px;\x0a\x09\x09\x09\x09line-height:\x2048px;\x0a\x09\x09\x09\x09text-align:\x20center;\x0a\x09\x09\x09\x09z-index:\x20999;\x0a\x09\x09\x09\x09color:\x20#ffffff;\x0a\x09\x09\x09\x09opacity:\x200;\x0a\x09\x09\x09\x09transition:\x20opacity\x20.2s\x20linear;\x0a\x09\x09\x09}\x0a\x0a\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_miniplayer\x20.video-js\x20#goodTube_miniplayer_closeButton::after\x20{\x0a\x09\x09\x09\x09content:\x20\x27Close\x27;\x0a\x09\x09\x09\x09right:\x2012px;\x0a\x09\x09\x09}\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_miniplayer\x20.video-js\x20#goodTube_miniplayer_expandButton::after\x20{\x0a\x09\x09\x09\x09content:\x20\x27Expand\x27;\x0a\x09\x09\x09\x09left:\x2012px;\x0a\x09\x09\x09}\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_miniplayer\x20.video-js\x20#goodTube_miniplayer_closeButton::after,\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_miniplayer\x20.video-js\x20#goodTube_miniplayer_expandButton::after\x20{\x0a\x09\x09\x09\x09position:\x20absolute;\x0a\x09\x09\x09\x09bottom:\x20-24px;\x0a\x09\x09\x09\x09background:\x20rgba(0,\x200,\x200,\x20.75);\x0a\x09\x09\x09\x09border-radius:\x204px;\x0a\x09\x09\x09\x09font-size:\x2012px;\x0a\x09\x09\x09\x09font-weight:\x20700;\x0a\x09\x09\x09\x09padding:\x208px;\x0a\x09\x09\x09\x09white-space:\x20nowrap;\x0a\x09\x09\x09\x09opacity:\x200;\x0a\x09\x09\x09\x09transition:\x20opacity\x20.1s;\x0a\x09\x09\x09\x09pointer-events:\x20none;\x0a\x09\x09\x09\x09text-shadow:\x20none\x20!important;\x0a\x09\x09\x09\x09z-index:\x201;\x0a\x09\x09\x09\x09font-family:\x20\x27MS\x20Shell\x20Dlg\x202\x27,\x20sans-serif;\x0a\x09\x09\x09\x09line-height:\x20initial;\x0a\x09\x09\x09}\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_miniplayer\x20.video-js\x20#goodTube_miniplayer_closeButton:hover::after,\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_miniplayer\x20.video-js\x20#goodTube_miniplayer_expandButton:hover::after\x20{\x0a\x09\x09\x09\x09opacity:\x201;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_miniplayer\x20.video-js\x20#goodTube_miniplayer_closeButton\x20{\x0a\x09\x09\x09\x09right:\x200;\x0a\x09\x09\x09\x09font-size:\x2024px;\x0a\x09\x09\x09}\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_miniplayer\x20.video-js\x20#goodTube_miniplayer_closeButton::before\x20{\x0a\x09\x09\x09\x09content:\x20\x22\x5cf119\x22;\x0a\x09\x09\x09\x09position:\x20absolute;\x0a\x09\x09\x09\x09top:\x2050%;\x0a\x09\x09\x09\x09left:\x2050%;\x0a\x09\x09\x09\x09transform:\x20translate(-50%,\x20-50%);\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_miniplayer\x20.video-js\x20#goodTube_miniplayer_expandButton\x20{\x0a\x09\x09\x09\x09left:\x200;\x0a\x09\x09\x09\x09font-size:\x2018px;\x0a\x09\x09\x09}\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_miniplayer\x20.video-js\x20#goodTube_miniplayer_expandButton::before\x20{\x0a\x09\x09\x09\x09content:\x20\x22\x5cf128\x22;\x0a\x09\x09\x09\x09position:\x20absolute;\x0a\x09\x09\x09\x09top:\x2050%;\x0a\x09\x09\x09\x09left:\x2050%;\x0a\x09\x09\x09\x09transform:\x20translate(-50%,\x20-50%);\x0a\x09\x09\x09}\x0a\x0a\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_miniplayer\x20.video-js.vjs-paused:not(.vjs-user-inactive)\x20#goodTube_miniplayer_expandButton,\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_miniplayer\x20.video-js.vjs-user-active\x20#goodTube_miniplayer_expandButton,\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_miniplayer\x20.video-js.vjs-paused:not(.vjs-user-inactive)\x20#goodTube_miniplayer_closeButton,\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_miniplayer\x20.video-js.vjs-user-active\x20#goodTube_miniplayer_closeButton\x20{\x0a\x09\x09\x09\x09opacity:\x201;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09/*\x20Mobile\x20*/\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_mobile\x20{\x0a\x09\x09\x09\x09position:\x20fixed;\x0a\x09\x09\x09\x09top:\x2048px;\x0a\x09\x09\x09\x09left:\x200;\x0a\x09\x09\x09\x09right:\x200;\x0a\x09\x09\x09\x09width:\x20100%;\x0a\x09\x09\x09\x09z-index:\x201;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_mobile\x20#goodTube_player_wrapper2\x20{\x0a\x09\x09\x09\x09width:\x20100%;\x0a\x09\x09\x09\x09height:\x20100%;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_mobile\x20#goodTube_player_wrapper3\x20{\x0a\x09\x09\x09\x09width:\x20100%;\x0a\x09\x09\x09\x09height:\x20100%;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_mobile\x20.video-js\x20.vjs-control.vjs-play-control,\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_miniplayer\x20.video-js\x20.vjs-control.vjs-play-control\x20{\x0a\x09\x09\x09\x09position:\x20absolute;\x0a\x09\x09\x09\x09top:\x20calc(50%\x20-\x2048px);\x0a\x09\x09\x09\x09left:\x20calc(50%\x20-\x2032px);\x0a\x09\x09\x09\x09width:\x2064px;\x0a\x09\x09\x09\x09height:\x2064px;\x0a\x09\x09\x09\x09background:\x20rgba(0,\x200,\x200,\x20.3);\x0a\x09\x09\x09\x09border-radius:\x2050%;\x0a\x09\x09\x09\x09max-width:\x20999px\x20!important;\x0a\x09\x09\x09}\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_mobile\x20.video-js\x20.vjs-play-control\x20.vjs-icon-placeholder::before,\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_miniplayer\x20.video-js\x20.vjs-play-control\x20.vjs-icon-placeholder::before\x20{\x0a\x09\x09\x09\x09font-size:\x2044px\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_mobile\x20.video-js\x20.vjs-prev-button,\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_miniplayer\x20.video-js\x20.vjs-prev-button\x20{\x0a\x09\x09\x09\x09position:\x20absolute;\x0a\x09\x09\x09\x09top:\x20calc(50%\x20-\x2040px);\x0a\x09\x09\x09\x09left:\x20calc(50%\x20-\x20104px);\x0a\x09\x09\x09\x09width:\x2048px;\x0a\x09\x09\x09\x09height:\x2048px;\x0a\x09\x09\x09\x09background:\x20rgba(0,\x200,\x200,\x20.3);\x0a\x09\x09\x09\x09border-radius:\x2050%;\x0a\x09\x09\x09\x09max-width:\x20999px\x20!important;\x0a\x09\x09\x09}\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_mobile\x20.video-js\x20.vjs-prev-button\x20.vjs-icon-placeholder::before,\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_miniplayer\x20.video-js\x20.vjs-prev-button\x20.vjs-icon-placeholder::before\x20{\x0a\x09\x09\x09\x09font-size:\x2032px\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_mobile\x20.video-js\x20.vjs-next-button,\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_miniplayer\x20.video-js\x20.vjs-next-button\x20{\x0a\x09\x09\x09\x09position:\x20absolute;\x0a\x09\x09\x09\x09top:\x20calc(50%\x20-\x2040px);\x0a\x09\x09\x09\x09left:\x20calc(50%\x20+\x2056px);\x0a\x09\x09\x09\x09width:\x2048px;\x0a\x09\x09\x09\x09height:\x2048px;\x0a\x09\x09\x09\x09background:\x20rgba(0,\x200,\x200,\x20.3);\x0a\x09\x09\x09\x09border-radius:\x2050%;\x0a\x09\x09\x09\x09max-width:\x20999px\x20!important;\x0a\x09\x09\x09}\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_mobile\x20.video-js\x20.vjs-next-button\x20.vjs-icon-placeholder::before,\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_miniplayer\x20.video-js\x20.vjs-next-button\x20.vjs-icon-placeholder::before\x20{\x0a\x09\x09\x09\x09font-size:\x2032px\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_mobile\x20.video-js\x20.vjs-control-bar,\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_miniplayer\x20.video-js\x20.vjs-control-bar\x20{\x0a\x09\x09\x09\x09z-index:\x201;\x0a\x09\x09\x09\x09position:\x20static;\x0a\x09\x09\x09\x09margin-top:\x20auto;\x0a\x09\x09\x09\x09justify-content:\x20space-around;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09ytd-watch-flexy:not([theater])\x20#primary\x20{\x0a\x09\x09\x09\x09min-width:\x20721px\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09@media\x20(max-width:\x201100px)\x20{\x0a\x09\x09\x09\x09ytd-watch-flexy:not([theater])\x20#primary\x20{\x0a\x09\x09\x09\x09\x09min-width:\x20636px\x20!important;\x0a\x09\x09\x09\x09}\x0a\x0a\x09\x09\x09\x09ytd-watch-flexy:not([theater])\x20#goodTube_player_wrapper1:not(.goodTube_mobile)\x20.video-js\x20.vjs-control-bar\x20{\x0a\x09\x09\x09\x09\x09zoom:\x20.88;\x0a\x09\x09\x09\x09}\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09@media\x20(max-width:\x201016px)\x20{\x0a\x09\x09\x09\x09ytd-watch-flexy:not([theater])\x20#primary\x20{\x0a\x09\x09\x09\x09\x09min-width:\x200\x20!important;\x0a\x09\x09\x09\x09}\x0a\x0a\x09\x09\x09\x09ytd-watch-flexy:not([theater])\x20#goodTube_player_wrapper1:not(.goodTube_mobile)\x20.video-js\x20.vjs-control-bar\x20{\x0a\x09\x09\x09\x09\x09zoom:\x201;\x0a\x09\x09\x09\x09}\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09@media\x20(max-width:\x20786px)\x20{\x0a\x09\x09\x09\x09ytd-watch-flexy:not([theater])\x20#goodTube_player_wrapper1:not(.goodTube_mobile)\x20.video-js\x20.vjs-control-bar\x20{\x0a\x09\x09\x09\x09\x09zoom:\x20.9;\x0a\x09\x09\x09\x09}\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09@media\x20(max-width:\x20715px)\x20{\x0a\x09\x09\x09\x09ytd-watch-flexy:not([theater])\x20#goodTube_player_wrapper1:not(.goodTube_mobile)\x20.video-js\x20.vjs-control-bar\x20{\x0a\x09\x09\x09\x09\x09zoom:\x20.85;\x0a\x09\x09\x09\x09}\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09@media\x20(max-width:\x20680px)\x20{\x0a\x09\x09\x09\x09ytd-watch-flexy:not([theater])\x20#goodTube_player_wrapper1:not(.goodTube_mobile)\x20.video-js\x20.vjs-control-bar\x20{\x0a\x09\x09\x09\x09\x09zoom:\x20.8;\x0a\x09\x09\x09\x09}\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_mobile\x20.video-js,\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_miniplayer\x20.video-js\x20{\x0a\x09\x09\x09\x09display:\x20flex;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_mobile\x20.video-js\x20.vjs-source-button,\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_miniplayer\x20.video-js\x20.vjs-source-button\x20{\x0a\x09\x09\x09\x09margin-left:\x200\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09@media\x20(max-width:\x20480px)\x20{\x0a\x09\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_mobile\x20.video-js\x20.vjs-source-button\x20.vjs-menu,\x0a\x09\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_miniplayer\x20.video-js\x20.vjs-source-button\x20.vjs-menu\x20{\x0a\x09\x09\x09\x09\x09left:\x2060px\x20!important;\x0a\x09\x09\x09\x09}\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_mobile\x20.video-js\x20.vjs-loading-spinner,\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_miniplayer\x20.video-js\x20.vjs-loading-spinner\x20{\x0a\x09\x09\x09\x09top:\x20calc(50%\x20-\x2016px);\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1\x20.video-js.vjs-loading\x20{\x0a\x09\x09\x09\x09background:\x20#000000;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_mobile\x20.video-js::before,\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_miniplayer\x20.video-js::before\x20{\x0a\x09\x09\x09\x09content:\x20\x27\x27;\x0a\x09\x09\x09\x09background:\x20transparent;\x0a\x09\x09\x09\x09transition:\x20background\x20.2s\x20ease-in-out;\x0a\x09\x09\x09\x09pointer-events:\x20none;\x0a\x09\x09\x09\x09position:\x20absolute;\x0a\x09\x09\x09\x09top:\x200;\x0a\x09\x09\x09\x09left:\x200;\x0a\x09\x09\x09\x09right:\x200;\x0a\x09\x09\x09\x09bottom:\x200;\x0a\x09\x09\x09\x09z-index:\x201;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_mobile\x20.video-js.vjs-paused::before,\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_miniplayer\x20.video-js.vjs-paused::before,\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_mobile\x20.video-js.vjs-user-active::before,\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_miniplayer\x20.video-js.vjs-user-active::before\x20{\x0a\x09\x09\x09\x09background:\x20rgba(0,0,0,.6);\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_mobile\x20.video-js.vjs-user-inactive:not(.vjs-paused)\x20.vjs-control-bar,\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1.goodTube_miniplayer\x20.video-js.vjs-user-inactive:not(.vjs-paused)\x20.vjs-control-bar\x20{\x0a\x09\x09\x09\x09visibility:\x20visible;\x0a\x09\x09\x09\x09opacity:\x200;\x0a\x09\x09\x09\x09pointer-events:\x20none;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1.goodTube_mobile\x20#goodTube_player_wrapper3\x20.video-js\x20.vjs-theater-button,\x0a\x09\x09\x09#goodTube_player_wrapper1.goodTube_mobile\x20#goodTube_player_wrapper3\x20.video-js\x20.vjs-miniplayer-button\x20{\x0a\x09\x09\x09\x09display:\x20none\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09/*\x20Video\x20*/\x0a\x09\x09\x09#goodTube_player\x20{\x0a\x09\x09\x09\x09position:\x20absolute;\x0a\x09\x09\x09\x09top:\x200;\x0a\x09\x09\x09\x09left:\x200;\x0a\x09\x09\x09\x09right:\x200;\x0a\x09\x09\x09\x09bottom:\x200;\x0a\x09\x09\x09\x09width:\x20100%;\x0a\x09\x09\x09\x09height:\x20100%;\x0a\x09\x09\x09\x09background:\x20transparent;\x0a\x09\x09\x09\x09z-index:\x201;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1.goodTube_mobile\x20#goodTube_player,\x0a\x09\x09\x09#goodTube_player.vjs-loading\x20{\x0a\x09\x09\x09\x09background:\x20#000000;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player:focus\x20{\x0a\x09\x09\x09\x09outline:\x200;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09/*\x20Error\x20*/\x0a\x09\x09\x09#goodTube_error\x20{\x0a\x09\x09\x09\x09position:\x20absolute;\x0a\x09\x09\x09\x09top:\x2050%;\x0a\x09\x09\x09\x09left:\x2040px;\x0a\x09\x09\x09\x09right:\x2040px;\x0a\x09\x09\x09\x09transform:\x20translateY(-50%);\x0a\x09\x09\x09\x09text-align:\x20center;\x0a\x09\x09\x09\x09color:\x20#ffffff;\x0a\x09\x09\x09\x09font-size:\x2020px;\x0a\x09\x09\x09\x09padding:\x2016px;\x0a\x09\x09\x09\x09background:\x20#000000;\x0a\x09\x09\x09\x09border-radius:\x208px;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_error\x20small\x20{\x0a\x09\x09\x09\x09padding-top:\x208px;\x0a\x09\x09\x09\x09display:\x20block;\x0a\x09\x09\x09}\x0a\x09\x09','https://invidious.perennialte.ch/latest_version?id=','match','arrowdown','volumechange','1900465xIdjfT','title','goodTube_player_wrapper2','[GoodTube]\x20Loading\x20quality\x20','Do\x20you\x20want\x20to\x20update?','yt-confirm-dialog-renderer\x20yt-formatted-string:not(.goodTube_clicked)','1292694UXtPvZ','download_','previoustrack','vttThumbnails','goodTube_inactive_timeout','goodTube_clicked','goodTube_seekBackwards','target','message','playbackRate','Are\x20you\x20sure\x20you\x20want\x20to\x20cancel\x20all\x20downloads?','\x20could\x20not\x20be\x20downloaded.\x20Please\x20try\x20again\x20soon.','[GoodTube]\x20','HD\x20-\x20Obsidian\x20(DE)','position','innerHTML','/css/videojs-core.css','optgroup','keyCode','[GoodTube]\x20Playing\x20previous\x20video\x20in\x20playlist...','dispatchEvent','catch','h264','#goodTube_player_wrapper1\x20.vjs-progress-control\x20.vjs-mouse-display\x20.vjs-time-tooltip','#player\x20video','.goodTube_downloadPlaylist_audio','.mp4','/js/','script','substr','number','theater','floor','requestPictureInPicture','basic','preventDefault','vjs-menuOpen','goodTube_hoverBar','beforeunload','offsetHeight','keydown','function','textarea','[GoodTube]\x20Downloading\x20','block','change','movie_player','onclick','HD\x20-\x20Sphynx\x20(JP)','src','muted','beforeinput','location','audio','keypress','goodTube_hasChapters','vjs-prev-button','pause','https://iv.melmac.space','[GoodTube]\x20Autoplaying\x20previous\x20video...','select','none','#player-control-container:not(.goodTube_hidden)','iframe.goodTube_iframe','a.compact-media-item-image','nodeName','360p\x20-\x20Velvet\x20(CL)','.vjs-quality-selector\x20.vjs-menu\x20.vjs-selected\x20.vjs-menu-item-text','reduce','Download\x20video','name','goodTube_previous','trim','arrowup','hook',')?\x0d\x0dYou\x20can\x20keep\x20playing\x20and\x20downloading\x20other\x20videos,\x20just\x20don\x27t\x20close\x20the\x20the\x20tab\x20:)','[GoodTube]\x20Loading\x20subtitles...','ontouchstart','.player-size.player-placeholder','paused','.vjs-control-bar\x20button','height','#inline-player','.vjs-menu','setItem','ytd-watch-flexy','/js/videojs-vtt-thumbnails.js','download','.goodTube_markers','/goodtube.user.js?i','remove','timeDivider','.ytp-autonav-toggle-button','goodTube_showMarker','settings','.goodTube_chapters\x20.goodTube_chapter','360p\x20-\x20Amethyst\x20(DE)','off','shorts/','application/x-mpegURL','[GoodTube]\x20Loading\x20qualities...','join','options_','.vjs-menuOpen','#secondary\x20.playlist-items\x20ytd-playlist-panel-video-renderer:not([hidden]),\x20#below\x20.playlist-items\x20ytd-playlist-panel-video-renderer:not([hidden])','[GoodTube]\x20No\x20chapters\x20found','Audio','volumePanel','#goodTube_player','\x20-\x20','getItem','playbackRateMenuButton','360p\x20-\x20Druid\x20(DE)','postMessage','url','https://invidious.jing.rocks','HD\x20-\x20Acid\x20(US)','log','registerComponent','[GoodTube]\x20Player\x20assets\x20loaded','goodTube_marker','source[video=true]','api','isConfirmed','goodTube_hidden',';\x20SameSite=None;\x20Secure','playToggle','SourceButton','querySelector','goodTube_autoplay','proxy','appendChild','goodTube_audio','HD\x20-\x20420\x20(FI)','cookie','vjs-paused','#wc-endpoint','hasOwnProperty','Are\x20you\x20sure\x20you\x20want\x20to\x20download\x20this\x20playlist\x20(','add','captions','marker-time','storyboards','requestAnimationFrame','dblclick','querySelectorAll','key','slice','MenuButton','goodTube_api','NextButton','getElementById','error','leavepictureinpicture','keys','fieldset','iframe#','text','createElement','.vjs-menu-button','option','tracks_','\x0a\x09\x09\x09\x09html\x20body\x20.swal2-container\x20{\x0a\x09\x09\x09\x09\x09z-index:\x202400;\x0a\x09\x09\x09\x09}\x0a\x0a\x09\x09\x09\x09html\x20body\x20.swal2-title\x20{\x0a\x09\x09\x09\x09\x09font-size:\x2018px;\x0a\x09\x09\x09\x09}\x0a\x0a\x09\x09\x09\x09html\x20body\x20.swal2-html-container\x20{\x0a\x09\x09\x09\x09\x09font-size:\x2014px;\x0a\x09\x09\x09\x09\x09margin-top:\x208px;\x0a\x09\x09\x09\x09\x09margin-bottom:\x2012px;\x0a\x09\x09\x09\x09}\x0a\x0a\x09\x09\x09\x09html\x20body\x20.swal2-actions\x20{\x0a\x09\x09\x09\x09\x09margin:\x200\x20!important;\x0a\x09\x09\x09\x09\x09display:\x20flex;\x0a\x09\x09\x09\x09\x09flex-wrap:\x20wrap;\x0a\x09\x09\x09\x09\x09gap:\x208px;\x0a\x09\x09\x09\x09}\x0a\x0a\x09\x09\x09\x09html\x20body\x20.swal2-actions\x20button\x20{\x0a\x09\x09\x09\x09\x09margin:\x200\x20!important;\x0a\x09\x09\x09\x09\x09font-size:\x2012px;\x0a\x09\x09\x09\x09}\x0a\x09\x09\x09','includes','360p\x20-\x20Jade\x20(SG)','hlsQualitySelector','goodTube_miniplayer_expandButton','[GoodTube]\x20Opening\x20download\x20in\x20new\x20tab\x20(normal\x20way\x20not\x20working!)\x20-\x20','ended','vjs-playing','addRemoteTextTrack','KeyboardEvent','isArray','toString','version','#time','prototype','DownloadButton','progressControl','loadstart','currentTimeDisplay','buildCSSClass','mousemove','.player-container.sticky-player','[GoodTube]\x20Loading\x20video\x20data\x20from\x20','[GoodTube]\x20Loading\x20chapters...','goodTube_markers','video-js','HD\x20-\x20Indigo\x20(FI)','\x0a==================================================\x0a\x20\x20\x20\x20______\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20________\x20\x20\x20\x20\x20\x20__\x0a\x20\x20\x20/\x20____/___\x20\x20____\x20\x20____/\x20/_\x20\x20__/_\x20\x20__/\x20/_\x20\x20___\x0a\x20\x20/\x20/\x20__/\x20__\x20\x5c/\x20__\x20\x5c/\x20__\x20\x20/\x20/\x20/\x20/\x20/\x20/\x20/\x20__\x20\x5c/\x20_\x20\x5c\x0a\x20/\x20/_/\x20/\x20/_/\x20/\x20/_/\x20/\x20/_/\x20/\x20/\x20/\x20/\x20/_/\x20/\x20/_/\x20/\x20\x20__/\x0a\x20\x5c____/\x5c____/\x5c____/\x5c____/\x20/_/\x20\x20\x5c____/_____/\x5c___/\x0a\x0a==================================================','head','parse','Download\x20playlist\x20(audio)','iframe','level','[GoodTube]\x20Downloads\x20finished','now','goodTube_loading','div.vjs-menu-button','goodTube_miniplayer_closeButton','...','length','setActionHandler','dashUrl','[GoodTube]\x20Qualities\x20loaded',';\x20max-age=','revokeObjectURL','offsetWidth','then','\x0a\x09\x09\x09ytd-shelf-renderer,\x0a\x09\x09\x09ytd-reel-shelf-renderer,\x0a\x09\x09\x09ytd-merch-shelf-renderer,\x0a\x09\x09\x09ytd-action-companion-ad-renderer,\x0a\x09\x09\x09ytd-display-ad-renderer,\x0a\x09\x09\x09ytd-rich-section-renderer,\x0a\x09\x09\x09ytd-video-masthead-ad-advertiser-info-renderer,\x0a\x09\x09\x09ytd-video-masthead-ad-primary-video-renderer,\x0a\x09\x09\x09ytd-in-feed-ad-layout-renderer,\x0a\x09\x09\x09ytd-ad-slot-renderer,\x0a\x09\x09\x09ytd-statement-banner-renderer,\x0a\x09\x09\x09ytd-banner-promo-renderer-background\x0a\x09\x09\x09ytd-ad-slot-renderer,\x0a\x09\x09\x09ytd-in-feed-ad-layout-renderer,\x0a\x09\x09\x09ytd-engagement-panel-section-list-renderer:not(.ytd-popup-container),\x0a\x09\x09\x09ytd-compact-video-renderer:has(.goodTube_hidden),\x0a\x09\x09\x09ytd-rich-item-renderer:has(>\x20#content\x20>\x20ytd-ad-slot-renderer)\x0a\x09\x09\x09.ytd-video-masthead-ad-v3-renderer,\x0a\x09\x09\x09div#root.style-scope.ytd-display-ad-renderer.yt-simple-endpoint,\x0a\x09\x09\x09div#sparkles-container.style-scope.ytd-promoted-sparkles-web-renderer,\x0a\x09\x09\x09div#main-container.style-scope.ytd-promoted-video-renderer,\x0a\x09\x09\x09div#player-ads.style-scope.ytd-watch-flexy,\x0a\x0a\x09\x09\x09ytm-rich-shelf-renderer,\x0a\x09\x09\x09ytm-shelf-renderer,\x0a\x09\x09\x09ytm-button-renderer.icon-avatar_logged_out,\x0a\x09\x09\x09ytm-companion-slot,\x0a\x09\x09\x09ytm-shelf-renderer,\x0a\x09\x09\x09ytm-reel-shelf-renderer,\x0a\x09\x09\x09ytm-merch-shelf-renderer,\x0a\x09\x09\x09ytm-action-companion-ad-renderer,\x0a\x09\x09\x09ytm-display-ad-renderer,\x0a\x09\x09\x09ytm-rich-section-renderer,\x0a\x09\x09\x09ytm-video-masthead-ad-advertiser-info-renderer,\x0a\x09\x09\x09ytm-video-masthead-ad-primary-video-renderer,\x0a\x09\x09\x09ytm-in-feed-ad-layout-renderer,\x0a\x09\x09\x09ytm-ad-slot-renderer,\x0a\x09\x09\x09ytm-statement-banner-renderer,\x0a\x09\x09\x09ytm-banner-promo-renderer-background\x0a\x09\x09\x09ytm-ad-slot-renderer,\x0a\x09\x09\x09ytm-in-feed-ad-layout-renderer,\x0a\x09\x09\x09ytm-compact-video-renderer:has(.goodTube_hidden),\x0a\x09\x09\x09ytm-rich-item-renderer:has(>\x20#content\x20>\x20ytm-ad-slot-renderer)\x0a\x09\x09\x09.ytm-video-masthead-ad-v3-renderer,\x0a\x09\x09\x09div#root.style-scope.ytm-display-ad-renderer.yt-simple-endpoint,\x0a\x09\x09\x09div#sparkles-container.style-scope.ytm-promoted-sparkles-web-renderer,\x0a\x09\x09\x09div#main-container.style-scope.ytm-promoted-video-renderer,\x0a\x09\x09\x09div#player-ads.style-scope.ytm-watch-flexy,\x0a\x09\x09\x09ytm-pivot-bar-item-renderer:has(>\x20.pivot-shorts),\x0a\x0a\x09\x09\x09yt-about-this-ad-renderer,\x0a\x09\x09\x09masthead-ad,\x0a\x09\x09\x09ad-slot-renderer,\x0a\x09\x09\x09yt-mealbar-promo-renderer,\x0a\x09\x09\x09statement-banner-style-type-compact,\x0a\x09\x09\x09ytm-promoted-sparkles-web-renderer,\x0a\x09\x09\x09tp-yt-iron-overlay-backdrop,\x0a\x09\x09\x09#masthead-ad\x0a\x09\x09\x09\x20{\x0a\x09\x09\x09\x09display:\x20none\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.style-scope[page-subtype=\x27channels\x27]\x20ytd-shelf-renderer,\x0a\x09\x09\x09.style-scope[page-subtype=\x27channels\x27]\x20ytm-shelf-renderer\x20{\x0a\x09\x09\x09\x09display:\x20block\x20!important;\x0a\x09\x09\x09}\x0a\x09\x09','[GoodTube]\x20Downloading\x20failed,\x20could\x20not\x20find\x20playlist\x20data','\x20playlist...','https://api.cobalt.tools/api/json','width','Video\x20source','https://invidious.protokolla.fi','description','stringify','append','.goodTube_markers\x20.goodTube_marker','https://raw.githubusercontent.com/goodtube4u/GoodTube/main','https://vid.lilay.dev','.vjs-fullscreen-control','.compact-media-item-headline\x20>\x20span','chapter-time','vjs-loading','.vjs-source-button\x20.vjs-menu\x20.vjs-menu-item','srcElement','.vjs-menu\x20.vjs-menu-item','open','[GoodTube]\x20Downloaded\x20','div','&t=','time','data','touchstart','vjs-download-button','stopImmediatePropagation','split','vjs-miniplayer-button','mouseover','fixed','top-end','volume','ytd-video-renderer','goodTube_seekForwards','ready','click','744607QVGefX','https://inv.nadeko.net','display','contenteditable-root','#player:not(.ytd-channel-video-player-renderer):not(.goodTube_hidden)','[GoodTube]\x20Autoplaying\x20next\x20video...','868136nygDPR','HD\x20-\x20Lilith\x20(DE)','[GoodTube]\x20Subtitles\x20loaded','body','undefined','goodTube_player','rate-limit','values','replace','forEach','[GoodTube]\x20Downloads\x20cancelled','&itag=','tagName','goodTube_miniplayer','goodTube_unique_new2','qualitySelector','.vjs-download-button','removeEventListener','.video-js\x20.vjs-progress-control\x20.vjs-mouse-display','&listen=true&raw=1','currentTime','Autoplay\x20on','duration','loadeddata','shiftKey','touchmove','getTime','hlsUrl','goodTube_stopUpdates','/js/videojs-quality-selector.js','controls','true','itag','\x0a-------------------------\x0a\x0a','nexttrack','https://iv.datura.network','https://invidious.incogniweb.net','enterpictureinpicture','[GoodTube]\x20Loading\x20storyboard...','toFixed','goodTube_downloadPlaylist_cancel','.vjs-menu-item','.vjs-vtt-thumbnail-display','prev','push','closest','exitPictureInPicture','#panels\x20ytd-engagement-panel-section-list-renderer:nth-child(2)\x20#content\x20ytd-macro-markers-list-renderer\x20#contents\x20ytd-macro-markers-list-item-renderer\x20#endpoint\x20#details','URL','Autoplay','status','video:not(#goodTube_player):not(#goodTube_player_html5_api)','cobalt.tools','\x0a\x09\x09\x09#goodTube_player_wrapper1:not(.goodTube_mobile)\x20{\x0a\x09\x09\x09\x09border-radius:\x2012px;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20{\x0a\x09\x09\x09\x09overflow:\x20hidden;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20*:focus\x20{\x0a\x09\x09\x09\x09outline-color:\x20transparent;\x0a\x09\x09\x09\x09outline-style:\x20none;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.vjs-has-started.vjs-user-inactive.vjs-playing\x20.vjs-control-bar\x20{\x0a\x09\x09\x09\x09transition:\x20visibility\x20.25s,\x20opacity\x20.25s\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.vjs-menu\x20.vjs-menu-item-text\x20{\x0a\x09\x09\x09\x09text-transform:\x20none\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.vjs-menu\x20.vjs-menu-item-text:first-letter\x20{\x0a\x09\x09\x09\x09text-transform:\x20uppercase\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-download-button\x20.vjs-icon-placeholder,\x0a\x09\x09\x09.video-js\x20.vjs-source-button\x20.vjs-icon-placeholder,\x0a\x09\x09\x09.video-js\x20.vjs-autoplay-button\x20.vjs-icon-placeholder,\x0a\x09\x09\x09.video-js\x20.vjs-quality-selector\x20.vjs-icon-placeholder,\x0a\x09\x09\x09.video-js\x20.vjs-prev-button\x20.vjs-icon-placeholder,\x0a\x09\x09\x09.video-js\x20.vjs-next-button\x20.vjs-icon-placeholder,\x0a\x09\x09\x09.video-js\x20.vjs-miniplayer-button\x20.vjs-icon-placeholder,\x0a\x09\x09\x09.video-js\x20.vjs-theater-button\x20.vjs-icon-placeholder\x20{\x0a\x09\x09\x09\x09font-family:\x20VideoJS;\x0a\x09\x09\x09\x09font-weight:\x20400;\x0a\x09\x09\x09\x09font-style:\x20normal;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-control-bar\x20>\x20button\x20{\x0a\x09\x09\x09\x09cursor:\x20pointer;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-prev-button\x20.vjs-icon-placeholder:before\x20{\x0a\x09\x09\x09\x09content:\x20\x22\x5cf124\x22;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-next-button\x20.vjs-icon-placeholder:before\x20{\x0a\x09\x09\x09\x09content:\x20\x22\x5cf123\x22;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-download-button\x20.vjs-icon-placeholder:before\x20{\x0a\x09\x09\x09\x09content:\x20\x22\x5cf110\x22;\x0a\x09\x09\x09}\x0a\x0a\x0a\x0a\x09\x09\x09//\x20Loading\x20indicator\x20for\x20downloads\x0a\x09\x09\x09.video-js\x20.vjs-download-button\x20{\x0a\x09\x09\x09\x09position:\x20relative;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-download-button\x20.goodTube_spinner\x20{\x0a\x09\x09\x09\x09opacity:\x200;\x0a\x09\x09\x09\x09position:\x20absolute;\x0a\x09\x09\x09\x09top:\x2050%;\x0a\x09\x09\x09\x09left:\x2050%;\x0a\x09\x09\x09\x09transform:\x20translate(-50%,\x20-50%);\x0a\x09\x09\x09\x09transition:\x20opacity\x20.4s\x20linear;\x0a\x09\x09\x09}\x0a\x09\x09\x09.video-js\x20.vjs-download-button.goodTube_loading\x20.goodTube_spinner\x20{\x0a\x09\x09\x09\x09opacity:\x201;\x0a\x09\x09\x09\x09transition:\x20opacity\x20.2s\x20.2s\x20linear;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-download-button\x20.vjs-icon-placeholder:before\x20{\x0a\x09\x09\x09\x09opacity:\x201;\x0a\x09\x09\x09\x09transition:\x20opacity\x20.2s\x20.2s\x20linear;\x0a\x09\x09\x09}\x0a\x09\x09\x09.video-js\x20.vjs-download-button.goodTube_loading\x20.vjs-icon-placeholder:before\x20{\x0a\x09\x09\x09\x09opacity:\x200;\x0a\x09\x09\x09\x09transition:\x20opacity\x20.2s\x20linear;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.goodTube_spinner\x20{\x0a\x09\x09\x09\x09color:\x20#ffffff;\x0a\x09\x09\x09\x09pointer-events:\x20none;\x0a\x09\x09\x09}\x0a\x09\x09\x09.goodTube_spinner,\x0a\x09\x09\x09.goodTube_spinner\x20div\x20{\x0a\x09\x09\x09\x09box-sizing:\x20border-box;\x0a\x09\x09\x09}\x0a\x09\x09\x09.goodTube_spinner\x20{\x0a\x09\x09\x09\x09display:\x20inline-block;\x0a\x09\x09\x09\x09position:\x20relative;\x0a\x09\x09\x09\x09width:\x2036px;\x0a\x09\x09\x09\x09height:\x2036px;\x0a\x09\x09\x09}\x0a\x09\x09\x09.goodTube_spinner\x20div\x20{\x0a\x09\x09\x09\x09position:\x20absolute;\x0a\x09\x09\x09\x09border:\x202px\x20solid\x20currentColor;\x0a\x09\x09\x09\x09opacity:\x201;\x0a\x09\x09\x09\x09border-radius:\x2050%;\x0a\x09\x09\x09\x09animation:\x20goodTube_spinner\x201s\x20cubic-bezier(0,\x200.2,\x200.8,\x201)\x20infinite;\x0a\x09\x09\x09}\x0a\x09\x09\x09.goodTube_spinner\x20div:nth-child(2)\x20{\x0a\x09\x09\x09\x09animation-delay:\x20-0.5s;\x0a\x09\x09\x09}\x0a\x09\x09\x09@keyframes\x20goodTube_spinner\x20{\x0a\x09\x09\x09\x090%\x20{\x0a\x09\x09\x09\x09\x09top:\x2016px;\x0a\x09\x09\x09\x09\x09left:\x2016px;\x0a\x09\x09\x09\x09\x09width:\x204px;\x0a\x09\x09\x09\x09\x09height:\x204px;\x0a\x09\x09\x09\x09\x09opacity:\x20.5;\x0a\x09\x09\x09\x09}\x0a\x09\x09\x09\x094.9%\x20{\x0a\x09\x09\x09\x09\x09top:\x2016px;\x0a\x09\x09\x09\x09\x09left:\x2016px;\x0a\x09\x09\x09\x09\x09width:\x204px;\x0a\x09\x09\x09\x09\x09height:\x204px;\x0a\x09\x09\x09\x09\x09opacity:\x20.5;\x0a\x09\x09\x09\x09}\x0a\x09\x09\x09\x095%\x20{\x0a\x09\x09\x09\x09\x09top:\x2016px;\x0a\x09\x09\x09\x09\x09left:\x2016px;\x0a\x09\x09\x09\x09\x09width:\x204px;\x0a\x09\x09\x09\x09\x09height:\x204px;\x0a\x09\x09\x09\x09\x09opacity:\x201;\x0a\x09\x09\x09\x09}\x0a\x09\x09\x09\x09100%\x20{\x0a\x09\x09\x09\x09\x09top:\x200;\x0a\x09\x09\x09\x09\x09left:\x200;\x0a\x09\x09\x09\x09\x09width:\x2036px;\x0a\x09\x09\x09\x09\x09height:\x2036px;\x0a\x09\x09\x09\x09\x09opacity:\x200;\x0a\x09\x09\x09\x09}\x0a\x09\x09\x09}\x0a\x0a\x0a\x0a\x09\x09\x09.video-js\x20.vjs-source-button\x20.vjs-icon-placeholder:before\x20{\x0a\x09\x09\x09\x09content:\x20\x22\x5cf10e\x22;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-autoplay-button\x20.vjs-icon-placeholder:before\x20{\x0a\x09\x09\x09\x09content:\x20\x22\x5cf102\x22;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-quality-selector\x20.vjs-icon-placeholder:before\x20{\x0a\x09\x09\x09\x09content:\x20\x22\x5cf114\x22;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-source-button\x20.vjs-icon-placeholder:before\x20{\x0a\x09\x09\x09\x09content:\x20\x22\x5cf10e\x22;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-miniplayer-button\x20.vjs-icon-placeholder:before\x20{\x0a\x09\x09\x09\x09content:\x20\x22\x5cf127\x22;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-theater-button\x20.vjs-icon-placeholder:before\x20{\x0a\x09\x09\x09\x09content:\x20\x22\x5cf115\x22;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09/*\x20Youtube\x20player\x20style\x20*/\x0a\x09\x09\x09.vjs-slider-horizontal\x20.vjs-volume-level:before\x20{\x0a\x09\x09\x09\x09font-size:\x2014px\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.vjs-volume-control\x20{\x0a\x09\x09\x09\x09width:\x20auto\x20!important;\x0a\x09\x09\x09\x09margin-right:\x200\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-volume-panel.vjs-volume-panel-horizontal\x20{\x0a\x09\x09\x09\x09transition:\x20width\x20.25s\x20!important;\x0a\x09\x09\x09\x09z-index:\x20999;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-volume-panel\x20.vjs-volume-control.vjs-volume-horizontal\x20{\x0a\x09\x09\x09\x09transition:\x20opacity\x20.25s,\x20width\x201s\x20!important;\x0a\x09\x09\x09\x09min-width:\x200\x20!important;\x0a\x09\x09\x09\x09padding-right:\x208px\x20!important;\x0a\x09\x09\x09\x09pointer-events:\x20none;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-volume-panel\x20{\x0a\x09\x09\x09\x09margin-right:\x206px\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-volume-panel.vjs-hover,\x0a\x09\x09\x09.video-js\x20.vjs-volume-panel.vjs-slider-active\x20{\x0a\x09\x09\x09\x09margin-right:\x2016px\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-volume-panel.vjs-hover\x20.vjs-volume-control.vjs-volume-horizontal\x20{\x0a\x09\x09\x09\x09pointer-events:\x20all;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.vjs-volume-bar.vjs-slider-horizontal\x20{\x0a\x09\x09\x09\x09min-width:\x2052px\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js.player-style-youtube\x20.vjs-control-bar\x20>\x20.vjs-spacer\x20{\x0a\x09\x09\x09\x09flex:\x201;\x0a\x09\x09\x09\x09order:\x202;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js.player-style-youtube\x20.vjs-play-progress\x20.vjs-time-tooltip\x20{\x0a\x09\x09\x09\x09display:\x20none;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js.player-style-youtube\x20.vjs-play-progress::before\x20{\x0a\x09\x09\x09\x09color:\x20red;\x0a\x09\x09\x09\x09font-size:\x200.85em;\x0a\x09\x09\x09\x09display:\x20none;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js.player-style-youtube\x20.vjs-progress-holder:hover\x20.vjs-play-progress::before\x20{\x0a\x09\x09\x09\x09display:\x20unset;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js.player-style-youtube\x20.vjs-control-bar\x20{\x0a\x09\x09\x09\x09display:\x20flex;\x0a\x09\x09\x09\x09flex-direction:\x20row;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js.player-style-youtube\x20.vjs-big-play-button\x20{\x0a\x09\x09\x09\x09top:\x2050%;\x0a\x09\x09\x09\x09left:\x2050%;\x0a\x09\x09\x09\x09margin-top:\x20-0.81666em;\x0a\x09\x09\x09\x09margin-left:\x20-1.5em;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js.player-style-youtube\x20.vjs-menu-button-popup\x20.vjs-menu\x20{\x0a\x09\x09\x09\x09margin-bottom:\x202em;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20ul.vjs-menu-content::-webkit-scrollbar\x20{\x0a\x09\x09\x09\x09display:\x20none;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-user-inactive:not(.vjs-paused)\x20{\x0a\x09\x09\x09\x09cursor:\x20none;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-text-track-display\x20>\x20div\x20>\x20div\x20>\x20div\x20{\x0a\x09\x09\x09\x09border-radius:\x200\x20!important;\x0a\x09\x09\x09\x09padding:\x204px\x208px\x20!important;\x0a\x09\x09\x09\x09line-height:\x20calc(1.2em\x20+\x207px)\x20!important;\x0a\x09\x09\x09\x09white-space:\x20break-spaces\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-play-control\x20{\x0a\x09\x09\x09\x09order:\x200;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-prev-button\x20{\x0a\x09\x09\x09\x09order:\x201;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-next-button\x20{\x0a\x09\x09\x09\x09order:\x202;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-volume-panel\x20{\x0a\x09\x09\x09\x09order:\x203;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09/*\x20Time\x20control\x20*/\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1\x20.video-js\x20.vjs-time-control\x20{\x0a\x09\x09\x09\x09font-family:\x20\x22YouTube\x20Noto\x22,\x20Roboto,\x20Arial,\x20Helvetica,\x20sans-serif\x20!important;\x0a\x09\x09\x09\x09order:\x204;\x0a\x09\x09\x09\x09font-size:\x2013.0691px\x20!important;\x0a\x09\x09\x09\x09padding-top:\x204px\x20!important;\x0a\x09\x09\x09\x09color:\x20rgb(221,\x20221,\x20221)\x20!important;\x0a\x09\x09\x09\x09text-shadow:\x200\x200\x202px\x20rgba(0,\x200,\x200,\x20.5)\x20!important;\x0a\x09\x09\x09\x09min-width:\x200\x20!important;\x0a\x09\x09\x09\x09z-index:\x201;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09html\x20body\x20#goodTube_player_wrapper1\x20.video-js\x20.vjs-time-control\x20*\x20{\x0a\x09\x09\x09\x09min-width:\x200\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-current-time\x20{\x0a\x09\x09\x09\x09padding-right:\x204px\x20!important;\x0a\x09\x09\x09\x09padding-left:\x200\x20!important;\x0a\x09\x09\x09\x09margin-left:\x200\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-duration\x20{\x0a\x09\x09\x09\x09padding-left:\x204px\x20!important;\x0a\x09\x09\x09\x09padding-right:\x205px\x20!important;\x0a\x09\x09\x09\x09margin-right:\x200\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1.goodTube_mobile\x20.video-js\x20.vjs-time-control\x20{\x0a\x09\x09\x09\x09position:\x20absolute;\x0a\x09\x09\x09\x09top:\x20calc(100%\x20-\x2098px);\x0a\x09\x09\x09\x09font-weight:\x20500;\x0a\x09\x09\x09\x09pointer-events:\x20none;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1.goodTube_mobile\x20.video-js\x20.vjs-current-time\x20{\x0a\x09\x09\x09\x09color:\x20#ffffff\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-source-button\x20{\x0a\x09\x09\x09\x09margin-left:\x20auto\x20!important;\x0a\x09\x09\x09\x09order:\x205;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-download-button\x20{\x0a\x09\x09\x09\x09order:\x206;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-autoplay-button\x20{\x0a\x09\x09\x09\x09order:\x207;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-playback-rate\x20{\x0a\x09\x09\x09\x09order:\x208;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-subs-caps-button\x20{\x0a\x09\x09\x09\x09order:\x209;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-quality-selector\x20{\x0a\x09\x09\x09\x09order:\x2010;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-miniplayer-button\x20{\x0a\x09\x09\x09\x09order:\x2011;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-theater-button\x20{\x0a\x09\x09\x09\x09order:\x2012;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-fullscreen-control\x20{\x0a\x09\x09\x09\x09order:\x2013;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-control-bar\x20{\x0a\x09\x09\x09\x09display:\x20flex;\x0a\x09\x09\x09\x09flex-direction:\x20row;\x0a\x09\x09\x09\x09scrollbar-width:\x20none;\x0a\x09\x09\x09\x09height:\x2048px\x20!important;\x0a\x09\x09\x09\x09background:\x20transparent\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-control-bar::before\x20{\x0a\x09\x09\x09\x09content:\x20\x27\x27;\x0a\x09\x09\x09\x09position:\x20absolute;\x0a\x09\x09\x09\x09left:\x200;\x0a\x09\x09\x09\x09right:\x200;\x0a\x09\x09\x09\x09bottom:\x200;\x0a\x09\x09\x09\x09background:\x20url(\x22data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAD1CAYAAACRFp+GAAAAAXNSR0IArs4c6QAAASpJREFUOE9lyOlHGAAcxvHuY63Wta3WsdWqdaz7vtfduoyZSBLJmCSSSCaSSBJJJIkk0h+Z7/Pm59Hz4sP3SUh4tUSeIIkMkkmR4qSSIs1JJ4MMUmQ6b0iR5bwlg2xS5DjvSJHr5JFBPikKnEIyeE+KD85HUhQ5xWTwiRQlTikpypxyMvhMii9OBSkqna9kUEWKaqeGDL6RotapI0W900AG30nR6DSRotlpIYNWUrQ57aTocDrJoIsU3U4PKXqdPjLoJ8WAM0gGQ6QYdn6QYsQZJYMxUow7E6SYdKbIYJoUP50ZUsw6c2QwTy7AL/gNf2ARlmAZVmAV1mAd/sI/2IBN2IJt2IFd2IN9+A8HcAhHcAwncApncA4XcAlXcA03cAt3cA8P8AhP8PwCakcyvVVFagcAAAAASUVORK5CYII=\x22);\x0a\x09\x09\x09\x09background-size:\x20cover;\x0a\x09\x09\x09\x09background-repeat:\x20repeat-x;\x0a\x09\x09\x09\x09background-position:\x20bottom;\x0a\x09\x09\x09\x09background-size:\x20contain;\x0a\x09\x09\x09\x09height:\x20calc(var(--ytd-watch-flexy-max-player-height)\x20/\x202.5);\x0a\x09\x09\x09\x09pointer-events:\x20none;\x0a\x09\x09\x09}\x0a\x09\x09\x09#goodTube_player_wrapper1.goodTube_mobile\x20.video-js\x20.vjs-control-bar::before\x20{\x0a\x09\x09\x09\x09display:\x20none;\x0a\x09\x09\x09\x09content:\x20none;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-menu\x20.vjs-icon-placeholder\x20{\x0a\x09\x09\x09\x09display:\x20none\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-menu\x20.vjs-menu-content\x20>\x20*\x20{\x0a\x09\x09\x09\x09padding-top:\x208px\x20!important;\x0a\x09\x09\x09\x09padding-bottom:\x208px\x20!important;\x0a\x09\x09\x09\x09padding-left:\x2012px\x20!important;\x0a\x09\x09\x09\x09padding-right:\x2012px\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-menu\x20{\x0a\x09\x09\x09\x09height:\x20auto\x20!important;\x0a\x09\x09\x09\x09bottom:\x2048px\x20!important;\x0a\x09\x09\x09\x09padding-bottom:\x200\x20!important;\x0a\x09\x09\x09\x09margin-bottom:\x200\x20!important;\x0a\x09\x09\x09\x09width:\x20auto\x20!important;\x0a\x09\x09\x09\x09transform:\x20translateX(-50%)\x20!important;\x0a\x09\x09\x09\x09left:\x2050%\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-menu\x20.vjs-menu-content\x20{\x0a\x09\x09\x09\x09position:\x20static\x20!important;\x0a\x09\x09\x09\x09border-radius:\x204px\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-volume-control\x20{\x0a\x09\x09\x09\x09height:\x20100%\x20!important;\x0a\x09\x09\x09\x09display:\x20flex\x20!important;\x0a\x09\x09\x09\x09align-items:\x20center\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-vtt-thumbnail-display\x20{\x0a\x09\x09\x09\x09bottom:\x20calc(100%\x20+\x2035px)\x20!important;\x0a\x09\x09\x09\x09border-radius:\x2012px\x20!important;\x0a\x09\x09\x09\x09overflow:\x20hidden\x20!important;\x0a\x09\x09\x09\x09border:\x202px\x20solid\x20#ffffff\x20!important;\x0a\x09\x09\x09\x09background-color:\x20#000000\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-control-bar\x20.vjs-icon-placeholder\x20{\x0a\x09\x09\x09\x09height:\x20100%;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-control\x20{\x0a\x09\x09\x09\x09min-width:\x2048px\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1:not(goodTube_mobile)\x20.video-js\x20.vjs-control-bar\x20>\x20.vjs-play-control\x20{\x0a\x09\x09\x09\x09padding-left:\x208px;\x0a\x09\x09\x09\x09box-sizing:\x20content-box;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1.goodTube_mobile\x20.video-js\x20.vjs-control:not(.vjs-progress-control)\x20{\x0a\x09\x09\x09\x09min-width:\x200\x20!important;\x0a\x09\x09\x09\x09flex-grow:\x201\x20!important;\x0a\x09\x09\x09\x09max-width:\x209999px\x20!important;\x0a\x09\x09\x09\x09padding-left:\x200\x20!important;\x0a\x09\x09\x09\x09padding-right:\x200\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1.goodTube_mobile\x20.video-js\x20.vjs-control.vjs-volume-panel,\x0a\x09\x09\x09#goodTube_player_wrapper1.goodTube_miniplayer\x20#goodTube_player_wrapper3\x20.video-js\x20.vjs-control.vjs-volume-panel\x20{\x0a\x09\x09\x09\x09display:\x20none;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-control-bar\x20.vjs-icon-placeholder::before\x20{\x0a\x09\x09\x09\x09height:\x20auto;\x0a\x09\x09\x09\x09top:\x2050%;\x0a\x09\x09\x09\x09transform:\x20translateY(-50%);\x0a\x09\x09\x09\x09font-size:\x2024px;\x0a\x09\x09\x09\x09line-height:\x20100%;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-control-bar\x20*:not(.vjs-time-control)\x20{\x0a\x09\x09\x09\x09text-shadow:\x20none\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-vtt-thumbnail-time\x20{\x0a\x09\x09\x09\x09display:\x20none\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-playback-rate\x20.vjs-playback-rate-value\x20{\x0a\x09\x09\x09\x09line-height:\x2048px;\x0a\x09\x09\x09\x09font-size:\x2014px\x20!important;\x0a\x09\x09\x09\x09font-weight:\x20700;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-play-progress\x20.vjs-time-tooltip\x20{\x0a\x09\x09\x09\x09display:\x20none\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-mouse-display\x20.vjs-time-tooltip\x20{\x0a\x09\x09\x09\x09background:\x20none\x20!important;\x0a\x09\x09\x09\x09font-size:\x2012px\x20!important;\x0a\x09\x09\x09\x09top:\x20-50px\x20!important;\x0a\x09\x09\x09\x09text-shadow:\x200\x200\x2010px\x20rgba(0,\x200,\x200,\x20.5)\x20!important;\x0a\x09\x09\x09\x09font-family:\x20\x22YouTube\x20Noto\x22,\x20Roboto,\x20Arial,\x20Helvetica,\x20sans-serif\x20!important;\x0a\x09\x09\x09\x09font-weight:\x20500\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-menu-content\x20{\x0a\x09\x09\x09\x09max-height:\x20calc(var(--ytd-watch-flexy-panel-max-height)\x20-\x2072px)\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1.goodTube_mobile\x20.video-js\x20.vjs-menu-content\x20{\x0a\x09\x09\x09\x09max-height:\x20164px\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-control-bar::-webkit-scrollbar\x20{\x0a\x09\x09\x09\x09display:\x20none;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-icon-cog\x20{\x0a\x09\x09\x09\x09font-size:\x2018px;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-control-bar,\x0a\x09\x09\x09.video-js\x20.vjs-menu-button-popup\x20.vjs-menu\x20.vjs-menu-content\x20{\x0a\x09\x09\x09\x09background-color:\x20rgba(35,\x2035,\x2035,\x200.75);\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-menu\x20li.vjs-menu-item:not(.vjs-selected),\x0a\x09\x09\x09.video-js\x20.vjs-menu\x20li.vjs-menu-item:not(.vjs-selected):focus,\x0a\x09\x09\x09.video-js\x20.vjs-menu\x20li.vjs-menu-item:not(.vjs-selected):active\x20{\x0a\x09\x09\x09\x09background-color:\x20transparent\x20!important;\x0a\x09\x09\x09\x09color:\x20#ffffff\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-menu\x20li.vjs-menu-item:not(.vjs-selected):hover\x20{\x0a\x09\x09\x09\x09background-color:\x20rgba(255,\x20255,\x20255,\x200.75)\x20!important;\x0a\x09\x09\x09\x09color:\x20rgba(49,\x2049,\x2051,\x200.75)\x20!important;\x0a\x09\x09\x09\x09color:\x20#ffffff\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-menu\x20li.vjs-selected,\x0a\x09\x09\x09.video-js\x20.vjs-menu\x20li.vjs-selected:hover\x20{\x0a\x09\x09\x09\x09background-color:\x20#ffffff\x20!important;\x0a\x09\x09\x09\x09color:\x20#000000\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-menu\x20li\x20{\x0a\x09\x09\x09\x09white-space:\x20nowrap\x20!important;\x0a\x09\x09\x09\x09font-size:\x2012px\x20!important;\x0a\x09\x09\x09\x09font-weight:\x20700\x20!important;\x0a\x09\x09\x09\x09max-width:\x209999px\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-subs-caps-button\x20.vjs-menu\x20li\x20{\x0a\x09\x09\x09\x09white-space:\x20normal\x20!important;\x0a\x09\x09\x09\x09min-width:\x20128px\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09/*\x20Progress\x20Bar\x20*/\x0a\x09\x09\x09.video-js\x20.vjs-slider\x20{\x0a\x09\x09\x09\x09background-color:\x20rgba(15,\x2015,\x2015,\x200.5);\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-load-progress,\x0a\x09\x09\x09.video-js\x20.vjs-load-progress\x20div\x20{\x0a\x09\x09\x09\x09background:\x20rgba(87,\x2087,\x2088,\x201);\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-slider:hover,\x0a\x09\x09\x09.video-js\x20button:hover\x20{\x0a\x09\x09\x09\x09color:\x20#ffffff;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09/*\x20Overlay\x20*/\x0a\x09\x09\x09.video-js\x20.vjs-overlay\x20{\x0a\x09\x09\x09\x09background-color:\x20rgba(35,\x2035,\x2035,\x200.75)\x20!important;\x0a\x09\x09\x09}\x0a\x09\x09\x09.video-js\x20.vjs-overlay\x20*\x20{\x0a\x09\x09\x09\x09color:\x20rgba(255,\x20255,\x20255,\x201)\x20!important;\x0a\x09\x09\x09\x09text-align:\x20center;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09/*\x20ProgressBar\x20marker\x20*/\x0a\x09\x09\x09.video-js\x20.vjs-marker\x20{\x0a\x09\x09\x09\x09background-color:\x20rgba(255,\x20255,\x20255,\x201);\x0a\x09\x09\x09\x09z-index:\x200;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09/*\x20Big\x20\x22Play\x22\x20Button\x20*/\x0a\x09\x09\x09.video-js\x20.vjs-big-play-button\x20{\x0a\x09\x09\x09\x09background-color:\x20rgba(35,\x2035,\x2035,\x200.5);\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js:hover\x20.vjs-big-play-button\x20{\x0a\x09\x09\x09\x09background-color:\x20rgba(35,\x2035,\x2035,\x200.75);\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-current-time,\x0a\x09\x09\x09.video-js\x20.vjs-time-divider,\x0a\x09\x09\x09.video-js\x20.vjs-duration\x20{\x0a\x09\x09\x09\x09display:\x20block;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-time-divider\x20{\x0a\x09\x09\x09\x09min-width:\x200px;\x0a\x09\x09\x09\x09padding-left:\x200px;\x0a\x09\x09\x09\x09padding-right:\x200px;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-poster\x20{\x0a\x09\x09\x09\x09background-size:\x20cover;\x0a\x09\x09\x09\x09object-fit:\x20cover;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.player-dimensions.vjs-fluid\x20{\x0a\x09\x09\x09\x09padding-top:\x2082vh;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09video.video-js\x20{\x0a\x09\x09\x09\x09position:\x20absolute;\x0a\x09\x09\x09\x09height:\x20100%;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.mobile-operations-bar\x20{\x0a\x09\x09\x09\x09display:\x20flex;\x0a\x09\x09\x09\x09position:\x20absolute;\x0a\x09\x09\x09\x09top:\x200;\x0a\x09\x09\x09\x09right:\x201px\x20!important;\x0a\x09\x09\x09\x09left:\x20initial\x20!important;\x0a\x09\x09\x09\x09width:\x20initial\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.mobile-operations-bar\x20ul\x20{\x0a\x09\x09\x09\x09position:\x20absolute\x20!important;\x0a\x09\x09\x09\x09bottom:\x20unset\x20!important;\x0a\x09\x09\x09\x09top:\x201.5em;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-menu-button-popup\x20.vjs-menu\x20{\x0a\x09\x09\x09\x09border:\x200\x20!important;\x0a\x09\x09\x09\x09padding-bottom:\x2012px\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-menu\x20li.vjs-menu-item:not(.vjs-selected):hover\x20{\x0a\x09\x09\x09\x09background-color:\x20rgba(255,\x20255,\x20255,\x20.2)\x20!important;\x0a\x09\x09\x09\x09color:\x20#ffffff\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-menu\x20*\x20{\x0a\x09\x09\x09\x09border:\x200\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09/*\x20Tooltips\x0a\x09\x09\x09------------------------------------------------------------------------------------------\x20*/\x0a\x09\x09\x09.video-js\x20.vjs-control-bar\x20>\x20.vjs-prev-button::before\x20{\x0a\x09\x09\x09\x09content:\x20\x27Previous\x20video\x27;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-control-bar\x20>\x20.vjs-next-button::before\x20{\x0a\x09\x09\x09\x09content:\x20\x27Next\x20video\x27;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-control-bar\x20.vjs-mute-control:not(.vjs-vol-0)::before\x20{\x0a\x09\x09\x09\x09content:\x20\x27Mute\x20(m)\x27;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-control-bar\x20.vjs-mute-control.vjs-vol-0::before\x20{\x0a\x09\x09\x09\x09content:\x20\x27Unmute\x20(m)\x27;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-control-bar\x20>\x20.vjs-playback-rate\x20>\x20.vjs-menu-button::before\x20{\x0a\x09\x09\x09\x09content:\x20\x27Playback\x20speed\x27;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-control-bar\x20>\x20.vjs-subs-caps-button\x20>\x20.vjs-menu-button::before\x20{\x0a\x09\x09\x09\x09content:\x20\x27Subtitles\x27;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-control-bar\x20>\x20.vjs-quality-selector\x20>\x20.vjs-menu-button::before\x20{\x0a\x09\x09\x09\x09content:\x20\x27Quality\x27;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-control-bar\x20>\x20.vjs-download-button\x20>\x20.vjs-menu-button::before\x20{\x0a\x09\x09\x09\x09content:\x20\x27Download\x27;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-control-bar\x20>\x20.vjs-autoplay-button\x20>\x20.vjs-menu-button::before\x20{\x0a\x09\x09\x09\x09content:\x20\x27Autoplay\x27;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-control-bar\x20>\x20.vjs-source-button\x20>\x20.vjs-menu-button::before\x20{\x0a\x09\x09\x09\x09content:\x20\x27Video\x20source\x27;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-control-bar\x20>\x20.vjs-miniplayer-button::before\x20{\x0a\x09\x09\x09\x09content:\x20\x27Miniplayer\x20(i)\x27;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-control-bar\x20>\x20.vjs-theater-button::before\x20{\x0a\x09\x09\x09\x09content:\x20\x27Theater\x20mode\x20(t)\x27;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-control-bar\x20>\x20.vjs-fullscreen-control::before\x20{\x0a\x09\x09\x09\x09content:\x20\x27Fullscreen\x20(f)\x27;\x0a\x09\x09\x09\x09left:\x20auto\x20!important;\x0a\x09\x09\x09\x09right:\x2012px\x20!important;\x0a\x09\x09\x09\x09transform:\x20none\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-control-bar\x20button.vjs-menu-button::before,\x0a\x09\x09\x09.video-js\x20.vjs-control-bar\x20.vjs-button:not(.vjs-menu-button)::before\x20{\x0a\x09\x09\x09\x09position:\x20absolute;\x0a\x09\x09\x09\x09top:\x20-40px;\x0a\x09\x09\x09\x09left:\x2050%;\x0a\x09\x09\x09\x09transform:\x20translateX(-50%);\x0a\x09\x09\x09\x09background:\x20rgba(0,\x200,\x200,\x20.75);\x0a\x09\x09\x09\x09border-radius:\x204px;\x0a\x09\x09\x09\x09font-size:\x2012px;\x0a\x09\x09\x09\x09font-weight:\x20600;\x0a\x09\x09\x09\x09padding:\x208px;\x0a\x09\x09\x09\x09white-space:\x20nowrap;\x0a\x09\x09\x09\x09opacity:\x200;\x0a\x09\x09\x09\x09transition:\x20opacity\x20.1s;\x0a\x09\x09\x09\x09pointer-events:\x20none;\x0a\x09\x09\x09\x09text-shadow:\x20none\x20!important;\x0a\x09\x09\x09\x09z-index:\x201;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09#goodTube_player_wrapper1.goodTube_mobile\x20.video-js\x20.vjs-control-bar\x20button.vjs-menu-button::before,\x0a\x09\x09\x09#goodTube_player_wrapper1.goodTube_mobile\x20.video-js\x20.vjs-control-bar\x20.vjs-button:not(.vjs-menu-button)::before\x20{\x0a\x09\x09\x09\x09display:\x20none\x20!important;\x0a\x09\x09\x09\x09content:\x20none\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-control-bar\x20div.vjs-menu-button:not(.vjs-menuOpen)\x20button.vjs-menu-button:hover::before,\x0a\x09\x09\x09.video-js\x20.vjs-control-bar\x20.vjs-button:not(.vjs-menu-button):hover::before\x20{\x0a\x09\x09\x09\x09opacity:\x201;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20div.vjs-menu-button:not(.vjs-menuOpen)\x20.vjs-menu\x20{\x0a\x09\x09\x09\x09display:\x20none\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20div.vjs-menu-button.vjs-menuOpen\x20.vjs-menu\x20{\x0a\x09\x09\x09\x09display:\x20block\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-menu\x20{\x0a\x09\x09\x09\x09z-index:\x20999\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-big-play-button\x20{\x0a\x09\x09\x09\x09display:\x20none\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-volume-panel,\x0a\x09\x09\x09.video-js\x20.vjs-button\x20{\x0a\x09\x09\x09\x09z-index:\x201;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-button.vjs-menuOpen\x20{\x0a\x09\x09\x09\x09z-index:\x20999;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js\x20.vjs-error-display\x20.vjs-modal-dialog-content\x20{\x0a\x09\x09\x09\x09display:\x20none;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.video-js:not(.vjs-has-started)\x20.vjs-control-bar\x20{\x0a\x09\x09\x09\x09display:\x20flex\x20!important;\x0a\x09\x09\x09}\x0a\x0a\x09\x09\x09.vjs-track-settings-controls\x20button:hover\x20{\x0a\x09\x09\x09\x09color:\x20#000000\x20!important;\x0a\x09\x09\x09}\x0a\x09\x09','https://invidious.fdn.fr','vp9','tab-index','toLowerCase','top','.vjs-duration','selected','.vjs-quality-selector','814910QMgKai','search','m.youtube','parent','downloadFileAsBlob_','.vjs-time-divider','goodTube_source_','textContent','focus','ytm-playlist-panel-entry-point','.vjs-play-control','&amp;unique_res=1','source','goodTube_chapters','goodTube_lastDownloadTimeSeconds','goodTube_player_wrapper1','#description\x20a,\x20ytd-comments\x20.yt-core-attributed-string\x20a,\x20ytm-expandable-video-description-body-renderer\x20a,\x20.comment-content\x20a','resolution','.goodTube_downloadPlaylist_video','contains','loadAsset','.compact-media-item-image','7Sqgcbi','ytm-playlist-panel-renderer\x20ytm-playlist-panel-video-renderer[aria-selected=\x22true\x22],\x20ytm-playlist-video-list-renderer\x20ytm-playlist-video-renderer[aria-selected=\x22true\x22]','https://yt.artemislena.eu','.macro-markers','PrevButton','[GoodTube]\x20Player\x20loaded','type','[GoodTube]\x20Player\x20assets\x20could\x20not\x20be\x20loaded','https://cobalt.tools/#','CANCEL\x20ALL\x20DOWNLOADS','/api/v1/videos/','goodTube_error','style','loadVideoData','av1','before','#goodTube_player_wrapper1\x20.vjs-progress-control','handleClick','goodTube_source_audio','getComponent','history','max','livestream','goodTube_timestampLink','from','vjs-user-active','.vjs-control-bar\x20.vjs-play-control','class','self','#full-bleed-container:not(.goodTube_hidden)','/watch?v=','setAttribute','seeking','keyup','https://invidious.privacyredirect.com','mediaSession','video','getAttribute','fullscreen','#goodTube_player\x20video','.mp3','onmousedown','goodTube_iframe','vjs-user-inactive','next','/js/video.min.js','filter','WEBVTT','GoodTube:\x20a\x20new\x20version\x20is\x20available.','aria-selected','ytm-playlist-panel-renderer\x20ytm-playlist-panel-video-renderer,\x20ytm-playlist-video-list-renderer\x20ytm-playlist-video-renderer','.ytp-skip-ad-button','#goodTube_error','360p\x20-\x20Goblin\x20(AU)','.vjs-selected','https://api.counterapi.dev/v1/goodtube/videos/up/','&raw=1&listen=1','#movie_player','2VuVMID','[GoodTube]\x20Video\x20could\x20not\x20be\x20loaded\x20-\x20please\x20select\x20another\x20video\x20source','.vjs-next-button','chapter-title','source[selected=true]','360p\x20-\x20Raptor\x20(US)','[GoodTube]\x20Quality\x20loaded','input','3259644CVqPMe','label','#goodTube_player_wrapper1\x20.vjs-progress-control\x20.vjs-play-progress','POST','Skip','goodTube_downloadPlaylist_video','https://invidious.projectsegfau.lt','vjs-next-button','youtube','durationDisplay','pop','171zxlDRU','Download','call','.goodTube_downloadPlaylist_cancel','indexOf','left','absolute','play','[GoodTube]\x20Playing\x20next\x20video\x20in\x20playlist...','100%','&local=true','goodTube_mobile','charAt','end','setPlaybackQualityRange','https://www.youtube.com/watch?v=','mute','fullscreenToggle','/latest_version?id=','.ytm-autonav-toggle-button-container[aria-label=\x22Autoplay\x20is\x20on\x22]','map','application/json','https://invidious.perennialte.ch'];_0x5c4e=function(){return _0x293e46;};return _0x5c4e();}
+(function() {
+	'use strict';
+
+	/* Config
+	------------------------------------------------------------------------------------------ */
+	// Set your github location for loading assets, etc
+	let goodTube_github = 'https://raw.githubusercontent.com/goodtube4u/GoodTube/main';
+
+	// Select how long to wait before trying to load something again (in milliseconds)
+	let goodTube_retryDelay = 500;
+
+	// Select how many times to try and load something again
+	let goodTube_retryAttempts = 5;
+
+	// Enable debug console messages
+	let goodTube_debug = true;
+
+
+	/* Helper functions
+	------------------------------------------------------------------------------------------ */
+	// Convert seconds to HH:MM:SS
+	function goodTube_helper_formatTime(secs) {
+		var sec_num = parseInt(secs, 10);
+		var hours = Math.floor(sec_num / 3600);
+		var minutes = Math.floor(sec_num / 60) % 60;
+		var seconds = sec_num % 60;
+
+		return [hours,minutes,seconds]
+		.map(v => v < 10 ? "0" + v : v)
+		.filter((v,i) => v !== "00" || i > 0)
+		.join(":");
+	}
+
+	// Find all HTML tags that match a regular expression
+	function goodTube_helper_tagMatches(regEx) {
+		return Array.prototype.slice.call(document.querySelectorAll('*')).filter(function(element) {
+			return element.tagName.match(regEx);
+		});
+	}
+
+	// Pad a number with leading zeros
+	function goodTube_helper_padNumber(num, size) {
+		num = num.toString();
+		while (num.length < size) num = "0" + num;
+		return num;
+	}
+
+	// Parse GET parameters
+	function goodTube_helper_parseGetParams() {
+		let getParams = {};
+
+		document.location.search.replace(/\??(?:([^=]+)=([^&]*)&?)/g, function() {
+			function decode(s) {
+				return decodeURIComponent(s.split("+").join(" "));
+			}
+
+			getParams[decode(arguments[1])] = decode(arguments[2]);
+		});
+
+		return getParams;
+	}
+
+	// Set a cookie
+	function goodTube_helper_setCookie(name, value) {
+		// 399 days
+		document.cookie = name + "=" + encodeURIComponent(value) + "; max-age=" + (399*24*60*60);
+	}
+
+	// Get a cookie
+	function goodTube_helper_getCookie(name) {
+		// Split the cookie string and get all individual name=value pairs in an array
+		let cookies = document.cookie.split(";");
+
+		// Loop through the array elements
+		for (let i = 0; i < cookies.length; i++) {
+			let cookie = cookies[i].split("=");
+
+			// Removing whitespace at the beginning of the cookie name and compare it with the given string
+			if (name == cookie[0].trim()) {
+				// Decode the cookie value and return
+				return decodeURIComponent(cookie[1]);
+			}
+		}
+
+		// Return null if not found
+		return null;
+	}
+
+	// Hide an element (without Youtube knowing)
+	function goodTube_helper_hideElement_init() {
+		let style = document.createElement('style');
+		style.textContent = `
+			.goodTube_hidden {
+				position: fixed !important;
+				pointer-events: none !important;
+				top: -999px !important;
+				left: -999px !important;
+				opacity: 0 !important;
+			}
+		`;
+
+		document.head.appendChild(style);
+	}
+
+	function goodTube_helper_hideElement(element) {
+		if (element && !element.classList.contains('goodTube_hidden')) {
+			element.classList.add('goodTube_hidden');
+		}
+	}
+
+	function goodTube_helper_showElement(element) {
+		if (element && element.classList.contains('goodTube_hidden')) {
+			element.classList.remove('goodTube_hidden');
+		}
+	}
+
+
+	/* Youtube functions
+	------------------------------------------------------------------------------------------ */
+	let goodTube_syncing = true;
+	let goodTube_previousSyncTime = 0;
+
+	// Hide ads, shorts, etc - init
+	function goodTube_youtube_hideAdsShortsEtc_init() {
+		let style = document.createElement('style');
+		style.textContent = `
+			ytd-shelf-renderer,
+			ytd-reel-shelf-renderer,
+			ytd-merch-shelf-renderer,
+			ytd-action-companion-ad-renderer,
+			ytd-display-ad-renderer,
+			ytd-rich-section-renderer,
+			ytd-video-masthead-ad-advertiser-info-renderer,
+			ytd-video-masthead-ad-primary-video-renderer,
+			ytd-in-feed-ad-layout-renderer,
+			ytd-ad-slot-renderer,
+			ytd-statement-banner-renderer,
+			ytd-banner-promo-renderer-background
+			ytd-ad-slot-renderer,
+			ytd-in-feed-ad-layout-renderer,
+			ytd-engagement-panel-section-list-renderer:not(.ytd-popup-container),
+			ytd-compact-video-renderer:has(.goodTube_hidden),
+			ytd-rich-item-renderer:has(> #content > ytd-ad-slot-renderer)
+			.ytd-video-masthead-ad-v3-renderer,
+			div#root.style-scope.ytd-display-ad-renderer.yt-simple-endpoint,
+			div#sparkles-container.style-scope.ytd-promoted-sparkles-web-renderer,
+			div#main-container.style-scope.ytd-promoted-video-renderer,
+			div#player-ads.style-scope.ytd-watch-flexy,
+
+			ytm-rich-shelf-renderer,
+			ytm-shelf-renderer,
+			ytm-button-renderer.icon-avatar_logged_out,
+			ytm-companion-slot,
+			ytm-shelf-renderer,
+			ytm-reel-shelf-renderer,
+			ytm-merch-shelf-renderer,
+			ytm-action-companion-ad-renderer,
+			ytm-display-ad-renderer,
+			ytm-rich-section-renderer,
+			ytm-video-masthead-ad-advertiser-info-renderer,
+			ytm-video-masthead-ad-primary-video-renderer,
+			ytm-in-feed-ad-layout-renderer,
+			ytm-ad-slot-renderer,
+			ytm-statement-banner-renderer,
+			ytm-banner-promo-renderer-background
+			ytm-ad-slot-renderer,
+			ytm-in-feed-ad-layout-renderer,
+			ytm-compact-video-renderer:has(.goodTube_hidden),
+			ytm-rich-item-renderer:has(> #content > ytm-ad-slot-renderer)
+			.ytm-video-masthead-ad-v3-renderer,
+			div#root.style-scope.ytm-display-ad-renderer.yt-simple-endpoint,
+			div#sparkles-container.style-scope.ytm-promoted-sparkles-web-renderer,
+			div#main-container.style-scope.ytm-promoted-video-renderer,
+			div#player-ads.style-scope.ytm-watch-flexy,
+			ytm-pivot-bar-item-renderer:has(> .pivot-shorts),
+
+			yt-about-this-ad-renderer,
+			masthead-ad,
+			ad-slot-renderer,
+			yt-mealbar-promo-renderer,
+			statement-banner-style-type-compact,
+			ytm-promoted-sparkles-web-renderer,
+			tp-yt-iron-overlay-backdrop,
+			#masthead-ad
+			 {
+				display: none !important;
+			}
+
+			.style-scope[page-subtype='channels'] ytd-shelf-renderer,
+			.style-scope[page-subtype='channels'] ytm-shelf-renderer {
+				display: block !important;
+			}
+		`;
+
+		document.head.appendChild(style);
+
+		// Debug message
+		if (goodTube_debug) {
+			console.log('[GoodTube] Ads removed');
+		}
+	}
+
+	// Hide ads, shorts, etc - real time
+	function goodTube_youtube_hideAdsShortsEtc_realTime() {
+		// If we're on a channel page, don't hide shorts
+		if (window.location.href.indexOf('@') !== -1) {
+			return;
+		}
+
+		// Hide shorts links
+		let shortsLinks = document.querySelectorAll('a');
+		shortsLinks.forEach((element) => {
+			if (element.href.indexOf('shorts/') !== -1) {
+				goodTube_helper_hideElement(element);
+				goodTube_helper_hideElement(element.closest('ytd-video-renderer'));
+			}
+		});
+	}
+
+	// Remove that annoying "Are you still watching" prompt
+	function goodTube_youtube_areYouStillWatching() {
+		let textElements = document.querySelectorAll('yt-confirm-dialog-renderer yt-formatted-string:not(.goodTube_clicked)');
+		textElements.forEach((element) => {
+			element.classList.add('goodTube_clicked');
+			if (element.innerHTML.toLowerCase().indexOf('continue watching') !== -1) {
+				document.querySelector('yt-confirm-dialog-renderer button').click();
+			}
+		});
+	}
+
+	// Support timestamp links in comments
+	function goodTube_youtube_timestampLinks() {
+		// Links in video description and comments
+		let timestampLinks = document.querySelectorAll('#description a, ytd-comments .yt-core-attributed-string a, ytm-expandable-video-description-body-renderer a, .comment-content a');
+
+		// For each link
+		timestampLinks.forEach((element) => {
+			// Make sure we've not touched it yet, this stops doubling up on event listeners
+			if (!element.classList.contains('goodTube_timestampLink') && element.getAttribute('href') && element.getAttribute('href').indexOf(goodTube_getParams['v']) !== -1 && element.getAttribute('href').indexOf('t=') !== -1) {
+				element.classList.add('goodTube_timestampLink');
+
+				// Add the event listener to send our player to the correct time
+				element.addEventListener('click', function() {
+					let bits = element.getAttribute('href').split('t=');
+					if (typeof bits[1] !== 'undefined') {
+						let time = bits[1].replace('s', '');
+						goodTube_player_skipTo(goodTube_player, time);
+					}
+				});
+			}
+		});
+	}
+
+	// Make the youtube player the lowest quality to save on bandwidth
+	function goodTube_youtube_lowestQuality() {
+		let youtubeFrameAPI = document.getElementById('movie_player');
+
+		if (youtubeFrameAPI && typeof youtubeFrameAPI.setPlaybackQualityRange === 'function' && typeof youtubeFrameAPI.getAvailableQualityData === 'function' && typeof youtubeFrameAPI.getPlaybackQuality === 'function') {
+			let qualities = youtubeFrameAPI.getAvailableQualityData();
+			let currentQuality = youtubeFrameAPI.getPlaybackQuality();
+			if (qualities.length && currentQuality) {
+				let lowestQuality = qualities[qualities.length-1]['quality'];
+
+				if (currentQuality != lowestQuality) {
+					youtubeFrameAPI.setPlaybackQualityRange(lowestQuality, lowestQuality);
+				}
+			}
+		}
+	}
+
+	// Hide all Youtube players
+	function goodTube_youtube_hidePlayers() {
+		// Hide the normal Youtube player
+		let regularPlayers = document.querySelectorAll('#player:not(.ytd-channel-video-player-renderer):not(.goodTube_hidden)');
+		regularPlayers.forEach((element) => {
+			goodTube_helper_hideElement(element);
+		});
+
+		// Hide the mobile buttons
+		let mobileButtons = document.querySelectorAll('#player-control-container:not(.goodTube_hidden)');
+		mobileButtons.forEach((element) => {
+			goodTube_helper_hideElement(element);
+		});
+
+		// Remove the full screen Youtube player
+		let fullscreenPlayers = document.querySelectorAll('#full-bleed-container:not(.goodTube_hidden)');
+		fullscreenPlayers.forEach((element) => {
+			goodTube_helper_hideElement(element);
+		});
+
+		// Hide the Youtube miniplayer
+		let miniPlayers = document.querySelectorAll('ytd-miniplayer:not(.goodTube_hidden)');
+		miniPlayers.forEach((element) => {
+			goodTube_helper_hideElement(element);
+		});
+
+		// Turn off autoplay
+		let autoplayButton = false;
+
+		// Desktop
+		if (window.location.href.indexOf('m.youtube') === -1) {
+			autoplayButton = document.querySelector('.ytp-autonav-toggle-button');
+
+			// Turn off the youtube autoplay button
+			if (autoplayButton && autoplayButton.getAttribute('aria-checked') === 'true') {
+				autoplayButton.click();
+			}
+		}
+		// Mobile
+		else {
+			autoplayButton = document.querySelector('.ytm-autonav-toggle-button-container[aria-label="Autoplay is on"]');
+
+			// Turn off the youtube autoplay button
+			if (autoplayButton) {
+				autoplayButton.click();
+			}
+		}
+	}
+
+	// Mute, pause and skip ads on all Youtube videos
+	function goodTube_youtube_mutePauseSkipAds() {
+		// Always mute the youtube video - this helps to fix the audio flash on load
+		if (!goodTube_syncing || !goodTube_player) {
+			let youtubeFrameApi = document.querySelector('#movie_player');
+			if (youtubeFrameApi) {
+				youtubeFrameApi.mute();
+			}
+		}
+
+		// Always skip the ads as soon as possible by clicking the skip button
+		let skipButton = document.querySelector('.ytp-skip-ad-button');
+		if (skipButton) {
+			skipButton.click();
+		}
+
+		// Also pause and mute all videos on the page
+		let youtubeVideos = document.querySelectorAll('video:not(#goodTube_player):not(#goodTube_player_html5_api)');
+		youtubeVideos.forEach((element) => {
+			// Don't touch the thumbnail hover player
+			if (!element.closest('#inline-player')) {
+				element.muted = true;
+				element.pause();
+			}
+		});
+	}
+
+	// Sync players
+	function goodTube_youtube_syncPlayers() {
+		let youtube_player = document.querySelector('#player video');
+
+		// If the youtube player exists, our player is loaded and we're viewing a video
+		if (youtube_player && goodTube_videojs_player_loaded && typeof goodTube_getParams['v'] !== 'undefined') {
+			// Don't keep syncing the same time over and over unless it's 0
+			let sync_time = goodTube_player.currentTime;
+			if (sync_time === goodTube_previousSyncTime && parseFloat(sync_time) > 0) {
+				return;
+			}
+
+			goodTube_previousSyncTime = sync_time;
+
+			// Set the current time of the Youtube player to match ours (this makes history and watched time work correctly)
+			youtube_player.currentTime = sync_time;
+
+			// We're syncing
+			goodTube_syncing = true;
+
+			// Play for 10ms to make history work
+			youtube_player.play();
+
+			setTimeout(function() {
+				youtube_player.pause();
+
+				// We've finished syncing
+				goodTube_syncing = false;
+			}, 10);
+		}
+	}
+
+
+	/* Player functions
+	------------------------------------------------------------------------------------------ */
+	let goodTube_pendingRetry = [];
+	let goodTube_player_restoreTime = 0;
+	let goodTube_player_assets = [
+		goodTube_github+'/js/video.min.js',
+		goodTube_github+'/js/videojs-hls-quality-selector.js',
+		goodTube_github+'/js/videojs-vtt-thumbnails.js',
+		goodTube_github+'/js/videojs-quality-selector.js',
+		goodTube_github+'/css/videojs-core.css',
+		goodTube_github+'/css/videojs-vtt-thumbnails.css'
+	];
+	let goodTube_player_loadedAssets = 0;
+	let goodTube_player_loadAssetAttempts = 0;
+	let goodTube_player_loadVideoDataAttempts = 0;
+	let goodTube_player_loadChaptersAttempts = 0;
+	let goodTube_player_downloadAttempts = [];
+	let goodTube_player_downloadFileAsBlobAttempts = [];
+	let goodTube_player_vttThumbnailsFunction = false;
+	let goodTube_player_reloadVideoAttempts = 1;
+	let goodTube_player_ended = false;
+	let goodTube_player_pip = false;
+	let goodTube_player_miniplayer = false;
+	let goodTube_player_miniplayer_video = false;
+	let goodTube_player_highestQuality = false;
+	let goodTube_player_selectedQuality = false;
+	let goodTube_player_manuallySelectedQuality = false;
+	let goodTube_updateChapters = false;
+	let goodTube_chapterTitleInterval = false;
+	let goodTube_chaptersChangeInterval = false;
+
+	// Init
+	function goodTube_player_init() {
+		// If the target Youtube page element does not exist OR the assets are not loaded, call this function again next drawframe
+		let youtubePageElement = false;
+		// Desktop
+		if (window.location.href.indexOf('m.youtube') === -1) {
+			youtubePageElement = document.getElementById('below');
+		}
+		// Mobile
+		else {
+			youtubePageElement = document.querySelector('body');
+		}
+
+		if (!youtubePageElement || goodTube_player_loadedAssets < goodTube_player_assets.length) {
+			setTimeout(function() {
+				goodTube_player_init();
+			}, 0);
+
+			return;
+		}
+
+		// Add CSS styles for the player
+		let style = document.createElement('style');
+		style.textContent = `
+			#contentContainer.tp-yt-app-drawer[swipe-open].tp-yt-app-drawer::after {
+				display: none !important;
+			}
+
+			/* Live streams */
+			#goodTube_player_wrapper1 .vjs-live .vjs-progress-control {
+				display: block;
+			}
+
+			#goodTube_player_wrapper1 .vjs-live .vjs-duration-display,
+			#goodTube_player_wrapper1 .vjs-live .vjs-time-divider {
+				display: none !important;
+			}
+
+			/* Seek bar */
+			#goodTube_player_wrapper1 .vjs-progress-control {
+				position: absolute;
+				bottom: 48px;
+				left: 0;
+				right: 0;
+				width: 100%;
+				height: calc(24px + 3px);
+			}
+
+			#goodTube_player_wrapper1 .vjs-progress-control .vjs-slider {
+				margin: 0;
+				background: transparent;
+				position: absolute;
+				bottom: 3px;
+				left: 8px;
+				right: 8px;
+				top: auto;
+				transition: height .1s linear, bottom .1s linear;
+				z-index: 1;
+			}
+
+			#goodTube_player_wrapper1 .vjs-progress-control:hover .vjs-slider {
+				pointer-events: none;
+				height: 5px;
+				bottom: 2px;
+			}
+
+			#goodTube_player_wrapper1 .vjs-progress-control .vjs-slider .vjs-load-progress {
+				height: 100%;
+				background: rgba(255, 255, 255, .2);
+				transition: none;
+				position: static;
+				margin-bottom: -3px;
+				transition: margin .1s linear;
+			}
+
+			#goodTube_player_wrapper1 .vjs-progress-control:hover .vjs-slider .vjs-load-progress {
+				margin-bottom: -5px;
+			}
+
+			#goodTube_player_wrapper1 .vjs-progress-control .vjs-slider .vjs-load-progress .vjs-control-text {
+				display: none;
+			}
+
+			#goodTube_player_wrapper1 .vjs-progress-control .vjs-slider .vjs-load-progress > div {
+				background: transparent !important;
+			}
+
+			#goodTube_player_wrapper1 .vjs-progress-control .vjs-slider .vjs-play-progress {
+				background: transparent;
+				position: static;
+				z-index: 1;
+			}
+
+			#goodTube_player_wrapper1 .vjs-progress-control .vjs-slider .vjs-play-progress::before {
+				content: '';
+				background: #ff0000;
+				width: 100%;
+				height: 100%;
+				position: static;
+				display: block;
+			}
+
+			#goodTube_player_wrapper1 .vjs-progress-control .vjs-slider .vjs-play-progress::after {
+				content: '';
+				display: block;
+				float: right;
+				background: #ff0000;
+				border-radius: 50%;
+				opacity: 0;
+				width: 13px;
+				height: 13px;
+				right: -7px;
+				top: -8px;
+				transition: opacity .1s linear, top .1s linear;
+				position: relative;
+			}
+
+			#goodTube_player_wrapper1 .vjs-progress-control:hover .vjs-slider .vjs-play-progress::after {
+				opacity: 1;
+				top: -9px;
+			}
+
+
+			/* Without chapters */
+			#goodTube_player_wrapper1:not(.goodTube_hasChapters) .vjs-progress-control::before {
+				content: '';
+				position: absolute;
+				bottom: 3px;
+				left: 8px;
+				right: 8px;
+				height: 3px;
+				background: rgba(255, 255, 255, .2);
+				transition: height .1s linear, bottom .1s linear;
+			}
+
+			#goodTube_player_wrapper1:not(.goodTube_hasChapters) .vjs-progress-control:hover::before {
+				height: 5px;
+				bottom: 2px;
+			}
+
+
+			/* With chapters */
+			#goodTube_player_wrapper1.goodTube_hasChapters .vjs-progress-control .goodTube_chapters {
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				left: 8px;
+				right: 8px;
+			}
+
+			#goodTube_player_wrapper1.goodTube_hasChapters .vjs-progress-control .goodTube_chapters .goodTube_chapter {
+				height: 100%;
+				position: absolute;
+			}
+
+			#goodTube_player_wrapper1.goodTube_hasChapters .vjs-progress-control .goodTube_chapters .goodTube_chapter::before {
+				content: '';
+				background: rgba(255, 255, 255, .2);
+				position: absolute;
+				left: 0;
+				right: 2px;
+				bottom: 3px;
+				height: 3px;
+				transition: height .1s linear, bottom .1s linear, background .1s linear;
+			}
+
+			#goodTube_player_wrapper1.goodTube_hasChapters .vjs-progress-control .goodTube_chapters .goodTube_chapter.goodTube_redChapter::before {
+				background: #ff0000 !important;
+			}
+
+			#goodTube_player_wrapper1.goodTube_hasChapters .vjs-progress-control .goodTube_chapters .goodTube_chapter:last-child::before {
+				right: 0;
+			}
+
+			#goodTube_player_wrapper1.goodTube_hasChapters .vjs-progress-control:hover .goodTube_chapters .goodTube_chapter::before {
+				height: 5px;
+				bottom: 2px;
+			}
+
+			#goodTube_player_wrapper1.goodTube_hasChapters:not(.goodTube_mobile) .vjs-progress-control .goodTube_chapters .goodTube_chapter:hover::before {
+				height: 9px;
+				bottom: 0;
+				background: rgba(255, 255, 255, .4);
+			}
+
+			#goodTube_player_wrapper1.goodTube_hasChapters .vjs-progress-control .goodTube_markers {
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				pointer-events: none;
+			}
+
+			#goodTube_player_wrapper1.goodTube_hasChapters .vjs-progress-control .goodTube_marker {
+				width: 2px;
+				height: 100%;
+				position: absolute;
+				background: rgba(0, 0, 0, .2);
+				margin-left: -2px;
+			}
+
+			#goodTube_player_wrapper1.goodTube_hasChapters .vjs-progress-control .goodTube_marker.goodTube_showMarker {
+				background: rgba(0, 0, 0, .6);
+			}
+
+			#goodTube_player_wrapper1.goodTube_hasChapters .vjs-progress-control .goodTube_marker:last-child {
+				display: none;
+			}
+
+			#goodTube_player_wrapper1 .vjs-progress-control .vjs-mouse-display {
+				background: transparent;
+			}
+
+			#goodTube_player_wrapper1.goodTube_hasChapters .vjs-progress-control .vjs-mouse-display .vjs-time-tooltip::before {
+				content: attr(chapter-title);
+				display: block;
+				white-space: nowrap;
+				margin-bottom: 4px;
+			}
+
+			#goodTube_player_wrapper1 .vjs-progress-control .goodTube_hoverBar {
+				background: rgba(255, 255, 255, .4);
+				position: absolute;
+				bottom: 3px;
+				left: 8px;
+				height: 3px;
+				opacity: 0;
+				transition: height .1s linear, bottom .1s linear, opacity .1s linear;
+			}
+
+			#goodTube_player_wrapper1 .vjs-progress-control:hover .goodTube_hoverBar {
+				height: 5px;
+				bottom: 2px;
+				opacity: 1;
+			}
+
+			#goodTube_player_wrapper1.goodTube_mobile .vjs-time-control .vjs-duration-display {
+				white-space: nowrap;
+			}
+
+			#goodTube_player_wrapper1.goodTube_mobile .vjs-time-control .vjs-duration-display::after {
+				content: attr(chapter-title);
+				display: inline-block;
+				color: #ffffff;
+				margin-left: 3px;
+			}
+
+			#goodTube_player_wrapper1.goodTube_mobile .vjs-progress-control .vjs-slider,
+			#goodTube_player_wrapper1.goodTube_mobile:not(.goodTube_hasChapters) .vjs-progress-control::before,
+			#goodTube_player_wrapper1.goodTube_mobile.goodTube_hasChapters .vjs-progress-control .goodTube_chapters,
+			#goodTube_player_wrapper1.goodTube_mobile .vjs-progress-control .goodTube_hoverBar {
+				left: 16px;
+				right: 16px;
+			}
+
+
+			/* Audio only view */
+			#goodTube_player_wrapper3.goodTube_audio {
+				background: #000000;
+				position: relative;
+			}
+
+			#goodTube_player_wrapper3.goodTube_audio .video-js::after {
+				content: '\\f107';
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				color: #ffffff;
+				font-family: VideoJS;
+				font-weight: 400;
+				font-style: normal;
+				font-size: 148px;
+				pointer-events: none;
+			}
+
+			@media (max-width: 768px) {
+				#goodTube_player_wrapper3.goodTube_audio .video-js::after {
+					font-size: 100px;
+				}
+			}
+
+			#goodTube_player_wrapper1.goodTube_mobile #goodTube_player_wrapper3.goodTube_audio .video-js::after {
+				font-size: 100px;
+			}
+
+			/* Double tap or tap and hold elements for seeking on mobile */
+			#goodTube_seekBackwards {
+				position: absolute;
+				top: 0;
+				left: 0;
+				bottom: 48px;
+				content: '';
+				width: 25%;
+			}
+
+			#goodTube_seekForwards {
+				position: absolute;
+				top: 0;
+				right: 0;
+				bottom: 48px;
+				content: '';
+				width: 25%;
+			}
+
+			/* Theater mode */
+			ytd-watch-flexy[theater] #goodTube_player_wrapper1:not(.goodTube_mobile) {
+				width: 100%;
+				position: absolute;
+				top: 56px;
+				left: 0;
+				right: 0;
+				background: #000000;
+				border-radius: 0;
+			}
+
+			ytd-watch-flexy:not(ytd-watch-flexy[theater]) #below,
+			ytd-watch-flexy:not(ytd-watch-flexy[theater]) #secondary {
+				margin-top: 0 !important;
+			}
+
+			ytd-watch-flexy[theater] #below {
+				padding-top: 8px !important;
+			}
+
+			ytd-watch-flexy[theater] #secondary {
+				padding-top: 16px !important;
+			}
+
+			ytd-watch-flexy[theater] #goodTube_player_wrapper1:not(.goodTube_mobile) {
+				padding-top: min(var(--ytd-watch-flexy-max-player-height), (calc(var(--ytd-watch-flexy-height-ratio) / var(--ytd-watch-flexy-width-ratio) * 100%))) !important;
+			}
+
+			ytd-watch-flexy[theater] #goodTube_player_wrapper1:not(.goodTube_mobile) #goodTube_player_wrapper3,
+			ytd-watch-flexy[theater] #goodTube_player_wrapper1:not(.goodTube_mobile) #goodTube_player_wrapper3 #goodTube_player {
+				border-radius: 0;
+			}
+
+			/* Desktop */
+			#goodTube_player_wrapper1:not(.goodTube_mobile) {
+				position: relative;
+				height: 0;
+				padding-top: min(var(--ytd-watch-flexy-max-player-height), (calc(var(--ytd-watch-flexy-height-ratio) / var(--ytd-watch-flexy-width-ratio) * 100%))) !important;
+				box-sizing: border-box;
+				min-height: var(--ytd-watch-flexy-min-player-height);
+			}
+
+			#goodTube_player_wrapper1:not(.goodTube_mobile) #goodTube_player_wrapper2 {
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				margin: 0 auto;
+				min-height: 240px;
+			}
+
+			#goodTube_player_wrapper1:not(.goodTube_mobile) #goodTube_player_wrapper3 {
+				box-sizing: border-box;
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				min-height: 240px;
+			}
+
+			#goodTube_player_wrapper1:not(.goodTube_mobile):not(.goodTube_miniplayer) #goodTube_player {
+				border-radius: 12px;
+			}
+
+			#goodTube_player_wrapper1.goodTube_miniplayer.goodTube_mobile {
+				position: absolute !important;
+			}
+
+			#goodTube_player_wrapper3 {
+				overflow: hidden;
+			}
+
+			#goodTube_player_wrapper1:not(.goodTube_mobile) #goodTube_player_wrapper3 {
+				border-radius: 12px;
+			}
+
+			/* Miniplayer */
+			#goodTube_player_wrapper1.goodTube_miniplayer {
+				z-index: 999 !important;
+			}
+
+			#goodTube_player_wrapper1.goodTube_miniplayer #goodTube_player_wrapper3 .video-js {
+				position: fixed;
+				bottom: 12px;
+				right: 12px;
+				width: 400px;
+				max-width: calc(100% - 24px);
+				min-height: 0;
+				padding-top: 0;
+				z-index: 999;
+				height: auto;
+				left: auto;
+				aspect-ratio: 16 / 9;
+				top: auto;
+				border-radius: 12px;
+				overflow: hidden;
+			}
+
+			#goodTube_player_wrapper1.goodTube_miniplayer.goodTube_mobile  #goodTube_player_wrapper3 .video-js {
+				bottom: 60px;
+			}
+
+			ytd-watch-flexy.goodTube_miniplayer {
+				display: block !important;
+				top: 0;
+				left: 0;
+				position: fixed;
+				z-index: 999;
+				top: -9999px;
+				left: -9999px;
+			}
+
+			#goodTube_player_wrapper1.goodTube_miniplayer #goodTube_player_wrapper3 .video-js .vjs-source-button,
+			#goodTube_player_wrapper1.goodTube_miniplayer #goodTube_player_wrapper3 .video-js .vjs-autoplay-button,
+			#goodTube_player_wrapper1.goodTube_miniplayer #goodTube_player_wrapper3 .video-js .vjs-miniplayer-button,
+			#goodTube_player_wrapper1.goodTube_miniplayer #goodTube_player_wrapper3 .video-js .vjs-theater-button {
+				display: none !important;
+			}
+
+			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js #goodTube_miniplayer_closeButton,
+			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js #goodTube_miniplayer_expandButton {
+				font-family: VideoJS;
+				font-weight: 400;
+				font-style: normal;
+				cursor: pointer;
+				position: absolute;
+				top: 0;
+				width: 48px;
+				height: 48px;
+				line-height: 48px;
+				text-align: center;
+				z-index: 999;
+				color: #ffffff;
+				opacity: 0;
+				transition: opacity .2s linear;
+			}
+
+
+			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js #goodTube_miniplayer_closeButton::after {
+				content: 'Close';
+				right: 12px;
+			}
+			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js #goodTube_miniplayer_expandButton::after {
+				content: 'Expand';
+				left: 12px;
+			}
+			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js #goodTube_miniplayer_closeButton::after,
+			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js #goodTube_miniplayer_expandButton::after {
+				position: absolute;
+				bottom: -24px;
+				background: rgba(0, 0, 0, .75);
+				border-radius: 4px;
+				font-size: 12px;
+				font-weight: 700;
+				padding: 8px;
+				white-space: nowrap;
+				opacity: 0;
+				transition: opacity .1s;
+				pointer-events: none;
+				text-shadow: none !important;
+				z-index: 1;
+				font-family: 'MS Shell Dlg 2', sans-serif;
+				line-height: initial;
+			}
+			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js #goodTube_miniplayer_closeButton:hover::after,
+			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js #goodTube_miniplayer_expandButton:hover::after {
+				opacity: 1;
+			}
+
+			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js #goodTube_miniplayer_closeButton {
+				right: 0;
+				font-size: 24px;
+			}
+			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js #goodTube_miniplayer_closeButton::before {
+				content: "\\f119";
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+			}
+
+			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js #goodTube_miniplayer_expandButton {
+				left: 0;
+				font-size: 18px;
+			}
+			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js #goodTube_miniplayer_expandButton::before {
+				content: "\\f128";
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+			}
+
+
+			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js.vjs-paused:not(.vjs-user-inactive) #goodTube_miniplayer_expandButton,
+			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js.vjs-user-active #goodTube_miniplayer_expandButton,
+			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js.vjs-paused:not(.vjs-user-inactive) #goodTube_miniplayer_closeButton,
+			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js.vjs-user-active #goodTube_miniplayer_closeButton {
+				opacity: 1;
+			}
+
+			/* Mobile */
+			html body #goodTube_player_wrapper1.goodTube_mobile {
+				position: fixed;
+				top: 48px;
+				left: 0;
+				right: 0;
+				width: 100%;
+				z-index: 1;
+			}
+
+			html body #goodTube_player_wrapper1.goodTube_mobile #goodTube_player_wrapper2 {
+				width: 100%;
+				height: 100%;
+			}
+
+			html body #goodTube_player_wrapper1.goodTube_mobile #goodTube_player_wrapper3 {
+				width: 100%;
+				height: 100%;
+			}
+
+			html body #goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-control.vjs-play-control,
+			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js .vjs-control.vjs-play-control {
+				position: absolute;
+				top: calc(50% - 48px);
+				left: calc(50% - 32px);
+				width: 64px;
+				height: 64px;
+				background: rgba(0, 0, 0, .3);
+				border-radius: 50%;
+				max-width: 999px !important;
+			}
+			html body #goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-play-control .vjs-icon-placeholder::before,
+			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js .vjs-play-control .vjs-icon-placeholder::before {
+				font-size: 44px !important;
+			}
+
+			html body #goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-prev-button,
+			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js .vjs-prev-button {
+				position: absolute;
+				top: calc(50% - 40px);
+				left: calc(50% - 104px);
+				width: 48px;
+				height: 48px;
+				background: rgba(0, 0, 0, .3);
+				border-radius: 50%;
+				max-width: 999px !important;
+			}
+			html body #goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-prev-button .vjs-icon-placeholder::before,
+			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js .vjs-prev-button .vjs-icon-placeholder::before {
+				font-size: 32px !important;
+			}
+
+			html body #goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-next-button,
+			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js .vjs-next-button {
+				position: absolute;
+				top: calc(50% - 40px);
+				left: calc(50% + 56px);
+				width: 48px;
+				height: 48px;
+				background: rgba(0, 0, 0, .3);
+				border-radius: 50%;
+				max-width: 999px !important;
+			}
+			html body #goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-next-button .vjs-icon-placeholder::before,
+			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js .vjs-next-button .vjs-icon-placeholder::before {
+				font-size: 32px !important;
+			}
+
+			html body #goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-control-bar,
+			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js .vjs-control-bar {
+				z-index: 1;
+				position: static;
+				margin-top: auto;
+				justify-content: space-around;
+			}
+
+			ytd-watch-flexy:not([theater]) #primary {
+				min-width: 721px !important;
+			}
+
+			@media (max-width: 1100px) {
+				ytd-watch-flexy:not([theater]) #primary {
+					min-width: 636px !important;
+				}
+
+				ytd-watch-flexy:not([theater]) #goodTube_player_wrapper1:not(.goodTube_mobile) .video-js .vjs-control-bar {
+					zoom: .88;
+				}
+			}
+
+			@media (max-width: 1016px) {
+				ytd-watch-flexy:not([theater]) #primary {
+					min-width: 0 !important;
+				}
+
+				ytd-watch-flexy:not([theater]) #goodTube_player_wrapper1:not(.goodTube_mobile) .video-js .vjs-control-bar {
+					zoom: 1;
+				}
+			}
+
+			@media (max-width: 786px) {
+				ytd-watch-flexy:not([theater]) #goodTube_player_wrapper1:not(.goodTube_mobile) .video-js .vjs-control-bar {
+					zoom: .9;
+				}
+			}
+
+			@media (max-width: 715px) {
+				ytd-watch-flexy:not([theater]) #goodTube_player_wrapper1:not(.goodTube_mobile) .video-js .vjs-control-bar {
+					zoom: .85;
+				}
+			}
+
+			@media (max-width: 680px) {
+				ytd-watch-flexy:not([theater]) #goodTube_player_wrapper1:not(.goodTube_mobile) .video-js .vjs-control-bar {
+					zoom: .8;
+				}
+			}
+
+			html body #goodTube_player_wrapper1.goodTube_mobile .video-js,
+			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js {
+				display: flex;
+			}
+
+			html body #goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-source-button,
+			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js .vjs-source-button {
+				margin-left: 0 !important;
+			}
+
+			@media (max-width: 480px) {
+				html body #goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-source-button .vjs-menu,
+				html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js .vjs-source-button .vjs-menu {
+					left: 60px !important;
+				}
+			}
+
+			html body #goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-loading-spinner,
+			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js .vjs-loading-spinner {
+				top: calc(50% - 16px);
+			}
+
+			html body #goodTube_player_wrapper1 .video-js.vjs-loading {
+				background: #000000;
+			}
+
+			html body #goodTube_player_wrapper1.goodTube_mobile .video-js::before,
+			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js::before {
+				content: '';
+				background: transparent;
+				transition: background .2s ease-in-out;
+				pointer-events: none;
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				z-index: 1;
+			}
+
+			html body #goodTube_player_wrapper1.goodTube_mobile .video-js.vjs-paused::before,
+			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js.vjs-paused::before,
+			html body #goodTube_player_wrapper1.goodTube_mobile .video-js.vjs-user-active::before,
+			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js.vjs-user-active::before {
+				background: rgba(0,0,0,.6);
+			}
+
+			html body #goodTube_player_wrapper1.goodTube_mobile .video-js.vjs-user-inactive:not(.vjs-paused) .vjs-control-bar,
+			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js.vjs-user-inactive:not(.vjs-paused) .vjs-control-bar {
+				visibility: visible;
+				opacity: 0;
+				pointer-events: none;
+			}
+
+			#goodTube_player_wrapper1.goodTube_mobile #goodTube_player_wrapper3 .video-js .vjs-theater-button,
+			#goodTube_player_wrapper1.goodTube_mobile #goodTube_player_wrapper3 .video-js .vjs-miniplayer-button {
+				display: none !important;
+			}
+
+			/* Video */
+			#goodTube_player {
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				width: 100%;
+				height: 100%;
+				background: transparent;
+				z-index: 1;
+			}
+
+			#goodTube_player_wrapper1.goodTube_mobile #goodTube_player,
+			#goodTube_player.vjs-loading {
+				background: #000000;
+			}
+
+			#goodTube_player:focus {
+				outline: 0;
+			}
+
+			/* Error */
+			#goodTube_error {
+				position: absolute;
+				top: 50%;
+				left: 40px;
+				right: 40px;
+				transform: translateY(-50%);
+				text-align: center;
+				color: #ffffff;
+				font-size: 20px;
+				padding: 16px;
+				background: #000000;
+				border-radius: 8px;
+			}
+
+			#goodTube_error small {
+				padding-top: 8px;
+				display: block;
+			}
+		`;
+		document.head.appendChild(style);
+
+		// Setup player layout
+		let player_wrapper1 = document.createElement('div');
+		player_wrapper1.id = 'goodTube_player_wrapper1';
+
+		let player_wrapper2 = document.createElement('div');
+		player_wrapper2.id = 'goodTube_player_wrapper2';
+
+		let player_wrapper3 = document.createElement('div');
+		player_wrapper3.id = 'goodTube_player_wrapper3';
+
+		// Add player to the page
+
+		// Desktop
+		if (window.location.href.indexOf('m.youtube') === -1) {
+			youtubePageElement.before(player_wrapper1);
+
+			// Offset top of stuff when in theater mode
+			setInterval(function() {
+				let offsetElements = document.querySelectorAll('ytd-watch-flexy[theater] #below, ytd-watch-flexy[theater] #secondary');
+				offsetElements.forEach((element) => {
+					element.style.marginTop = player_wrapper1.offsetHeight+'px';
+				});
+			}, 1);
+		}
+		// Mobile
+		else {
+			player_wrapper1.classList.add('goodTube_mobile');
+			youtubePageElement.appendChild(player_wrapper1);
+
+			setInterval(function() {
+				if (typeof goodTube_getParams['v'] !== 'undefined') {
+					// Match width and height of mobile player
+					let youtubeSize_element = document.querySelector('.player-size.player-placeholder');
+					if (youtubeSize_element) {
+						if (youtubeSize_element.offsetHeight > 0) {
+							player_wrapper1.style.height = youtubeSize_element.offsetHeight+'px';
+							player_wrapper1.style.width = youtubeSize_element.offsetWidth+'px';
+						}
+						else {
+							youtubeSize_element = document.querySelector('#player');
+							if (youtubeSize_element.offsetHeight > 0) {
+								player_wrapper1.style.height = youtubeSize_element.offsetHeight+'px';
+								player_wrapper1.style.width = youtubeSize_element.offsetWidth+'px';
+							}
+						}
+					}
+
+					// Match sticky mode of mobile player
+					let youtubeSticky_element = document.querySelector('.player-container.sticky-player');
+					if (youtubeSticky_element) {
+						player_wrapper1.style.position = 'fixed';
+					}
+					else {
+						player_wrapper1.style.position = 'absolute';
+					}
+				}
+				else {
+					player_wrapper1.style.height = '0';
+					player_wrapper1.style.width = '0';
+				}
+			}, 1);
+		}
+
+		player_wrapper1.appendChild(player_wrapper2);
+		player_wrapper2.appendChild(player_wrapper3);
+
+		// Add video
+		let player = document.createElement('video');
+		player.id = 'goodTube_player';
+		player.classList.add('video-js');
+		player.controls = true;
+		player.setAttribute('tab-index', '1');
+		player_wrapper3.appendChild(player);
+
+		// Expose the player globally
+		goodTube_player = player;
+
+		// Init picture in picture
+		goodTube_player_pipInit();
+
+		// Init videojs
+		goodTube_player_videojs();
+
+		// Sync players every 10s
+		setInterval(goodTube_youtube_syncPlayers, 10000);
+
+		// Listen for keyboard shortcuts
+		document.addEventListener('keydown', function(event) {
+			// Don't do anything if we're holding shift or control, or we're not viewing a video
+			if (event.shiftKey || event.ctrlKey || typeof goodTube_getParams['v'] === 'undefined') {
+				return;
+			}
+
+			// If we're not focused on a HTML form element
+			let focusedElement = event.srcElement;
+			let focusedElement_tag = false;
+			let focusedElement_id = false;
+			if (focusedElement) {
+				if (typeof focusedElement.nodeName !== 'undefined') {
+					focusedElement_tag = focusedElement.nodeName.toLowerCase();
+				}
+
+				if (typeof focusedElement.getAttribute !== 'undefined') {
+					focusedElement_id = focusedElement.getAttribute('id');
+				}
+			}
+
+			if (
+				!focusedElement ||
+				(
+					focusedElement_tag.indexOf('input') === -1 &&
+					focusedElement_tag.indexOf('label') === -1 &&
+					focusedElement_tag.indexOf('select') === -1 &&
+					focusedElement_tag.indexOf('textarea') === -1 &&
+					focusedElement_tag.indexOf('fieldset') === -1 &&
+					focusedElement_tag.indexOf('legend') === -1 &&
+					focusedElement_tag.indexOf('datalist') === -1 &&
+					focusedElement_tag.indexOf('output') === -1 &&
+					focusedElement_tag.indexOf('option') === -1 &&
+					focusedElement_tag.indexOf('optgroup') === -1 &&
+					focusedElement_id !== 'contenteditable-root'
+				)
+			) {
+				let keyPressed = event.key.toLowerCase();
+
+				// If we're focused on the video element
+				if (focusedElement && typeof focusedElement.closest !== 'undefined' && focusedElement.closest('#goodTube_player')) {
+					// Volume down
+					if (keyPressed === 'arrowdown') {
+						if (player.volume >= .05) {
+							player.volume -= .05;
+						}
+						else {
+							player.volume = 0;
+						}
+
+						// No scroll
+						event.preventDefault();
+					}
+
+					// Volume up
+					if (keyPressed === 'arrowup') {
+						if (player.volume <= .95) {
+							player.volume += .05;
+						}
+						else {
+							player.volume = 1;
+						}
+
+						// No scroll
+						event.preventDefault();
+					}
+
+					// Theater mode (focus the body, this makes the default youtube shortcut work)
+					if (keyPressed === 't') {
+						document.querySelector('body').focus();
+					}
+				}
+
+				// Prev 5 seconds
+				if (keyPressed === 'arrowleft') {
+					player.currentTime -= 5;
+				}
+
+				// Next 5 seconds
+				if (keyPressed === 'arrowright') {
+					player.currentTime += 5;
+				}
+
+				// Toggle play/pause
+				if (keyPressed === ' ') {
+					if (player.paused || player.ended) {
+						player.play();
+					}
+					else {
+						player.pause();
+					}
+				}
+
+				// Toggle mute
+				if (keyPressed === 'm') {
+					// Also check the volume, because player.muted isn't reliable
+					if (player.muted || player.volume <= 0) {
+						player.muted = false;
+
+						// Small fix to make unmute work if you've manually turned it all the way down
+						if (player.volume <= 0) {
+							player.volume = 1;
+						}
+					}
+					else {
+						player.muted = true;
+					}
+				}
+
+				// Toggle miniplayer
+				if (keyPressed === 'i') {
+					event.stopImmediatePropagation();
+					goodTube_player_miniplayerShowHide();
+				}
+
+				// Toggle fullscreen
+				if (keyPressed === 'f') {
+					document.querySelector('.vjs-fullscreen-control')?.click();
+				}
+
+				// Prev 10 seconds
+				else if (keyPressed === 'j') {
+					player.currentTime -= 10;
+				}
+
+				// Next 10 seconds
+				else if (keyPressed === 'l') {
+					player.currentTime += 10;
+				}
+
+				// Start of video
+				else if (keyPressed === 'home') {
+					player.currentTime = 0;
+				}
+
+				// End of video
+				else if (keyPressed === 'end') {
+					player.currentTime += player.duration;
+				}
+
+				// Speed up playback
+				else if (keyPressed === '>') {
+					if (parseFloat(player.playbackRate) == .25) {
+						player.playbackRate = .5;
+					}
+					else if (parseFloat(player.playbackRate) == .5) {
+						player.playbackRate = .75;
+					}
+					else if (parseFloat(player.playbackRate) == .75) {
+						player.playbackRate = 1;
+					}
+					else if (parseFloat(player.playbackRate) == 1) {
+						player.playbackRate = 1.25;
+					}
+					else if (parseFloat(player.playbackRate) == 1.25) {
+						player.playbackRate = 1.5;
+					}
+					else if (parseFloat(player.playbackRate) == 1.5) {
+						player.playbackRate = 1.75;
+					}
+					else if (parseFloat(player.playbackRate) == 1.75) {
+						player.playbackRate = 2;
+					}
+				}
+
+				// Slow down playback
+				else if (keyPressed === '<') {
+					if (parseFloat(player.playbackRate) == .5) {
+						player.playbackRate = .25;
+					}
+					else if (parseFloat(player.playbackRate) == .75) {
+						player.playbackRate = .5;
+					}
+					else if (parseFloat(player.playbackRate) == 1) {
+						player.playbackRate = .75;
+					}
+					else if (parseFloat(player.playbackRate) == 1.25) {
+						player.playbackRate = 1;
+					}
+					else if (parseFloat(player.playbackRate) == 1.5) {
+						player.playbackRate = 1.25;
+					}
+					else if (parseFloat(player.playbackRate) == 1.75) {
+						player.playbackRate = 1.5;
+					}
+					else if (parseFloat(player.playbackRate) == 2) {
+						player.playbackRate = 1.75;
+					}
+				}
+
+				// Skip to percentage
+				if (keyPressed === '0') {
+					player.currentTime = 0;
+				}
+				else if (keyPressed === '1') {
+					player.currentTime = ((player.duration / 100) * 10);
+				}
+				else if (keyPressed === '2') {
+					player.currentTime = ((player.duration / 100) * 20);
+				}
+				else if (keyPressed === '3') {
+					player.currentTime = ((player.duration / 100) * 30);
+				}
+				else if (keyPressed === '4') {
+					player.currentTime = ((player.duration / 100) * 40);
+				}
+				else if (keyPressed === '5') {
+					player.currentTime = ((player.duration / 100) * 50);
+				}
+				else if (keyPressed === '6') {
+					player.currentTime = ((player.duration / 100) * 60);
+				}
+				else if (keyPressed === '7') {
+					player.currentTime = ((player.duration / 100) * 70);
+				}
+				else if (keyPressed === '8') {
+					player.currentTime = ((player.duration / 100) * 80);
+				}
+				else if (keyPressed === '9') {
+					player.currentTime = ((player.duration / 100) * 90);
+				}
+			}
+		}, true);
+
+		// If we're on mobile, set the volume to 100%
+		if (window.location.href.indexOf('m.youtube') !== -1) {
+			goodTube_player_volume(goodTube_player, 1);
+		}
+	}
+
+	// Load assets
+	function goodTube_player_loadAssets() {
+		// Debug message
+		if (goodTube_debug) {
+			console.log('[GoodTube] Loading player assets...');
+		}
+
+		// Load the first asset, this will then load the others sequentially
+		goodTube_player_loadAssetAttempts = 0;
+		goodTube_player_loadAsset(goodTube_player_assets[goodTube_player_loadedAssets]);
+	}
+
+	function goodTube_player_loadAsset(asset) {
+		// Only re-attempt to load the video data max configured retry attempts
+		goodTube_player_loadAssetAttempts++;
+		if (goodTube_player_loadAssetAttempts > goodTube_retryAttempts) {
+
+			// Debug message
+			if (goodTube_debug) {
+				console.log('[GoodTube] Player assets could not be loaded');
+			}
+
+			return;
+		}
+
+		fetch(asset)
+		.then(response => response.text())
+		.then(data => {
+			let asset_element = false;
+
+			if (asset.indexOf('/js/') !== -1) {
+				asset_element = document.createElement('script');
+			}
+			else if (asset.indexOf('/css/') !== -1) {
+				asset_element = document.createElement('style');
+			}
+
+			asset_element.innerHTML = data;
+			document.head.appendChild(asset_element);
+
+			goodTube_player_loadedAssets++;
+
+			// If we've loaded all the assets
+			if (goodTube_player_loadedAssets >= goodTube_player_assets.length) {
+				// Debug message
+				if (goodTube_debug) {
+					console.log('[GoodTube] Player assets loaded');
+				}
+			}
+			// Otherwise load the next asset
+			else {
+				goodTube_player_loadAssetAttempts = 0;
+				goodTube_player_loadAsset(goodTube_player_assets[goodTube_player_loadedAssets]);
+			}
+		})
+		.catch((error) => {
+			if (typeof goodTube_pendingRetry['loadAsset'] !== 'undefined') {
+				clearTimeout(goodTube_pendingRetry['loadAsset']);
+			}
+
+			goodTube_pendingRetry['loadAsset'] = setTimeout(function() {
+				goodTube_player_loadAsset(asset);
+			}, goodTube_retryDelay);
+		});
+	}
+
+	// Select API
+	function goodTube_player_selectApi(url) {
+		goodTube_apis.forEach((api) => {
+			if (url == api['url']) {
+				goodTube_api_type = api['type'];
+				goodTube_api_proxy = api['proxy'];
+				goodTube_api_url = api['url'];
+				goodTube_api_name = api['name'];
+
+				goodTube_helper_setCookie('goodTube_api', url);
+			}
+		});
+	}
+
+	// Pause
+	function goodTube_player_pause(player) {
+		player.pause();
+	}
+
+	// Play
+	function goodTube_player_play(player) {
+		player.play();
+	}
+
+	// Volume
+	function goodTube_player_volume(player, volume) {
+		player.volume = volume;
+	}
+
+	// Skip to
+	function goodTube_player_skipTo(player, time) {
+		player.currentTime = time;
+	}
+
+	// Load video
+	function goodTube_player_loadVideo(player) {
+		// If we're not viewing a video
+		if (typeof goodTube_getParams['v'] === 'undefined') {
+			// Empty the previous video history
+			goodTube_videojs_previousVideo = [];
+
+			// Then return, we don't do anything else.
+			return;
+		}
+
+		// Clear any pending reloadVideo attempts
+		goodTube_player_reloadVideoAttempts = 1;
+		if (typeof goodTube_pendingRetry['reloadVideo'] !== 'undefined') {
+			clearTimeout(goodTube_pendingRetry['reloadVideo']);
+		}
+
+		// Clear any pending loadVideoData attempts
+		if (typeof goodTube_pendingRetry['loadVideoData'] !== 'undefined') {
+			clearTimeout(goodTube_pendingRetry['loadVideoData']);
+		}
+
+		// Clear the player
+		goodTube_player_clear(player);
+
+		// Add a loading class (this gives a black background)
+		let goodTube_videojs_loadingElement = document.getElementById('goodTube_player');
+		if (!goodTube_videojs_loadingElement.classList.contains('vjs-loading')) {
+			goodTube_videojs_loadingElement.classList.add('vjs-loading');
+		}
+
+		// Only re-attempt to load the video data max configured retry attempts
+		goodTube_player_loadVideoDataAttempts++;
+		if (goodTube_player_loadVideoDataAttempts > goodTube_retryAttempts) {
+			// Show an error message
+			goodTube_player_videojs_showError();
+
+			// Debug message
+			if (goodTube_debug) {
+				console.log('[GoodTube] Video data could not be loaded - please select another video source');
+			}
+
+			return;
+		}
+
+		// Remove any existing video sources
+		let videoSources_existing = player.querySelectorAll('source');
+		videoSources_existing.forEach((videoSource) => {
+			videoSource.remove();
+		});
+
+		// Setup API endpoint to get video data from
+		let apiEndpoint = false;
+
+		if (goodTube_api_type === 1 || goodTube_api_type === 2) {
+			apiEndpoint = goodTube_api_url+"/api/v1/videos/"+goodTube_getParams['v'];
+		}
+
+		// Get the video data
+		fetch(apiEndpoint)
+		.then(response => response.text())
+		.then(data => {
+			// Turn video data into JSON
+			let videoData = JSON.parse(data);
+
+			// Setup variables to hold the data
+			let sourceData = false;
+			let subtitleData = false;
+			let storyboardData = false;
+
+			// Below populates the source data - but first, if there's any issues with the source data, try again (after configured delay time)
+			let retry = false;
+
+			if (goodTube_api_type === 1) {
+				if (typeof videoData['formatStreams'] === 'undefined') {
+					retry = true;
+				}
+				else {
+					sourceData = videoData['formatStreams'];
+					subtitleData = videoData['captions'];
+					storyboardData = videoData['storyboards'];
+				}
+			}
+			else if (goodTube_api_type === 2) {
+				if (typeof videoData['type'] === 'undefined' || (typeof videoData['dashUrl'] === 'undefined' && typeof videoData['hlsUrl'] === 'undefined')) {
+					retry = true;
+				}
+				else {
+					subtitleData = videoData['captions'];
+					storyboardData = videoData['storyboards'];
+				}
+			}
+
+
+
+			// Try again if data wasn't all good
+			if (retry) {
+				if (typeof goodTube_pendingRetry['loadVideoData'] !== 'undefined') {
+					clearTimeout(goodTube_pendingRetry['loadVideoData']);
+				}
+
+				goodTube_pendingRetry['loadVideoData'] = setTimeout(function() {
+					goodTube_player_loadVideo(player);
+				}, goodTube_retryDelay);
+
+				return;
+			}
+			// Otherwise the data was all good so load the sources
+			else {
+				// Debug message
+				if (goodTube_debug) {
+					console.log('[GoodTube] Video data loaded');
+				}
+
+
+				if (goodTube_api_type === 2) {
+					// Format dash source data
+					let dashUrl = false;
+					let dashType = false;
+
+					// Add dash source
+					let proxyUrlPart = 'false';
+					if (goodTube_api_proxy) {
+						proxyUrlPart = 'true';
+					}
+
+					// HLS stream (for live videos)
+					if (videoData['type'] === 'livestream') {
+						dashUrl = videoData['hlsUrl']+'?local='+proxyUrlPart+'&amp;unique_res=1';
+						dashType = 'application/x-mpegURL';
+					}
+					// DASH stream (for all other videos)
+					else {
+						dashUrl = videoData['dashUrl']+'?local='+proxyUrlPart+'&amp;unique_res=1';
+						dashType = 'application/dash+xml';
+					}
+
+					// Add the HLS or DASH source
+					goodTube_videojs_player.src({
+						src: dashUrl,
+						type: dashType
+					});
+
+					// Show the correct quality menu item
+					let qualityButtons = document.querySelectorAll('.vjs-quality-selector');
+					if (qualityButtons.length === 2) {
+						qualityButtons[0].style.display = 'none';
+						qualityButtons[1].style.display = 'block';
+					}
+
+					// Select the highest DASH quality
+					goodTube_player_selectHighestDashQuality();
+				}
+
+
+				if (goodTube_api_type === 1) {
+					// If we've manually selected a quality, and it exists for this video, select it
+					if (goodTube_player_manuallySelectedQuality && player.querySelector('.goodTube_source_'+goodTube_player_manuallySelectedQuality)) {
+						player.querySelector('.goodTube_source_'+goodTube_player_manuallySelectedQuality).setAttribute('selected', true);
+
+						// Save the currently selected quality, this is used when we change quality to know weather or not the new quality has been manually selected
+						goodTube_player_selectedQuality = goodTube_player_manuallySelectedQuality;
+					}
+					// Otherwise select the highest quality source
+					else {
+						player.querySelector('.goodTube_source_'+goodTube_player_highestQuality)?.setAttribute('selected', true);
+
+						// Save the currently selected quality, this is used when we change quality to know weather or not the new quality has been manually selected
+						goodTube_player_selectedQuality = goodTube_player_highestQuality;
+					}
+
+					// Add audio only source
+					let audio_element = document.createElement('source');
+					audio_element.setAttribute('src', goodTube_api_url+"/watch?v="+goodTube_getParams['v']+'&raw=1&listen=1');
+					audio_element.setAttribute('type', 'audio/mp3');
+					audio_element.setAttribute('label', 'Audio');
+					audio_element.setAttribute('video', true);
+					audio_element.setAttribute('class', 'goodTube_source_audio');
+					player.appendChild(audio_element);
+
+					// For each source
+					let i = 0;
+					goodTube_player_highestQuality = false;
+					sourceData.forEach((source) => {
+						// Format the data correctly
+						let source_src = false;
+						let source_type = false;
+						let source_label = false;
+						let source_quality = false;
+
+						source_src = goodTube_api_url+'/latest_version?id='+goodTube_getParams['v']+'&itag='+source['itag'];
+						if (goodTube_api_proxy) {
+							source_src = source_src+'&local=true';
+						}
+
+						source_type = source['type'];
+						source_label = parseFloat(source['resolution'].replace('p', '').replace('hd', ''))+'p';
+						source_quality = parseFloat(source['resolution'].replace('p', '').replace('hd', ''));
+
+						// Only add the source to the player if the data is populated
+						if (source_src && source_type && source_label) {
+
+							// Add video
+							if (source_type.toLowerCase().indexOf('video') !== -1) {
+								let video_element = document.createElement('source');
+								video_element.setAttribute('src', source_src);
+								video_element.setAttribute('type', source_type);
+								video_element.setAttribute('label', source_label);
+								video_element.setAttribute('video', true);
+								video_element.setAttribute('class', 'goodTube_source_'+source_quality);
+								player.appendChild(video_element);
+
+								// Keep track of the highest quality item
+								if (!goodTube_player_highestQuality || source_quality > goodTube_player_highestQuality) {
+									goodTube_player_highestQuality = source_quality;
+								}
+							}
+						}
+
+						// Increment the loop
+						i++;
+					});
+
+					// If we've manually selected a quality, and it exists for this video, select it
+					if (goodTube_player_manuallySelectedQuality && player.querySelector('.goodTube_source_'+goodTube_player_manuallySelectedQuality)) {
+						player.querySelector('.goodTube_source_'+goodTube_player_manuallySelectedQuality).setAttribute('selected', true);
+
+						// Save the currently selected quality, this is used when we change quality to know weather or not the new quality has been manually selected
+						goodTube_player_selectedQuality = goodTube_player_manuallySelectedQuality;
+					}
+					// Otherwise select the highest quality source
+					else {
+						player.querySelector('.goodTube_source_'+goodTube_player_highestQuality)?.setAttribute('selected', true);
+
+						// Save the currently selected quality, this is used when we change quality to know weather or not the new quality has been manually selected
+						goodTube_player_selectedQuality = goodTube_player_highestQuality;
+					}
+
+
+					// Enable the videojs quality selector
+					let qualities = [];
+					player.querySelectorAll('source[video=true]').forEach((quality) => {
+						qualities.push({
+							src: quality.getAttribute('src'),
+							type: quality.getAttribute('type'),
+							label: quality.getAttribute('label'),
+							selected: quality.getAttribute('selected')
+						});
+					});
+
+					goodTube_videojs_player.src(qualities);
+
+
+					// Show the correct quality menu item
+					let qualityButtons = document.querySelectorAll('.vjs-quality-selector');
+					if (qualityButtons.length === 2) {
+						qualityButtons[1].style.display = 'none';
+						qualityButtons[0].style.display = 'block';
+					}
+				}
+
+
+
+				// Play the video
+				setTimeout(function() {
+					goodTube_player_play(player);
+				}, 1);
+
+				// Load the subtitles into the player
+				goodTube_player_loadSubtitles(player, subtitleData);
+
+				// Load the chapters into the player
+				// Debug message
+				if (goodTube_debug) {
+					console.log('[GoodTube] Loading chapters...');
+				}
+
+				goodTube_player_loadChapters(player, videoData['description'], videoData['lengthSeconds']);
+
+				// Load storyboards into the player (desktop only)
+				if (storyboardData && window.location.href.indexOf('m.youtube') === -1) {
+					goodTube_player_loadStoryboard(player, storyboardData);
+				}
+			}
+		})
+		// If there's any issues loading the video data, try again (after configured delay time)
+		.catch((error) => {
+			if (typeof goodTube_pendingRetry['loadVideoData'] !== 'undefined') {
+				clearTimeout(goodTube_pendingRetry['loadVideoData']);
+			}
+
+			goodTube_pendingRetry['loadVideoData'] = setTimeout(function() {
+				goodTube_player_loadVideo(player);
+			}, goodTube_retryDelay);
+		});
+	}
+
+	// Select highest DASH quality by default
+	function goodTube_player_selectHighestDashQuality() {
+		// Find and click the highest quality button (if it can't be found, this will call itself again until it works)
+		let qualityMenus = document.querySelectorAll('.vjs-quality-selector');
+		if (qualityMenus && typeof qualityMenus[1] !== 'undefined') {
+			let highestQualityButton = qualityMenus[1].querySelector('li:first-child');
+			if (highestQualityButton) {
+				highestQualityButton.click();
+
+				let highestQualityButtonText = highestQualityButton.querySelector('.vjs-menu-item-text').innerHTML;
+
+				// Debug message
+				if (goodTube_debug) {
+					console.log('[GoodTube] Selecting highest quality - '+highestQualityButtonText);
+				}
+			}
+			else {
+				setTimeout(goodTube_player_selectHighestDashQuality, 100);
+				return;
+			}
+		}
+		else {
+			setTimeout(goodTube_player_selectHighestDashQuality, 100);
+			return;
+		}
+	}
+
+	// Load chapters
+	function goodTube_player_loadChapters(player, description, totalDuration) {
+		// Clear any existing chapters
+		goodTube_player_clearChapters();
+
+		// Create a variable to store the chapters
+		let chapters = [];
+
+		// First up, try to get the chapters from the video description
+		let lines = description.split("\n");
+		let regex = /(\d{0,2}:?\d{1,2}:\d{2})/g;
+
+		for (let line of lines) {
+			const matches = line.match(regex);
+			if (matches) {
+				let ts = matches[0];
+				let title = line
+					.split(" ")
+					.filter((l) => !l.includes(ts))
+					.join(" ");
+
+				chapters.push({
+					time: ts,
+					title: title,
+				});
+			}
+		}
+
+
+		// If that didn't work, get them from the DOM (this works for desktop only)
+		if (chapters.length === 0) {
+			// Target the chapters in the DOM
+			let uiChapters = Array.from(document.querySelectorAll("#panels ytd-engagement-panel-section-list-renderer:nth-child(2) #content ytd-macro-markers-list-renderer #contents ytd-macro-markers-list-item-renderer #endpoint #details"));
+
+
+			// If the chapters from the DOM change, reload the chapters. This is important because it's async data that changes.
+			// ----------------------------------------
+			if (goodTube_chaptersChangeInterval) {
+				clearInterval(goodTube_chaptersChangeInterval);
+			}
+
+			let prevUIChapters = JSON.stringify(document.querySelectorAll("#panels ytd-engagement-panel-section-list-renderer:nth-child(2) #content ytd-macro-markers-list-renderer #contents ytd-macro-markers-list-item-renderer #endpoint #details"));
+			goodTube_chaptersChangeInterval = setInterval(function() {
+				let chaptersInnerHTML = JSON.stringify(document.querySelectorAll("#panels ytd-engagement-panel-section-list-renderer:nth-child(2) #content ytd-macro-markers-list-renderer #contents ytd-macro-markers-list-item-renderer #endpoint #details"));
+
+				if (chaptersInnerHTML !== prevUIChapters) {
+					prevUIChapters = chaptersInnerHTML;
+					goodTube_player_loadChapters(player, description, totalDuration);
+				}
+			}, 1000);
+			// ----------------------------------------
+
+			let withTitleAndTime = uiChapters.map((node) => ({
+				title: node.querySelector(".macro-markers")?.textContent,
+				time: node.querySelector("#time")?.textContent,
+			}));
+
+			let filtered = withTitleAndTime.filter(
+				(element) =>
+					element.title !== undefined &&
+					element.title !== null &&
+					element.time !== undefined &&
+					element.time !== null
+			);
+
+			chapters = [
+				...new Map(filtered.map((node) => [node.time, node])).values(),
+			];
+		}
+
+		// If we found the chapters data
+		if (chapters.length > 0) {
+			// Load chapters into the player
+			goodTube_player_loadChaptersFromData(player, chapters, totalDuration);
+		}
+		// Otherwise this video does not have chapters
+		else {
+			// Debug message
+			if (goodTube_debug) {
+				console.log('[GoodTube] No chapters found');
+			}
+		}
+	}
+
+	function goodTube_player_loadChaptersFromData(player, chapters, totalDuration) {
+		// If there's no data, just return
+		if (!chapters.length) {
+			return;
+		}
+
+		// Create a container for our chapters
+		let chaptersContainer = document.createElement('div');
+		chaptersContainer.classList.add('goodTube_chapters');
+
+		let markersContainer = document.createElement('div');
+		markersContainer.classList.add('goodTube_markers');
+
+		// For each chapter
+		let i = 0;
+		chapters.forEach((chapter) => {
+			// Create a chapter element
+			let chapterDiv = document.createElement('div');
+			chapterDiv.classList.add('goodTube_chapter');
+			if (typeof chapters[i+1] !== 'undefined') {
+				if (typeof chapters[i+1]['time'] === 'number') {
+					chapterDiv.setAttribute('chapter-time', chapters[i+1]['time']);
+				}
+				else {
+					chapterDiv.setAttribute('chapter-time', chapters[i+1]['time'].split(':').reduce((acc,time) => (60 * acc) + +time));
+				}
+			}
+
+
+			// Create a marker element
+			let markerDiv = document.createElement('div');
+			markerDiv.classList.add('goodTube_marker');
+			if (typeof chapters[i+1] !== 'undefined') {
+				if (typeof chapters[i+1]['time'] === 'number') {
+					markerDiv.setAttribute('marker-time', chapters[i+1]['time']);
+				}
+				else {
+					markerDiv.setAttribute('marker-time', chapters[i+1]['time'].split(':').reduce((acc,time) => (60 * acc) + +time));
+				}
+			}
+
+			// Add a hover action to show the title in the tooltip (desktop only)
+			if (window.location.href.indexOf('m.youtube') === -1) {
+				chapterDiv.addEventListener('mouseover', function() {
+					document.querySelector('#goodTube_player_wrapper1 .vjs-progress-control .vjs-mouse-display .vjs-time-tooltip')?.setAttribute('chapter-title', chapter['title']);
+				});
+			}
+
+			// Position the chapter with CSS
+			// ------------------------------
+
+			// Convert the timestamp (HH:MM:SS) to seconds
+			let time = 0;
+			if (typeof chapter['time'] === 'number') {
+				time = chapter['time'];
+			}
+			else {
+				time = chapter['time'].split(':').reduce((acc,time) => (60 * acc) + +time);
+			}
+
+			// Get time as percentage. This is the starting point of this chapter.
+			let startingPercentage = (time / totalDuration) * 100;
+
+			// Set the starting point
+			chapterDiv.style.left = startingPercentage+'%';
+
+			// Get the starting point of the next chapter (HH:MM:SS) and convert it to seconds
+			// If there's no next chapter, use 100%
+			let nextChapterStart = totalDuration;
+			if (typeof chapters[i+1] !== 'undefined') {
+				if (typeof chapters[i+1]['time'] === 'number') {
+					nextChapterStart = chapters[i+1]['time'];
+				}
+				else {
+					nextChapterStart = chapters[i+1]['time'].split(':').reduce((acc,time) => (60 * acc) + +time);
+				}
+			}
+
+			// Get the starting point of the next chapter as percentage. This is the starting point of this chapter.
+			let endingPercentage = (nextChapterStart / totalDuration) * 100;
+
+			// Set the width to be the ending point MINUS the starting point (difference between them = length)
+			chapterDiv.style.width = (endingPercentage - startingPercentage)+'%';
+
+			// Position the marker
+			markerDiv.style.left = endingPercentage+'%';
+
+			// ------------------------------
+
+
+			// Add the chapter to the chapters container
+			chaptersContainer.appendChild(chapterDiv);
+
+			// Add the marker to the markers container
+			markersContainer.appendChild(markerDiv);
+
+			// Increment the loop
+			i++;
+		});
+
+		// Add an action to show the title next to the time duration (mobile only)
+		if (window.location.href.indexOf('m.youtube') !== -1) {
+			goodTube_chapterTitleInterval = setInterval(function() {
+				let currentPlayerTime = parseFloat(player.currentTime);
+				let currentChapterTitle = false;
+				chapters.forEach((chapter) => {
+					let chapterTime = false;
+
+					if (typeof chapter['time'] === 'number') {
+						chapterTime = chapter['time'];
+					}
+					else {
+						chapterTime = chapter['time'].split(':').reduce((acc,time) => (60 * acc) + +time);
+					}
+
+					if (parseFloat(currentPlayerTime) >= parseFloat(chapterTime)) {
+						currentChapterTitle = chapter['title'];
+					}
+				});
+
+				if (currentChapterTitle) {
+					document.querySelector('#goodTube_player_wrapper1 .vjs-time-control .vjs-duration-display')?.setAttribute('chapter-title', '· '+currentChapterTitle);
+				}
+			}, 10);
+		}
+
+		// Add the chapters container to the player
+		document.querySelector('#goodTube_player_wrapper1 .vjs-progress-control')?.appendChild(chaptersContainer);
+
+		// Add the markers container to the player
+		document.querySelector('#goodTube_player_wrapper1 .vjs-progress-control .vjs-play-progress')?.appendChild(markersContainer);
+
+		// Add chapters class to the player
+		if (!document.querySelector('#goodTube_player_wrapper1').classList.contains('goodTube_hasChapters')) {
+			document.querySelector('#goodTube_player_wrapper1').classList.add('goodTube_hasChapters');
+		}
+
+		// Update the chapters display as we play the video
+		goodTube_updateChapters = setInterval(function() {
+			// Hide markers that are before the current play position / red play bar
+			let markerElements = document.querySelectorAll('.goodTube_markers .goodTube_marker');
+
+			markerElements.forEach((element) => {
+				if (element.getAttribute('marker-time')) {
+					if (parseFloat(player.currentTime) >= parseFloat(element.getAttribute('marker-time'))) {
+						if (!element.classList.contains('goodTube_showMarker')) {
+							element.classList.add('goodTube_showMarker')
+						}
+					}
+					else {
+						if (element.classList.contains('goodTube_showMarker')) {
+							element.classList.remove('goodTube_showMarker')
+						}
+					}
+				}
+			});
+
+			// Make chapter hover RED for chapters that are before the current play position / red play bar
+			let chapterElements = document.querySelectorAll('.goodTube_chapters .goodTube_chapter');
+
+			chapterElements.forEach((element) => {
+				if (element.getAttribute('chapter-time')) {
+					if (parseFloat(player.currentTime) >= parseFloat(element.getAttribute('chapter-time'))) {
+						if (!element.classList.contains('goodTube_redChapter')) {
+							element.classList.add('goodTube_redChapter')
+						}
+					}
+					else {
+						if (element.classList.contains('goodTube_redChapter')) {
+							element.classList.remove('goodTube_redChapter')
+						}
+					}
+				}
+			});
+
+		}, 10);
+
+		// Debug message
+		if (goodTube_debug) {
+			console.log('[GoodTube] Chapters loaded');
+		}
+	}
+
+	function goodTube_player_clearChapters() {
+		// Remove timeouts and intervals
+		if (goodTube_updateChapters) {
+			clearInterval(goodTube_updateChapters);
+			goodTube_updateChapters = false;
+		}
+
+		if (goodTube_chapterTitleInterval) {
+			clearInterval(goodTube_chapterTitleInterval);
+			goodTube_chapterTitleInterval = false;
+		}
+
+		if (goodTube_chaptersChangeInterval) {
+			clearInterval(goodTube_chaptersChangeInterval);
+			goodTube_chaptersChangeInterval = false;
+		}
+
+		// Remove interface elements
+		document.querySelector('#goodTube_player_wrapper1 .vjs-time-control .vjs-duration-display')?.setAttribute('chapter-title', '');
+		document.querySelector('.goodTube_chapters')?.remove();
+		document.querySelector('.goodTube_markers')?.remove();
+		if (document.querySelector('#goodTube_player_wrapper1').classList.contains('goodTube_hasChapters')) {
+			document.querySelector('#goodTube_player_wrapper1').classList.remove('goodTube_hasChapters');
+		}
+	}
+
+	// Load subtitles
+	function goodTube_player_loadSubtitles(player, subtitleData) {
+		// Remove any existing subtitles from videojs
+		let existingSubtitles = goodTube_videojs_player.remoteTextTracks();
+		if (typeof existingSubtitles['tracks_'] !== 'undefined') {
+			existingSubtitles['tracks_'].forEach((existingSubtitle) => {
+				goodTube_videojs_player.removeRemoteTextTrack(existingSubtitle);
+			});
+		}
+
+		// If subtitle data exists
+		if (subtitleData.length > 0) {
+			// Debug message
+			if (goodTube_debug) {
+				console.log('[GoodTube] Loading subtitles...');
+			}
+
+			// Check the subtitle server works, if not fallback to a backup server
+			if (goodTube_api_type === 1 || goodTube_api_type === 2) {
+				goodTube_subtitleServersIndex = 0;
+				goodTube_player_checkSubtitleServer(player, subtitleData, goodTube_api_url);
+			}
+
+		}
+	}
+
+	function goodTube_player_checkSubtitleServer(player, subtitleData, subtitleApi) {
+		// If our selected index will be greater than 0, the selected server failed to load the subtitles
+		// So we fallback to a configured subtitle server
+		if (goodTube_subtitleServersIndex > 0) {
+			// If we're out of fallback servers, show an error
+			if (typeof goodTube_subtitleServers[(goodTube_subtitleServersIndex-1)] === 'undefined') {
+				// Debug message
+				if (goodTube_debug) {
+					console.log('[GoodTube] Subtitles could not be loaded');
+				}
+
+				return;
+			}
+
+			// Otherwise select the next fallback server
+			subtitleApi = goodTube_subtitleServers[(goodTube_subtitleServersIndex-1)];
+		}
+		goodTube_subtitleServersIndex++;
+
+		fetch(subtitleApi+subtitleData[0]['url'])
+		.then(response => response.text())
+		.then(data => {
+			// If it failed, try again (with a fallback server)
+			if (data.substr(0,6) !== 'WEBVTT') {
+				goodTube_player_checkSubtitleServer(player, subtitleData, subtitleApi);
+			}
+			// If it worked, load the subtitles
+			else {
+				goodTube_player_loadSubtitlesAfterCheck(player, subtitleData, subtitleApi);
+			}
+		})
+		// If it failed, use a fallback API for the subtitles
+		.catch((error) => {
+			// If it failed, try again (with a fallback server)
+			goodTube_player_checkSubtitleServer(player, subtitleData, subtitleApi);
+		});
+	}
+
+	function goodTube_player_loadSubtitlesAfterCheck(player, subtitleData, subtitleApi) {
+		// For each subtitle
+		let previous_subtitle = false;
+		subtitleData.forEach((subtitle) => {
+			// Format the data
+			let subtitle_url = false;
+			let subtitle_label = false;
+
+			if (goodTube_api_type === 1 || goodTube_api_type === 2) {
+				subtitle_url = subtitleApi+subtitle['url'];
+				subtitle_label = subtitle['label'];
+			}
+
+			// Ensure we have all the subtitle data AND don't load a subtitle with the same label twice (this helps Piped to load actual captions over auto-generated captions if both exist)
+			if (subtitle_url && subtitle_label && subtitle_label !== previous_subtitle) {
+				previous_subtitle = subtitle_label;
+
+				// Capitalise the first letter of the label, this looks a bit better
+				subtitle_label = subtitle_label[0].toUpperCase() + subtitle_label.slice(1);
+
+				// Add the subtitle to videojs
+				goodTube_videojs_player.addRemoteTextTrack({
+					kind: 'captions',
+					language: subtitle_label,
+					src: subtitle_url
+				}, false);
+			}
+		});
+
+		// Debug message
+		if (goodTube_debug) {
+			console.log('[GoodTube] Subtitles loaded');
+		}
+	}
+
+	// Load storyboard
+	function goodTube_player_loadStoryboard(player, storyboardData) {
+		// Remove the old thumbnails
+		document.querySelector('.vjs-vtt-thumbnail-display')?.remove();
+
+		// If storyboard data exists
+		if (storyboardData.length > 0) {
+			// Debug message
+			if (goodTube_debug) {
+				console.log('[GoodTube] Loading storyboard...');
+			}
+
+			// Go through each storyboard and find the highest quality
+			let highestQualityStoryboardUrl = false;
+			let highestQualityStoryboardWidth = 0;
+			storyboardData.forEach((storyboard) => {
+				if (storyboard['width'] > highestQualityStoryboardWidth) {
+					highestQualityStoryboardUrl = storyboard['url'];
+					highestQualityStoryboardWidth = parseFloat(storyboard['width']);
+				}
+			});
+
+			// If we have a storyboard to load
+			if (highestQualityStoryboardUrl) {
+				// Store the core vttThumbnails function so we can call it again, because this plugin overwrites it's actual function once loaded!
+				if (typeof goodTube_videojs_player.vttThumbnails === 'function') {
+					goodTube_player_vttThumbnailsFunction = goodTube_videojs_player.vttThumbnails;
+				}
+
+				// Restore the core function
+				goodTube_videojs_player.vttThumbnails = goodTube_player_vttThumbnailsFunction;
+
+				// Load the highest quality storyboard
+				goodTube_videojs_player.vttThumbnails({
+					src: goodTube_api_url+highestQualityStoryboardUrl
+				});
+
+				// Debug message
+				if (goodTube_debug) {
+					console.log('[GoodTube] Storyboard loaded');
+				}
+			}
+		}
+	}
+
+	// Reload the video
+	function goodTube_player_reloadVideo(player) {
+		// If we're not viewing a video, just return
+		if (typeof goodTube_getParams['v'] === 'undefined') {
+			return;
+		}
+
+		// Clear any pending timeouts to prevent double ups
+		if (typeof goodTube_pendingRetry['reloadVideo'] !== 'undefined') {
+			clearTimeout(goodTube_pendingRetry['reloadVideo']);
+		}
+
+		// Only re-attempt to load these max configured retry attempts
+		if (goodTube_player_reloadVideoAttempts > goodTube_retryAttempts) {
+			// Show an error message
+			goodTube_player_videojs_showError();
+
+			// Debug message
+			if (goodTube_debug) {
+				console.log('[GoodTube] Video could not be loaded - please select another video source');
+			}
+
+			return;
+		}
+
+		// Store the current video src
+		let currentSrc = player.src;
+
+		// Clear the player
+		goodTube_player_clear(player);
+
+		// Now use the next javascript animation frame (via set timeout so it still works when you're not focused on the tab) to load the actual video
+		setTimeout(function() {
+			player.setAttribute('src', currentSrc);
+		}, 0);
+	}
+
+	// Clear the player
+	function goodTube_player_clear(player) {
+		goodTube_player_ended = false;
+		goodTube_player_videojs_hideError();
+		player.classList.add('goodTube_hidden');
+		player.currentTime = 0;
+		player.pause();
+
+		let openMenuButtons = document.querySelectorAll('.vjs-menuOpen');
+		openMenuButtons.forEach((openMenuButton) => {
+			openMenuButton.classList.remove('vjs-menuOpen');
+		});
+
+		// Clear any existing chapters
+		goodTube_player_clearChapters();
+
+		// Clear any DASH qualities
+		let qualityMenus = document.querySelectorAll('.vjs-quality-selector');
+		if (qualityMenus && typeof qualityMenus[1] !== 'undefined') {
+			let menuInner = qualityMenus[1].querySelector('ul');
+			if (menuInner) {
+				menuInner.innerHTML = '';
+			}
+		}
+	}
+
+	// Hide the player
+	function goodTube_player_hide(player) {
+		goodTube_helper_hideElement(player.closest('#goodTube_player_wrapper1'));
+	}
+
+	// Show the player
+	function goodTube_player_show(player) {
+		goodTube_helper_showElement(player.closest('#goodTube_player_wrapper1'));
+	}
+
+	// Picture in picture
+	function goodTube_player_pipInit() {
+		// If we leave the picture in picture
+		addEventListener('leavepictureinpicture', (event) => {
+			// If we're not viewing a video
+			if (typeof goodTube_getParams['v'] === 'undefined') {
+				// Pause the player
+				goodTube_player_pause(goodTube_player);
+			}
+
+			goodTube_player_pip = false;
+		});
+
+		// If we enter the picture in picture
+		addEventListener('enterpictureinpicture', (event) => {
+			goodTube_player_pip = true;
+		});
+	}
+
+	function goodTube_player_pipUpdate() {
+		// Support play and pause (but only attach these events once!)
+		if ("mediaSession" in navigator) {
+			// Play
+			navigator.mediaSession.setActionHandler("play", () => {
+				goodTube_player_play(goodTube_player);
+			});
+
+			// Pause
+			navigator.mediaSession.setActionHandler("pause", () => {
+				goodTube_player_pause(goodTube_player);
+			});
+
+			// Next track
+			if (goodTube_videojs_nextButton) {
+				navigator.mediaSession.setActionHandler("nexttrack", () => {
+					goodTube_nextVideo(true);
+				});
+			}
+			else {
+				navigator.mediaSession.setActionHandler('nexttrack', null);
+			}
+
+			// Prev track
+			if (goodTube_videojs_prevButton) {
+				navigator.mediaSession.setActionHandler("previoustrack", () => {
+					goodTube_prevVideo(true);
+				});
+			}
+			else {
+				navigator.mediaSession.setActionHandler('previoustrack', null);
+			}
+		}
+	}
+
+	function goodTube_player_pipShowHide() {
+		if (goodTube_player_pip) {
+			document.exitPictureInPicture();
+			goodTube_player_pip = false;
+		}
+		else {
+			goodTube_player.requestPictureInPicture();
+			goodTube_player_pip = true;
+
+			// If the miniplayer is open, remove it
+			if (goodTube_player_miniplayer) {
+				goodTube_player_miniplayerShowHide();
+			}
+		}
+	}
+
+	// Miniplayer
+	function goodTube_player_miniplayerUpdate() {
+		// This is needed to show it differently when we're off a video page, desktop only
+		if (window.location.href.indexOf('m.youtube') === -1) {
+			let youtube_wrapper = document.querySelector('ytd-watch-flexy');
+
+			if (youtube_wrapper) {
+				if (typeof goodTube_getParams['v'] !== 'undefined') {
+					youtube_wrapper.classList.remove('goodTube_miniplayer');
+				}
+				else {
+					youtube_wrapper.classList.add('goodTube_miniplayer');
+				}
+			}
+		}
+
+		// Set the video id if we can, used for the expand button
+		if (typeof goodTube_getParams['v'] !== 'undefined') {
+			goodTube_player_miniplayer_video = goodTube_getParams['v'];
+		}
+	}
+
+	function goodTube_player_miniplayerShowHide() {
+		// If we have real picture in picture, use that instead!
+		if (document.pictureInPictureEnabled) {
+			goodTube_player_pipShowHide();
+			return;
+		}
+
+		let goodTube_wrapper = document.querySelector('#goodTube_player_wrapper1');
+
+		if (goodTube_player_miniplayer) {
+			goodTube_wrapper.classList.remove('goodTube_miniplayer');
+			goodTube_player_miniplayer = false;
+
+			// If we're not viewing a video, clear the player
+			if (typeof goodTube_getParams['v'] === 'undefined') {
+				goodTube_player_clear(goodTube_player);
+			}
+		}
+		else {
+			goodTube_wrapper.classList.add('goodTube_miniplayer');
+			goodTube_player_miniplayer = true;
+			goodTube_player_miniplayer_video = goodTube_getParams['v'];
+		}
+	}
+
+
+	/* Video JS functions
+	------------------------------------------------------------------------------------------ */
+	let goodTube_videojs_player = false;
+	let goodTube_videojs_player_loaded = false;
+	let goodTube_videojs_previousVideo = [];
+	let goodTube_videojs_prevButton = false;
+	let goodTube_videojs_nextButton = true;
+	let goodTube_videojs_tapTimer_backwards = false;
+	let goodTube_videojs_tapTimer_forwards = false;
+	let goodTube_videojs_fastForward = false;
+	let goodTube_qualityApi = false;
+
+	// Init video js
+	function goodTube_player_videojs() {
+		// Debug message
+		if (goodTube_debug) {
+			console.log('[GoodTube] Loading player...');
+		}
+
+		// Load the skin
+		goodTube_player_videojs_loadSkin();
+
+		// Setup GET params
+		goodTube_getParams = goodTube_helper_parseGetParams();
+
+		// Add custom MENU buttons
+		const MenuItem = videojs.getComponent("MenuItem");
+		const MenuButton = videojs.getComponent("MenuButton");
+
+		class CustomMenuButton extends MenuButton {
+			createItems() {
+				const items = [];
+				const { myItems } = this.options_;
+
+				if (!Array.isArray(myItems)) items;
+
+				myItems.forEach(({ clickHandler, ...item }) => {
+					const menuItem = new MenuItem(this.player(), item);
+
+					if (clickHandler) {
+						menuItem.handleClick = clickHandler;
+					}
+
+					items.push(menuItem);
+				});
+
+				return items;
+			}
+
+			buildCSSClass() {
+				return `${super.buildCSSClass()}`;
+			}
+		}
+
+		videojs.registerComponent("DownloadButton", CustomMenuButton);
+		videojs.registerComponent("SourceButton", CustomMenuButton);
+		videojs.registerComponent("AutoplayButton", CustomMenuButton);
+
+		// Add custom buttons
+		const Button = videojs.getComponent("Button");
+
+		class PrevButton extends Button {
+			handleClick(event) {
+				event.stopImmediatePropagation();
+				goodTube_prevVideo(true);
+			}
+		}
+		videojs.registerComponent('PrevButton', PrevButton);
+
+		class NextButton extends Button {
+			handleClick(event) {
+				event.stopImmediatePropagation();
+				goodTube_nextVideo(true);
+			}
+		}
+		videojs.registerComponent('NextButton', NextButton);
+
+		class MiniplayerButton extends Button {
+			handleClick(event) {
+				event.stopImmediatePropagation();
+				goodTube_player_miniplayerShowHide();
+			}
+		}
+		videojs.registerComponent('MiniplayerButton', MiniplayerButton);
+
+		class TheaterButton extends Button {
+			handleClick(event) {
+				event.stopImmediatePropagation();
+				goodTube_shortcut('theater');
+			}
+		}
+		videojs.registerComponent('TheaterButton', TheaterButton);
+
+		// Setup the API selection
+		let apiList = [];
+		goodTube_apis.forEach((api) => {
+			apiList.push({
+				label: api['name'],
+				clickHandler(event) {
+					// Get the menu
+					let menu = event.target.closest('.vjs-menu');
+
+					// Deselect the currently selected menu item
+					menu.querySelector('.vjs-selected')?.classList.remove('vjs-selected');
+
+					// Select the clicked menu item
+					let menuItem = event.target.closest('.vjs-menu-item');
+					menuItem.classList.add('vjs-selected');
+
+					// Set the new API
+					goodTube_player_selectApi(menuItem.getAttribute('api'));
+
+					// Set the player time to be restored when the new server loads
+					if (goodTube_player.currentTime > 0) {
+						goodTube_player_restoreTime = goodTube_player.currentTime;
+					}
+
+					// Reload the video data
+
+					// Debug message
+					if (goodTube_debug) {
+						console.log('[GoodTube] Loading video data from '+goodTube_api_name+'...');
+					}
+
+					let delay = 0;
+					if (window.location.href.indexOf('m.youtube') !== -1) {
+						delay = 400;
+					}
+
+					setTimeout(function() {
+						goodTube_player_loadVideoDataAttempts = 0;
+						goodTube_player_loadVideo(goodTube_player);
+					}, delay);
+				}
+			});
+		});
+
+		// Init the player
+		goodTube_videojs_player = videojs('goodTube_player', {
+			inactivityTimeout: 3000,
+			controls: true,
+			autoplay: false,
+			preload: 'auto',
+			width: '100%',
+			height: '100%',
+			playbackRates: [0.25, 0.5, 1, 1.25, 1.5, 1.75, 2],
+			userActions: {
+				doubleClick: false
+			},
+			controlBar: {
+				children: [
+					'playToggle',
+					'volumePanel',
+					'currentTimeDisplay',
+					'timeDivider',
+					'durationDisplay',
+					'progressControl',
+					'playbackRateMenuButton',
+					'subsCapsButton',
+					'qualitySelector',
+					'fullscreenToggle'
+				],
+
+				// Add next button
+				NextButton: {
+					className: "vjs-next-button"
+				},
+
+				// Add prev button
+				PrevButton: {
+					className: "vjs-prev-button"
+				},
+
+				// Add autoplay button
+				AutoplayButton: {
+					controlText: "Autoplay",
+					className: "vjs-autoplay-button",
+					myItems: [
+						{
+							label: "Autoplay off",
+							clickHandler() {
+								// Get the menu
+								let menu = event.target.closest('.vjs-menu');
+
+								// Deselect the currently selected menu item
+								menu.querySelector('.vjs-selected')?.classList.remove('vjs-selected');
+
+								// Select the clicked menu item
+								let menuItem = event.target.closest('.vjs-menu-item');
+								menuItem.classList.add('vjs-selected');
+
+								goodTube_helper_setCookie('goodTube_autoplay', 'off');
+							},
+						},
+						{
+							label: "Autoplay on",
+							clickHandler() {
+								// Get the menu
+								let menu = event.target.closest('.vjs-menu');
+
+								// Deselect the currently selected menu item
+								menu.querySelector('.vjs-selected')?.classList.remove('vjs-selected');
+
+								// Select the clicked menu item
+								let menuItem = event.target.closest('.vjs-menu-item');
+								menuItem.classList.add('vjs-selected');
+
+								goodTube_helper_setCookie('goodTube_autoplay', 'on');
+							},
+						},
+					],
+				},
+
+				// Add source button
+				SourceButton: {
+					controlText: "Video source",
+					className: "vjs-source-button",
+					myItems: apiList,
+				},
+
+				// Add download button
+				DownloadButton: {
+					controlText: "Download",
+					className: "vjs-download-button",
+					myItems: [
+						{
+							className: 'goodTube_downloadPlaylist_cancel',
+							label: "CANCEL ALL DOWNLOADS",
+							clickHandler() {
+								goodTube_downloadsCancel();
+							},
+						},
+						{
+							label: "Download video",
+							clickHandler() {
+								// Debug message
+								if (goodTube_debug) {
+									console.log('[GoodTube] Downloading video...');
+								}
+
+								// Add to pending downloads
+								goodTube_pendingDownloads[goodTube_getParams['v']] = true;
+
+								// Download the video
+								goodTube_download('video', goodTube_getParams['v']);
+							},
+						},
+						{
+							label: "Download audio",
+							clickHandler() {
+								// Debug message
+								if (goodTube_debug) {
+									console.log('[GoodTube] Downloading audio...');
+								}
+
+								// Add to pending downloads
+								goodTube_pendingDownloads[goodTube_getParams['v']] = true;
+
+								// Download the audio
+								goodTube_download('audio', goodTube_getParams['v']);
+							},
+						},
+						{
+							className: 'goodTube_downloadPlaylist_video',
+							label: "Download playlist (video)",
+							clickHandler() {
+								goodTube_downloadPlaylist('video');
+							},
+						},
+						{
+							className: 'goodTube_downloadPlaylist_audio',
+							label: "Download playlist (audio)",
+							clickHandler() {
+								goodTube_downloadPlaylist('audio');
+							},
+						},
+					],
+				},
+
+				// Add miniplayer button
+				MiniplayerButton: {
+					className: "vjs-miniplayer-button"
+				},
+
+				// Add theater button
+				TheaterButton: {
+					className: "vjs-theater-button"
+				},
+			}
+		});
+
+		// Disable console errors from video js
+		videojs.log.level('off');
+
+		// If for any reason the video failed to load, try reloading it again
+		videojs.hook('error', function() {
+			if (typeof goodTube_pendingRetry['reloadVideo'] !== 'undefined') {
+				clearTimeout(goodTube_pendingRetry['reloadVideo']);
+			}
+
+			goodTube_pendingRetry['reloadVideo'] = setTimeout(function() {
+				goodTube_player_reloadVideo(goodTube_player);
+			}, goodTube_retryDelay);
+
+			// Update the video js player
+			goodTube_player_videojs_update();
+		});
+
+		// After video JS has loaded
+		goodTube_videojs_player.on('ready', function() {
+			goodTube_videojs_player_loaded = true;
+
+			// Enable the qualities API
+			goodTube_qualityApi = goodTube_videojs_player.hlsQualitySelector();
+
+			// Add expand and close miniplayer buttons
+			let goodTube_target = document.querySelector('#goodTube_player');
+
+			if (goodTube_target) {
+				let miniplayer_closeButton = document.createElement('div');
+				miniplayer_closeButton.id = 'goodTube_miniplayer_closeButton';
+				miniplayer_closeButton.onclick = function() {
+					goodTube_player_miniplayerShowHide();
+				};
+				goodTube_target.appendChild(miniplayer_closeButton);
+
+				let miniplayer_expandButton = document.createElement('div');
+				miniplayer_expandButton.id = 'goodTube_miniplayer_expandButton';
+				miniplayer_expandButton.onclick = function() {
+					if (goodTube_player_miniplayer_video !== goodTube_getParams['v']) {
+						window.location.href = '/watch?v='+goodTube_player_miniplayer_video+'&t='+parseFloat(goodTube_player.currentTime).toFixed(0)+'s';
+					}
+					else {
+						goodTube_player_miniplayerShowHide();
+					}
+				};
+				goodTube_target.appendChild(miniplayer_expandButton);
+			}
+
+			// Debug message
+			if (goodTube_debug) {
+				console.log('[GoodTube] Player loaded');
+			}
+
+			// Expose the goodTube player
+			goodTube_player = document.querySelector('#goodTube_player video');
+
+			// Attach mobile seeking events
+			if (window.location.href.indexOf('m.youtube') !== -1) {
+				// Attach the backwards seek button
+				let goodTube_seekBackwards = document.createElement('div');
+				goodTube_seekBackwards.id = 'goodTube_seekBackwards';
+				goodTube_target.append(goodTube_seekBackwards);
+
+				// Double tap event to seek backwards
+				goodTube_seekBackwards.onclick = function() {
+					// Get the time
+					var now = new Date().getTime();
+
+					// Check how long since last tap
+					var timesince = now - goodTube_videojs_tapTimer_backwards;
+
+					// If it's less than 400ms
+					if ((timesince < 400) && (timesince > 0)) {
+						// Remove active state and hide overlays (so you can see the video properly)
+						goodTube_target.classList.remove('vjs-user-active');
+						goodTube_target.classList.add('vjs-user-inactive');
+
+						// Seek backwards 10 seconds
+						goodTube_player.currentTime -= 10;
+					}
+					// If it's just a normal tap
+					else {
+						// Swap to opposite state of active / inactive
+						if (goodTube_target.classList.contains('vjs-user-active')) {
+							goodTube_target.classList.remove('vjs-user-active');
+							goodTube_target.classList.add('vjs-user-inactive');
+						}
+						else {
+							goodTube_target.classList.add('vjs-user-active');
+							goodTube_target.classList.remove('vjs-user-inactive');
+						}
+					}
+
+					// Set the last tap time
+					goodTube_videojs_tapTimer_backwards = new Date().getTime();
+				}
+
+
+				// Attach the forwards seek button
+				let goodTube_seekForwards = document.createElement('div');
+				goodTube_seekForwards.id = 'goodTube_seekForwards';
+				goodTube_target.append(goodTube_seekForwards);
+
+				goodTube_seekForwards.onclick = function() {
+					// Get the time
+					var now = new Date().getTime();
+
+					// Check how long since last tap
+					var timesince = now - goodTube_videojs_tapTimer_forwards;
+
+					// If it's less than 400ms
+					if ((timesince < 400) && (timesince > 0)) {
+						// Remove active state and hide overlays (so you can see the video properly)
+						goodTube_target.classList.remove('vjs-user-active');
+						goodTube_target.classList.add('vjs-user-inactive');
+
+						// Seek forwards 5 seconds
+						goodTube_player.currentTime += 5;
+					}
+					// If it's just a normal tap
+					else {
+						// Swap to opposite state of active / inactive
+						if (goodTube_target.classList.contains('vjs-user-active')) {
+							goodTube_target.classList.remove('vjs-user-active');
+							goodTube_target.classList.add('vjs-user-inactive');
+						}
+						else {
+							goodTube_target.classList.add('vjs-user-active');
+							goodTube_target.classList.remove('vjs-user-inactive');
+						}
+					}
+
+					// Set the last tap time
+					goodTube_videojs_tapTimer_forwards = new Date().getTime();
+				}
+
+
+				// Long press to fast forward
+
+				// On touch start
+				goodTube_target.addEventListener('touchstart', function(e) {
+					// Start fast forward after 1 second
+					goodTube_videojs_fastForward = setTimeout(function() {
+						// Remove active state and hide overlays (so you can see the video properly)
+						goodTube_target.classList.remove('vjs-user-active');
+						goodTube_target.classList.add('vjs-user-inactive');
+
+						// Set playback rate to 2x (fast forward)
+						goodTube_player.playbackRate = 2;
+					}, 1000);
+				});
+
+				// On touch move
+				goodTube_target.addEventListener('touchmove', function(e) {
+					// Remove any pending timeouts to fast forward
+					if (goodTube_videojs_fastForward) {
+						clearTimeout(goodTube_videojs_fastForward);
+					}
+					goodTube_videojs_fastForward = false;
+
+					// Set the playback rate to 1x (normal)
+					goodTube_player.playbackRate = 1;
+				});
+
+				// On touch end
+				goodTube_target.addEventListener('touchend', function(e) {
+					// Remove any pending timeouts to fast forward
+					if (goodTube_videojs_fastForward) {
+						clearTimeout(goodTube_videojs_fastForward);
+					}
+					goodTube_videojs_fastForward = false;
+
+					// Set the playback rate to 1x (normal)
+					goodTube_player.playbackRate = 1;
+				});
+			}
+
+			// Double click to fullscreen (desktop only)
+			if (window.location.href.indexOf('m.youtube') === -1) {
+				goodTube_target.addEventListener('dblclick', function(event) {
+					document.querySelector('.vjs-fullscreen-control')?.click();
+				});
+			}
+
+			// Position timestamp every 100ms (mobile only)
+			if (window.location.href.indexOf('m.youtube') !== -1) {
+				setInterval(function() {
+					let currentTime = document.querySelector('.vjs-current-time');
+					let divider = document.querySelector('.vjs-time-divider');
+					let duration = document.querySelector('.vjs-duration');
+
+					if (currentTime && divider && duration) {
+						let leftOffset = 16;
+						let padding = 4;
+
+						currentTime.style.left = leftOffset+'px';
+						divider.style.left = (leftOffset+currentTime.offsetWidth+padding)+'px';
+						duration.style.left = (leftOffset+currentTime.offsetWidth+divider.offsetWidth+padding+padding)+'px';
+					}
+				}, 100);
+			}
+
+			// Active and inactive control based on mouse movement (desktop only)
+			if (window.location.href.indexOf('m.youtube') === -1) {
+				// Mouse off make inactive
+				goodTube_target.addEventListener('mouseout', function(event) {
+					if (goodTube_target.classList.contains('vjs-user-active') && !goodTube_target.classList.contains('vjs-paused')) {
+						goodTube_target.classList.remove('vjs-user-active');
+						goodTube_target.classList.add('vjs-user-inactive');
+					}
+				});
+
+				// Mouse over make active
+				goodTube_target.addEventListener('mouseover', function(event) {
+					if (goodTube_target.classList.contains('vjs-user-inactive') && !goodTube_target.classList.contains('vjs-paused')) {
+						goodTube_target.classList.add('vjs-user-active');
+						goodTube_target.classList.remove('vjs-user-inactive');
+					}
+				});
+
+				// Click to play, don't make inactive (override video js default behavior)
+				goodTube_target.addEventListener('click', function(event) {
+					setTimeout(function() {
+						if (goodTube_target.classList.contains('vjs-user-inactive') && !goodTube_target.classList.contains('vjs-paused')) {
+							goodTube_target.classList.add('vjs-user-active');
+							goodTube_target.classList.remove('vjs-user-inactive');
+
+							// Set a timeout to make inactive (to replace video js default behavior)
+							window.goodTube_inactive_timeout = setTimeout(function() {
+								if (goodTube_target.classList.contains('vjs-user-active') && !goodTube_target.classList.contains('vjs-paused')) {
+									goodTube_target.classList.remove('vjs-user-active');
+									goodTube_target.classList.add('vjs-user-inactive');
+								}
+							}, 3000);
+						}
+					}, 1);
+				});
+
+				// If they move the mouse, remove our timeout to make inactive (return to video js default behavior)
+				goodTube_target.addEventListener('mousemove', function(event) {
+					if (typeof window.goodTube_inactive_timeout !== 'undefined') {
+						clearTimeout(window.goodTube_inactive_timeout);
+					}
+				});
+			}
+
+			// Remove all title attributes from buttons, we don't want hover text
+			let buttons = document.querySelectorAll('#goodTube_player button');
+			buttons.forEach((element) => {
+				element.setAttribute('title', '');
+			});
+
+
+			// Set the default volume (if a cookie exists for it)
+			let volume = goodTube_helper_getCookie('goodTube_volume');
+			if (volume && volume == parseFloat(volume)) {
+				goodTube_player_volume(goodTube_player, volume);
+			}
+
+
+			// Autoplay
+			// If autoplay cookie doesn't exist, turn autoplay on
+			if (!goodTube_helper_getCookie('goodTube_autoplay')) {
+				goodTube_helper_setCookie('goodTube_autoplay', 'on');
+			}
+
+			// Select the correct autoplay button
+			let autoplayButton = document.querySelector('.vjs-autoplay-button');
+
+			if (autoplayButton) {
+				// Deselect all our autoplay menu items
+				autoplayButton.querySelector('.vjs-menu .vjs-selected')?.classList.remove('vjs-selected');
+
+				// Select the correct autoplay menu item
+				let autoplay_menuItems = autoplayButton.querySelectorAll('.vjs-menu .vjs-menu-item');
+
+				if (goodTube_helper_getCookie('goodTube_autoplay') === 'on') {
+					autoplay_menuItems[autoplay_menuItems.length- 1].classList.add('vjs-selected');
+				}
+				else {
+					autoplay_menuItems[0].classList.add('vjs-selected');
+				}
+			}
+
+			// Make mute button work
+			let muteButton = document.querySelector('.vjs-mute-control');
+			if (muteButton) {
+				muteButton.onmousedown = function() {
+					if (goodTube_player.muted) {
+						goodTube_videojs_player.muted(false);
+					}
+					else {
+						goodTube_videojs_player.muted(true);
+					}
+				}
+
+				muteButton.ontouchstart = function() {
+					if (goodTube_player.muted) {
+						goodTube_videojs_player.muted(false);
+					}
+					else {
+						goodTube_videojs_player.muted(true);
+					}
+				}
+			}
+
+			// Make clicking the play / pause button work
+			let playPauseButton = document.querySelector('.vjs-play-control');
+			if (playPauseButton) {
+				playPauseButton.removeEventListener('click', goodTube_player_videojs_playPause, false);
+				playPauseButton.addEventListener('click', goodTube_player_videojs_playPause, false);
+			}
+
+			// Click off close menu
+			document.onmousedown = function() {
+				if (!event.target.closest('.vjs-menu') && !event.target.closest('.vjs-menu-button')) {
+					let openMenuButtons = document.querySelectorAll('.vjs-menuOpen');
+
+					openMenuButtons.forEach((openMenuButton) => {
+						openMenuButton.classList.remove('vjs-menuOpen');
+					});
+				}
+			}
+
+			document.ontouchstart = function() {
+				if (!event.target.closest('.vjs-menu') && !event.target.closest('.vjs-menu-button')) {
+					let openMenuButtons = document.querySelectorAll('.vjs-menuOpen');
+
+					openMenuButtons.forEach((openMenuButton) => {
+						openMenuButton.classList.remove('vjs-menuOpen');
+					});
+				}
+			}
+
+			// Make replay button work
+			let playButton = document.querySelector('.vjs-control-bar .vjs-play-control');
+			if (playButton) {
+				playButton.onclick = function() {
+					if (goodTube_player.currentTime === 0) {
+						goodTube_player.click();
+					}
+				}
+
+				playButton.ontouchstart = function() {
+					if (goodTube_player.currentTime === 0) {
+						goodTube_player.click();
+					}
+				}
+			}
+
+			// Update the video js player
+			goodTube_player_videojs_update();
+		});
+
+		// Esc keypress close menus
+		document.addEventListener('keydown', function(event) {
+			if (event.keyCode == 27) {
+				let openMenuButtons = document.querySelectorAll('.vjs-menuOpen');
+
+				openMenuButtons.forEach((openMenuButton) => {
+					openMenuButton.classList.remove('vjs-menuOpen');
+				});
+			}
+		}, true);
+
+		// Once the metadata has loaded
+		goodTube_videojs_player.on('loadedmetadata', function() {
+			// Skip to remembered time once loaded metadata (if there's a get param of 't')
+			if (typeof goodTube_getParams['t'] !== 'undefined') {
+				let time = goodTube_getParams['t'].replace('s', '');
+				goodTube_player_skipTo(goodTube_player, time);
+			}
+
+			// Skip to remembered time if we're changing server
+			if (goodTube_player_restoreTime > 0) {
+				goodTube_player_skipTo(goodTube_player, goodTube_player_restoreTime);
+			}
+
+			// Focus the video player once loaded metadata
+			goodTube_player.focus();
+		});
+
+		// Sync players when you seek
+		goodTube_videojs_player.on('seeking', function() {
+			goodTube_youtube_syncPlayers();
+		});
+
+		// Debug message to show the video is loading
+		goodTube_videojs_player.on('loadstart', function() {
+			// Enable the player
+			goodTube_player.classList.remove('goodTube_hidden');
+
+
+			// Server 1 quality stuff
+			if (goodTube_api_type === 1) {
+				let qualityLabel = '';
+
+				// Get the quality label from the quality select menu in the player
+				let qualityLabelMenuItem = document.querySelector('.vjs-quality-selector .vjs-menu .vjs-selected .vjs-menu-item-text');
+				if (qualityLabelMenuItem) {
+					qualityLabel = qualityLabelMenuItem.innerHTML;
+				}
+				// Otherwise that doesn't exist so get it from the selected source
+				else {
+					qualityLabel = goodTube_player.querySelector('source[selected=true]').getAttribute('label');
+				}
+
+				// If we've manually changed quality, remember it so the next video stays with the same quality
+				let newQuality = qualityLabel.replace('p', '').replace('hd', '').replace(' ', '').toLowerCase();
+
+				if (parseFloat(goodTube_player_selectedQuality) !== parseFloat(newQuality)) {
+					goodTube_player_manuallySelectedQuality = newQuality;
+					goodTube_player_selectedQuality = newQuality;
+				}
+
+				// Target the outer wrapper
+				let goodTube_target = document.querySelector('#goodTube_player_wrapper3');
+
+				// If the quality is audio, add the audio style to the player
+				if (newQuality === 'audio') {
+					if (!goodTube_target.classList.contains('goodTube_audio')) {
+						goodTube_target.classList.add('goodTube_audio');
+					}
+				}
+				// Otherwise remove the audio style from the player
+				else if (goodTube_target.classList.contains('goodTube_audio')) {
+					goodTube_target.classList.remove('goodTube_audio');
+				}
+
+				// Debug message
+				if (goodTube_debug) {
+					if (goodTube_player_reloadVideoAttempts <= 1) {
+						console.log('[GoodTube] Loading quality '+qualityLabel+'...');
+					}
+				}
+			}
+
+
+			// Server type 2 (dash) quality stuff
+			else if (goodTube_api_type === 2) {
+				// Target the outer wrapper
+				let goodTube_target = document.querySelector('#goodTube_player_wrapper3');
+
+				// Remove any audio styles from the player
+				if (goodTube_target.classList.contains('goodTube_audio')) {
+					goodTube_target.classList.remove('goodTube_audio');
+				}
+
+				// Debug message
+				if (goodTube_debug) {
+					if (goodTube_player_reloadVideoAttempts <= 1) {
+						console.log('[GoodTube] Loading qualities...');
+					}
+				}
+			}
+
+			// This must go here because video js tries to load it twice, and this messes with things if we increment inside the reload function
+			goodTube_player_reloadVideoAttempts++;
+		});
+
+		// Once loaded data
+		goodTube_videojs_player.on('loadeddata', function() {
+			// Autoplay the video
+			// Only autoplay if the user hasn't paused the video prior to it loading
+			if (!goodTube_player.paused) {
+				goodTube_player_play(goodTube_player);
+			}
+
+			// The load worked so clear any pending reloads and allow more reload attempts for future loads
+			goodTube_player_reloadVideoAttempts = 1;
+			if (typeof goodTube_pendingRetry['reloadVideo'] !== 'undefined') {
+				clearTimeout(goodTube_pendingRetry['reloadVideo']);
+			}
+
+			// Debug message
+			if (goodTube_debug) {
+				if (goodTube_api_type === 1) {
+					console.log('[GoodTube] Quality loaded');
+				}
+				else if (goodTube_api_type === 2) {
+					console.log('[GoodTube] Qualities loaded');
+				}
+			}
+
+			// Update the video js player
+			goodTube_player_videojs_update();
+
+			// Remove the loading class (this removes the black background)
+			let goodTube_videojs_loadingElement = document.getElementById('goodTube_player');
+			if (goodTube_videojs_loadingElement.classList.contains('vjs-loading')) {
+				goodTube_videojs_loadingElement.classList.remove('vjs-loading');
+			}
+		});
+
+		// Play next video this video has ended
+		goodTube_videojs_player.on('ended', function() {
+			goodTube_player_ended = true;
+			goodTube_youtube_syncPlayers();
+			goodTube_nextVideo();
+		});
+
+		// Save the volume you were last at in a cookie
+		goodTube_videojs_player.on('volumechange', function() {
+			let volume = goodTube_player.volume;
+			if (goodTube_player.muted) {
+				volume = 0;
+			}
+
+			goodTube_helper_setCookie('goodTube_volume', volume);
+		});
+	}
+
+	// Load the skin
+	function goodTube_player_videojs_loadSkin() {
+		let style = document.createElement('style');
+		style.textContent = `
+			#goodTube_player_wrapper1:not(.goodTube_mobile) {
+				border-radius: 12px;
+			}
+
+			.video-js {
+				overflow: hidden;
+			}
+
+			.video-js *:focus {
+				outline-color: transparent;
+				outline-style: none;
+			}
+
+			.vjs-has-started.vjs-user-inactive.vjs-playing .vjs-control-bar {
+				transition: visibility .25s, opacity .25s !important;
+			}
+
+			.vjs-menu .vjs-menu-item-text {
+				text-transform: none !important;
+			}
+
+			.vjs-menu .vjs-menu-item-text:first-letter {
+				text-transform: uppercase !important;
+			}
+
+			.video-js .vjs-download-button .vjs-icon-placeholder,
+			.video-js .vjs-source-button .vjs-icon-placeholder,
+			.video-js .vjs-autoplay-button .vjs-icon-placeholder,
+			.video-js .vjs-quality-selector .vjs-icon-placeholder,
+			.video-js .vjs-prev-button .vjs-icon-placeholder,
+			.video-js .vjs-next-button .vjs-icon-placeholder,
+			.video-js .vjs-miniplayer-button .vjs-icon-placeholder,
+			.video-js .vjs-theater-button .vjs-icon-placeholder {
+				font-family: VideoJS;
+				font-weight: 400;
+				font-style: normal;
+			}
+
+			.video-js .vjs-control-bar > button {
+				cursor: pointer;
+			}
+
+			.video-js .vjs-prev-button .vjs-icon-placeholder:before {
+				content: "\\f124";
+			}
+
+			.video-js .vjs-next-button .vjs-icon-placeholder:before {
+				content: "\\f123";
+			}
+
+			.video-js .vjs-download-button .vjs-icon-placeholder:before {
+				content: "\\f110";
+			}
+
+
+
+			// Loading indicator for downloads
+			.video-js .vjs-download-button {
+				position: relative;
+			}
+
+			.video-js .vjs-download-button .goodTube_spinner {
+				opacity: 0;
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				transition: opacity .4s linear;
+			}
+			.video-js .vjs-download-button.goodTube_loading .goodTube_spinner {
+				opacity: 1;
+				transition: opacity .2s .2s linear;
+			}
+
+			.video-js .vjs-download-button .vjs-icon-placeholder:before {
+				opacity: 1;
+				transition: opacity .2s .2s linear;
+			}
+			.video-js .vjs-download-button.goodTube_loading .vjs-icon-placeholder:before {
+				opacity: 0;
+				transition: opacity .2s linear;
+			}
+
+			.goodTube_spinner {
+				color: #ffffff;
+				pointer-events: none;
+			}
+			.goodTube_spinner,
+			.goodTube_spinner div {
+				box-sizing: border-box;
+			}
+			.goodTube_spinner {
+				display: inline-block;
+				position: relative;
+				width: 36px;
+				height: 36px;
+			}
+			.goodTube_spinner div {
+				position: absolute;
+				border: 2px solid currentColor;
+				opacity: 1;
+				border-radius: 50%;
+				animation: goodTube_spinner 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+			}
+			.goodTube_spinner div:nth-child(2) {
+				animation-delay: -0.5s;
+			}
+			@keyframes goodTube_spinner {
+				0% {
+					top: 16px;
+					left: 16px;
+					width: 4px;
+					height: 4px;
+					opacity: .5;
+				}
+				4.9% {
+					top: 16px;
+					left: 16px;
+					width: 4px;
+					height: 4px;
+					opacity: .5;
+				}
+				5% {
+					top: 16px;
+					left: 16px;
+					width: 4px;
+					height: 4px;
+					opacity: 1;
+				}
+				100% {
+					top: 0;
+					left: 0;
+					width: 36px;
+					height: 36px;
+					opacity: 0;
+				}
+			}
+
+
+
+			.video-js .vjs-source-button .vjs-icon-placeholder:before {
+				content: "\\f10e";
+			}
+
+			.video-js .vjs-autoplay-button .vjs-icon-placeholder:before {
+				content: "\\f102";
+			}
+
+			.video-js .vjs-quality-selector .vjs-icon-placeholder:before {
+				content: "\\f114";
+			}
+
+			.video-js .vjs-source-button .vjs-icon-placeholder:before {
+				content: "\\f10e";
+			}
+
+			.video-js .vjs-miniplayer-button .vjs-icon-placeholder:before {
+				content: "\\f127";
+			}
+
+			.video-js .vjs-theater-button .vjs-icon-placeholder:before {
+				content: "\\f115";
+			}
+
+			/* Youtube player style */
+			.vjs-slider-horizontal .vjs-volume-level:before {
+				font-size: 14px !important;
+			}
+
+			.vjs-volume-control {
+				width: auto !important;
+				margin-right: 0 !important;
+			}
+
+			.video-js .vjs-volume-panel.vjs-volume-panel-horizontal {
+				transition: width .25s !important;
+				z-index: 999;
+			}
+
+			.video-js .vjs-volume-panel .vjs-volume-control.vjs-volume-horizontal {
+				transition: opacity .25s, width 1s !important;
+				min-width: 0 !important;
+				padding-right: 8px !important;
+				pointer-events: none;
+			}
+
+			.video-js .vjs-volume-panel {
+				margin-right: 6px !important;
+			}
+
+			.video-js .vjs-volume-panel.vjs-hover,
+			.video-js .vjs-volume-panel.vjs-slider-active {
+				margin-right: 16px !important;
+			}
+
+			.video-js .vjs-volume-panel.vjs-hover .vjs-volume-control.vjs-volume-horizontal {
+				pointer-events: all;
+			}
+
+			.vjs-volume-bar.vjs-slider-horizontal {
+				min-width: 52px !important;
+			}
+
+			.video-js.player-style-youtube .vjs-control-bar > .vjs-spacer {
+				flex: 1;
+				order: 2;
+			}
+
+			.video-js.player-style-youtube .vjs-play-progress .vjs-time-tooltip {
+				display: none;
+			}
+
+			.video-js.player-style-youtube .vjs-play-progress::before {
+				color: red;
+				font-size: 0.85em;
+				display: none;
+			}
+
+			.video-js.player-style-youtube .vjs-progress-holder:hover .vjs-play-progress::before {
+				display: unset;
+			}
+
+			.video-js.player-style-youtube .vjs-control-bar {
+				display: flex;
+				flex-direction: row;
+			}
+
+			.video-js.player-style-youtube .vjs-big-play-button {
+				top: 50%;
+				left: 50%;
+				margin-top: -0.81666em;
+				margin-left: -1.5em;
+			}
+
+			.video-js.player-style-youtube .vjs-menu-button-popup .vjs-menu {
+				margin-bottom: 2em;
+			}
+
+			.video-js ul.vjs-menu-content::-webkit-scrollbar {
+				display: none;
+			}
+
+			.video-js .vjs-user-inactive:not(.vjs-paused) {
+				cursor: none;
+			}
+
+			.video-js .vjs-text-track-display > div > div > div {
+				border-radius: 0 !important;
+				padding: 4px 8px !important;
+				line-height: calc(1.2em + 7px) !important;
+				white-space: break-spaces !important;
+			}
+
+			.video-js .vjs-play-control {
+				order: 0;
+			}
+
+			.video-js .vjs-prev-button {
+				order: 1;
+			}
+
+			.video-js .vjs-next-button {
+				order: 2;
+			}
+
+			.video-js .vjs-volume-panel {
+				order: 3;
+			}
+
+			/* Time control */
+			html body #goodTube_player_wrapper1 .video-js .vjs-time-control {
+				font-family: "YouTube Noto", Roboto, Arial, Helvetica, sans-serif !important;
+				order: 4;
+				font-size: 13.0691px !important;
+				padding-top: 4px !important;
+				color: rgb(221, 221, 221) !important;
+				text-shadow: 0 0 2px rgba(0, 0, 0, .5) !important;
+				min-width: 0 !important;
+				z-index: 1;
+			}
+
+			html body #goodTube_player_wrapper1 .video-js .vjs-time-control * {
+				min-width: 0 !important;
+			}
+
+			.video-js .vjs-current-time {
+				padding-right: 4px !important;
+				padding-left: 0 !important;
+				margin-left: 0 !important;
+			}
+
+			.video-js .vjs-duration {
+				padding-left: 4px !important;
+				padding-right: 5px !important;
+				margin-right: 0 !important;
+			}
+
+			#goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-time-control {
+				position: absolute;
+				top: calc(100% - 98px);
+				font-weight: 500;
+				pointer-events: none;
+			}
+
+			#goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-current-time {
+				color: #ffffff !important;
+			}
+
+			.video-js .vjs-source-button {
+				margin-left: auto !important;
+				order: 5;
+			}
+
+			.video-js .vjs-download-button {
+				order: 6;
+			}
+
+			.video-js .vjs-autoplay-button {
+				order: 7;
+			}
+
+			.video-js .vjs-playback-rate {
+				order: 8;
+			}
+
+			.video-js .vjs-subs-caps-button {
+				order: 9;
+			}
+
+			.video-js .vjs-quality-selector {
+				order: 10;
+			}
+
+			.video-js .vjs-miniplayer-button {
+				order: 11;
+			}
+
+			.video-js .vjs-theater-button {
+				order: 12;
+			}
+
+			.video-js .vjs-fullscreen-control {
+				order: 13;
+			}
+
+			.video-js .vjs-control-bar {
+				display: flex;
+				flex-direction: row;
+				scrollbar-width: none;
+				height: 48px !important;
+				background: transparent !important;
+			}
+
+			.video-js .vjs-control-bar::before {
+				content: '';
+				position: absolute;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAD1CAYAAACRFp+GAAAAAXNSR0IArs4c6QAAASpJREFUOE9lyOlHGAAcxvHuY63Wta3WsdWqdaz7vtfduoyZSBLJmCSSSCaSSBJJJIkk0h+Z7/Pm59Hz4sP3SUh4tUSeIIkMkkmR4qSSIs1JJ4MMUmQ6b0iR5bwlg2xS5DjvSJHr5JFBPikKnEIyeE+KD85HUhQ5xWTwiRQlTikpypxyMvhMii9OBSkqna9kUEWKaqeGDL6RotapI0W900AG30nR6DSRotlpIYNWUrQ57aTocDrJoIsU3U4PKXqdPjLoJ8WAM0gGQ6QYdn6QYsQZJYMxUow7E6SYdKbIYJoUP50ZUsw6c2QwTy7AL/gNf2ARlmAZVmAV1mAd/sI/2IBN2IJt2IFd2IN9+A8HcAhHcAwncApncA4XcAlXcA03cAt3cA8P8AhP8PwCakcyvVVFagcAAAAASUVORK5CYII=");
+				background-size: cover;
+				background-repeat: repeat-x;
+				background-position: bottom;
+				background-size: contain;
+				height: calc(var(--ytd-watch-flexy-max-player-height) / 2.5);
+				pointer-events: none;
+			}
+			#goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-control-bar::before {
+				display: none;
+				content: none;
+			}
+
+			.video-js .vjs-menu .vjs-icon-placeholder {
+				display: none !important;
+			}
+
+			.video-js .vjs-menu .vjs-menu-content > * {
+				padding-top: 8px !important;
+				padding-bottom: 8px !important;
+				padding-left: 12px !important;
+				padding-right: 12px !important;
+			}
+
+			.video-js .vjs-menu {
+				height: auto !important;
+				bottom: 48px !important;
+				padding-bottom: 0 !important;
+				margin-bottom: 0 !important;
+				width: auto !important;
+				transform: translateX(-50%) !important;
+				left: 50% !important;
+			}
+
+			.video-js .vjs-menu .vjs-menu-content {
+				position: static !important;
+				border-radius: 4px !important;
+			}
+
+			.video-js .vjs-volume-control {
+				height: 100% !important;
+				display: flex !important;
+				align-items: center !important;
+			}
+
+			.video-js .vjs-vtt-thumbnail-display {
+				bottom: calc(100% + 35px) !important;
+				border-radius: 12px !important;
+				overflow: hidden !important;
+				border: 2px solid #ffffff !important;
+				background-color: #000000 !important;
+			}
+
+			.video-js .vjs-control-bar .vjs-icon-placeholder {
+				height: 100%;
+			}
+
+			.video-js .vjs-control {
+				min-width: 48px !important;
+			}
+
+			#goodTube_player_wrapper1:not(goodTube_mobile) .video-js .vjs-control-bar > .vjs-play-control {
+				padding-left: 8px;
+				box-sizing: content-box;
+			}
+
+			#goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-control:not(.vjs-progress-control) {
+				min-width: 0 !important;
+				flex-grow: 1 !important;
+				max-width: 9999px !important;
+				padding-left: 0 !important;
+				padding-right: 0 !important;
+			}
+
+			#goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-control.vjs-volume-panel,
+			#goodTube_player_wrapper1.goodTube_miniplayer #goodTube_player_wrapper3 .video-js .vjs-control.vjs-volume-panel {
+				display: none;
+			}
+
+			.video-js .vjs-control-bar .vjs-icon-placeholder::before {
+				height: auto;
+				top: 50%;
+				transform: translateY(-50%);
+				font-size: 24px;
+				line-height: 100%;
+			}
+
+			.video-js .vjs-control-bar *:not(.vjs-time-control) {
+				text-shadow: none !important;
+			}
+
+			.video-js .vjs-vtt-thumbnail-time {
+				display: none !important;
+			}
+
+			.video-js .vjs-playback-rate .vjs-playback-rate-value {
+				line-height: 48px;
+				font-size: 14px !important;
+				font-weight: 700;
+			}
+
+			.video-js .vjs-play-progress .vjs-time-tooltip {
+				display: none !important;
+			}
+
+			.video-js .vjs-mouse-display .vjs-time-tooltip {
+				background: none !important;
+				font-size: 12px !important;
+				top: -50px !important;
+				text-shadow: 0 0 10px rgba(0, 0, 0, .5) !important;
+				font-family: "YouTube Noto", Roboto, Arial, Helvetica, sans-serif !important;
+				font-weight: 500 !important;
+			}
+
+			.video-js .vjs-menu-content {
+				max-height: calc(var(--ytd-watch-flexy-panel-max-height) - 72px) !important;
+			}
+
+			#goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-menu-content {
+				max-height: 164px !important;
+			}
+
+			.video-js .vjs-control-bar::-webkit-scrollbar {
+				display: none;
+			}
+
+			.video-js .vjs-icon-cog {
+				font-size: 18px;
+			}
+
+			.video-js .vjs-control-bar,
+			.video-js .vjs-menu-button-popup .vjs-menu .vjs-menu-content {
+				background-color: rgba(35, 35, 35, 0.75);
+			}
+
+			.video-js .vjs-menu li.vjs-menu-item:not(.vjs-selected),
+			.video-js .vjs-menu li.vjs-menu-item:not(.vjs-selected):focus,
+			.video-js .vjs-menu li.vjs-menu-item:not(.vjs-selected):active {
+				background-color: transparent !important;
+				color: #ffffff !important;
+			}
+
+			.video-js .vjs-menu li.vjs-menu-item:not(.vjs-selected):hover {
+				background-color: rgba(255, 255, 255, 0.75) !important;
+				color: rgba(49, 49, 51, 0.75) !important;
+				color: #ffffff !important;
+			}
+
+			.video-js .vjs-menu li.vjs-selected,
+			.video-js .vjs-menu li.vjs-selected:hover {
+				background-color: #ffffff !important;
+				color: #000000 !important;
+			}
+
+			.video-js .vjs-menu li {
+				white-space: nowrap !important;
+				font-size: 12px !important;
+				font-weight: 700 !important;
+				max-width: 9999px !important;
+			}
+
+			.video-js .vjs-subs-caps-button .vjs-menu li {
+				white-space: normal !important;
+				min-width: 128px !important;
+			}
+
+			/* Progress Bar */
+			.video-js .vjs-slider {
+				background-color: rgba(15, 15, 15, 0.5);
+			}
+
+			.video-js .vjs-load-progress,
+			.video-js .vjs-load-progress div {
+				background: rgba(87, 87, 88, 1);
+			}
+
+			.video-js .vjs-slider:hover,
+			.video-js button:hover {
+				color: #ffffff;
+			}
+
+			/* Overlay */
+			.video-js .vjs-overlay {
+				background-color: rgba(35, 35, 35, 0.75) !important;
+			}
+			.video-js .vjs-overlay * {
+				color: rgba(255, 255, 255, 1) !important;
+				text-align: center;
+			}
+
+			/* ProgressBar marker */
+			.video-js .vjs-marker {
+				background-color: rgba(255, 255, 255, 1);
+				z-index: 0;
+			}
+
+			/* Big "Play" Button */
+			.video-js .vjs-big-play-button {
+				background-color: rgba(35, 35, 35, 0.5);
+			}
+
+			.video-js:hover .vjs-big-play-button {
+				background-color: rgba(35, 35, 35, 0.75);
+			}
+
+			.video-js .vjs-current-time,
+			.video-js .vjs-time-divider,
+			.video-js .vjs-duration {
+				display: block;
+			}
+
+			.video-js .vjs-time-divider {
+				min-width: 0px;
+				padding-left: 0px;
+				padding-right: 0px;
+			}
+
+			.video-js .vjs-poster {
+				background-size: cover;
+				object-fit: cover;
+			}
+
+			.video-js .player-dimensions.vjs-fluid {
+				padding-top: 82vh;
+			}
+
+			video.video-js {
+				position: absolute;
+				height: 100%;
+			}
+
+			.video-js .mobile-operations-bar {
+				display: flex;
+				position: absolute;
+				top: 0;
+				right: 1px !important;
+				left: initial !important;
+				width: initial !important;
+			}
+
+			.video-js .mobile-operations-bar ul {
+				position: absolute !important;
+				bottom: unset !important;
+				top: 1.5em;
+			}
+
+			.video-js .vjs-menu-button-popup .vjs-menu {
+				border: 0 !important;
+				padding-bottom: 12px !important;
+			}
+
+			.video-js .vjs-menu li.vjs-menu-item:not(.vjs-selected):hover {
+				background-color: rgba(255, 255, 255, .2) !important;
+				color: #ffffff !important;
+			}
+
+			.video-js .vjs-menu * {
+				border: 0 !important;
+			}
+
+			/* Tooltips
+			------------------------------------------------------------------------------------------ */
+			.video-js .vjs-control-bar > .vjs-prev-button::before {
+				content: 'Previous video';
+			}
+
+			.video-js .vjs-control-bar > .vjs-next-button::before {
+				content: 'Next video';
+			}
+
+			.video-js .vjs-control-bar .vjs-mute-control:not(.vjs-vol-0)::before {
+				content: 'Mute (m)';
+			}
+
+			.video-js .vjs-control-bar .vjs-mute-control.vjs-vol-0::before {
+				content: 'Unmute (m)';
+			}
+
+			.video-js .vjs-control-bar > .vjs-playback-rate > .vjs-menu-button::before {
+				content: 'Playback speed';
+			}
+
+			.video-js .vjs-control-bar > .vjs-subs-caps-button > .vjs-menu-button::before {
+				content: 'Subtitles';
+			}
+
+			.video-js .vjs-control-bar > .vjs-quality-selector > .vjs-menu-button::before {
+				content: 'Quality';
+			}
+
+			.video-js .vjs-control-bar > .vjs-download-button > .vjs-menu-button::before {
+				content: 'Download';
+			}
+
+			.video-js .vjs-control-bar > .vjs-autoplay-button > .vjs-menu-button::before {
+				content: 'Autoplay';
+			}
+
+			.video-js .vjs-control-bar > .vjs-source-button > .vjs-menu-button::before {
+				content: 'Video source';
+			}
+
+			.video-js .vjs-control-bar > .vjs-miniplayer-button::before {
+				content: 'Miniplayer (i)';
+			}
+
+			.video-js .vjs-control-bar > .vjs-theater-button::before {
+				content: 'Theater mode (t)';
+			}
+
+			.video-js .vjs-control-bar > .vjs-fullscreen-control::before {
+				content: 'Fullscreen (f)';
+				left: auto !important;
+				right: 12px !important;
+				transform: none !important;
+			}
+
+			.video-js .vjs-control-bar button.vjs-menu-button::before,
+			.video-js .vjs-control-bar .vjs-button:not(.vjs-menu-button)::before {
+				position: absolute;
+				top: -40px;
+				left: 50%;
+				transform: translateX(-50%);
+				background: rgba(0, 0, 0, .75);
+				border-radius: 4px;
+				font-size: 12px;
+				font-weight: 600;
+				padding: 8px;
+				white-space: nowrap;
+				opacity: 0;
+				transition: opacity .1s;
+				pointer-events: none;
+				text-shadow: none !important;
+				z-index: 1;
+			}
+
+			#goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-control-bar button.vjs-menu-button::before,
+			#goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-control-bar .vjs-button:not(.vjs-menu-button)::before {
+				display: none !important;
+				content: none !important;
+			}
+
+			.video-js .vjs-control-bar div.vjs-menu-button:not(.vjs-menuOpen) button.vjs-menu-button:hover::before,
+			.video-js .vjs-control-bar .vjs-button:not(.vjs-menu-button):hover::before {
+				opacity: 1;
+			}
+
+			.video-js div.vjs-menu-button:not(.vjs-menuOpen) .vjs-menu {
+				display: none !important;
+			}
+
+			.video-js div.vjs-menu-button.vjs-menuOpen .vjs-menu {
+				display: block !important;
+			}
+
+			.video-js .vjs-menu {
+				z-index: 999 !important;
+			}
+
+			.video-js .vjs-big-play-button {
+				display: none !important;
+			}
+
+			.video-js .vjs-volume-panel,
+			.video-js .vjs-button {
+				z-index: 1;
+			}
+
+			.video-js .vjs-button.vjs-menuOpen {
+				z-index: 999;
+			}
+
+			.video-js .vjs-error-display .vjs-modal-dialog-content {
+				display: none;
+			}
+
+			.video-js:not(.vjs-has-started) .vjs-control-bar {
+				display: flex !important;
+			}
+
+			.vjs-track-settings-controls button:hover {
+				color: #000000 !important;
+			}
+		`;
+
+		document.body.appendChild(style);
+	}
+
+	// Setup the previous button history
+	function goodTube_player_videojs_setupPrevHistory() {
+		// If we've hit the previous button
+		if (goodTube_helper_getCookie('goodTube_previous') === 'true') {
+			// Remove the last item from the previous video array
+			goodTube_videojs_previousVideo.pop();
+
+			goodTube_helper_setCookie('goodTube_previous', 'false');
+		}
+		// Otherwise it's a normal video load
+		else {
+			// Add this page to the previous video array
+			goodTube_videojs_previousVideo.push(window.location.href);
+		}
+	}
+
+	// Show or hide the next and previous button
+	function goodTube_player_videojs_showHideNextPrevButtons() {
+		goodTube_videojs_prevButton = false;
+		goodTube_videojs_nextButton = true;
+
+		// Don't show next / prev in the miniplayer / pip unless we're viewing a video
+		if ((goodTube_player_miniplayer || goodTube_player_pip) && typeof goodTube_getParams['v'] === 'undefined') {
+			goodTube_videojs_prevButton = false;
+			goodTube_videojs_nextButton = false;
+		}
+		else {
+			// Mobile
+			if (window.location.href.indexOf('m.youtube') !== -1) {
+				// If we're viewing a playlist
+				if (typeof goodTube_getParams['i'] !== 'undefined' || typeof goodTube_getParams['index'] !== 'undefined' || typeof goodTube_getParams['list'] !== 'undefined') {
+					let playlist = document.querySelectorAll('ytm-playlist-panel-renderer ytm-playlist-panel-video-renderer, ytm-playlist-video-list-renderer ytm-playlist-video-renderer');
+
+					if (!playlist || playlist.length <= 0) {
+						return;
+					}
+
+					// If the first video is NOT selected, enable previous
+					let firstItemSelected = playlist[0].getAttribute('aria-selected');
+					if (firstItemSelected === 'false') {
+						goodTube_videojs_prevButton = true;
+					}
+
+					// If the last video is NOT selected, enable previous
+					let lastItemSelected = playlist[playlist.length-1].getAttribute('aria-selected');
+					if (lastItemSelected === 'true') {
+						goodTube_videojs_nextButton = false;
+					}
+				}
+				// Otherwise we're not in a playlist, so if a previous video exists
+				else if (goodTube_videojs_previousVideo[goodTube_videojs_previousVideo.length - 2] && goodTube_videojs_previousVideo[goodTube_videojs_previousVideo.length - 2] !== window.location.href) {
+					// Enable the previous button
+					goodTube_videojs_prevButton = true;
+				}
+			}
+			// Desktop
+			else {
+				goodTube_videojs_nextButton = true;
+
+				// If we're viewing a playlist
+				if (typeof goodTube_getParams['i'] !== 'undefined' || typeof goodTube_getParams['index'] !== 'undefined' || typeof goodTube_getParams['list'] !== 'undefined') {
+					// If we're not viewing the first video in the playlist
+					let playlist = document.querySelectorAll('#secondary .playlist-items ytd-playlist-panel-video-renderer:not([hidden]), #below .playlist-items ytd-playlist-panel-video-renderer:not([hidden])');
+
+					if (!playlist || playlist.length <= 0) {
+						return;
+					}
+
+					if (playlist && !playlist[0].selected) {
+						// Enable the previous button
+						goodTube_videojs_prevButton = true;
+					}
+				}
+				// Otherwise we're not in a playlist, so if a previous video exists
+				else if (goodTube_videojs_previousVideo[goodTube_videojs_previousVideo.length - 2] && goodTube_videojs_previousVideo[goodTube_videojs_previousVideo.length - 2] !== window.location.href) {
+					// Enable the previous button
+					goodTube_videojs_prevButton = true;
+				}
+			}
+		}
+
+		// Show or hide the previous button
+		let prevButton = document.querySelector('.vjs-prev-button');
+		if (prevButton) {
+			if (!goodTube_videojs_prevButton) {
+				goodTube_helper_hideElement(prevButton);
+			}
+			else {
+				goodTube_helper_showElement(prevButton);
+			}
+		}
+
+		// Show or hide the next button
+		let nextButton = document.querySelector('.vjs-next-button');
+		if (nextButton) {
+			if (!goodTube_videojs_nextButton) {
+				goodTube_helper_hideElement(nextButton);
+			}
+			else {
+				goodTube_helper_showElement(nextButton);
+			}
+		}
+	}
+
+	// Play / pause
+	function goodTube_player_videojs_playPause() {
+		let playPauseButton = document.querySelector('.vjs-play-control');
+
+		if (playPauseButton.classList.contains('vjs-playing')) {
+			goodTube_player_play(goodTube_player);
+		}
+		else {
+			goodTube_player_pause(goodTube_player);
+		}
+	}
+
+	// Update the video js player
+	function goodTube_player_videojs_update() {
+		// Add URL param to default video source menu items
+		let sourceMenuItems = document.querySelectorAll('.vjs-source-button .vjs-menu .vjs-menu-item');
+		if (sourceMenuItems) {
+			let i = 0;
+			sourceMenuItems.forEach((sourceMenuItem) => {
+				sourceMenuItem.setAttribute('api', goodTube_apis[i]['url']);
+
+				if (goodTube_apis[i]['url'] === goodTube_api_url) {
+					sourceMenuItem.classList.add('vjs-selected');
+				}
+
+				i++;
+			});
+		}
+
+		// Make menus work
+		let menuButtons = document.querySelectorAll('.vjs-control-bar button');
+		menuButtons.forEach((button) => {
+			button.onclick = function() {
+				let openMenuButtons = document.querySelectorAll('.vjs-menuOpen');
+				openMenuButtons.forEach((openMenuButton) => {
+					if (openMenuButton != button.closest('div.vjs-menu-button')) {
+						openMenuButton.classList.remove('vjs-menuOpen');
+					}
+				});
+
+				let menu = button.closest('div.vjs-menu-button');
+
+				if (menu) {
+					if (menu.classList.contains('vjs-menuOpen')) {
+						menu.classList.remove('vjs-menuOpen');
+					}
+					else {
+						menu.classList.add('vjs-menuOpen');
+					}
+				}
+			}
+
+			button.ontouchstart = function() {
+				let openMenuButtons = document.querySelectorAll('.vjs-menuOpen');
+				openMenuButtons.forEach((openMenuButton) => {
+					if (openMenuButton != button.closest('div.vjs-menu-button')) {
+						openMenuButton.classList.remove('vjs-menuOpen');
+					}
+				});
+
+				let menu = button.closest('div.vjs-menu-button');
+
+				if (menu) {
+					if (menu.classList.contains('vjs-menuOpen')) {
+						menu.classList.remove('vjs-menuOpen');
+					}
+					else {
+						menu.classList.add('vjs-menuOpen');
+					}
+				}
+			}
+		});
+
+		const onClickOrTap = (element, handler) => {
+			let touchMoveHappened = false;
+
+			function touchstart() {
+				touchMoveHappened = false;
+			}
+
+			function touchmove() {
+				touchMoveHappened = true;
+			}
+
+			function touchend(e) {
+				if (touchMoveHappened) {
+					return;
+				}
+
+				handler(e);
+			}
+
+			function click(e) {
+				handler(e);
+			}
+
+			element.addEventListener('touchstart', touchstart);
+			element.addEventListener('touchmove', touchmove);
+			element.addEventListener('touchend', touchend);
+			element.addEventListener('click', click);
+		};
+
+		// Click menu item, close menu
+		let menuItems = document.querySelectorAll('.vjs-menu-item');
+		menuItems.forEach((item) => {
+			onClickOrTap(item, (e) => {
+				let delay = 0;
+
+				if (window.location.href.indexOf('m.youtube') !== -1) {
+					delay = 400;
+				}
+
+				setTimeout(function() {
+					let openMenuButtons = document.querySelectorAll('.vjs-menuOpen');
+					openMenuButtons.forEach((openMenuButton) => {
+						openMenuButton.classList.remove('vjs-menuOpen');
+					});
+				}, delay);
+			});
+		});
+
+		// Add a hover bar to the DOM if we haven't alread (desktop only)
+		if (window.location.href.indexOf('m.youtube') === -1) {
+			if (!document.querySelector('.goodTube_hoverBar')) {
+				let hoverBar = document.createElement('div');
+				hoverBar.classList.add('goodTube_hoverBar');
+				document.querySelector('.video-js .vjs-progress-control').appendChild(hoverBar);
+
+				// Add actions to size the hover bar
+				document.querySelector('.video-js .vjs-progress-control').addEventListener('mousemove', function(event) {
+					window.requestAnimationFrame(function() {
+						hoverBar.style.width = document.querySelector('.video-js .vjs-progress-control .vjs-mouse-display').style.left;
+					});
+
+				});
+			}
+		}
+	}
+
+	// Show an error on screen
+	function goodTube_player_videojs_showError() {
+		let error = document.createElement('div');
+		error.setAttribute('id', 'goodTube_error');
+		error.innerHTML = "Video could not be loaded. Please select another video source.<br><small>There is a button for this at the bottom of the player.</small>";
+		player.appendChild(error);
+
+		document.querySelector('#goodTube_player').appendChild(error);
+	}
+
+	// Hide an error on screen
+	function goodTube_player_videojs_hideError() {
+		let error = document.querySelector('#goodTube_error');
+		if (error) {
+			error.remove();
+		}
+	}
+
+	// Show downloading indicator
+	function goodTube_player_videojs_showDownloading() {
+		let loadingElement = document.querySelector('.vjs-download-button');
+
+		// If there's no spinner, add one
+		let spinnerElement = document.querySelector('.vjs-download-button .goodTube_spinner');
+		if (!spinnerElement) {
+			let spinnerIcon = document.createElement('div');
+			spinnerIcon.classList.add('goodTube_spinner');
+			spinnerIcon.innerHTML = "<div></div><div></div>";
+
+			loadingElement.append(spinnerIcon);
+		}
+
+		if (loadingElement && !loadingElement.classList.contains('goodTube_loading')) {
+			loadingElement.classList.add('goodTube_loading');
+		}
+	}
+
+	// Hide downloading indicator
+	function goodTube_player_videojs_hideDownloading(hideMessage) {
+		// Only do this if we've finished all downloads (this is a weird if statement, but it works to check the length of an associative array)
+		if (Reflect.ownKeys(goodTube_pendingDownloads).length > 1) {
+			return;
+		}
+
+		let loadingElement = document.querySelector('.vjs-download-button');
+
+		if (loadingElement && loadingElement.classList.contains('goodTube_loading')) {
+			loadingElement.classList.remove('goodTube_loading');
+		}
+
+		// Set the last download time in seconds to now
+		goodTube_helper_setCookie('goodTube_lastDownloadTimeSeconds', (new Date().getTime() / 1000));
+
+		// Debug message
+		if (goodTube_debug && typeof hideMessage === 'undefined') {
+			console.log('[GoodTube] Downloads finished');
+		}
+	}
+
+	// Show or hide the download playlist buttons
+	function goodTube_player_videojs_showHideDownloadPlaylistButtons() {
+		// Target the playlist buttons
+		let playlistButton_cancel = document.querySelector('.goodTube_downloadPlaylist_cancel');
+		let goodTube_downloadPlaylist_video = document.querySelector('.goodTube_downloadPlaylist_video');
+		let goodTube_downloadPlaylist_audio = document.querySelector('.goodTube_downloadPlaylist_audio');
+
+		// Make sure the playlist buttons exist
+		if (!playlistButton_cancel || !goodTube_downloadPlaylist_video || !goodTube_downloadPlaylist_audio) {
+			return;
+		}
+
+		// If we're viewing a playlist
+		if (typeof goodTube_getParams['i'] !== 'undefined' || typeof goodTube_getParams['index'] !== 'undefined' || typeof goodTube_getParams['list'] !== 'undefined') {
+			// Show the download playlist buttons
+			goodTube_helper_showElement(goodTube_downloadPlaylist_video);
+			goodTube_helper_showElement(goodTube_downloadPlaylist_audio);
+		}
+		// If we're not viewing a playlist
+		else {
+			// Hide the download playlist buttons
+			goodTube_helper_hideElement(goodTube_downloadPlaylist_video);
+			goodTube_helper_hideElement(goodTube_downloadPlaylist_audio);
+		}
+
+		// If there's pendng downloads (this is a weird if statement, but it works to check the length of an associative array)
+		if (Reflect.ownKeys(goodTube_pendingDownloads).length > 1) {
+			// Show the cancel button
+			goodTube_helper_showElement(playlistButton_cancel);
+		}
+		// If there's no pending downloads
+		else {
+			// Hide the cancel button
+			goodTube_helper_hideElement(playlistButton_cancel);
+		}
+	}
+
+
+	/* GoodTube general functions
+	------------------------------------------------------------------------------------------ */
+	let goodTube_stopUpdates = false;
+	let goodTube_previousUrl = false;
+	let goodTube_player = false;
+	let goodTube_getParams = false;
+	let goodTube_downloadTimeouts = [];
+	let goodTube_pendingDownloads = [];
+
+	// API Subtitle servers
+	let goodTube_subtitleServersIndex = 0;
+	let goodTube_subtitleServers = [
+		'https://invidious.perennialte.ch',
+		'https://yt.artemislena.eu',
+		'https://invidious.jing.rocks',
+		'https://invidious.privacyredirect.com',
+		'https://invidious.fdn.fr'
+	]
+
+	// API Endpoints
+	let goodTube_apis = [
+		{
+			'name': 'HD - Acid (US)',
+			'type': 2,
+			'proxy': true,
+			'url': 'https://invidious.incogniweb.net'
+		},
+		{
+			'name': 'HD - Sphynx (JP)',
+			'type': 2,
+			'proxy': true,
+			'url': 'https://invidious.jing.rocks'
+		},
+		{
+			'name': 'HD - 420 (FI)',
+			'type': 2,
+			'proxy': true,
+			'url': 'https://invidious.privacyredirect.com'
+		},
+		{
+			'name': 'HD - Onyx (FR)',
+			'type': 2,
+			'proxy': true,
+			'url': 'https://invidious.fdn.fr'
+		},
+		{
+			'name': 'HD - Obsidian (DE)',
+			'type': 2,
+			'proxy': true,
+			'url': 'https://invidious.protokolla.fi'
+		},
+		{
+			'name': 'HD - Indigo (FI)',
+			'type': 2,
+			'proxy': true,
+			'url': 'https://iv.datura.network'
+		},
+		{
+			'name': 'HD - Lilith (DE)',
+			'type': 2,
+			'proxy': true,
+			'url': 'https://iv.melmac.space'
+		},
+
+		{
+			'name': '360p - Amethyst (DE)',
+			'type': 1,
+			'proxy': true,
+			'url': 'https://yt.artemislena.eu'
+		},
+		{
+			'name': '360p - Goblin (AU)',
+			'type': 1,
+			'proxy': false,
+			'url': 'https://invidious.perennialte.ch'
+		},
+		{
+			'name': '360p - Jade (SG)',
+			'type': 1,
+			'proxy': true,
+			'url': 'https://vid.lilay.dev'
+		},
+		{
+			'name': '360p - Nymph (AT)',
+			'type': 1,
+			'proxy': true,
+			'url': 'https://invidious.private.coffee'
+		},
+		{
+			'name': '360p - Raptor (US)',
+			'type': 1,
+			'proxy': true,
+			'url': 'https://invidious.drgns.space'
+		},
+		{
+			'name': '360p - Velvet (CL)',
+			'type': 1,
+			'proxy': true,
+			'url': 'https://inv.nadeko.net'
+		},
+		{
+			'name': '360p - Druid (DE)',
+			'type': 1,
+			'proxy': true,
+			'url': 'https://invidious.projectsegfau.lt'
+		}
+	];
+
+	let goodTube_api_type = goodTube_apis[0]['type'];
+	let goodTube_api_proxy = goodTube_apis[0]['proxy'];
+	let goodTube_api_url = goodTube_apis[0]['url'];
+	let goodTube_api_name = goodTube_apis[0]['name'];
+
+	// Press shortcut
+	function goodTube_shortcut(shortcut) {
+		let theKey = false;
+		let keyCode = false;
+		let shiftKey = false;
+
+		if (shortcut === 'next') {
+			theKey = 'n';
+			keyCode = 78;
+			shiftKey = true;
+		}
+		else if (shortcut === 'prev') {
+			theKey = 'p';
+			keyCode = 80;
+			shiftKey = true;
+		}
+		else if (shortcut === 'theater') {
+			theKey = 't';
+			keyCode = 84;
+			shiftKey = false;
+		}
+		else if (shortcut === 'fullscreen') {
+			theKey = 'f';
+			keyCode = 70;
+			shiftKey = false;
+		}
+		else {
+			return;
+		}
+
+		let e = false;
+		e = new window.KeyboardEvent('focus', {
+			bubbles: true,
+			key: theKey,
+			keyCode: keyCode,
+			shiftKey: shiftKey,
+			charCode: 0,
+		});
+		document.dispatchEvent(e);
+
+		e = new window.KeyboardEvent('keydown', {
+			bubbles: true,
+			key: theKey,
+			keyCode: keyCode,
+			shiftKey: shiftKey,
+			charCode: 0,
+		});
+		document.dispatchEvent(e);
+
+		e = new window.KeyboardEvent('beforeinput', {
+			bubbles: true,
+			key: theKey,
+			keyCode: keyCode,
+			shiftKey: shiftKey,
+			charCode: 0,
+		});
+		document.dispatchEvent(e);
+
+		e = new window.KeyboardEvent('keypress', {
+			bubbles: true,
+			key: theKey,
+			keyCode: keyCode,
+			shiftKey: shiftKey,
+			charCode: 0,
+		});
+		document.dispatchEvent(e);
+
+		e = new window.KeyboardEvent('input', {
+			bubbles: true,
+			key: theKey,
+			keyCode: keyCode,
+			shiftKey: shiftKey,
+			charCode: 0,
+		});
+		document.dispatchEvent(e);
+
+		e = new window.KeyboardEvent('change', {
+			bubbles: true,
+			key: theKey,
+			keyCode: keyCode,
+			shiftKey: shiftKey,
+			charCode: 0,
+		});
+		document.dispatchEvent(e);
+
+		e = new window.KeyboardEvent('keyup', {
+			bubbles: true,
+			key: theKey,
+			keyCode: keyCode,
+			shiftKey: shiftKey,
+			charCode: 0,
+		});
+		document.dispatchEvent(e);
+	}
+
+	// Play the previous video
+	function goodTube_prevVideo(pressedButton = false) {
+		// Mobile
+		if (window.location.href.indexOf('m.youtube') !== -1) {
+			// If we're viewing a playlist
+			if (typeof goodTube_getParams['i'] !== 'undefined' || typeof goodTube_getParams['index'] !== 'undefined' || typeof goodTube_getParams['list'] !== 'undefined') {
+				let playlist = document.querySelectorAll('ytm-playlist-panel-renderer ytm-playlist-panel-video-renderer, ytm-playlist-video-list-renderer ytm-playlist-video-renderer');
+				let selectedItem = document.querySelectorAll('ytm-playlist-panel-renderer ytm-playlist-panel-video-renderer[aria-selected="true"], ytm-playlist-video-list-renderer ytm-playlist-video-renderer[aria-selected="true"]');
+
+				// Re-open the playlist if it's closed and try again
+				if (!playlist || playlist.length <= 0 || !selectedItem || selectedItem.length <= 0) {
+					document.querySelector('ytm-playlist-panel-entry-point')?.click();
+
+					setTimeout(function() {
+						goodTube_prevVideo(true);
+					}, 100);
+
+					return;
+				}
+
+				let prevEnabled = false;
+
+				// If the last video is NOT selected, enable next
+				let firstItemSelected = playlist[0].getAttribute('aria-selected');
+				if (firstItemSelected === 'false') {
+					prevEnabled = true;
+				}
+
+				if (prevEnabled) {
+					// Debug message
+					if (goodTube_debug) {
+						console.log('[GoodTube] Playing previous video in playlist...');
+					}
+
+					let playNextInLoop = false;
+					for (let i = playlist.length - 1; i >= 0; i--) {
+						if (playNextInLoop) {
+							playlist[i].querySelector('a.compact-media-item-image').click();
+							return;
+						}
+
+						if (playlist[i].getAttribute('aria-selected') === 'true') {
+							playNextInLoop = true;
+						}
+					}
+				}
+			}
+			// Otherwise we're not viewing a playlist, so if autoplay is on or we've pressed the prev button, and a previous video exists
+			else if ((goodTube_helper_getCookie('goodTube_autoplay') === 'on' || pressedButton) && goodTube_videojs_previousVideo[goodTube_videojs_previousVideo.length - 2] && goodTube_videojs_previousVideo[goodTube_videojs_previousVideo.length - 2] !== window.location.href) {
+				// Debug message
+				if (goodTube_debug) {
+					console.log('[GoodTube] Autoplaying previous video...');
+				}
+
+				// Go back to the previous video
+				setTimeout(function() {
+					goodTube_helper_setCookie('goodTube_previous', 'true');
+					window.history.go(-1);
+				}, 0);
+			}
+		}
+		// Desktop
+		else {
+			// If we're viewing a playlist
+			if (typeof goodTube_getParams['i'] !== 'undefined' || typeof goodTube_getParams['index'] !== 'undefined' || typeof goodTube_getParams['list'] !== 'undefined') {
+				let playlist = document.querySelectorAll('#secondary .playlist-items ytd-playlist-panel-video-renderer:not([hidden]), #below .playlist-items ytd-playlist-panel-video-renderer:not([hidden])');
+
+				// If we're not viewing the first video in the playlist
+				if (playlist && !playlist[0].selected) {
+					// Debug message
+					if (goodTube_debug) {
+						console.log('[GoodTube] Playing previous video in playlist...');
+					}
+
+					goodTube_shortcut('prev');
+				}
+				// Otherwise we're at the first video of the playlist, so if autoplay is on or we've pressed the prev button, and a previous video exists
+				else if ((goodTube_helper_getCookie('goodTube_autoplay') === 'on' || pressedButton) && goodTube_videojs_previousVideo[goodTube_videojs_previousVideo.length - 2] && goodTube_videojs_previousVideo[goodTube_videojs_previousVideo.length - 2] !== window.location.href) {
+					// Debug message
+					if (goodTube_debug) {
+						console.log('[GoodTube] Autoplaying previous video...');
+					}
+
+					// Go back to the previous video
+					setTimeout(function() {
+						goodTube_helper_setCookie('goodTube_previous', 'true');
+						window.history.go(-1);
+					}, 0);
+				}
+			}
+			// Otherwise we're not viewing a playlist, so if autoplay is on or we've pressed the prev button, and a previous video exists
+			else if ((goodTube_helper_getCookie('goodTube_autoplay') === 'on' || pressedButton) && goodTube_videojs_previousVideo[goodTube_videojs_previousVideo.length - 2] && goodTube_videojs_previousVideo[goodTube_videojs_previousVideo.length - 2] !== window.location.href) {
+				// Debug message
+				if (goodTube_debug) {
+					console.log('[GoodTube] Autoplaying previous video...');
+				}
+
+				// Go back to the previous video
+				setTimeout(function() {
+					goodTube_helper_setCookie('goodTube_previous', 'true');
+					window.history.go(-1);
+				}, 0);
+			}
+		}
+	}
+
+	// Play the next video
+	function goodTube_nextVideo(pressedButton = false) {
+		// Mobile
+		if (window.location.href.indexOf('m.youtube') !== -1) {
+			// If we're viewing a playlist
+			if (typeof goodTube_getParams['i'] !== 'undefined' || typeof goodTube_getParams['index'] !== 'undefined' || typeof goodTube_getParams['list'] !== 'undefined') {
+				let playlist = document.querySelectorAll('#secondary .playlist-items ytd-playlist-panel-video-renderer:not([hidden]), #below .playlist-items ytd-playlist-panel-video-renderer:not([hidden])');
+				let selectedItem = document.querySelectorAll('ytm-playlist-panel-renderer ytm-playlist-panel-video-renderer[aria-selected="true"], ytm-playlist-video-list-renderer ytm-playlist-video-renderer[aria-selected="true"]');
+
+				// Re-open the playlist if it's closed and try again
+				if (!playlist || playlist.length <= 0 || !selectedItem || selectedItem.length <= 0) {
+					document.querySelector('ytm-playlist-panel-entry-point')?.click();
+
+					setTimeout(function() {
+						goodTube_nextVideo(true);
+					}, 100);
+
+					return;
+				}
+
+				let nextEnabled = false;
+
+				// If the last video is NOT selected, enable next
+				let lastItemSelected = playlist[playlist.length - 1].getAttribute('aria-selected');
+				if (lastItemSelected === 'false') {
+					nextEnabled = true;
+				}
+
+				if (nextEnabled) {
+					// Debug message
+					if (goodTube_debug) {
+						console.log('[GoodTube] Playing next video in playlist...');
+					}
+
+					let playNextInLoop = false;
+					for (let i = 0; i < playlist.length; i++) {
+						if (playNextInLoop) {
+							playlist[i].querySelector('a.compact-media-item-image').click();
+							return;
+						}
+
+						if (playlist[i].getAttribute('aria-selected') === 'true') {
+							playNextInLoop = true;
+						}
+					}
+				}
+			}
+			// Otherwise we're not viewing a playlist, so if autoplay is on, play the next autoplay video
+			else if (goodTube_helper_getCookie('goodTube_autoplay') === 'on' || pressedButton) {
+				// Debug message
+				if (goodTube_debug) {
+					console.log('[GoodTube] Autoplaying next video...');
+				}
+
+				function goodTube_clickNextButtonMobile() {
+					// Skip to the end of the video
+					goodTube_player_skipTo(goodTube_player, goodTube_player.duration);
+
+					// Sync the players, this helps the Youtube next button to populate
+					goodTube_youtube_syncPlayers();
+
+					// Click the next button
+					let nextButton = document.querySelector('.icon-button[aria-label="Next video"');
+
+					if (nextButton) {
+						nextButton.click();
+					}
+					else {
+						setTimeout(goodTube_clickNextButtonMobile, 0);
+					}
+				}
+
+				// Play the next video
+				setTimeout(goodTube_clickNextButtonMobile, 0);
+			}
+		}
+		// Desktop
+		else {
+			// If we're viewing a playlist
+			if (typeof goodTube_getParams['i'] !== 'undefined' || typeof goodTube_getParams['index'] !== 'undefined' || typeof goodTube_getParams['list'] !== 'undefined') {
+				let playlist = document.querySelectorAll('#secondary .playlist-items ytd-playlist-panel-video-renderer:not([hidden]), #below .playlist-items ytd-playlist-panel-video-renderer:not([hidden])');
+
+				// If we're not viewing the last video in the playlist
+				if (playlist && !playlist[playlist.length - 1].selected) {
+					// Debug message
+					if (goodTube_debug) {
+						console.log('[GoodTube] Playing next video in playlist...');
+					}
+
+					goodTube_shortcut('next');
+				}
+				// Otherwise we're at the last video of the playlist,  so if autoplay is on or we've pressed the next button, play the next autoplay video
+				else if (goodTube_helper_getCookie('goodTube_autoplay') === 'on' || pressedButton) {
+					// Debug message
+					if (goodTube_debug) {
+						console.log('[GoodTube] Autoplaying next video...');
+					}
+
+					// Play the next video
+					setTimeout(function() {
+						goodTube_shortcut('next');
+					}, 0);
+				}
+			}
+			// Otherwise we're not viewing a playlist,  so if autoplay is on or we've pressed the next button, play the next autoplay video
+			else if (goodTube_helper_getCookie('goodTube_autoplay') === 'on' || pressedButton) {
+				// Debug message
+				if (goodTube_debug) {
+					console.log('[GoodTube] Autoplaying next video...');
+				}
+
+				// Play the next video
+				setTimeout(function() {
+					goodTube_shortcut('next');
+				}, 0);
+			}
+		}
+	}
+
+	// Download video / audio for a specificed youtube ID
+	function goodTube_download(type, youtubeId, fileName, codec) {
+		// Stop if this is no longer a pending download
+		if (typeof goodTube_pendingDownloads[youtubeId] === 'undefined') {
+			return;
+		}
+
+		// Only re-attempt to download max configured retry attempts (x 5 - API debounce can be trouble)
+		if (typeof goodTube_player_downloadAttempts[youtubeId] === 'undefined') {
+			goodTube_player_downloadAttempts[youtubeId] = 0;
+		}
+
+		goodTube_player_downloadAttempts[youtubeId]++;
+		if (goodTube_player_downloadAttempts[youtubeId] > (goodTube_retryAttempts * 5)) {
+			// Debug message
+			if (goodTube_debug) {
+				if (typeof fileName !== 'undefined') {
+					console.log('[GoodTube] '+type.charAt(0).toUpperCase()+type.slice(1)+' - '+fileName+' could not be downloaded. Please try again soon.');
+				}
+				else {
+					console.log('[GoodTube] '+type.charAt(0).toUpperCase()+type.slice(1)+' could not be downloaded. Please try again soon.');
+				}
+			}
+
+			// Hide the downloading indicator
+			goodTube_player_videojs_hideDownloading();
+
+			return;
+		}
+
+		// Delay calling the API 3s since it was last called
+		let delaySeconds = 0;
+		let currentTimeSeconds = new Date().getTime() / 1000;
+		let lastDownloadTimeSeconds = parseFloat(goodTube_helper_getCookie('goodTube_lastDownloadTimeSeconds'));
+		if (lastDownloadTimeSeconds) {
+			delaySeconds = (3 - (currentTimeSeconds - lastDownloadTimeSeconds));
+
+			if (delaySeconds < 0) {
+				delaySeconds = 0;
+			}
+		}
+		goodTube_helper_setCookie('goodTube_lastDownloadTimeSeconds', (currentTimeSeconds + delaySeconds));
+
+		goodTube_downloadTimeouts[youtubeId] = setTimeout(function() {
+			// Show the downloading indicator
+			goodTube_player_videojs_showDownloading();
+
+			// Mobile only supports h264, otherwise we use vp9
+			let vCodec = 'vp9';
+			if (typeof codec !== 'undefined') {
+					vCodec = codec;
+			}
+			if (window.location.href.indexOf('m.youtube') !== -1) {
+				vCodec = 'h264';
+			}
+
+			// Audio only option
+			let isAudioOnly = false;
+			if (type === 'audio') {
+				isAudioOnly = true;
+			}
+
+			// Setup options to call the API
+			let jsonData = JSON.stringify({
+				'url': 'https://www.youtube.com/watch?v='+youtubeId,
+				'vCodec': vCodec,
+				'vQuality': 'max',
+				'filenamePattern': 'basic',
+				'isAudioOnly': isAudioOnly
+			});
+
+			// Call the API
+			fetch('https://api-pl.cobalt.best/api/json', {
+				method: 'POST',
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				body: jsonData
+			})
+			.then(response => response.text())
+			.then(data => {
+				// Stop if this is no longer a pending download
+				if (typeof goodTube_pendingDownloads[youtubeId] === 'undefined') {
+					return;
+				}
+
+				// Turn data into JSON
+				data = JSON.parse(data);
+
+				// Try again if we've hit the API rate limit
+				if (typeof data['status'] !== 'undefined' && data['status'] === 'rate-limit') {
+					if (typeof goodTube_pendingRetry['download_'+youtubeId] !== 'undefined') {
+						clearTimeout(goodTube_pendingRetry['download_'+youtubeId]);
+					}
+
+					goodTube_pendingRetry['download_'+youtubeId] = setTimeout(function() {
+						goodTube_download(type, youtubeId, fileName);
+					}, goodTube_retryDelay);
+
+					return;
+				}
+
+				// If there was an error returned from the API
+				if (typeof data['status'] !== 'undefined' && data['status'] === 'error') {
+
+					// Try again if the API is down.
+					// There should be an error with the word 'api' in it.
+					if (typeof data['text'] !== 'undefined' && data['text'].toLowerCase().indexOf('api') !== -1) {
+						if (typeof goodTube_pendingRetry['download_'+youtubeId] !== 'undefined') {
+							clearTimeout(goodTube_pendingRetry['download_'+youtubeId]);
+						}
+
+						goodTube_pendingRetry['download_'+youtubeId] = setTimeout(function() {
+							goodTube_download(type, youtubeId, fileName);
+						}, goodTube_retryDelay);
+
+						return;
+					}
+
+					// If there was an issue with the codec, try again with; av1 (better support), then h264 (best support)
+					// There should be an error with the word 'settings' in it.
+					if (vCodec !== 'h264' && typeof data['text'] !== 'undefined' && data['text'].toLowerCase().indexOf('settings') !== -1) {
+						let newCodec = false;
+						if (vCodec === 'vp9') {
+							newCodec = 'av1';
+						}
+						else if (vCodec === 'av1') {
+							newCodec = 'h264';
+						}
+
+						if (typeof goodTube_pendingRetry['download_'+youtubeId] !== 'undefined') {
+							clearTimeout(goodTube_pendingRetry['download_'+youtubeId]);
+						}
+
+						goodTube_pendingRetry['download_'+youtubeId] = setTimeout(function() {
+							goodTube_download(type, youtubeId, fileName, newCodec);
+						}, goodTube_retryDelay);
+
+						return;
+					}
+
+					// Otherwise, just fallback to opening it in a new tab
+					if (goodTube_api_type === 1 || goodTube_api_type === 2) {
+						if (type === 'audio') {
+							window.open(goodTube_api_url+'/watch?v='+goodTube_getParams['v']+'&listen=true&raw=1', '_blank');
+						}
+						else {
+							window.open(goodTube_api_url+'/latest_version?id='+goodTube_getParams['v'], '_blank');
+						}
+
+						// Debug message
+						if (goodTube_debug) {
+							if (typeof fileName !== 'undefined') {
+								console.log('[GoodTube] Opening download in new tab (normal way not working!) - '+type+' - '+fileName);
+							}
+							else {
+								console.log('[GoodTube] Opening download in new tab (normal way not working!) - '+type);
+							}
+						}
+					}
+
+					// Reset ALL downloading attempts (this helps to debounce the API)
+					goodTube_player_downloadAttempts = [];
+
+					// Remove from pending downloads
+					if (typeof goodTube_pendingDownloads[youtubeId] !== 'undefined') {
+						delete goodTube_pendingDownloads[youtubeId];
+					}
+
+					// Hide the downloading indicator
+					setTimeout(function() {
+						goodTube_player_videojs_hideDownloading();
+					}, 1000);
+
+					return;
+				}
+
+				// If the data is all good
+				if (typeof data['status'] !== 'undefined' && typeof data['url'] !== 'undefined') {
+					// Download the file, without a file name (also just do this on mobile because we can't download blobs)
+					if (typeof fileName === 'undefined' || window.location.href.indexOf('m.youtube') !== -1) {
+						window.open(data['url'], '_self');
+
+						// Debug message
+						if (goodTube_debug) {
+							console.log('[GoodTube] Downloaded '+type);
+						}
+
+						// Reset ALL downloading attempts (this helps to debounce the API)
+						goodTube_player_downloadAttempts = [];
+
+						// Remove from pending downloads
+						if (typeof goodTube_pendingDownloads[youtubeId] !== 'undefined') {
+							delete goodTube_pendingDownloads[youtubeId];
+						}
+
+						// Hide the downloading indicator
+						setTimeout(function() {
+							goodTube_player_videojs_hideDownloading();
+						}, 1000);
+					}
+					// Download the file with a file name (as a blob, this is used for playlists - DESKTOP ONLY)
+					else {
+						goodTube_downloadFileAsBlob(data['url'], type, fileName, youtubeId);
+					}
+				}
+			})
+			// If anything went wrong, try again
+			.catch((error) => {
+				if (typeof goodTube_pendingRetry['download_'+youtubeId] !== 'undefined') {
+					clearTimeout(goodTube_pendingRetry['download_'+youtubeId]);
+				}
+
+				goodTube_pendingRetry['download_'+youtubeId] = setTimeout(function() {
+					goodTube_download(type, youtubeId, fileName);
+				}, goodTube_retryDelay);
+			});
+		}, (delaySeconds * 1000));
+	}
+
+	// Download the entire playlist (currently only works on desktop cus frame API limitations)
+	function goodTube_downloadPlaylist(type, noPrompt) {
+		// Show a "are you sure cus it takes some time" sort of message
+		if (typeof noPrompt === 'undefined' && !confirm("Are you sure you want to download this playlist ("+type+")?\r\rYou can keep playing and downloading other videos, just don't close the the tab :)")) {
+			return;
+		}
+
+		// Debug message
+		if (goodTube_debug && typeof noPrompt === 'undefined') {
+			console.log('[GoodTube] Downloading '+type+' playlist...');
+		}
+
+		let playlistItems = [];
+
+		// Mobile - get playlist items
+		if (window.location.href.indexOf('m.youtube') !== -1) {
+			playlistItems = document.querySelectorAll('ytm-playlist-panel-renderer ytm-playlist-panel-video-renderer, ytm-playlist-video-list-renderer ytm-playlist-video-renderer');
+
+			// Re-open the playlist if it's closed and try again
+			if (!playlistItems || playlistItems.length <= 0) {
+				document.querySelector('ytm-playlist-panel-entry-point')?.click();
+
+				setTimeout(function() {
+					goodTube_downloadPlaylist(type, true);
+				}, 100);
+
+				return;
+			}
+		}
+		// Desktop - get playlist items
+		else {
+			playlistItems = document.querySelectorAll('#secondary .playlist-items ytd-playlist-panel-video-renderer:not([hidden]), #below .playlist-items ytd-playlist-panel-video-renderer:not([hidden])');
+		}
+
+		// Make sure the data is all good
+		if (playlistItems.length <= 0) {
+			if (goodTube_debug) {
+				console.log('[GoodTube] Downloading failed, could not find playlist data');
+			}
+
+			return;
+		}
+
+		let track = 0;
+		playlistItems.forEach((element) => {
+			let fileName = '';
+			let url = '';
+
+			// Mobile - get playlist info
+			if (window.location.href.indexOf('m.youtube') !== -1) {
+				fileName = goodTube_helper_padNumber((track + 1), 2)+' - '+element.querySelector('.compact-media-item-headline > span').innerHTML.trim();
+				url = element.querySelector('.compact-media-item-image').getAttribute('href');
+			}
+			// Desktop - get playlist info
+			else {
+				fileName = goodTube_helper_padNumber((track + 1), 2)+' - '+element.querySelector('#video-title').innerHTML.trim();
+				url = element.querySelector('#wc-endpoint').getAttribute('href');
+			}
+
+			// Make sure the data is all good
+			if (!fileName || !url) {
+				if (goodTube_debug) {
+					console.log('[GoodTube] Downloading failed, could not find playlist data');
+				}
+
+				return;
+			}
+
+			let urlGet = url.split('?')[1];
+
+			let getParams = {};
+			urlGet.replace(/\??(?:([^=]+)=([^&]*)&?)/g, function() {
+				function decode(s) {
+					return decodeURIComponent(s.split("+").join(" "));
+				}
+
+				getParams[decode(arguments[1])] = decode(arguments[2]);
+			});
+
+			let id = getParams['v'];
+
+			// Add to pending downloads
+			goodTube_pendingDownloads[id] = true;
+
+			// Download the video
+			goodTube_download(type, id, fileName);
+
+			track++;
+		});
+	}
+
+	// Download a file as blob (this allows us to name it - so we use it for playlists - but it's doesn't actually download the file until fully loaded in the browser, which is kinda bad UX - but for now, it works!)
+	function goodTube_downloadFileAsBlob(url, type, fileName, youtubeId) {
+		// Stop if this is no longer a pending download
+		if (typeof goodTube_pendingDownloads[youtubeId] === 'undefined') {
+			return;
+		}
+
+		// Only re-attempt to download the max configured retry attempts
+		if (typeof goodTube_player_downloadFileAsBlobAttempts[url] === 'undefined') {
+			goodTube_player_downloadFileAsBlobAttempts[url] = 0;
+		}
+
+		goodTube_player_downloadFileAsBlobAttempts[url]++;
+		if (goodTube_player_downloadFileAsBlobAttempts[url] > goodTube_retryAttempts) {
+			// Debug message
+			if (goodTube_debug) {
+				console.log('[GoodTube] '+type.charAt(0).toUpperCase()+type.slice(1)+' - '+fileName+' could not be downloaded. Please try again soon.');
+			}
+
+			// Hide the downloading indicator
+			goodTube_player_videojs_hideDownloading();
+
+			return;
+		}
+
+		// Show the downloading indicator
+		goodTube_player_videojs_showDownloading();
+
+		// Set the file extension based on the type
+		let fileExtension = '.mp4';
+		if (type === 'audio') {
+			fileExtension = '.mp3';
+		}
+
+		fetch(url)
+		.then(response => response.blob())
+		.then(blob => {
+			// Stop if this is no longer a pending download
+			if (typeof goodTube_pendingDownloads[youtubeId] === 'undefined') {
+				return;
+			}
+
+			// Get the blob
+			let url = URL.createObjectURL(blob);
+
+			// Create a download link element and set params
+			let a = document.createElement('a');
+			a.style.display = 'none';
+			a.href = url;
+			a.download = fileName+fileExtension;
+			document.body.appendChild(a);
+
+			// Click the link to download
+			a.click();
+
+			// Remove the blob from memory
+			window.URL.revokeObjectURL(url);
+
+			// Remove the link
+			a.remove();
+
+			// Debug message
+			if (goodTube_debug) {
+				console.log('[GoodTube] Downloaded '+type+' - '+fileName);
+			}
+
+			// Reset ALL downloading attempts (this helps to debounce the API)
+			goodTube_player_downloadAttempts = [];
+
+			// Remove from pending downloads
+			if (typeof goodTube_pendingDownloads[youtubeId] !== 'undefined') {
+				delete goodTube_pendingDownloads[youtubeId];
+			}
+
+			// Hide the downloading indicator
+			goodTube_player_videojs_hideDownloading();
+		})
+		// If anything went wrong, try again
+		.catch((error) => {
+			if (typeof goodTube_pendingRetry['downloadFileAsBlob_'+url] !== 'undefined') {
+				clearTimeout(goodTube_pendingRetry['downloadFileAsBlob_'+url]);
+			}
+
+			goodTube_pendingRetry['downloadFileAsBlob_'+url] = setTimeout(function() {
+				goodTube_downloadFileAsBlob(url, type, fileName, youtubeId);
+			}, goodTube_retryDelay);
+		});
+	}
+
+	// Cancel all pending downloads
+	function goodTube_downloadsCancel() {
+		// Show "are you sure" prompt
+		if (!confirm("Are you sure you want to cancel all downloads?")) {
+			return;
+		}
+
+		// Remove all pending downloads
+		goodTube_pendingDownloads = [];
+
+		// Reset all downloading attempts
+		goodTube_player_downloadAttempts = [];
+
+		// Clear all download timeouts
+		for (let key in goodTube_downloadTimeouts) {
+			clearTimeout(goodTube_downloadTimeouts[key]);
+			delete goodTube_downloadTimeouts[key];
+		}
+
+		// Hide the downloading indicator
+		goodTube_player_videojs_hideDownloading(true);
+
+		// Debug message
+		if (goodTube_debug) {
+			console.log('[GoodTube] Downloads cancelled');
+		}
+	}
+
+	// Check for updates
+	function goodTube_checkForUpdates() {
+		if (goodTube_stopUpdates) {
+			return;
+		}
+
+		const scriptUrl = goodTube_github+'/goodtube.user.js?i'+Date.now();
+
+		// Debug message
+		if (goodTube_debug) {
+			console.log('[GoodTube] Checking for updates...');
+		}
+
+		fetch(scriptUrl)
+		.then(response => response.text())
+		.then(data => {
+			// Extract version from the script on GitHub
+			const match = data.match(/@version\s+(\d+\.\d+)/);
+
+			// If we can't find the version, just return
+			if (!match) {
+				return;
+			}
+
+			const currentVersion = parseFloat(GM_info.script.version);
+			const githubVersion = parseFloat(match[1]);
+
+			// There's no updates, so just return
+			if (githubVersion <= currentVersion) {
+				// Debug message
+				if (goodTube_debug) {
+					console.log('[GoodTube] No updates found');
+				}
+				return;
+			}
+
+			// If a version is skipped, don't show the update message again until the next version
+			if (parseFloat(localStorage.getItem('goodTube_stopUpdates')) === githubVersion) {
+				return;
+			}
+
+			// Style SweetAlert2
+			let style = document.createElement('style');
+			style.textContent = `
+				html body .swal2-container {
+					z-index: 2400;
+				}
+
+				html body .swal2-title {
+					font-size: 18px;
+				}
+
+				html body .swal2-html-container {
+					font-size: 14px;
+					margin-top: 8px;
+					margin-bottom: 12px;
+				}
+
+				html body .swal2-actions {
+					margin: 0 !important;
+					display: flex;
+					flex-wrap: wrap;
+					gap: 8px;
+				}
+
+				html body .swal2-actions button {
+					margin: 0 !important;
+					font-size: 12px;
+				}
+			`;
+			document.head.appendChild(style);
+
+			// Include SweetAlert2 library
+			fetch(goodTube_github+'/js/sweetalert2@11.js')
+			.then(response => response.text())
+			.then(data => {
+				let asset_element = document.createElement('script');
+				asset_element.innerHTML = data;
+				document.head.appendChild(asset_element);
+
+				Swal.fire({
+					position: "top-end",
+					backdrop: false,
+					title: 'GoodTube: a new version is available.',
+					text: 'Do you want to update?',
+					showCancelButton: true,
+					showDenyButton: true,
+					confirmButtonText: 'Update',
+					denyButtonText:'Skip',
+					cancelButtonText: 'Close'
+				}).then((result) => {
+					if (result.isConfirmed) {
+						window.location = scriptUrl;
+					}
+					else if (result.isDenied) {
+						localStorage.setItem('goodTube_stopUpdates', githubVersion);
+					}
+				});
+			});
+
+			// Debug message
+			if (goodTube_debug) {
+				console.log('[GoodTube] New version found - '+githubVersion);
+			}
+		})
+		.catch(error => {
+			goodTube_stopUpdates = true;
+		});
+
+		goodTube_stopUpdates = true;
+	}
+
+	// Actions
+	function goodTube_actions() {
+		// Hide youtube players
+		goodTube_youtube_hidePlayers();
+
+		// Make the youtube player the lowest quality to save on bandwidth
+		goodTube_youtube_lowestQuality();
+
+		// Hide ads, shorts, etc - real time
+		goodTube_youtube_hideAdsShortsEtc_realTime();
+
+		// Remove that annoying "Are you still watching" prompt
+		goodTube_youtube_areYouStillWatching();
+
+		// Support timestamp links in comments
+		goodTube_youtube_timestampLinks();
+
+		// Check that the assets are loaded AND the player is loaded before continuing
+		let player = goodTube_player;
+		if (goodTube_player_loadedAssets >= goodTube_player_assets.length && goodTube_videojs_player_loaded) {
+			// Remove hashes, these mess with things sometimes
+			let prevURL = goodTube_previousUrl;
+			if (prevURL) {
+				prevURL = prevURL.split('#')[0];
+			}
+
+			let currentURL = window.location.href.split('#')[0];
+			if (currentURL) {
+				currentURL = currentURL.split('#')[0];
+			}
+
+			// If the URL has changed (or on first page load)
+			if (prevURL !== currentURL) {
+				// Setup GET params
+				goodTube_getParams = goodTube_helper_parseGetParams();
+
+				// If we're viewing a video
+				if (typeof goodTube_getParams['v'] !== 'undefined') {
+					// Show the player (mobile only)
+					if (window.location.href.indexOf('m.youtube') !== -1) {
+						goodTube_player_show(player);
+					}
+
+					// Debug message
+					if (goodTube_debug) {
+						console.log('\n-------------------------\n\n');
+					}
+
+					// Setup the previous button history
+					goodTube_player_videojs_setupPrevHistory();
+
+					// Load the video data
+
+					// Debug message
+					if (goodTube_debug) {
+						console.log('[GoodTube] Loading video data from '+goodTube_api_name+'...');
+					}
+
+					goodTube_player_loadVideoDataAttempts = 0;
+					goodTube_player_restoreTime = 0;
+					goodTube_player_loadVideo(player);
+
+					// Usage stats
+					goodTube_stats_video();
+				}
+				// Otherwise we're not viewing a video, and we're not in the miniplayer or pip
+				else if (!goodTube_player_miniplayer && !goodTube_player_pip) {
+					// Clear the player
+					goodTube_player_clear(goodTube_player);
+
+					// Hide the player (mobile only)
+					if (window.location.href.indexOf('m.youtube') !== -1) {
+						goodTube_player_hide(player);
+					}
+
+					// Empty the previous video history
+					goodTube_videojs_previousVideo = [];
+
+					// Clear any pending retry attempts
+					for (let key in goodTube_pendingRetry) {
+						if (goodTube_pendingRetry.hasOwnProperty(key)) {
+							clearTimeout(goodTube_pendingRetry[key]);
+						}
+					}
+				}
+
+				// Ok, we've done what we need to with our player so let's pause this part of the loop until the URL changes
+				goodTube_previousUrl = window.location.href;
+			}
+		}
+	}
+
+	/*
+		Basic usage stats
+		Don't worry everyone - this is just a counter that totals unique users / how many videos were played with GoodTube.
+		It's only in here so I can have some fun and see how many people use this thing I made - no private info is tracked.
+	*/
+	function goodTube_stats_unique() {
+		if (!goodTube_helper_getCookie('goodTube_unique_new2')) {
+			fetch('https://api.counterapi.dev/v1/goodtube/users/up/');
+
+			// No longer works :(
+			// fetch("https://api.lyket.dev/v1/clap-buttons/goodtube/users/press", {
+			// 	method: "PUT",
+			// 	headers: {
+			// 		"Content-Type": "application/json",
+			// 		"Authorization": 'Bearer pt_aa32dfa6765c4ac49ae96f6a423b02'
+			// 	}
+			// });
+
+			// Set a cookie to only count users once
+			goodTube_helper_setCookie('goodTube_unique_new2', 'true');
+		}
+	}
+
+	function goodTube_stats_video() {
+		fetch('https://api.counterapi.dev/v1/goodtube/videos/up/');
+
+		// No longer works :(
+		// fetch("https://api.lyket.dev/v1/clap-buttons/goodtube/videos/press", {
+		// 	method: "PUT",
+		// 	headers: {
+		// 		"Content-Type": "application/json",
+		// 		"Authorization": 'Bearer pt_aa32dfa6765c4ac49ae96f6a423b02'
+		// 	}
+		// });
+	}
+
+	// Init
+	function goodTube_init() {
+		// Debug message
+		if (goodTube_debug) {
+			console.log('\n==================================================\n    ______                ________      __\n   / ____/___  ____  ____/ /_  __/_  __/ /_  ___\n  / / __/ __ \\/ __ \\/ __  / / / / / / / __ \\/ _ \\\n / /_/ / /_/ / /_/ / /_/ / / / / /_/ / /_/ /  __/\n \\____/\\____/\\____/\\____/ /_/  \\____/_____/\\___/\n\n==================================================');
+			console.log('[GoodTube] Initiating...');
+		}
+
+		// If there's a cookie for our previously chosen API, select it
+		let goodTube_api_cookie = goodTube_helper_getCookie('goodTube_api');
+		if (goodTube_api_cookie) {
+			goodTube_apis.forEach((api) => {
+				if (api['url'] === goodTube_api_cookie) {
+					goodTube_api_type = api['type'];
+					goodTube_api_proxy = api['proxy'];
+					goodTube_api_url = api['url'];
+					goodTube_api_name = api['name'];
+				}
+			});
+		}
+
+		// Mute, pause and skip ads on all Youtube as much as possible
+		setInterval(goodTube_youtube_mutePauseSkipAds, 1);
+
+		// Run the GoodTube actions initally
+		setInterval(goodTube_actions, 1);
+
+		// Setup our next / prev buttons to show or hide every 100ms
+		setInterval(goodTube_player_videojs_showHideNextPrevButtons, 100);
+
+		// Setup our playlist buttons to show or hide every 100ms
+		setInterval(goodTube_player_videojs_showHideDownloadPlaylistButtons, 100);
+
+		// Sync pip properly
+		setInterval(goodTube_player_pipUpdate, 100);
+
+		// Sync miniplayer properly
+		setInterval(goodTube_player_miniplayerUpdate, 100);
+
+		// Hide ads, shorts, etc - init
+		goodTube_youtube_hideAdsShortsEtc_init();
+
+		// Support hiding elements without Youtube knowing
+		goodTube_helper_hideElement_init();
+
+		// Check for updates
+		goodTube_checkForUpdates();
+
+		// Mute, pause and skip ads on all Youtube initally
+		goodTube_youtube_mutePauseSkipAds();
+
+		// Load required assets
+		goodTube_player_loadAssets();
+
+		// Init our player
+		goodTube_player_init();
+
+		// Usage stats
+		goodTube_stats_unique();
+	}
+
+
+	/* Start GoodTube
+	------------------------------------------------------------------------------------------ */
+	goodTube_init();
+
+
+})();
