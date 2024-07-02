@@ -160,3 +160,10 @@ This took around 5 weeks to create and a thousand black coffees. I do hope you e
 Any questions, you can contact me at: goodtube4u@hotmail.com
 
 I'm dedicated to helping every single user get this working, so really - if you have any problems at all hit me up!
+
+
+## Attributions
+
+Many thanks to https://cobalt.tools for providing the amazing API we're using to download stuff!
+
+You can also use this website to download from other platforms like SoundCloud, give it a try :)
