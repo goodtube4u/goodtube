@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      3.052
+// @version      3.053
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -1849,7 +1849,7 @@
 				goodTube_player_loadChapters(player, videoData['description'], videoData['lengthSeconds']);
 
 				// Load storyboards into the player (desktop only)
-				if (storyboardData && window.location.href.indexOf('m.youtube') === -1) {
+				if (window.location.href.indexOf('m.youtube') === -1) {
 					goodTube_player_loadStoryboard(player, storyboardData);
 				}
 			}
