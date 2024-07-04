@@ -2203,11 +2203,9 @@
 				console.log('[GoodTube] Loading subtitles...');
 			}
 
-			// Check the subtitle server works, if not fallback to a backup server
-			if (goodTube_api_type === 1 || goodTube_api_type === 2) {
-				goodTube_otherDataServersIndex_subtitles = 0;
-				goodTube_player_checkSubtitleServer(player, subtitleData, goodTube_api_url);
-			}
+			// Check the subtitle server works
+			goodTube_otherDataServersIndex_subtitles = 0;
+			goodTube_player_checkSubtitleServer(player, subtitleData, goodTube_api_url);
 		}
 	}
 
@@ -2230,21 +2228,21 @@
 		}
 		goodTube_otherDataServersIndex_subtitles++;
 
+		// Get the subtitle
 		fetch(subtitleApi+subtitleData[0]['url'])
 		.then(response => response.text())
 		.then(data => {
-			// If it failed, try again (with a fallback server)
+			// If the data wasn't right, try the next fallback server
 			if (data.substr(0,6) !== 'WEBVTT') {
 				goodTube_player_checkSubtitleServer(player, subtitleData, subtitleApi);
 			}
-			// If it worked, load the subtitles
+			// If the data was good, load the subtitles
 			else {
 				goodTube_player_loadSubtitlesAfterCheck(player, subtitleData, subtitleApi);
 			}
 		})
-		// If it failed, use a fallback API for the subtitles
+		// If the fetch failed, try the next fallback server
 		.catch((error) => {
-			// If it failed, try again (with a fallback server)
 			goodTube_player_checkSubtitleServer(player, subtitleData, subtitleApi);
 		});
 	}
@@ -2257,10 +2255,8 @@
 			let subtitle_url = false;
 			let subtitle_label = false;
 
-			if (goodTube_api_type === 1 || goodTube_api_type === 2) {
-				subtitle_url = subtitleApi+subtitle['url'];
-				subtitle_label = subtitle['label'];
-			}
+			subtitle_url = subtitleApi+subtitle['url'];
+			subtitle_label = subtitle['label'];
 
 			// Ensure we have all the subtitle data AND don't load a subtitle with the same label twice (this helps Piped to load actual captions over auto-generated captions if both exist)
 			if (subtitle_url && subtitle_label && subtitle_label !== previous_subtitle) {
@@ -2289,11 +2285,9 @@
 		// Remove the old thumbnails
 		document.querySelector('.vjs-vtt-thumbnail-display')?.remove();
 
-		// Check the storyboard server works, if not fallback to a backup server
-		if (goodTube_api_type === 1 || goodTube_api_type === 2) {
-			goodTube_otherDataServersIndex_storyboard = 0;
-			goodTube_player_checkStoryboardServer(player, storyboardData, goodTube_api_url);
-		}
+		// Check the storyboard server works
+		goodTube_otherDataServersIndex_storyboard = 0;
+		goodTube_player_checkStoryboardServer(player, storyboardData, goodTube_api_url);
 	}
 
 	function goodTube_player_checkStoryboardServer(player, storyboardData, storyboardApi) {
@@ -2315,22 +2309,21 @@
 		}
 		goodTube_otherDataServersIndex_storyboard++;
 
-		// If there's no storyboard data, check next server
+		// If there's no storyboard data, try the next fallback server
 		if (!storyboardData.length || storyboardData.length <= 0) {
 			goodTube_player_checkStoryboardServer(player, storyboardData, storyboardApi);
 		}
-		// Otherwise double check the storyboard returned actually loads
+		// Otherwise we have data, so double check the storyboard returned actually loads
 		else {
 			fetch(storyboardApi+storyboardData[0]['url'])
 			.then(response => response.text())
 			.then(data => {
-				// If it failed, try again (with a fallback server)
+				// If it failed, try the next fallback server
 				if (data.substr(0,6) !== 'WEBVTT') {
 					goodTube_player_checkStoryboardServer(player, storyboardData, storyboardApi);
 				}
-				// If it worked, load the storyboard
+				// If it worked, load the first storyboard returned (we've got to fish this out of a plain text return)
 				else {
-					// Validate the first storyboard returned
 					let gotTheUrl = false;
 					let storyboardUrl = false;
 					let items = data.split('\n\n');
@@ -2357,72 +2350,62 @@
 								goodTube_player_loadStoryboardAfterCheck(player, storyboardData, storyboardApi);
 							}
 							else {
-								// If it failed, try again (with a fallback server)
+								// It's not an image, so try the next fallback server
 								goodTube_player_checkStoryboardServer(player, storyboardData, storyboardApi);
 							}
 						})
+						// If the fetch failed, try the next fallback server
 						.catch((error) => {
-							// If it failed, try again (with a fallback server)
 							goodTube_player_checkStoryboardServer(player, storyboardData, storyboardApi);
 						});
 					}
-					// Otherwise move to the next server
+					// Otherwise try the next fallback server
 					else {
 						goodTube_player_checkStoryboardServer(player, storyboardData, storyboardApi);
 					}
 				}
 			})
-			// If it failed, use a fallback API for the storyboard
+			// If the fetch failed, try the next fallback server
 			.catch((error) => {
-				// If it failed, try again (with a fallback server)
 				goodTube_player_checkStoryboardServer(player, storyboardData, storyboardApi);
 			});
 		}
 	}
 
 	function goodTube_player_loadStoryboardAfterCheck(player, storyboardData, storyboardApi) {
-		// If storyboard data exists
-		if (storyboardData.length > 0) {
-			// Debug message
-			if (goodTube_debug) {
-				console.log('[GoodTube] Loading storyboard...');
+		// Debug message
+		if (goodTube_debug) {
+			console.log('[GoodTube] Loading storyboard...');
+		}
+
+		// Go through each storyboard and find the highest quality
+		let highestQualityStoryboardUrl = false;
+		let highestQualityStoryboardWidth = 0;
+		storyboardData.forEach((storyboard) => {
+			if (storyboard['width'] > highestQualityStoryboardWidth) {
+				highestQualityStoryboardUrl = storyboard['url'];
+				highestQualityStoryboardWidth = parseFloat(storyboard['width']);
+			}
+		});
+
+		// If we have a storyboard to load
+		if (highestQualityStoryboardUrl) {
+			// Store the core vttThumbnails function so we can call it again, because this plugin overwrites it's actual function once loaded!
+			if (typeof goodTube_videojs_player.vttThumbnails === 'function') {
+				goodTube_player_vttThumbnailsFunction = goodTube_videojs_player.vttThumbnails;
 			}
 
-			// Go through each storyboard and find the highest quality
-			let highestQualityStoryboardUrl = false;
-			let highestQualityStoryboardWidth = 0;
-			storyboardData.forEach((storyboard) => {
-				if (storyboard['width'] > highestQualityStoryboardWidth) {
-					highestQualityStoryboardUrl = storyboard['url'];
-					highestQualityStoryboardWidth = parseFloat(storyboard['width']);
-				}
+			// Restore the core function
+			goodTube_videojs_player.vttThumbnails = goodTube_player_vttThumbnailsFunction;
+
+			// Load the highest quality storyboard
+			goodTube_videojs_player.vttThumbnails({
+				src: storyboardApi+highestQualityStoryboardUrl
 			});
 
-			// If we have a storyboard to load
-			if (highestQualityStoryboardUrl) {
-				// Store the core vttThumbnails function so we can call it again, because this plugin overwrites it's actual function once loaded!
-				if (typeof goodTube_videojs_player.vttThumbnails === 'function') {
-					goodTube_player_vttThumbnailsFunction = goodTube_videojs_player.vttThumbnails;
-				}
-
-				// Restore the core function
-				goodTube_videojs_player.vttThumbnails = goodTube_player_vttThumbnailsFunction;
-
-				// Load the highest quality storyboard
-				goodTube_videojs_player.vttThumbnails({
-					src: storyboardApi+highestQualityStoryboardUrl
-				});
-
-				// Debug message
-				if (goodTube_debug) {
-					console.log('[GoodTube] Storyboard loaded');
-				}
-			}
-		}
-		else {
 			// Debug message
 			if (goodTube_debug) {
-				console.log('[GoodTube] Storyboard could not be loaded');
+				console.log('[GoodTube] Storyboard loaded');
 			}
 		}
 	}
