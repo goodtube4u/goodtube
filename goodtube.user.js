@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      3.055
+// @version      3.056
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -4981,13 +4981,19 @@
 			// Show the downloading indicator
 			goodTube_player_videojs_showDownloading();
 
-			// Mobile only supports h264, otherwise we use vp9
+			// CODEC:
+			// Desktop tries in this order: vp9, av1, h264
+			// Mobile tries in this order: h264, av1, vp9
+
+			// Set the default codec (first download call)
 			let vCodec = 'vp9';
-			if (typeof codec !== 'undefined') {
-					vCodec = codec;
-			}
 			if (window.location.href.indexOf('m.youtube') !== -1) {
 				vCodec = 'h264';
+			}
+
+			// If a codec was passed to this function (cus it retried itself) - then use that
+			if (typeof codec !== 'undefined') {
+				vCodec = codec;
 			}
 
 			// Audio only option
@@ -5041,7 +5047,7 @@
 				if (typeof data['status'] !== 'undefined' && data['status'] === 'error') {
 
 					// Try again if the API is down.
-					// There should be an error with the word 'api' in it.
+					// There should be an error with the word 'api' in it if this happens.
 					if (typeof data['text'] !== 'undefined' && data['text'].toLowerCase().indexOf('api') !== -1) {
 						if (typeof goodTube_pendingRetry['download_'+youtubeId] !== 'undefined') {
 							clearTimeout(goodTube_pendingRetry['download_'+youtubeId]);
@@ -5054,66 +5060,86 @@
 						return;
 					}
 
-					// If there was an issue with the codec, try again with; av1 (better support), then h264 (best support)
-					// There should be an error with the word 'settings' in it.
-					if (vCodec !== 'h264' && typeof data['text'] !== 'undefined' && data['text'].toLowerCase().indexOf('settings') !== -1) {
-						let newCodec = false;
-						if (vCodec === 'vp9') {
-							newCodec = 'av1';
-						}
-						else if (vCodec === 'av1') {
-							newCodec = 'h264';
+					// If there was an issue with the codec, try the next one.
+					// There should be an error with the word 'settings' in it if this happens.
+					let nextCodec = false;
+					if (typeof data['text'] !== 'undefined' && data['text'].toLowerCase().indexOf('settings') !== -1) {
+						// Select the next codec
+
+						// Desktop
+						if (window.location.href.indexOf('m.youtube') === -1) {
+							if (vCodec === 'vp9') {
+								nextCodec = 'av1';
+							}
+							else if (vCodec === 'av1') {
+								nextCodec = 'h264';
+							}
 						}
 
-						if (typeof goodTube_pendingRetry['download_'+youtubeId] !== 'undefined') {
-							clearTimeout(goodTube_pendingRetry['download_'+youtubeId]);
+						// Mobile
+						if (window.location.href.indexOf('m.youtube') === -1) {
+							if (vCodec === 'h264') {
+								nextCodec = 'av1';
+							}
+							else if (vCodec === 'av1') {
+								nextCodec = 'vp9';
+							}
 						}
 
-						goodTube_pendingRetry['download_'+youtubeId] = setTimeout(function() {
-							goodTube_download(type, youtubeId, fileName, newCodec);
-						}, goodTube_retryDelay);
+						// If there's a next codec available (and we're not out of options)
+						if (nextCodec) {
+							// Retry with the next codec
+							if (typeof goodTube_pendingRetry['download_'+youtubeId] !== 'undefined') {
+								clearTimeout(goodTube_pendingRetry['download_'+youtubeId]);
+							}
 
-						return;
-					}
+							goodTube_pendingRetry['download_'+youtubeId] = setTimeout(function() {
+								goodTube_download(type, youtubeId, fileName, nextCodec);
+							}, goodTube_retryDelay);
 
-					// Otherwise, just fallback to opening it in a new tab
-					if (goodTube_api_type === 1 || goodTube_api_type === 2) {
-						if (type === 'audio') {
-							window.open(goodTube_api_url+'/watch?v='+goodTube_getParams['v']+'&listen=true&raw=1', '_blank');
+							return;
 						}
+						// Otherwise, there's no more codecs to try, so fallback to opening it in a new tab
 						else {
-							window.open(goodTube_api_url+'/latest_version?id='+goodTube_getParams['v'], '_blank');
-						}
+							if (goodTube_api_type === 1 || goodTube_api_type === 2) {
+								if (type === 'audio') {
+									window.open(goodTube_api_url+'/watch?v='+goodTube_getParams['v']+'&listen=true&raw=1', '_blank');
+								}
+								else {
+									window.open(goodTube_api_url+'/latest_version?id='+goodTube_getParams['v'], '_blank');
+								}
 
-						// Debug message
-						if (goodTube_debug) {
-							if (typeof fileName !== 'undefined') {
-								console.log('[GoodTube] Opening download in new tab (normal way not working!) - '+type+' - '+fileName);
-							}
-							else {
-								console.log('[GoodTube] Opening download in new tab (normal way not working!) - '+type);
+								// Debug message
+								if (goodTube_debug) {
+									if (typeof fileName !== 'undefined') {
+										console.log('[GoodTube] Opening download in new tab (normal way not working!) - '+type+' - '+fileName);
+									}
+									else {
+										console.log('[GoodTube] Opening download in new tab (normal way not working!) - '+type);
+									}
+								}
+
+								// Reset ALL downloading attempts (this helps to debounce the API)
+								goodTube_player_downloadAttempts = [];
+
+								// Remove from pending downloads
+								if (typeof goodTube_pendingDownloads[youtubeId] !== 'undefined') {
+									delete goodTube_pendingDownloads[youtubeId];
+								}
+
+								// Hide the downloading indicator
+								setTimeout(function() {
+									goodTube_player_videojs_hideDownloading();
+								}, 1000);
+
+								return;
 							}
 						}
 					}
-
-					// Reset ALL downloading attempts (this helps to debounce the API)
-					goodTube_player_downloadAttempts = [];
-
-					// Remove from pending downloads
-					if (typeof goodTube_pendingDownloads[youtubeId] !== 'undefined') {
-						delete goodTube_pendingDownloads[youtubeId];
-					}
-
-					// Hide the downloading indicator
-					setTimeout(function() {
-						goodTube_player_videojs_hideDownloading();
-					}, 1000);
-
-					return;
 				}
 
 				// If the data is all good
-				if (typeof data['status'] !== 'undefined' && typeof data['url'] !== 'undefined') {
+				else if (typeof data['status'] !== 'undefined' && typeof data['url'] !== 'undefined') {
 					// Download the file, without a file name (also just do this on mobile because we can't download blobs)
 					if (typeof fileName === 'undefined' || window.location.href.indexOf('m.youtube') !== -1) {
 						window.open(data['url'], '_self');
@@ -5273,6 +5299,11 @@
 
 		// Show the downloading indicator
 		goodTube_player_videojs_showDownloading();
+
+		// Debug message
+		if (goodTube_debug) {
+			console.log('[GoodTube] Downloading '+type+' - '+fileName+'...');
+		}
 
 		// Set the file extension based on the type
 		let fileExtension = '.mp4';
