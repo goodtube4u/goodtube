@@ -2277,6 +2277,11 @@
 
 	// Load storyboard
 	function goodTube_player_loadStoryboard(player, storyboardData) {
+		// Debug message
+		if (goodTube_debug) {
+			console.log('[GoodTube] Loading storyboard...');
+		}
+
 		// Check the storyboard server works
 		goodTube_otherDataServersIndex_storyboard = 0;
 		goodTube_player_checkStoryboardServer(player, storyboardData, goodTube_api_url);
@@ -2365,11 +2370,6 @@
 	}
 
 	function goodTube_player_loadStoryboardAfterCheck(player, storyboardData, storyboardApi) {
-		// Debug message
-		if (goodTube_debug) {
-			console.log('[GoodTube] Loading storyboard...');
-		}
-
 		// Go through each storyboard and find the highest quality
 		let highestQualityStoryboardUrl = false;
 		let highestQualityStoryboardWidth = 0;
