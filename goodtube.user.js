@@ -2191,14 +2191,6 @@
 
 	// Load subtitles
 	function goodTube_player_loadSubtitles(player, subtitleData) {
-		// Remove any existing subtitles from videojs
-		let existingSubtitles = goodTube_videojs_player.remoteTextTracks();
-		if (typeof existingSubtitles['tracks_'] !== 'undefined') {
-			existingSubtitles['tracks_'].forEach((existingSubtitle) => {
-				goodTube_videojs_player.removeRemoteTextTrack(existingSubtitle);
-			});
-		}
-
 		// If subtitle data exists
 		if (subtitleData.length > 0) {
 			// Debug message
@@ -2285,9 +2277,6 @@
 
 	// Load storyboard
 	function goodTube_player_loadStoryboard(player, storyboardData) {
-		// Remove the old thumbnails
-		document.querySelector('.vjs-vtt-thumbnail-display')?.remove();
-
 		// Check the storyboard server works
 		goodTube_otherDataServersIndex_storyboard = 0;
 		goodTube_player_checkStoryboardServer(player, storyboardData, goodTube_api_url);
@@ -2316,16 +2305,16 @@
 		if (!storyboardData.length || storyboardData.length <= 0) {
 			goodTube_player_checkStoryboardServer(player, storyboardData, storyboardApi);
 		}
-		// Otherwise we have data, so double check the storyboard returned actually loads
+		// Otherwise we have data, so check the storyboard returned actually loads
 		else {
 			fetch(storyboardApi+storyboardData[0]['url'])
 			.then(response => response.text())
 			.then(data => {
-				// If it failed, try the next fallback server
+				// If it failed to get WEBVTT format, try the next fallback server
 				if (data.substr(0,6) !== 'WEBVTT') {
 					goodTube_player_checkStoryboardServer(player, storyboardData, storyboardApi);
 				}
-				// If it worked, load the first storyboard returned (we've got to fish this out of a plain text return)
+				// If it got WEBVTT format, find the URL of the first storyboard image inside that data (we've got to fish this out of a plain text return)
 				else {
 					let gotTheUrl = false;
 					let storyboardUrl = false;
@@ -2342,18 +2331,18 @@
 						}
 					}
 
-					// If we found the URL of a storyboard, check it loads
+					// If we found the URL of the first storyboard image, check it loads
 					if (gotTheUrl) {
 						fetch(storyboardUrl)
 						.then(response => response.text())
 						.then(data => {
-							// Check the data returned, it should be an image...
+							// Check the data returned, it should be an image not a HTML document (this often comes back when it fails to load)
 							if (data.indexOf('<html') === -1) {
 								// All good, load the storyboard
 								goodTube_player_loadStoryboardAfterCheck(player, storyboardData, storyboardApi);
 							}
+							// It's a HTML document and not an image, so try the next fallback server
 							else {
-								// It's not an image, so try the next fallback server
 								goodTube_player_checkStoryboardServer(player, storyboardData, storyboardApi);
 							}
 						})
@@ -2362,7 +2351,7 @@
 							goodTube_player_checkStoryboardServer(player, storyboardData, storyboardApi);
 						});
 					}
-					// Otherwise try the next fallback server
+					// Otherwise we didn't find the URL of the first storyboard image, so try the next fallback server
 					else {
 						goodTube_player_checkStoryboardServer(player, storyboardData, storyboardApi);
 					}
@@ -2465,6 +2454,17 @@
 
 		// Clear any existing chapters
 		goodTube_player_clearChapters();
+
+		// Remove the storyboard
+		document.querySelector('.vjs-vtt-thumbnail-display')?.remove();
+
+		// Remove any existing subtitles from videojs
+		let existingSubtitles = goodTube_videojs_player.remoteTextTracks();
+		if (typeof existingSubtitles['tracks_'] !== 'undefined') {
+			existingSubtitles['tracks_'].forEach((existingSubtitle) => {
+				goodTube_videojs_player.removeRemoteTextTrack(existingSubtitle);
+			});
+		}
 
 		// Clear any DASH qualities
 		let qualityMenus = document.querySelectorAll('.vjs-quality-selector');
