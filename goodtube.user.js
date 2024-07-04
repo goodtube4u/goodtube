@@ -2212,8 +2212,8 @@
 	}
 
 	function goodTube_player_checkSubtitleServer(player, subtitleData, subtitleApi) {
-		// If our selected index will be greater than 0, the selected server failed to load the subtitles
-		// So we fallback to a configured subtitle server
+		// If our selected index is greater than 0, the first selected server failed to load the subtitles
+		// So we use the next configured fallback server
 		if (goodTube_otherDataServersIndex_subtitles > 0) {
 			// If we're out of fallback servers, show an error
 			if (typeof goodTube_otherDataServers[(goodTube_otherDataServersIndex_subtitles-1)] === 'undefined') {
@@ -2297,8 +2297,8 @@
 	}
 
 	function goodTube_player_checkStoryboardServer(player, storyboardData, storyboardApi) {
-		// If our selected index will be greater than 0, the selected server failed to load the storyboard
-		// So we fallback to a configured storyboard server
+		// If our selected index is greater than 0, the first selected server failed to load the storyboard
+		// So we use the next configured fallback server
 		if (goodTube_otherDataServersIndex_storyboard > 0) {
 			// If we're out of fallback servers, show an error
 			if (typeof goodTube_otherDataServers[(goodTube_otherDataServersIndex_storyboard-1)] === 'undefined') {
