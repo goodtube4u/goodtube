@@ -1921,7 +1921,7 @@
 			}
 		}
 
-		// Ensure the first chapter is 0
+		// Ensure the first chapter is 0 (sometimes the video descriptions are off)
 		if (!chapters.length || chapters.length <= 0 || chapters[0]['time'].split(':').reduce((acc,time) => (60 * acc) + +time) > 0) {
 			chapters = [];
 		}
@@ -1966,7 +1966,7 @@
 			];
 		}
 
-		// Ensure the first chapter is 0
+		// Ensure the first chapter is 0 (sometimes the video descriptions are off)
 		if (!chapters.length || chapters.length <= 0 || chapters[0]['time'].split(':').reduce((acc,time) => (60 * acc) + +time) > 0) {
 			chapters = [];
 		}
