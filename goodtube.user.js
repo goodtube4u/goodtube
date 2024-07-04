@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      3.050
+// @version      3.051
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -4920,7 +4920,7 @@
 			});
 
 			// Call the API
-			fetch('https://api-pl.cobalt.best/api/json', {
+			fetch('https://co.eepy.today/api/json', {
 				method: 'POST',
 				headers: {
 					'Accept': 'application/json',
