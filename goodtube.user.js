@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      3.051
+// @version      3.052
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -2205,19 +2205,18 @@
 
 			// Check the subtitle server works, if not fallback to a backup server
 			if (goodTube_api_type === 1 || goodTube_api_type === 2) {
-				goodTube_subtitleServersIndex = 0;
+				goodTube_otherDataServersIndex_subtitles = 0;
 				goodTube_player_checkSubtitleServer(player, subtitleData, goodTube_api_url);
 			}
-
 		}
 	}
 
 	function goodTube_player_checkSubtitleServer(player, subtitleData, subtitleApi) {
 		// If our selected index will be greater than 0, the selected server failed to load the subtitles
 		// So we fallback to a configured subtitle server
-		if (goodTube_subtitleServersIndex > 0) {
+		if (goodTube_otherDataServersIndex_subtitles > 0) {
 			// If we're out of fallback servers, show an error
-			if (typeof goodTube_subtitleServers[(goodTube_subtitleServersIndex-1)] === 'undefined') {
+			if (typeof goodTube_otherDataServers[(goodTube_otherDataServersIndex_subtitles-1)] === 'undefined') {
 				// Debug message
 				if (goodTube_debug) {
 					console.log('[GoodTube] Subtitles could not be loaded');
@@ -2227,9 +2226,9 @@
 			}
 
 			// Otherwise select the next fallback server
-			subtitleApi = goodTube_subtitleServers[(goodTube_subtitleServersIndex-1)];
+			subtitleApi = goodTube_otherDataServers[(goodTube_otherDataServersIndex_subtitles-1)];
 		}
-		goodTube_subtitleServersIndex++;
+		goodTube_otherDataServersIndex_subtitles++;
 
 		fetch(subtitleApi+subtitleData[0]['url'])
 		.then(response => response.text())
@@ -2290,6 +2289,98 @@
 		// Remove the old thumbnails
 		document.querySelector('.vjs-vtt-thumbnail-display')?.remove();
 
+		// Check the storyboard server works, if not fallback to a backup server
+		if (goodTube_api_type === 1 || goodTube_api_type === 2) {
+			goodTube_otherDataServersIndex_storyboard = 0;
+			goodTube_player_checkStoryboardServer(player, storyboardData, goodTube_api_url);
+		}
+	}
+
+	function goodTube_player_checkStoryboardServer(player, storyboardData, storyboardApi) {
+		// If our selected index will be greater than 0, the selected server failed to load the storyboard
+		// So we fallback to a configured storyboard server
+		if (goodTube_otherDataServersIndex_storyboard > 0) {
+			// If we're out of fallback servers, show an error
+			if (typeof goodTube_otherDataServers[(goodTube_otherDataServersIndex_storyboard-1)] === 'undefined') {
+				// Debug message
+				if (goodTube_debug) {
+					console.log('[GoodTube] Storyboard could not be loaded');
+				}
+
+				return;
+			}
+
+			// Otherwise select the next fallback server
+			storyboardApi = goodTube_otherDataServers[(goodTube_otherDataServersIndex_storyboard-1)];
+		}
+		goodTube_otherDataServersIndex_storyboard++;
+
+		// If there's no storyboard data, check next server
+		if (!storyboardData.length || storyboardData.length <= 0) {
+			goodTube_player_checkStoryboardServer(player, storyboardData, storyboardApi);
+		}
+		// Otherwise double check the storyboard returned actually loads
+		else {
+			fetch(storyboardApi+storyboardData[0]['url'])
+			.then(response => response.text())
+			.then(data => {
+				// If it failed, try again (with a fallback server)
+				if (data.substr(0,6) !== 'WEBVTT') {
+					goodTube_player_checkStoryboardServer(player, storyboardData, storyboardApi);
+				}
+				// If it worked, load the storyboard
+				else {
+					// Validate the first storyboard returned
+					let gotTheUrl = false;
+					let storyboardUrl = false;
+					let items = data.split('\n\n');
+					if (items.length && items.length > 1) {
+						let itemBits = items[1].split('\n');
+
+						if (itemBits.length && itemBits.length > 1) {
+							storyboardUrl = itemBits[1];
+
+							if (storyboardUrl.indexOf('https') !== -1) {
+								gotTheUrl = true;
+							}
+						}
+					}
+
+					// If we found the URL of a storyboard, check it loads
+					if (gotTheUrl) {
+						fetch(storyboardUrl)
+						.then(response => response.text())
+						.then(data => {
+							// Check the data returned, it should be an image...
+							if (data.indexOf('<html') === -1) {
+								// All good, load the storyboard
+								goodTube_player_loadStoryboardAfterCheck(player, storyboardData, storyboardApi);
+							}
+							else {
+								// If it failed, try again (with a fallback server)
+								goodTube_player_checkStoryboardServer(player, storyboardData, storyboardApi);
+							}
+						})
+						.catch((error) => {
+							// If it failed, try again (with a fallback server)
+							goodTube_player_checkStoryboardServer(player, storyboardData, storyboardApi);
+						});
+					}
+					// Otherwise move to the next server
+					else {
+						goodTube_player_checkStoryboardServer(player, storyboardData, storyboardApi);
+					}
+				}
+			})
+			// If it failed, use a fallback API for the storyboard
+			.catch((error) => {
+				// If it failed, try again (with a fallback server)
+				goodTube_player_checkStoryboardServer(player, storyboardData, storyboardApi);
+			});
+		}
+	}
+
+	function goodTube_player_loadStoryboardAfterCheck(player, storyboardData, storyboardApi) {
 		// If storyboard data exists
 		if (storyboardData.length > 0) {
 			// Debug message
@@ -2319,13 +2410,19 @@
 
 				// Load the highest quality storyboard
 				goodTube_videojs_player.vttThumbnails({
-					src: goodTube_api_url+highestQualityStoryboardUrl
+					src: storyboardApi+highestQualityStoryboardUrl
 				});
 
 				// Debug message
 				if (goodTube_debug) {
 					console.log('[GoodTube] Storyboard loaded');
 				}
+			}
+		}
+		else {
+			// Debug message
+			if (goodTube_debug) {
+				console.log('[GoodTube] Storyboard could not be loaded');
 			}
 		}
 	}
@@ -4424,14 +4521,17 @@
 	let goodTube_downloadTimeouts = [];
 	let goodTube_pendingDownloads = [];
 
-	// API Subtitle servers
-	let goodTube_subtitleServersIndex = 0;
-	let goodTube_subtitleServers = [
+	// API subtitle / storyboard servers
+	let goodTube_otherDataServersIndex_subtitles = 0;
+	let goodTube_otherDataServersIndex_storyboard = 0;
+	let goodTube_otherDataServers = [
 		'https://invidious.perennialte.ch',
 		'https://yt.artemislena.eu',
-		'https://invidious.jing.rocks',
-		'https://invidious.privacyredirect.com',
-		'https://invidious.fdn.fr'
+		'https://vid.lilay.dev',
+		'https://invidious.private.coffee',
+		'https://invidious.drgns.space',
+		'https://inv.nadeko.net',
+		'https://invidious.projectsegfau.lt'
 	]
 
 	// API Endpoints
