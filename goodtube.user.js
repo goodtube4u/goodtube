@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      3.053
+// @version      3.055
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -1921,12 +1921,15 @@
 			}
 		}
 
+		// Ensure the first chapter is 0
+		if (!chapters.length || chapters.length <= 0 || chapters[0]['time'].split(':').reduce((acc,time) => (60 * acc) + +time) > 0) {
+			chapters = [];
+		}
 
 		// If that didn't work, get them from the DOM (this works for desktop only)
-		if (chapters.length === 0) {
+		if ((!chapters.length || chapters.length <= 0) && window.location.href.indexOf('m.youtube') === -1) {
 			// Target the chapters in the DOM
 			let uiChapters = Array.from(document.querySelectorAll("#panels ytd-engagement-panel-section-list-renderer:nth-child(2) #content ytd-macro-markers-list-renderer #contents ytd-macro-markers-list-item-renderer #endpoint #details"));
-
 
 			// If the chapters from the DOM change, reload the chapters. This is important because it's async data that changes.
 			// ----------------------------------------
@@ -1963,6 +1966,11 @@
 			];
 		}
 
+		// Ensure the first chapter is 0
+		if (!chapters.length || chapters.length <= 0 || chapters[0]['time'].split(':').reduce((acc,time) => (60 * acc) + +time) > 0) {
+			chapters = [];
+		}
+
 		// If we found the chapters data
 		if (chapters.length > 0) {
 			// Load chapters into the player
@@ -1978,11 +1986,6 @@
 	}
 
 	function goodTube_player_loadChaptersFromData(player, chapters, totalDuration) {
-		// If there's no data, just return
-		if (!chapters.length) {
-			return;
-		}
-
 		// Create a container for our chapters
 		let chaptersContainer = document.createElement('div');
 		chaptersContainer.classList.add('goodTube_chapters');
