@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.008
+// @version      4.009
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -3496,8 +3496,8 @@
 				clearTimeout(goodTube_bufferingTimeout);
 			}
 
-			// Only do this for HD servers
-			if (goodTube_api_type === 2 || goodTube_api_type === 3) {
+			// Only do this for HD servers (and we're part of the way through the video)
+			if ((goodTube_api_type === 2 || goodTube_api_type === 3) && goodTube_player.currentTime > 0) {
 				// If we've been waiting more than 10s, select the next server
 				goodTube_bufferingTimeout = setTimeout(function() {
 					// Debug message
@@ -3508,9 +3508,7 @@
 					goodTube_player_selectApi('automatic');
 
 					// Set the player time to be restored when the new server loads
-					if (goodTube_player.currentTime > 0) {
-						goodTube_player_restoreTime = goodTube_player.currentTime;
-					}
+					goodTube_player_restoreTime = goodTube_player.currentTime;
 
 					// Reload the video data
 					goodTube_player_reloadVideoData();
@@ -3521,6 +3519,7 @@
 		goodTube_videojs_player.on('timeupdate', function() {
 			// It loaded so let's remove the loading timeout
 			if (goodTube_bufferingTimeout) {
+				console.log('clear buffering timeout...');
 				clearTimeout(goodTube_bufferingTimeout);
 			}
 		});
