@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      3.056
+// @version      3.060
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -422,6 +422,7 @@
 	let goodTube_updateChapters = false;
 	let goodTube_chapterTitleInterval = false;
 	let goodTube_chaptersChangeInterval = false;
+	let goodTube_selectHighestManifestQualityTimeout = false;
 
 	// Init
 	function goodTube_player_init() {
@@ -447,6 +448,11 @@
 		// Add CSS styles for the player
 		let style = document.createElement('style');
 		style.textContent = `
+			/* Hide the volume tooltip */
+			#goodTube_player_wrapper1 .vjs-volume-bar .vjs-mouse-display {
+				display: none !important;
+			}
+
 			#contentContainer.tp-yt-app-drawer[swipe-open].tp-yt-app-drawer::after {
 				display: none !important;
 			}
@@ -1544,7 +1550,7 @@
 				goodTube_api_url = api['url'];
 				goodTube_api_name = api['name'];
 
-				goodTube_helper_setCookie('goodTube_api', url);
+				goodTube_helper_setCookie('goodTube_api_new', url);
 			}
 		});
 	}
@@ -1599,6 +1605,9 @@
 		if (!goodTube_videojs_loadingElement.classList.contains('vjs-loading')) {
 			goodTube_videojs_loadingElement.classList.add('vjs-loading');
 		}
+		if (!goodTube_videojs_loadingElement.classList.contains('vjs-waiting')) {
+			goodTube_videojs_loadingElement.classList.add('vjs-waiting');
+		}
 
 		// Only re-attempt to load the video data max configured retry attempts
 		goodTube_player_loadVideoDataAttempts++;
@@ -1623,14 +1632,28 @@
 		// Setup API endpoint to get video data from
 		let apiEndpoint = false;
 
+		// Invidious (360p / HD)
 		if (goodTube_api_type === 1 || goodTube_api_type === 2) {
 			apiEndpoint = goodTube_api_url+"/api/v1/videos/"+goodTube_getParams['v'];
+		}
+		// Piped (HD)
+		else if (goodTube_api_type === 3) {
+			apiEndpoint = goodTube_api_url+"/streams/"+goodTube_getParams['v'];
 		}
 
 		// Get the video data
 		fetch(apiEndpoint)
 		.then(response => response.text())
 		.then(data => {
+			// Add a loading class (this gives a black background)
+			let goodTube_videojs_loadingElement = document.getElementById('goodTube_player');
+			if (!goodTube_videojs_loadingElement.classList.contains('vjs-loading')) {
+				goodTube_videojs_loadingElement.classList.add('vjs-loading');
+			}
+			if (!goodTube_videojs_loadingElement.classList.contains('vjs-waiting')) {
+				goodTube_videojs_loadingElement.classList.add('vjs-waiting');
+			}
+
 			// Turn video data into JSON
 			let videoData = JSON.parse(data);
 
@@ -1638,10 +1661,13 @@
 			let sourceData = false;
 			let subtitleData = false;
 			let storyboardData = false;
+			let videoDescription = false;
+			let videoDuration = false;
 
 			// Below populates the source data - but first, if there's any issues with the source data, try again (after configured delay time)
 			let retry = false;
 
+			// Invidious (360p)
 			if (goodTube_api_type === 1) {
 				if (typeof videoData['formatStreams'] === 'undefined') {
 					retry = true;
@@ -1650,18 +1676,40 @@
 					sourceData = videoData['formatStreams'];
 					subtitleData = videoData['captions'];
 					storyboardData = videoData['storyboards'];
+					videoDescription = videoData['description'];
+					videoDuration = videoData['lengthSeconds'];
 				}
 			}
+			// Invidious (HD)
 			else if (goodTube_api_type === 2) {
-				if (typeof videoData['type'] === 'undefined' || (typeof videoData['dashUrl'] === 'undefined' && typeof videoData['hlsUrl'] === 'undefined')) {
+				if (typeof videoData['dashUrl'] === 'undefined' && typeof videoData['hlsUrl'] === 'undefined') {
 					retry = true;
 				}
 				else {
+					sourceData = false;
 					subtitleData = videoData['captions'];
 					storyboardData = videoData['storyboards'];
+					videoDescription = videoData['description'];
+					videoDuration = videoData['lengthSeconds'];
 				}
 			}
+			// Piped (HD)
+			else if (goodTube_api_type === 3) {
+				if (typeof videoData['hls'] === 'undefined' && typeof videoData['dash'] === 'undefined') {
+					retry = true;
+				}
+				else {
+					// Leave the subtitle data as false, because these are still fetched from invidious (using fallback servers)
+					subtitleData = false;
 
+					// Leave the storyboard data as false, because this is baked into the stream (yay!)
+					storyboardData = false;
+
+					// Replace <br> with a newline, and strip the html from the desc. We need this to generate chapters properly.
+					videoDescription = videoData['description'].replace(/<br>/g, '\r\n').replace(/<[^>]*>?/gm, '');
+					videoDuration = videoData['duration'];
+				}
+			}
 
 
 			// Try again if data wasn't all good
@@ -1674,6 +1722,15 @@
 					goodTube_player_loadVideo(player);
 				}, goodTube_retryDelay);
 
+				// Add a loading class (this gives a black background)
+				let goodTube_videojs_loadingElement = document.getElementById('goodTube_player');
+				if (!goodTube_videojs_loadingElement.classList.contains('vjs-loading')) {
+					goodTube_videojs_loadingElement.classList.add('vjs-loading');
+				}
+				if (!goodTube_videojs_loadingElement.classList.contains('vjs-waiting')) {
+					goodTube_videojs_loadingElement.classList.add('vjs-waiting');
+				}
+
 				return;
 			}
 			// Otherwise the data was all good so load the sources
@@ -1683,47 +1740,7 @@
 					console.log('[GoodTube] Video data loaded');
 				}
 
-
-				if (goodTube_api_type === 2) {
-					// Format dash source data
-					let dashUrl = false;
-					let dashType = false;
-
-					// Add dash source
-					let proxyUrlPart = 'false';
-					if (goodTube_api_proxy) {
-						proxyUrlPart = 'true';
-					}
-
-					// HLS stream (for live videos)
-					if (videoData['type'] === 'livestream') {
-						dashUrl = videoData['hlsUrl']+'?local='+proxyUrlPart+'&amp;unique_res=1';
-						dashType = 'application/x-mpegURL';
-					}
-					// DASH stream (for all other videos)
-					else {
-						dashUrl = videoData['dashUrl']+'?local='+proxyUrlPart+'&amp;unique_res=1';
-						dashType = 'application/dash+xml';
-					}
-
-					// Add the HLS or DASH source
-					goodTube_videojs_player.src({
-						src: dashUrl,
-						type: dashType
-					});
-
-					// Show the correct quality menu item
-					let qualityButtons = document.querySelectorAll('.vjs-quality-selector');
-					if (qualityButtons.length === 2) {
-						qualityButtons[0].style.display = 'none';
-						qualityButtons[1].style.display = 'block';
-					}
-
-					// Select the highest DASH quality
-					goodTube_player_selectHighestDashQuality();
-				}
-
-
+				// Invidious (360p)
 				if (goodTube_api_type === 1) {
 					// If we've manually selected a quality, and it exists for this video, select it
 					if (goodTube_player_manuallySelectedQuality && player.querySelector('.goodTube_source_'+goodTube_player_manuallySelectedQuality)) {
@@ -1830,6 +1847,85 @@
 					}
 				}
 
+				// Invidious (HD)
+				else if (goodTube_api_type === 2) {
+					// Format manifest source data
+					let manifestUrl = false;
+					let manifestType = false;
+
+					// Add manifest source
+					let proxyUrlPart = 'false';
+					if (goodTube_api_proxy) {
+						proxyUrlPart = 'true';
+					}
+
+					// HLS stream
+					if (typeof videoData['hlsUrl'] !== 'undefined' && videoData['hlsUrl']) {
+						manifestUrl = videoData['hlsUrl']+'?local='+proxyUrlPart+'&amp;unique_res=1';
+						manifestType = 'application/x-mpegURL';
+					}
+					// DASH stream
+					else if (typeof videoData['dashUrl'] !== 'undefined' && videoData['dashUrl']) {
+						manifestUrl = videoData['dashUrl']+'?local='+proxyUrlPart+'&amp;unique_res=1';
+						manifestType = 'application/dash+xml';
+					}
+
+					// Add the HLS or DASH source
+					goodTube_videojs_player.src({
+						src: manifestUrl,
+						type: manifestType
+					});
+
+					// Show the correct quality menu item
+					let qualityButtons = document.querySelectorAll('.vjs-quality-selector');
+					if (qualityButtons.length === 2) {
+						qualityButtons[0].style.display = 'none';
+						qualityButtons[1].style.display = 'block';
+					}
+
+					// Select the highest DASH quality
+					goodTube_player_selectHighestManifestQuality();
+				}
+
+				// Piped (HD)
+				else if (goodTube_api_type === 3) {
+					// Format manifest source data
+					let manifestUrl = false;
+					let manifestType = false;
+
+					// Add manifest source
+					let proxyUrlPart = 'false';
+					if (goodTube_api_proxy) {
+						proxyUrlPart = 'true';
+					}
+
+					// HLS stream
+					if (typeof videoData['hls'] !== 'undefined' && videoData['hls']) {
+						manifestUrl = videoData['hls'];
+						manifestType = 'application/x-mpegURL';
+					}
+					// DASH stream
+					else if (typeof videoData['dash'] !== 'undefined' && videoData['dash']) {
+						manifestUrl = videoData['dash'];
+						manifestType = 'application/dash+xml';
+					}
+
+					// Add the HLS or DASH source
+					goodTube_videojs_player.src({
+						src: manifestUrl,
+						type: manifestType
+					});
+
+					// Show the correct quality menu item
+					let qualityButtons = document.querySelectorAll('.vjs-quality-selector');
+					if (qualityButtons.length === 2) {
+						qualityButtons[0].style.display = 'none';
+						qualityButtons[1].style.display = 'block';
+					}
+
+					// Select the highest quality
+					goodTube_player_selectHighestManifestQuality();
+				}
 
 
 				// Play the video
@@ -1846,11 +1942,16 @@
 					console.log('[GoodTube] Loading chapters...');
 				}
 
-				goodTube_player_loadChapters(player, videoData['description'], videoData['lengthSeconds']);
+				goodTube_player_loadChapters(player, videoDescription, videoDuration);
 
 				// Load storyboards into the player (desktop only)
 				if (window.location.href.indexOf('m.youtube') === -1) {
-					goodTube_player_loadStoryboard(player, storyboardData);
+					// Debug message
+					if (goodTube_debug) {
+						console.log('[GoodTube] Loading storyboard...');
+					}
+
+					goodTube_player_loadStoryboard(player, storyboardData, 0);
 				}
 			}
 		})
@@ -1863,11 +1964,25 @@
 			goodTube_pendingRetry['loadVideoData'] = setTimeout(function() {
 				goodTube_player_loadVideo(player);
 			}, goodTube_retryDelay);
+
+			// Add a loading class (this gives a black background)
+			let goodTube_videojs_loadingElement = document.getElementById('goodTube_player');
+			if (!goodTube_videojs_loadingElement.classList.contains('vjs-loading')) {
+				goodTube_videojs_loadingElement.classList.add('vjs-loading');
+			}
+			if (!goodTube_videojs_loadingElement.classList.contains('vjs-waiting')) {
+				goodTube_videojs_loadingElement.classList.add('vjs-waiting');
+			}
 		});
 	}
 
-	// Select highest DASH quality by default
-	function goodTube_player_selectHighestDashQuality() {
+	// Select highest quality by default (when using a manifest file)
+	function goodTube_player_selectHighestManifestQuality() {
+		// This stops it from ever accidentially firing twice
+		if (goodTube_selectHighestManifestQualityTimeout) {
+			clearTimeout(goodTube_selectHighestManifestQualityTimeout);
+		}
+
 		// Find and click the highest quality button (if it can't be found, this will call itself again until it works)
 		let qualityMenus = document.querySelectorAll('.vjs-quality-selector');
 		if (qualityMenus && typeof qualityMenus[1] !== 'undefined') {
@@ -1883,12 +1998,20 @@
 				}
 			}
 			else {
-				setTimeout(goodTube_player_selectHighestDashQuality, 100);
+				if (goodTube_selectHighestManifestQualityTimeout) {
+					clearTimeout(goodTube_selectHighestManifestQualityTimeout);
+				}
+
+				goodTube_selectHighestManifestQualityTimeout = setTimeout(goodTube_player_selectHighestManifestQuality, 100);
 				return;
 			}
 		}
 		else {
-			setTimeout(goodTube_player_selectHighestDashQuality, 100);
+			if (goodTube_selectHighestManifestQualityTimeout) {
+				clearTimeout(goodTube_selectHighestManifestQualityTimeout);
+			}
+
+			goodTube_selectHighestManifestQualityTimeout = setTimeout(goodTube_player_selectHighestManifestQuality, 100);
 			return;
 		}
 	}
@@ -2276,15 +2399,55 @@
 	}
 
 	// Load storyboard
-	function goodTube_player_loadStoryboard(player, storyboardData) {
-		// Debug message
-		if (goodTube_debug) {
-			console.log('[GoodTube] Loading storyboard...');
+	function goodTube_player_loadStoryboard(player, storyboardData, fallbackServerIndex) {
+		// If we're out of fallback servers, show an error
+		if (typeof goodTube_otherDataServers[fallbackServerIndex] === 'undefined') {
+			// Debug message
+			if (goodTube_debug) {
+				console.log('[GoodTube] Storyboard could not be loaded');
+			}
+
+			return;
 		}
 
-		// Check the storyboard server works
-		goodTube_otherDataServersIndex_storyboard = 0;
-		goodTube_player_checkStoryboardServer(player, storyboardData, goodTube_api_url);
+
+		// If we're using Piped, then we need to fetch the storyboard data from a fallback server before checking anything
+		if (goodTube_api_type === 3) {
+			let apiEndpoint = goodTube_otherDataServers[fallbackServerIndex]+"/api/v1/videos/"+goodTube_getParams['v'];
+
+			// Get the video data
+			fetch(apiEndpoint)
+			.then(response => response.text())
+			.then(data => {
+				// Turn video data into JSON
+				let videoData = JSON.parse(data);
+
+				// Check the storyboard data is all good, if not try the next fallback server
+				if (typeof videoData['storyboards'] === 'undefined') {
+					fallbackServerIndex++;
+					goodTube_player_loadStoryboard(player, storyboardData, fallbackServerIndex);
+				}
+				// Otherwise get the storyboard data and check the server works
+				else {
+					storyboardData = videoData['storyboards'];
+					goodTube_otherDataServersIndex_storyboard = 0;
+					goodTube_player_checkStoryboardServer(player, storyboardData, goodTube_api_url);
+				}
+			})
+			// If the fetch failed, try the next fallback server
+			.catch((error) => {
+				fallbackServerIndex++;
+				goodTube_player_loadStoryboard(player, storyboardData, fallbackServerIndex);
+			});
+		}
+
+
+		// Otherwise for Invidious, check straight away
+		else {
+			// Check the storyboard server works
+			goodTube_otherDataServersIndex_storyboard = 0;
+			goodTube_player_checkStoryboardServer(player, storyboardData, goodTube_api_url);
+		}
 	}
 
 	function goodTube_player_checkStoryboardServer(player, storyboardData, storyboardApi) {
@@ -2908,6 +3071,15 @@
 				goodTube_player_reloadVideo(goodTube_player);
 			}, goodTube_retryDelay);
 
+			// Add a loading class (this gives a black background)
+			let goodTube_videojs_loadingElement = document.getElementById('goodTube_player');
+			if (!goodTube_videojs_loadingElement.classList.contains('vjs-loading')) {
+				goodTube_videojs_loadingElement.classList.add('vjs-loading');
+			}
+			if (!goodTube_videojs_loadingElement.classList.contains('vjs-waiting')) {
+				goodTube_videojs_loadingElement.classList.add('vjs-waiting');
+			}
+
 			// Update the video js player
 			goodTube_player_videojs_update();
 		});
@@ -3334,7 +3506,7 @@
 
 
 			// Server type 2 (dash) quality stuff
-			else if (goodTube_api_type === 2) {
+			else if (goodTube_api_type === 2 || goodTube_api_type === 3) {
 				// Target the outer wrapper
 				let goodTube_target = document.querySelector('#goodTube_player_wrapper3');
 
@@ -3374,7 +3546,7 @@
 				if (goodTube_api_type === 1) {
 					console.log('[GoodTube] Quality loaded');
 				}
-				else if (goodTube_api_type === 2) {
+				else if (goodTube_api_type === 2 || goodTube_api_type === 3) {
 					console.log('[GoodTube] Qualities loaded');
 				}
 			}
@@ -3386,6 +3558,9 @@
 			let goodTube_videojs_loadingElement = document.getElementById('goodTube_player');
 			if (goodTube_videojs_loadingElement.classList.contains('vjs-loading')) {
 				goodTube_videojs_loadingElement.classList.remove('vjs-loading');
+			}
+			if (goodTube_videojs_loadingElement.classList.contains('vjs-waiting')) {
+				goodTube_videojs_loadingElement.classList.remove('vjs-waiting');
 			}
 		});
 
@@ -4403,12 +4578,17 @@
 
 	// Show an error on screen
 	function goodTube_player_videojs_showError() {
+		let player = document.querySelector('#goodTube_player');
+
+		// Remove the loading class
+		if (player.classList.contains('vjs-waiting')) {
+			player.classList.remove('vjs-waiting');
+		}
+
 		let error = document.createElement('div');
 		error.setAttribute('id', 'goodTube_error');
 		error.innerHTML = "Video could not be loaded. Please select another video source.<br><small>There is a button for this at the bottom of the player.</small>";
 		player.appendChild(error);
-
-		document.querySelector('#goodTube_player').appendChild(error);
 	}
 
 	// Hide an error on screen
@@ -4522,49 +4702,186 @@
 
 	// API Endpoints
 	let goodTube_apis = [
+		// HD SERVERS
+		// --------------------------------------------------------------------------------
+		// FAST
+		{
+			'name': 'HD - Anubis (DE)',
+			'type': 3,
+			'proxy': true,
+			'url': 'https://pipedapi.r4fo.com'
+		},
+		// FAST
+		{
+			'name': 'HD - Phoenix (US)',
+			'type': 3,
+			'proxy': true,
+			'url': 'https://pipedapi.drgns.space'
+		},
+		// FAST
+		{
+			'name': 'HD - Ra (US)',
+			'type': 3,
+			'proxy': true,
+			'url': 'https://pipedapi.us.projectsegfau.lt'
+		},
+		// FAST
+		{
+			'name': 'HD - Obsidian (AT)',
+			'type': 3,
+			'proxy': true,
+			'url': 'https://pipedapi.leptons.xyz'
+		},
+		// FAST
+		{
+			'name': 'HD - Sphere (US)',
+			'type': 3,
+			'proxy': true,
+			'url': 'https://pipedapi.darkness.services'
+		},
+		// FAST
 		{
 			'name': 'HD - Acid (US)',
 			'type': 2,
 			'proxy': true,
 			'url': 'https://invidious.incogniweb.net'
 		},
+		// FAST
 		{
 			'name': 'HD - Sphynx (JP)',
 			'type': 2,
 			'proxy': true,
 			'url': 'https://invidious.jing.rocks'
 		},
+		// MEDIUM
+		{
+			'name': 'HD - Hunter (NL)',
+			'type': 3,
+			'proxy': true,
+			'url': 'https://pipedapi.ducks.party'
+		},
+		// MEDIUM
+		{
+			'name': 'HD - Sapphire (IN)',
+			'type': 3,
+			'proxy': true,
+			'url': 'https://pipedapi.in.projectsegfau.lt'
+		},
+		// MEDIUM
+		{
+			'name': 'HD - Space (DE)',
+			'type': 3,
+			'proxy': true,
+			'url': 'https://pipedapi.smnz.de'
+		},
+		// MEDIUM
+		{
+			'name': 'HD - Orchid (DE)',
+			'type': 3,
+			'proxy': true,
+			'url': 'https://api.piped.yt'
+		},
+		// MEDIUM
+		{
+			'name': 'HD - Emerald (DE)',
+			'type': 3,
+			'proxy': true,
+			'url': 'https://pipedapi.phoenixthrush.com'
+		},
+		// MEDIUM
 		{
 			'name': 'HD - 420 (FI)',
 			'type': 2,
 			'proxy': true,
 			'url': 'https://invidious.privacyredirect.com'
 		},
+		// MEDIUM
 		{
 			'name': 'HD - Onyx (FR)',
 			'type': 2,
 			'proxy': true,
 			'url': 'https://invidious.fdn.fr'
 		},
-		{
-			'name': 'HD - Obsidian (DE)',
-			'type': 2,
-			'proxy': true,
-			'url': 'https://invidious.protokolla.fi'
-		},
+		// MEDIUM
 		{
 			'name': 'HD - Indigo (FI)',
 			'type': 2,
 			'proxy': true,
 			'url': 'https://iv.datura.network'
 		},
+		// MEDIUM
 		{
-			'name': 'HD - Lilith (DE)',
-			'type': 2,
+			'name': 'HD - Andromeda (FI)',
+			'type': 3,
 			'proxy': true,
-			'url': 'https://iv.melmac.space'
+			'url': 'https://pipedapi-libre.kavin.rocks'
 		},
+		// MEDIUM
+		{
+			'name': 'HD - Lilith (INT)',
+			'type': 3,
+			'proxy': true,
+			'url': 'https://pipedapi.syncpundit.io'
+		},
+		// MEDIUM
+		{
+			'name': 'HD - Basilisk (DE)',
+			'type': 3,
+			'proxy': true,
+			'url': 'https://pipedapi.adminforge.de'
+		},
+		// MEDIUM
+		{
+			'name': 'HD - Golem (AT)',
+			'type': 3,
+			'proxy': true,
+			'url': 'https://schaunapi.ehwurscht.at'
+		},
+		// // SLOW
+		// {
+		// 	'name': 'HD - Centaur (FR)',
+		// 	'type': 3,
+		// 	'proxy': true,
+		// 	'url': 'https://api.piped.projectsegfau.lt'
+		// },
+		// // SLOW
+		// {
+		// 	'name': 'HD - Cypher (FR)',
+		// 	'type': 3,
+		// 	'proxy': true,
+		// 	'url': 'https://api.piped.privacydev.net'
+		// },
+		// // SLOW
+		// {
+		// 	'name': 'HD - T800 (DE)',
+		// 	'type': 2,
+		// 	'proxy': true,
+		// 	'url': 'https://invidious.protokolla.fi'
+		// },
+		// // SLOW
+		// {
+		// 	'name': 'HD - Wasp (DE)',
+		// 	'type': 2,
+		// 	'proxy': true,
+		// 	'url': 'https://iv.melmac.space'
+		// },
+		// // SLOW
+		// {
+		// 	'name': 'HD - Platinum (TR)',
+		// 	'type': 3,
+		// 	'proxy': true,
+		// 	'url': 'https://pipedapi.ngn.tf'
+		// },
+		// // SLOW
+		// {
+		// 	'name': 'HD - Minotaur (NL)',
+		// 	'type': 3,
+		// 	'proxy': true,
+		// 	'url': 'https://pipedapi.astartes.nl'
+		// },
 
+		// 360p SERVERS
+		// --------------------------------------------------------------------------------
 		{
 			'name': '360p - Amethyst (DE)',
 			'type': 1,
@@ -4609,10 +4926,16 @@
 		}
 	];
 
-	let goodTube_api_type = goodTube_apis[0]['type'];
-	let goodTube_api_proxy = goodTube_apis[0]['proxy'];
-	let goodTube_api_url = goodTube_apis[0]['url'];
-	let goodTube_api_name = goodTube_apis[0]['name'];
+	// Get a random starting server between 0 and 6 (these are pretty fast and moving the users around will help to share the load!)
+	let minRand = 0;
+	let maxRand = 6;
+	let randomStartingServer = Math.floor(Math.random() * (maxRand - minRand + 1) + minRand);
+
+	// Set the random starting server
+	let goodTube_api_type = goodTube_apis[randomStartingServer]['type'];
+	let goodTube_api_proxy = goodTube_apis[randomStartingServer]['proxy'];
+	let goodTube_api_url = goodTube_apis[randomStartingServer]['url'];
+	let goodTube_api_name = goodTube_apis[randomStartingServer]['name'];
 
 	// Press shortcut
 	function goodTube_shortcut(shortcut) {
@@ -5012,7 +5335,7 @@
 			});
 
 			// Call the API
-			fetch('https://co.eepy.today/api/json', {
+			fetch('https://par1.coapi.ggtyler.dev/api/json', {
 				method: 'POST',
 				headers: {
 					'Accept': 'application/json',
@@ -5099,41 +5422,27 @@
 
 							return;
 						}
-						// Otherwise, there's no more codecs to try, so fallback to opening it in a new tab
+						// Otherwise, there's no more codecs to try, so display an error
 						else {
-							if (goodTube_api_type === 1 || goodTube_api_type === 2) {
-								if (type === 'audio') {
-									window.open(goodTube_api_url+'/watch?v='+goodTube_getParams['v']+'&listen=true&raw=1', '_blank');
-								}
-								else {
-									window.open(goodTube_api_url+'/latest_version?id='+goodTube_getParams['v'], '_blank');
-								}
-
-								// Debug message
-								if (goodTube_debug) {
-									if (typeof fileName !== 'undefined') {
-										console.log('[GoodTube] Opening download in new tab (normal way not working!) - '+type+' - '+fileName);
-									}
-									else {
-										console.log('[GoodTube] Opening download in new tab (normal way not working!) - '+type);
-									}
-								}
-
-								// Reset ALL downloading attempts (this helps to debounce the API)
-								goodTube_player_downloadAttempts = [];
-
-								// Remove from pending downloads
-								if (typeof goodTube_pendingDownloads[youtubeId] !== 'undefined') {
-									delete goodTube_pendingDownloads[youtubeId];
-								}
-
-								// Hide the downloading indicator
-								setTimeout(function() {
-									goodTube_player_videojs_hideDownloading();
-								}, 1000);
-
-								return;
+							// Debug message
+							if (goodTube_debug) {
+								console.log('[GoodTube] Could not download '+type+' - '+fileName);
 							}
+
+							// Reset ALL downloading attempts (this helps to debounce the API)
+							goodTube_player_downloadAttempts = [];
+
+							// Remove from pending downloads
+							if (typeof goodTube_pendingDownloads[youtubeId] !== 'undefined') {
+								delete goodTube_pendingDownloads[youtubeId];
+							}
+
+							// Hide the downloading indicator
+							setTimeout(function() {
+								goodTube_player_videojs_hideDownloading();
+							}, 1000);
+
+							return;
 						}
 					}
 				}
@@ -5643,7 +5952,7 @@
 		}
 
 		// If there's a cookie for our previously chosen API, select it
-		let goodTube_api_cookie = goodTube_helper_getCookie('goodTube_api');
+		let goodTube_api_cookie = goodTube_helper_getCookie('goodTube_api_new');
 		if (goodTube_api_cookie) {
 			goodTube_apis.forEach((api) => {
 				if (api['url'] === goodTube_api_cookie) {
