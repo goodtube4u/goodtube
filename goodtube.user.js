@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      3.065
+// @version      4.000
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -22,10 +22,10 @@
 	let goodTube_github = 'https://raw.githubusercontent.com/goodtube4u/GoodTube/main';
 
 	// Select how long to wait before trying to load something again (in milliseconds)
-	let goodTube_retryDelay = 500;
+	let goodTube_retryDelay = 100;
 
 	// Select how many times to try and load something again
-	let goodTube_retryAttempts = 5;
+	let goodTube_retryAttempts = 3;
 
 	// Enable debug console messages
 	let goodTube_debug = true;
@@ -447,6 +447,18 @@
 		// Add CSS styles for the player
 		let style = document.createElement('style');
 		style.textContent = `
+			/* Automatic server styling */
+			#goodTube_player_wrapper1.goodTube_automaticServer #goodTube_player_wrapper2 .vjs-source-button ul li:first-child {
+				background: #ffffff !important;
+   		 	color: #000000 !important;
+			}
+
+			#goodTube_player_wrapper1.goodTube_automaticServer .vjs-source-button ul li.vjs-selected {
+				background-color: rgba(255, 255, 255, .2) !important;
+				color: #ffffff !important;
+			}
+
+
 			/* Hide the volume tooltip */
 			#goodTube_player_wrapper1 .vjs-volume-bar .vjs-mouse-display {
 				display: none !important;
@@ -1541,17 +1553,56 @@
 	}
 
 	// Select API
+	let goodTube_automaticServerIndex = 0;
 	function goodTube_player_selectApi(url) {
-		goodTube_apis.forEach((api) => {
-			if (url == api['url']) {
-				goodTube_api_type = api['type'];
-				goodTube_api_proxy = api['proxy'];
-				goodTube_api_url = api['url'];
-				goodTube_api_name = api['name'];
+		// Automatic option
+		if (url === 'automatic') {
+			// Increment first to skip the first server (which is actually the automatic option itself)
+			goodTube_automaticServerIndex++;
 
-				goodTube_helper_setCookie('goodTube_api_new', url);
+			// If we're out of options, show an error
+			if (typeof goodTube_apis[goodTube_automaticServerIndex] === 'undefined') {
+				goodTube_player_videojs_handleError();
+				return;
 			}
-		});
+
+			// Select the next server
+			goodTube_api_type = goodTube_apis[goodTube_automaticServerIndex]['type'];
+			goodTube_api_proxy = goodTube_apis[goodTube_automaticServerIndex]['proxy'];
+			goodTube_api_url = goodTube_apis[goodTube_automaticServerIndex]['url'];
+			goodTube_api_name = goodTube_apis[goodTube_automaticServerIndex]['name'];
+
+			// Set cookie to remember we're on automatic
+			goodTube_helper_setCookie('goodTube_api_withauto', url);
+
+			// Add class from wrapper for styling automatic option
+			let wrapper = document.querySelector('#goodTube_player_wrapper1');
+			if (!wrapper.classList.contains('goodTube_automaticServer')) {
+				wrapper.classList.add('goodTube_automaticServer');
+			}
+		}
+		// Manual selection
+		else {
+			goodTube_apis.forEach((api) => {
+				if (url == api['url']) {
+					goodTube_api_type = api['type'];
+					goodTube_api_proxy = api['proxy'];
+					goodTube_api_url = api['url'];
+					goodTube_api_name = api['name'];
+
+					goodTube_helper_setCookie('goodTube_api_withauto', url);
+				}
+			});
+
+			// Remove class from wrapper for styling automatic option
+			let wrapper = document.querySelector('#goodTube_player_wrapper1');
+			if (wrapper.classList.contains('goodTube_automaticServer')) {
+				wrapper.classList.remove('goodTube_automaticServer');
+			}
+
+			// Reset the automatic selection
+			goodTube_automaticServerIndex = 0;
+		}
 	}
 
 	// Pause
@@ -1611,13 +1662,8 @@
 		// Only re-attempt to load the video data max configured retry attempts
 		goodTube_player_loadVideoDataAttempts++;
 		if (goodTube_player_loadVideoDataAttempts > goodTube_retryAttempts) {
-			// Show an error message
-			goodTube_player_videojs_showError();
-
-			// Debug message
-			if (goodTube_debug) {
-				console.log('[GoodTube] Video data could not be loaded - please select another video source');
-			}
+			// Show an error or select next server if we're on automatic mode
+			goodTube_player_videojs_handleError();
 
 			return;
 		}
@@ -2578,13 +2624,8 @@
 
 		// Only re-attempt to load these max configured retry attempts
 		if (goodTube_player_reloadVideoAttempts > goodTube_retryAttempts) {
-			// Show an error message
-			goodTube_player_videojs_showError();
-
-			// Debug message
-			if (goodTube_debug) {
-				console.log('[GoodTube] Video could not be loaded - please select another video source');
-			}
+			// Show an error or select next server if we're on automatic mode
+			goodTube_player_videojs_handleError();
 
 			return;
 		}
@@ -2608,11 +2649,6 @@
 		player.classList.add('goodTube_hidden');
 		player.currentTime = 0;
 		player.pause();
-
-		let openMenuButtons = document.querySelectorAll('.vjs-menuOpen');
-		openMenuButtons.forEach((openMenuButton) => {
-			openMenuButton.classList.remove('vjs-menuOpen');
-		});
 
 		// Clear any existing chapters
 		goodTube_player_clearChapters();
@@ -2861,6 +2897,7 @@
 
 		// Setup the API selection
 		let apiList = [];
+
 		goodTube_apis.forEach((api) => {
 			apiList.push({
 				label: api['name'],
@@ -2869,11 +2906,19 @@
 					let menu = event.target.closest('.vjs-menu');
 
 					// Deselect the currently selected menu item
-					menu.querySelector('.vjs-selected')?.classList.remove('vjs-selected');
+					let selectMenuItems = menu.querySelectorAll('.vjs-selected');
+					selectMenuItems.forEach((selectedMenuItem) => {
+						selectedMenuItem.classList.remove('vjs-selected');
+					});
 
 					// Select the clicked menu item
 					let menuItem = event.target.closest('.vjs-menu-item');
 					menuItem.classList.add('vjs-selected');
+
+					// If we selected automatic, reset the server index so it tries them all
+					if (menuItem.getAttribute('api') === 'automatic') {
+						goodTube_automaticServerIndex = 0;
+					}
 
 					// Set the new API
 					goodTube_player_selectApi(menuItem.getAttribute('api'));
@@ -2887,6 +2932,7 @@
 
 					// Debug message
 					if (goodTube_debug) {
+						console.log('\n-------------------------\n\n');
 						console.log('[GoodTube] Loading video data from '+goodTube_api_name+'...');
 					}
 
@@ -4575,19 +4621,82 @@
 		}
 	}
 
-	// Show an error on screen
-	function goodTube_player_videojs_showError() {
-		let player = document.querySelector('#goodTube_player');
+	// Show an error on screen, or select next server if we're on automatic mode
+	function goodTube_player_videojs_handleError() {
+		// What api are we on?
+		let selectedApi = goodTube_helper_getCookie('goodTube_api_withauto');
 
-		// Remove the loading class
-		if (player.classList.contains('vjs-waiting')) {
-			player.classList.remove('vjs-waiting');
+		// Are we out of automatic servers?
+		let showNoServersError = false;
+		if (typeof goodTube_apis[goodTube_automaticServerIndex] === 'undefined') {
+			showNoServersError = true;
 		}
 
-		let error = document.createElement('div');
-		error.setAttribute('id', 'goodTube_error');
-		error.innerHTML = "Video could not be loaded. Please select another video source.<br><small>There is a button for this at the bottom of the player.</small>";
-		player.appendChild(error);
+		// If it's automatic and we're out of servers
+		if (selectedApi === 'automatic' && showNoServersError) {
+			let player = document.querySelector('#goodTube_player');
+
+			// Remove the loading class
+			if (player.classList.contains('vjs-waiting')) {
+				player.classList.remove('vjs-waiting');
+			}
+
+			let error = document.createElement('div');
+			error.setAttribute('id', 'goodTube_error');
+			error.innerHTML = "Video could not be loaded. The servers are not responding :(<br><small>Please refresh the page / try again soon!</small>";
+			player.appendChild(error);
+		}
+
+
+		// If it's automatic and we have more servers
+		else if (selectedApi === 'automatic') {
+			// Debug message
+			if (goodTube_debug) {
+				console.log('[GoodTube] Video data could not be loaded - selecting next video source...');
+			}
+
+			// Select next server
+			goodTube_player_selectApi('automatic');
+
+			// Set the player time to be restored when the new server loads
+			if (goodTube_player.currentTime > 0) {
+				goodTube_player_restoreTime = goodTube_player.currentTime;
+			}
+
+			// Reload the video data
+
+			// Debug message
+			if (goodTube_debug) {
+				console.log('\n-------------------------\n\n');
+				console.log('[GoodTube] Loading video data from '+goodTube_api_name+'...');
+			}
+
+			let delay = 0;
+			if (window.location.href.indexOf('m.youtube') !== -1) {
+				delay = 400;
+			}
+
+			setTimeout(function() {
+				goodTube_player_loadVideoDataAttempts = 0;
+				goodTube_player_loadVideo(goodTube_player);
+			}, delay);
+		}
+
+
+		// If it's manual
+		else {
+			let player = document.querySelector('#goodTube_player');
+
+			// Remove the loading class
+			if (player.classList.contains('vjs-waiting')) {
+				player.classList.remove('vjs-waiting');
+			}
+
+			let error = document.createElement('div');
+			error.setAttribute('id', 'goodTube_error');
+			error.innerHTML = "Video could not be loaded. Please select another video source.<br><small>There is a button for this at the bottom of the player.</small>";
+			player.appendChild(error);
+		}
 	}
 
 	// Hide an error on screen
@@ -4732,6 +4841,15 @@
 
 	// API Endpoints
 	let goodTube_apis = [
+		// AUTOMATIC OPTION
+		// --------------------------------------------------------------------------------
+		{
+			'name': 'Automatic',
+			'type': false,
+			'proxy': true,
+			'url': 'automatic'
+		},
+
 		// HD SERVERS
 		// --------------------------------------------------------------------------------
 		// FAST
@@ -4956,16 +5074,11 @@
 		}
 	];
 
-	// Get a random starting server between 0 and 6 (these are pretty fast and moving the users around will help to share the load!)
-	let minRand = 0;
-	let maxRand = 6;
-	let randomStartingServer = Math.floor(Math.random() * (maxRand - minRand + 1) + minRand);
-
-	// Set the random starting server
-	let goodTube_api_type = goodTube_apis[randomStartingServer]['type'];
-	let goodTube_api_proxy = goodTube_apis[randomStartingServer]['proxy'];
-	let goodTube_api_url = goodTube_apis[randomStartingServer]['url'];
-	let goodTube_api_name = goodTube_apis[randomStartingServer]['name'];
+	// Set the starting server to automatic mode
+	let goodTube_api_type = goodTube_apis[0]['type'];
+	let goodTube_api_proxy = goodTube_apis[0]['proxy'];
+	let goodTube_api_url = goodTube_apis[0]['url'];
+	let goodTube_api_name = goodTube_apis[0]['name'];
 
 	// Press shortcut
 	function goodTube_shortcut(shortcut) {
@@ -5887,6 +6000,11 @@
 
 					// Load the video data
 
+					// First auto select a server if we've set it to automatic
+					if (goodTube_api_url === 'automatic') {
+						goodTube_player_selectApi('automatic');
+					}
+
 					// Debug message
 					if (goodTube_debug) {
 						console.log('[GoodTube] Loading video data from '+goodTube_api_name+'...');
@@ -5971,7 +6089,7 @@
 		}
 
 		// If there's a cookie for our previously chosen API, select it
-		let goodTube_api_cookie = goodTube_helper_getCookie('goodTube_api_new');
+		let goodTube_api_cookie = goodTube_helper_getCookie('goodTube_api_withauto');
 		if (goodTube_api_cookie) {
 			goodTube_apis.forEach((api) => {
 				if (api['url'] === goodTube_api_cookie) {
