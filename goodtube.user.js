@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.009
+// @version      4.010
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -3519,7 +3519,6 @@
 		goodTube_videojs_player.on('timeupdate', function() {
 			// It loaded so let's remove the loading timeout
 			if (goodTube_bufferingTimeout) {
-				console.log('clear buffering timeout...');
 				clearTimeout(goodTube_bufferingTimeout);
 			}
 		});
