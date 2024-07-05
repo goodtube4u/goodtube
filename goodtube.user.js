@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.022
+// @version      4.025
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -1711,7 +1711,6 @@
 			apiEndpoint = goodTube_api_url+"/streams/"+goodTube_getParams['v'];
 		}
 
-
 		// Clear any fetch timeouts
 		if (goodTube_fetchTimeout) {
 			clearTimeout(goodTube_fetchTimeout);
@@ -1726,8 +1725,6 @@
 				console.log('\n-------------------------\n\n');
 				console.log('[GoodTube] Loading video data from '+goodTube_api_name+'...');
 			}
-
-			goodTube_player_loadVideo(player);
 		}, 5000);
 
 		// Get the video data (and die after 5s)
@@ -4946,13 +4943,13 @@
 			'proxy': true,
 			'url': 'https://pipedapi.r4fo.com'
 		},
-		// FAST
-		{
-			'name': 'Phoenix (US)',
-			'type': 3,
-			'proxy': true,
-			'url': 'https://pipedapi.drgns.space'
-		},
+		// // FAST
+		// {
+		// 	'name': 'Phoenix (US)',
+		// 	'type': 3,
+		// 	'proxy': true,
+		// 	'url': 'https://pipedapi.drgns.space'
+		// },
 		// FAST
 		{
 			'name': 'Ra (US)',
