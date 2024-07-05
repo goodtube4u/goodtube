@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.016
+// @version      4.017
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -4905,14 +4905,14 @@
 			'name': 'Anubis (DE)',
 			'type': 3,
 			'proxy': true,
-			'url': 'https://pipedapi.r4fo.com222'
+			'url': 'https://pipedapi.r4fo.com'
 		},
 		// FAST
 		{
 			'name': 'Phoenix (US)',
 			'type': 3,
 			'proxy': true,
-			'url': 'https://pipedapi.drgns.space222'
+			'url': 'https://pipedapi.drgns.space'
 		},
 		// FAST
 		{
