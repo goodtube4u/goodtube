@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.027
+// @version      4.030
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -2527,7 +2527,7 @@
 				// Otherwise get the storyboard data and check the server works
 				else {
 					storyboardData = videoData['storyboards'];
-					goodTube_player_checkStoryboardServer(player, storyboardData, storyboardApi);
+					goodTube_player_checkStoryboardServer(player, storyboardData, goodTube_otherDataServers[fallbackServerIndex]);
 				}
 			})
 			// If the fetch failed, try the next fallback server
@@ -4937,6 +4937,13 @@
 		// --------------------------------------------------------------------------------
 		// FAST
 		{
+			'name': 'Ra (US)',
+			'type': 3,
+			'proxy': true,
+			'url': 'https://pipedapi.us.projectsegfau.lt'
+		},
+		// FAST
+		{
 			'name': 'Anubis (DE)',
 			'type': 3,
 			'proxy': true,
@@ -4949,13 +4956,6 @@
 		// 	'proxy': true,
 		// 	'url': 'https://pipedapi.drgns.space'
 		// },
-		// FAST
-		{
-			'name': 'Ra (US)',
-			'type': 3,
-			'proxy': true,
-			'url': 'https://pipedapi.us.projectsegfau.lt'
-		},
 		// FAST
 		{
 			'name': 'Obsidian (AT)',
