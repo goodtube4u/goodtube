@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.000
+// @version      4.005
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -1555,6 +1555,15 @@
 	// Select API
 	let goodTube_automaticServerIndex = 0;
 	function goodTube_player_selectApi(url) {
+		// Target the source menu
+		let menu = document.querySelector('.vjs-source-button .vjs-menu');
+
+		// Deselect the currently selected menu items
+		let selectedMenuItems = menu.querySelectorAll('.vjs-selected');
+		selectedMenuItems.forEach((selectedMenuItem) => {
+			selectedMenuItem.classList.remove('vjs-selected');
+		});
+
 		// Automatic option
 		if (url === 'automatic') {
 			// Increment first to skip the first server (which is actually the automatic option itself)
@@ -1580,6 +1589,12 @@
 			if (!wrapper.classList.contains('goodTube_automaticServer')) {
 				wrapper.classList.add('goodTube_automaticServer');
 			}
+
+			// Select the automatic menu item
+			let automaticMenuOption = menu.querySelector('ul li:first-child');
+			if (!automaticMenuOption.classList.contains('vjs-selected')) {
+				automaticMenuOption.classList.add('vjs-selected');
+			}
 		}
 		// Manual selection
 		else {
@@ -1603,6 +1618,15 @@
 			// Reset the automatic selection
 			goodTube_automaticServerIndex = 0;
 		}
+
+
+		// Select the currently selected item
+		let menuItems = menu.querySelectorAll('ul li');
+		menuItems.forEach((menuItem) => {
+			if (menuItem.getAttribute('api') == goodTube_api_url) {
+				menuItem.classList.add('vjs-selected');
+			}
+		});
 	}
 
 	// Pause
@@ -2813,6 +2837,7 @@
 	let goodTube_videojs_tapTimer_forwards = false;
 	let goodTube_videojs_fastForward = false;
 	let goodTube_qualityApi = false;
+	let goodTube_bufferingTimeout = false;
 
 	// Init video js
 	function goodTube_player_videojs() {
@@ -2905,9 +2930,9 @@
 					// Get the menu
 					let menu = event.target.closest('.vjs-menu');
 
-					// Deselect the currently selected menu item
-					let selectMenuItems = menu.querySelectorAll('.vjs-selected');
-					selectMenuItems.forEach((selectedMenuItem) => {
+					// Deselect the currently selected menu items
+					let selectedMenuItems = menu.querySelectorAll('.vjs-selected');
+					selectedMenuItems.forEach((selectedMenuItem) => {
 						selectedMenuItem.classList.remove('vjs-selected');
 					});
 
@@ -2929,22 +2954,7 @@
 					}
 
 					// Reload the video data
-
-					// Debug message
-					if (goodTube_debug) {
-						console.log('\n-------------------------\n\n');
-						console.log('[GoodTube] Loading video data from '+goodTube_api_name+'...');
-					}
-
-					let delay = 0;
-					if (window.location.href.indexOf('m.youtube') !== -1) {
-						delay = 400;
-					}
-
-					setTimeout(function() {
-						goodTube_player_loadVideoDataAttempts = 0;
-						goodTube_player_loadVideo(goodTube_player);
-					}, delay);
+					goodTube_player_reloadVideoData();
 				}
 			});
 		});
@@ -3462,8 +3472,56 @@
 				}
 			}
 
+			// Add URL param to default video source menu items
+			let sourceMenuItems = document.querySelectorAll('.vjs-source-button .vjs-menu .vjs-menu-item');
+			if (sourceMenuItems) {
+				let i = 0;
+
+				sourceMenuItems.forEach((sourceMenuItem) => {
+					sourceMenuItem.setAttribute('api', goodTube_apis[i]['url']);
+					i++;
+				});
+			}
+
+			// Init the API selection
+			goodTube_player_selectApi(goodTube_helper_getCookie('goodTube_api_withauto'));
+
 			// Update the video js player
 			goodTube_player_videojs_update();
+		});
+
+		// On buffering / loading
+		goodTube_videojs_player.on('waiting', function() {
+			// Only do this for HD servers
+			if (goodTube_api_type === 2 || goodTube_api_type === 3) {
+				// If we've been waiting more than 10s, select the next server
+				goodTube_bufferingTimeout = setTimeout(function() {
+					// Debug message
+					if (goodTube_debug) {
+						console.log('[GoodTube] Video not loading fast enough - selecting next video source...');
+					}
+
+					goodTube_player_selectApi('automatic');
+
+					// Set the player time to be restored when the new server loads
+					if (goodTube_player.currentTime > 0) {
+						goodTube_player_restoreTime = goodTube_player.currentTime;
+					}
+
+					// Reload the video data
+					goodTube_player_reloadVideoData();
+				}, 10000);
+			}
+		});
+
+		goodTube_videojs_player.on('timeupdate', function() {
+			// Only do this for HD servers
+			if (goodTube_api_type === 2 || goodTube_api_type === 3) {
+				// It loaded so let's remove the loading timeout
+				if (goodTube_bufferingTimeout) {
+					clearTimeout(goodTube_bufferingTimeout);
+				}
+			}
 		});
 
 		// Esc keypress close menus
@@ -4496,21 +4554,6 @@
 
 	// Update the video js player
 	function goodTube_player_videojs_update() {
-		// Add URL param to default video source menu items
-		let sourceMenuItems = document.querySelectorAll('.vjs-source-button .vjs-menu .vjs-menu-item');
-		if (sourceMenuItems) {
-			let i = 0;
-			sourceMenuItems.forEach((sourceMenuItem) => {
-				sourceMenuItem.setAttribute('api', goodTube_apis[i]['url']);
-
-				if (goodTube_apis[i]['url'] === goodTube_api_url) {
-					sourceMenuItem.classList.add('vjs-selected');
-				}
-
-				i++;
-			});
-		}
-
 		// Make menus work
 		let menuButtons = document.querySelectorAll('.vjs-control-bar button');
 		menuButtons.forEach((button) => {
@@ -4621,6 +4664,25 @@
 		}
 	}
 
+	// Reload the video data
+	function goodTube_player_reloadVideoData() {
+		// Debug message
+		if (goodTube_debug) {
+			console.log('\n-------------------------\n\n');
+			console.log('[GoodTube] Loading video data from '+goodTube_api_name+'...');
+		}
+
+		let delay = 0;
+		if (window.location.href.indexOf('m.youtube') !== -1) {
+			delay = 400;
+		}
+
+		setTimeout(function() {
+			goodTube_player_loadVideoDataAttempts = 0;
+			goodTube_player_loadVideo(goodTube_player);
+		}, delay);
+	}
+
 	// Show an error on screen, or select next server if we're on automatic mode
 	function goodTube_player_videojs_handleError() {
 		// What api are we on?
@@ -4664,38 +4726,28 @@
 			}
 
 			// Reload the video data
-
-			// Debug message
-			if (goodTube_debug) {
-				console.log('\n-------------------------\n\n');
-				console.log('[GoodTube] Loading video data from '+goodTube_api_name+'...');
-			}
-
-			let delay = 0;
-			if (window.location.href.indexOf('m.youtube') !== -1) {
-				delay = 400;
-			}
-
-			setTimeout(function() {
-				goodTube_player_loadVideoDataAttempts = 0;
-				goodTube_player_loadVideo(goodTube_player);
-			}, delay);
+			goodTube_player_reloadVideoData();
 		}
 
 
 		// If it's manual
 		else {
-			let player = document.querySelector('#goodTube_player');
-
-			// Remove the loading class
-			if (player.classList.contains('vjs-waiting')) {
-				player.classList.remove('vjs-waiting');
+			// Debug message
+			if (goodTube_debug) {
+				console.log('[GoodTube] Video data could not be loaded - selecting next video source...');
 			}
 
-			let error = document.createElement('div');
-			error.setAttribute('id', 'goodTube_error');
-			error.innerHTML = "Video could not be loaded. Please select another video source.<br><small>There is a button for this at the bottom of the player.</small>";
-			player.appendChild(error);
+			// Go to automatic mode
+			goodTube_automaticServerIndex = 0;
+			goodTube_player_selectApi('automatic');
+
+			// Set the player time to be restored when the new server loads
+			if (goodTube_player.currentTime > 0) {
+				goodTube_player_restoreTime = goodTube_player.currentTime;
+			}
+
+			// Reload the video data
+			goodTube_player_reloadVideoData();
 		}
 	}
 
@@ -5999,11 +6051,6 @@
 					goodTube_player_videojs_setupPrevHistory();
 
 					// Load the video data
-
-					// First auto select a server if we've set it to automatic
-					if (goodTube_api_url === 'automatic') {
-						goodTube_player_selectApi('automatic');
-					}
 
 					// Debug message
 					if (goodTube_debug) {
