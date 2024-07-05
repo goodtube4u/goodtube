@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      3.060
+// @version      3.065
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -408,7 +408,6 @@
 	let goodTube_player_loadAssetAttempts = 0;
 	let goodTube_player_loadVideoDataAttempts = 0;
 	let goodTube_player_loadChaptersAttempts = 0;
-	let goodTube_player_downloadAttempts = [];
 	let goodTube_player_downloadFileAsBlobAttempts = [];
 	let goodTube_player_vttThumbnailsFunction = false;
 	let goodTube_player_reloadVideoAttempts = 1;
@@ -3011,7 +3010,7 @@
 								goodTube_pendingDownloads[goodTube_getParams['v']] = true;
 
 								// Download the video
-								goodTube_download('video', goodTube_getParams['v']);
+								goodTube_download(0, 'video', goodTube_getParams['v']);
 							},
 						},
 						{
@@ -3026,7 +3025,7 @@
 								goodTube_pendingDownloads[goodTube_getParams['v']] = true;
 
 								// Download the audio
-								goodTube_download('audio', goodTube_getParams['v']);
+								goodTube_download(0, 'audio', goodTube_getParams['v']);
 							},
 						},
 						{
@@ -4698,7 +4697,38 @@
 		'https://invidious.drgns.space',
 		'https://inv.nadeko.net',
 		'https://invidious.projectsegfau.lt'
-	]
+	];
+
+	// Download servers
+	let goodTube_downloadServers = [
+		// 'https://api-pl.cobalt.best',
+		'https://sea-downloadapi.stuff.solutions',
+		'https://co.otomir23.me',
+		'https://ca.haloz.at',
+		'https://cobalt.wither.ing',
+		'https://capi.tieren.men',
+		'https://co.tskau.team',
+		'https://apicb.tigaultraman.com',
+		'https://api-cobalt.boykisser.systems',
+		'https://cobalt.decrystalfan.app',
+		'https://wukko.wolfdo.gg',
+		'https://cobalt.canine.tools',
+		'https://capi.oak.li',
+		'https://	cb.nyoom.fun',
+		'https://dl.khyernet.xyz',
+		'https://cobalt-api.alexagirl.studio',
+		'https://api-dl.cgm.rs',
+		'https://nyc1.coapi.ggtyler.dev',
+		'https://api.dl.ixhby.dev',
+		'https://co.eepy.today',
+		'https://downloadapi.stuff.solutions',
+		'https://cobalt-api.ayo.tf',
+		'https://api.sacreations.me',
+		'https://cobaltapi-oracle-bbb-arm-01.thetech.network',
+		'https://bot.codematter.am',
+		'https://apicloud2.filsfkwtlfjas.xyz',
+		'https://dl01.yt-dl.click'
+	];
 
 	// API Endpoints
 	let goodTube_apis = [
@@ -4706,175 +4736,175 @@
 		// --------------------------------------------------------------------------------
 		// FAST
 		{
-			'name': 'HD - Anubis (DE)',
+			'name': 'Anubis (DE)',
 			'type': 3,
 			'proxy': true,
 			'url': 'https://pipedapi.r4fo.com'
 		},
 		// FAST
 		{
-			'name': 'HD - Phoenix (US)',
+			'name': 'Phoenix (US)',
 			'type': 3,
 			'proxy': true,
 			'url': 'https://pipedapi.drgns.space'
 		},
 		// FAST
 		{
-			'name': 'HD - Ra (US)',
+			'name': 'Ra (US)',
 			'type': 3,
 			'proxy': true,
 			'url': 'https://pipedapi.us.projectsegfau.lt'
 		},
 		// FAST
 		{
-			'name': 'HD - Obsidian (AT)',
+			'name': 'Obsidian (AT)',
 			'type': 3,
 			'proxy': true,
 			'url': 'https://pipedapi.leptons.xyz'
 		},
 		// FAST
 		{
-			'name': 'HD - Sphere (US)',
+			'name': 'Sphere (US)',
 			'type': 3,
 			'proxy': true,
 			'url': 'https://pipedapi.darkness.services'
 		},
 		// FAST
 		{
-			'name': 'HD - Acid (US)',
+			'name': 'Acid (US)',
 			'type': 2,
 			'proxy': true,
 			'url': 'https://invidious.incogniweb.net'
 		},
 		// FAST
 		{
-			'name': 'HD - Sphynx (JP)',
+			'name': 'Sphynx (JP)',
 			'type': 2,
 			'proxy': true,
 			'url': 'https://invidious.jing.rocks'
 		},
 		// MEDIUM
 		{
-			'name': 'HD - Hunter (NL)',
+			'name': 'Hunter (NL)',
 			'type': 3,
 			'proxy': true,
 			'url': 'https://pipedapi.ducks.party'
 		},
 		// MEDIUM
 		{
-			'name': 'HD - Sapphire (IN)',
+			'name': 'Sapphire (IN)',
 			'type': 3,
 			'proxy': true,
 			'url': 'https://pipedapi.in.projectsegfau.lt'
 		},
 		// MEDIUM
 		{
-			'name': 'HD - Space (DE)',
+			'name': 'Space (DE)',
 			'type': 3,
 			'proxy': true,
 			'url': 'https://pipedapi.smnz.de'
 		},
 		// MEDIUM
 		{
-			'name': 'HD - Orchid (DE)',
+			'name': 'Orchid (DE)',
 			'type': 3,
 			'proxy': true,
 			'url': 'https://api.piped.yt'
 		},
 		// MEDIUM
 		{
-			'name': 'HD - Emerald (DE)',
+			'name': 'Emerald (DE)',
 			'type': 3,
 			'proxy': true,
 			'url': 'https://pipedapi.phoenixthrush.com'
 		},
 		// MEDIUM
 		{
-			'name': 'HD - 420 (FI)',
+			'name': '420 (FI)',
 			'type': 2,
 			'proxy': true,
 			'url': 'https://invidious.privacyredirect.com'
 		},
 		// MEDIUM
 		{
-			'name': 'HD - Onyx (FR)',
+			'name': 'Onyx (FR)',
 			'type': 2,
 			'proxy': true,
 			'url': 'https://invidious.fdn.fr'
 		},
 		// MEDIUM
 		{
-			'name': 'HD - Indigo (FI)',
+			'name': 'Indigo (FI)',
 			'type': 2,
 			'proxy': true,
 			'url': 'https://iv.datura.network'
 		},
 		// MEDIUM
 		{
-			'name': 'HD - Andromeda (FI)',
+			'name': 'Andromeda (FI)',
 			'type': 3,
 			'proxy': true,
 			'url': 'https://pipedapi-libre.kavin.rocks'
 		},
 		// MEDIUM
 		{
-			'name': 'HD - Lilith (INT)',
+			'name': 'Lilith (INT)',
 			'type': 3,
 			'proxy': true,
 			'url': 'https://pipedapi.syncpundit.io'
 		},
 		// MEDIUM
 		{
-			'name': 'HD - Basilisk (DE)',
+			'name': 'Basilisk (DE)',
 			'type': 3,
 			'proxy': true,
 			'url': 'https://pipedapi.adminforge.de'
 		},
 		// MEDIUM
 		{
-			'name': 'HD - Golem (AT)',
+			'name': 'Golem (AT)',
 			'type': 3,
 			'proxy': true,
 			'url': 'https://schaunapi.ehwurscht.at'
 		},
 		// // SLOW
 		// {
-		// 	'name': 'HD - Centaur (FR)',
+		// 	'name': 'Centaur (FR)',
 		// 	'type': 3,
 		// 	'proxy': true,
 		// 	'url': 'https://api.piped.projectsegfau.lt'
 		// },
 		// // SLOW
 		// {
-		// 	'name': 'HD - Cypher (FR)',
+		// 	'name': 'Cypher (FR)',
 		// 	'type': 3,
 		// 	'proxy': true,
 		// 	'url': 'https://api.piped.privacydev.net'
 		// },
 		// // SLOW
 		// {
-		// 	'name': 'HD - T800 (DE)',
+		// 	'name': 'T800 (DE)',
 		// 	'type': 2,
 		// 	'proxy': true,
 		// 	'url': 'https://invidious.protokolla.fi'
 		// },
 		// // SLOW
 		// {
-		// 	'name': 'HD - Wasp (DE)',
+		// 	'name': 'Wasp (DE)',
 		// 	'type': 2,
 		// 	'proxy': true,
 		// 	'url': 'https://iv.melmac.space'
 		// },
 		// // SLOW
 		// {
-		// 	'name': 'HD - Platinum (TR)',
+		// 	'name': 'Platinum (TR)',
 		// 	'type': 3,
 		// 	'proxy': true,
 		// 	'url': 'https://pipedapi.ngn.tf'
 		// },
 		// // SLOW
 		// {
-		// 	'name': 'HD - Minotaur (NL)',
+		// 	'name': 'Minotaur (NL)',
 		// 	'type': 3,
 		// 	'proxy': true,
 		// 	'url': 'https://pipedapi.astartes.nl'
@@ -5258,25 +5288,22 @@
 	}
 
 	// Download video / audio for a specificed youtube ID
-	function goodTube_download(type, youtubeId, fileName, codec) {
+	function goodTube_download(serverIndex, type, youtubeId, fileName, codec) {
 		// Stop if this is no longer a pending download
 		if (typeof goodTube_pendingDownloads[youtubeId] === 'undefined') {
 			return;
 		}
 
-		// Only re-attempt to download max configured retry attempts (x 5 - API debounce can be trouble)
-		if (typeof goodTube_player_downloadAttempts[youtubeId] === 'undefined') {
-			goodTube_player_downloadAttempts[youtubeId] = 0;
-		}
-
-		goodTube_player_downloadAttempts[youtubeId]++;
-		if (goodTube_player_downloadAttempts[youtubeId] > (goodTube_retryAttempts * 5)) {
+		// If we're out of download servers to try, show an error
+		if (typeof goodTube_downloadServers[serverIndex] === 'undefined') {
 			// Debug message
 			if (goodTube_debug) {
 				if (typeof fileName !== 'undefined') {
+					alert('[GoodTube] '+type.charAt(0).toUpperCase()+type.slice(1)+' - '+fileName+' could not be downloaded. Please try again soon.');
 					console.log('[GoodTube] '+type.charAt(0).toUpperCase()+type.slice(1)+' - '+fileName+' could not be downloaded. Please try again soon.');
 				}
 				else {
+					alert('[GoodTube] '+type.charAt(0).toUpperCase()+type.slice(1)+' could not be downloaded. Please try again soon.');
 					console.log('[GoodTube] '+type.charAt(0).toUpperCase()+type.slice(1)+' could not be downloaded. Please try again soon.');
 				}
 			}
@@ -5335,7 +5362,7 @@
 			});
 
 			// Call the API
-			fetch('https://par1.coapi.ggtyler.dev/api/json', {
+			fetch(goodTube_downloadServers[serverIndex]+'/api/json', {
 				method: 'POST',
 				headers: {
 					'Accept': 'application/json',
@@ -5360,7 +5387,7 @@
 					}
 
 					goodTube_pendingRetry['download_'+youtubeId] = setTimeout(function() {
-						goodTube_download(type, youtubeId, fileName);
+						goodTube_download(serverIndex, type, youtubeId, fileName);
 					}, goodTube_retryDelay);
 
 					return;
@@ -5376,8 +5403,10 @@
 							clearTimeout(goodTube_pendingRetry['download_'+youtubeId]);
 						}
 
+						serverIndex++;
+
 						goodTube_pendingRetry['download_'+youtubeId] = setTimeout(function() {
-							goodTube_download(type, youtubeId, fileName);
+							goodTube_download(serverIndex, type, youtubeId, fileName);
 						}, goodTube_retryDelay);
 
 						return;
@@ -5417,7 +5446,7 @@
 							}
 
 							goodTube_pendingRetry['download_'+youtubeId] = setTimeout(function() {
-								goodTube_download(type, youtubeId, fileName, nextCodec);
+								goodTube_download(serverIndex, type, youtubeId, fileName, nextCodec);
 							}, goodTube_retryDelay);
 
 							return;
@@ -5428,9 +5457,6 @@
 							if (goodTube_debug) {
 								console.log('[GoodTube] Could not download '+type+' - '+fileName);
 							}
-
-							// Reset ALL downloading attempts (this helps to debounce the API)
-							goodTube_player_downloadAttempts = [];
 
 							// Remove from pending downloads
 							if (typeof goodTube_pendingDownloads[youtubeId] !== 'undefined') {
@@ -5458,9 +5484,6 @@
 							console.log('[GoodTube] Downloaded '+type);
 						}
 
-						// Reset ALL downloading attempts (this helps to debounce the API)
-						goodTube_player_downloadAttempts = [];
-
 						// Remove from pending downloads
 						if (typeof goodTube_pendingDownloads[youtubeId] !== 'undefined') {
 							delete goodTube_pendingDownloads[youtubeId];
@@ -5483,8 +5506,10 @@
 					clearTimeout(goodTube_pendingRetry['download_'+youtubeId]);
 				}
 
+				serverIndex++;
+
 				goodTube_pendingRetry['download_'+youtubeId] = setTimeout(function() {
-					goodTube_download(type, youtubeId, fileName);
+					goodTube_download(serverIndex, type, youtubeId, fileName);
 				}, goodTube_retryDelay);
 			});
 		}, (delaySeconds * 1000));
@@ -5575,7 +5600,7 @@
 			goodTube_pendingDownloads[id] = true;
 
 			// Download the video
-			goodTube_download(type, id, fileName);
+			goodTube_download(0, type, id, fileName);
 
 			track++;
 		});
@@ -5652,9 +5677,6 @@
 				console.log('[GoodTube] Downloaded '+type+' - '+fileName);
 			}
 
-			// Reset ALL downloading attempts (this helps to debounce the API)
-			goodTube_player_downloadAttempts = [];
-
 			// Remove from pending downloads
 			if (typeof goodTube_pendingDownloads[youtubeId] !== 'undefined') {
 				delete goodTube_pendingDownloads[youtubeId];
@@ -5684,9 +5706,6 @@
 
 		// Remove all pending downloads
 		goodTube_pendingDownloads = [];
-
-		// Reset all downloading attempts
-		goodTube_player_downloadAttempts = [];
 
 		// Clear all download timeouts
 		for (let key in goodTube_downloadTimeouts) {
