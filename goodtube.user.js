@@ -2664,6 +2664,10 @@
 
 	// Reload the video
 	function goodTube_player_reloadVideo(player) {
+
+
+		console.log('reloadddd', goodTube_player_reloadVideoAttempts);
+
 		// If we're not viewing a video, just return
 		if (typeof goodTube_getParams['v'] === 'undefined') {
 			return;
@@ -2692,6 +2696,8 @@
 		setTimeout(function() {
 			player.setAttribute('src', currentSrc);
 		}, 0);
+
+		goodTube_player_reloadVideoAttempts++;
 	}
 
 	// Clear the player
@@ -3649,9 +3655,6 @@
 					}
 				}
 			}
-
-			// This must go here because video js tries to load it twice, and this messes with things if we increment inside the reload function
-			goodTube_player_reloadVideoAttempts++;
 		});
 
 		// Once loaded data
