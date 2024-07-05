@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.017
+// @version      4.020
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -1650,6 +1650,7 @@
 	}
 
 	// Load video
+	let goodTube_fetchTimeout = false;
 	function goodTube_player_loadVideo(player) {
 		// If we're not viewing a video
 		if (typeof goodTube_getParams['v'] === 'undefined') {
@@ -1710,10 +1711,34 @@
 			apiEndpoint = goodTube_api_url+"/streams/"+goodTube_getParams['v'];
 		}
 
-		// Get the video data
-		fetch(apiEndpoint)
+
+		// Clear any fetch timeouts
+		if (goodTube_fetchTimeout) {
+			clearTimeout(goodTube_fetchTimeout);
+		}
+
+		// Make sure fetch completes in 5s
+		goodTube_fetchTimeout = setTimeout(function() {
+			goodTube_player_selectApi('automatic');
+
+			// Debug message
+			if (goodTube_debug) {
+				console.log('\n-------------------------\n\n');
+				console.log('[GoodTube] Loading video data from '+goodTube_api_name+'...');
+			}
+
+			goodTube_player_loadVideo(player);
+		}, 5000);
+
+		// Get the video data (and die after 5s)
+		fetch(apiEndpoint, { signal: AbortSignal.timeout(5000) })
 		.then(response => response.text())
 		.then(data => {
+			// Clear any fetch timeouts
+			if (goodTube_fetchTimeout) {
+				clearTimeout(goodTube_fetchTimeout);
+			}
+
 			// Add a loading class (this gives a black background)
 			let goodTube_videojs_loadingElement = document.getElementById('goodTube_player');
 			if (!goodTube_videojs_loadingElement.classList.contains('vjs-loading')) {
@@ -2026,6 +2051,11 @@
 		})
 		// If there's any issues loading the video data, try again (after configured delay time)
 		.catch((error) => {
+			// Clear any fetch timeouts
+			if (goodTube_fetchTimeout) {
+				clearTimeout(goodTube_fetchTimeout);
+			}
+
 			if (typeof goodTube_pendingRetry['loadVideoData'] !== 'undefined') {
 				clearTimeout(goodTube_pendingRetry['loadVideoData']);
 			}
@@ -4900,20 +4930,20 @@
 
 		// HD SERVERS
 		// --------------------------------------------------------------------------------
-		// FAST
-		{
-			'name': 'Anubis (DE)',
-			'type': 3,
-			'proxy': true,
-			'url': 'https://pipedapi.r4fo.com'
-		},
-		// FAST
-		{
-			'name': 'Phoenix (US)',
-			'type': 3,
-			'proxy': true,
-			'url': 'https://pipedapi.drgns.space'
-		},
+		// // FAST
+		// {
+		// 	'name': 'Anubis (DE)',
+		// 	'type': 3,
+		// 	'proxy': true,
+		// 	'url': 'https://pipedapi.r4fo.com'
+		// },
+		// // FAST
+		// {
+		// 	'name': 'Phoenix (US)',
+		// 	'type': 3,
+		// 	'proxy': true,
+		// 	'url': 'https://pipedapi.drgns.space'
+		// },
 		// FAST
 		{
 			'name': 'Ra (US)',
