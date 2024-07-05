@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.006
+// @version      4.007
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -3492,6 +3492,10 @@
 
 		// On buffering / loading
 		goodTube_videojs_player.on('waiting', function() {
+			if (goodTube_bufferingTimeout) {
+				clearTimeout(goodTube_bufferingTimeout);
+			}
+
 			// Only do this for HD servers
 			if (goodTube_api_type === 2 || goodTube_api_type === 3) {
 				// If we've been waiting more than 10s, select the next server
