@@ -4736,7 +4736,7 @@
 		else if (selectedApi === 'automatic') {
 			// Debug message
 			if (goodTube_debug) {
-				console.log('[GoodTube] Video data could not be loaded - selecting next video source...');
+				console.log('[GoodTube] Video could not be loaded - selecting next video source...');
 			}
 
 			// Select next server
@@ -4756,7 +4756,7 @@
 		else {
 			// Debug message
 			if (goodTube_debug) {
-				console.log('[GoodTube] Video data could not be loaded - selecting next video source...');
+				console.log('[GoodTube] Video could not be loaded - selecting next video source...');
 			}
 
 			// Go to automatic mode
