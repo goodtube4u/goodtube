@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.020
+// @version      4.021
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -4916,6 +4916,15 @@
 		'https://apicloud2.filsfkwtlfjas.xyz',
 		'https://dl01.yt-dl.click'
 	];
+
+	// Shuffle the download servers to take the load off any one instance
+	let currentIndex = goodTube_downloadServers.length;
+	while (currentIndex != 0) {
+		let randomIndex = Math.floor(Math.random() * currentIndex);
+		currentIndex--;
+
+		[goodTube_downloadServers[currentIndex], goodTube_downloadServers[randomIndex]] = [goodTube_downloadServers[randomIndex], goodTube_downloadServers[currentIndex]];
+	}
 
 	// API Endpoints
 	let goodTube_apis = [
