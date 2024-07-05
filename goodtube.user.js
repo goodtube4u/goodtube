@@ -4937,13 +4937,6 @@
 		// --------------------------------------------------------------------------------
 		// FAST
 		{
-			'name': 'Ra (US)',
-			'type': 3,
-			'proxy': true,
-			'url': 'https://pipedapi.us.projectsegfau.lt'
-		},
-		// FAST
-		{
 			'name': 'Anubis (DE)',
 			'type': 3,
 			'proxy': true,
@@ -4956,6 +4949,13 @@
 		// 	'proxy': true,
 		// 	'url': 'https://pipedapi.drgns.space'
 		// },
+		// FAST
+		{
+			'name': 'Ra (US)',
+			'type': 3,
+			'proxy': true,
+			'url': 'https://pipedapi.us.projectsegfau.lt'
+		},
 		// FAST
 		{
 			'name': 'Obsidian (AT)',
