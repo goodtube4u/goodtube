@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.030
+// @version      4.031
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -4884,9 +4884,20 @@
 
 	// Download servers
 	let goodTube_downloadServers = [
-		// 'https://api-pl.cobalt.best',
+		// We first try these servers, recommended by "ihatespawn".
+		// As I understand it these are ok to use, not trying to step on anyone's toes here.
+		// Any issues with this implementation, please contact me. I am happy to work with you, so long as we let people download from somewhere.
+		'https://dl01.yt-dl.click',
+		'https://dl02.yt-dl.click',
+		'https://dl03.yt-dl.click',
+		'https://apicloud9.filsfkwtlfjas.xyz',
+		'https://apicloud3.filsfkwtlfjas.xyz',
+		'https://apicloud8.filsfkwtlfjas.xyz',
+		'https://apicloud4.filsfkwtlfjas.xyz',
+		'https://apicloud5.filsfkwtlfjas.xyz',
+
+		// Only if they fail; we then fallback to using community instances.
 		'https://sea-downloadapi.stuff.solutions',
-		'https://co.otomir23.me',
 		'https://ca.haloz.at',
 		'https://cobalt.wither.ing',
 		'https://capi.tieren.men',
@@ -4895,32 +4906,28 @@
 		'https://api-cobalt.boykisser.systems',
 		'https://cobalt.decrystalfan.app',
 		'https://wukko.wolfdo.gg',
-		'https://cobalt.canine.tools',
 		'https://capi.oak.li',
-		'https://	cb.nyoom.fun',
+		'https://cb.nyoom.fun',
 		'https://dl.khyernet.xyz',
 		'https://cobalt-api.alexagirl.studio',
-		'https://api-dl.cgm.rs',
 		'https://nyc1.coapi.ggtyler.dev',
 		'https://api.dl.ixhby.dev',
 		'https://co.eepy.today',
 		'https://downloadapi.stuff.solutions',
 		'https://cobalt-api.ayo.tf',
 		'https://api.sacreations.me',
-		'https://cobaltapi-oracle-bbb-arm-01.thetech.network',
-		'https://bot.codematter.am',
 		'https://apicloud2.filsfkwtlfjas.xyz',
 		'https://dl01.yt-dl.click'
 	];
 
-	// Shuffle the download servers to take the load off any one instance
-	let currentIndex = goodTube_downloadServers.length;
-	while (currentIndex != 0) {
-		let randomIndex = Math.floor(Math.random() * currentIndex);
-		currentIndex--;
+	// // Shuffle the download servers to take the load off any one instance
+	// let currentIndex = goodTube_downloadServers.length;
+	// while (currentIndex != 0) {
+	// 	let randomIndex = Math.floor(Math.random() * currentIndex);
+	// 	currentIndex--;
 
-		[goodTube_downloadServers[currentIndex], goodTube_downloadServers[randomIndex]] = [goodTube_downloadServers[randomIndex], goodTube_downloadServers[currentIndex]];
-	}
+	// 	[goodTube_downloadServers[currentIndex], goodTube_downloadServers[randomIndex]] = [goodTube_downloadServers[randomIndex], goodTube_downloadServers[currentIndex]];
+	// }
 
 	// API Endpoints
 	let goodTube_apis = [
