@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.007
+// @version      4.008
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -5462,6 +5462,11 @@
 
 		// If we're out of download servers to try, show an error
 		if (typeof goodTube_downloadServers[serverIndex] === 'undefined') {
+			// Remove from pending downloads
+			if (typeof goodTube_pendingDownloads[youtubeId] !== 'undefined') {
+				delete goodTube_pendingDownloads[youtubeId];
+			}
+
 			// Debug message
 			if (goodTube_debug) {
 				if (typeof fileName !== 'undefined') {
