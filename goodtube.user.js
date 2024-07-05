@@ -4163,7 +4163,7 @@
 			}
 
 			#goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-menu-content {
-				max-height: 164px !important;
+				max-height: 156px !important;
 			}
 
 			.video-js .vjs-control-bar::-webkit-scrollbar {
