@@ -1676,14 +1676,8 @@
 		// Clear the player
 		goodTube_player_clear(player);
 
-		// Add a loading class (this gives a black background)
-		let goodTube_videojs_loadingElement = document.getElementById('goodTube_player');
-		if (!goodTube_videojs_loadingElement.classList.contains('vjs-loading')) {
-			goodTube_videojs_loadingElement.classList.add('vjs-loading');
-		}
-		if (!goodTube_videojs_loadingElement.classList.contains('vjs-waiting')) {
-			goodTube_videojs_loadingElement.classList.add('vjs-waiting');
-		}
+		// Add the loading state
+		goodTube_player_addLoadingState();
 
 		// Only re-attempt to load the video data max configured retry attempts
 		goodTube_player_loadVideoDataAttempts++;
@@ -1737,14 +1731,8 @@
 				clearTimeout(goodTube_fetchTimeout);
 			}
 
-			// Add a loading class (this gives a black background)
-			let goodTube_videojs_loadingElement = document.getElementById('goodTube_player');
-			if (!goodTube_videojs_loadingElement.classList.contains('vjs-loading')) {
-				goodTube_videojs_loadingElement.classList.add('vjs-loading');
-			}
-			if (!goodTube_videojs_loadingElement.classList.contains('vjs-waiting')) {
-				goodTube_videojs_loadingElement.classList.add('vjs-waiting');
-			}
+			// Add the loading state
+			goodTube_player_addLoadingState();
 
 			// Turn video data into JSON
 			let videoData = JSON.parse(data);
@@ -1814,14 +1802,8 @@
 					goodTube_player_loadVideo(player);
 				}, goodTube_retryDelay);
 
-				// Add a loading class (this gives a black background)
-				let goodTube_videojs_loadingElement = document.getElementById('goodTube_player');
-				if (!goodTube_videojs_loadingElement.classList.contains('vjs-loading')) {
-					goodTube_videojs_loadingElement.classList.add('vjs-loading');
-				}
-				if (!goodTube_videojs_loadingElement.classList.contains('vjs-waiting')) {
-					goodTube_videojs_loadingElement.classList.add('vjs-waiting');
-				}
+				// Add the loading state
+				goodTube_player_addLoadingState();
 
 				return;
 			}
@@ -2062,14 +2044,8 @@
 				goodTube_player_loadVideo(player);
 			}, goodTube_retryDelay);
 
-			// Add a loading class (this gives a black background)
-			let goodTube_videojs_loadingElement = document.getElementById('goodTube_player');
-			if (!goodTube_videojs_loadingElement.classList.contains('vjs-loading')) {
-				goodTube_videojs_loadingElement.classList.add('vjs-loading');
-			}
-			if (!goodTube_videojs_loadingElement.classList.contains('vjs-waiting')) {
-				goodTube_videojs_loadingElement.classList.add('vjs-waiting');
-			}
+			// Add the loading state
+			goodTube_player_addLoadingState();
 		});
 	}
 
@@ -2737,6 +2713,30 @@
 		goodTube_helper_showElement(player.closest('#goodTube_player_wrapper1'));
 	}
 
+	// Add loading state
+	function goodTube_player_addLoadingState() {
+		let player = document.getElementById('goodTube_player');
+
+		if (!player.classList.contains('vjs-loading')) {
+			player.classList.add('vjs-loading');
+		}
+		if (!player.classList.contains('vjs-waiting')) {
+			player.classList.add('vjs-waiting');
+		}
+	}
+
+	// Remove loading state
+	function goodTube_player_removeLoadingState() {
+		let player = document.getElementById('goodTube_player');
+
+		if (player.classList.contains('vjs-loading')) {
+			player.classList.remove('vjs-loading');
+		}
+		if (player.classList.contains('vjs-waiting')) {
+			player.classList.remove('vjs-waiting');
+		}
+	}
+
 	// Picture in picture
 	function goodTube_player_pipInit() {
 		// If we leave the picture in picture
@@ -3155,14 +3155,8 @@
 				goodTube_player_reloadVideo(goodTube_player);
 			}, goodTube_retryDelay);
 
-			// Add a loading class (this gives a black background)
-			let goodTube_videojs_loadingElement = document.getElementById('goodTube_player');
-			if (!goodTube_videojs_loadingElement.classList.contains('vjs-loading')) {
-				goodTube_videojs_loadingElement.classList.add('vjs-loading');
-			}
-			if (!goodTube_videojs_loadingElement.classList.contains('vjs-waiting')) {
-				goodTube_videojs_loadingElement.classList.add('vjs-waiting');
-			}
+			// Add the loading state
+			goodTube_player_addLoadingState();
 
 			// Update the video js player
 			goodTube_player_videojs_update();
@@ -3679,14 +3673,8 @@
 			// Update the video js player
 			goodTube_player_videojs_update();
 
-			// Remove the loading class (this removes the black background)
-			let goodTube_videojs_loadingElement = document.getElementById('goodTube_player');
-			if (goodTube_videojs_loadingElement.classList.contains('vjs-loading')) {
-				goodTube_videojs_loadingElement.classList.remove('vjs-loading');
-			}
-			if (goodTube_videojs_loadingElement.classList.contains('vjs-waiting')) {
-				goodTube_videojs_loadingElement.classList.remove('vjs-waiting');
-			}
+			// Remove the loading state
+			goodTube_player_removeLoadingState();
 		});
 
 		// Play next video this video has ended
@@ -4720,10 +4708,8 @@
 		if (selectedApi === 'automatic' && showNoServersError) {
 			let player = document.querySelector('#goodTube_player');
 
-			// Remove the loading class
-			if (player.classList.contains('vjs-waiting')) {
-				player.classList.remove('vjs-waiting');
-			}
+			// Remove the loading state
+			goodTube_player_removeLoadingState();
 
 			let error = document.createElement('div');
 			error.setAttribute('id', 'goodTube_error');
