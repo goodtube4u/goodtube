@@ -2677,6 +2677,7 @@
 		goodTube_player_videojs_hideError();
 		player.classList.add('goodTube_hidden');
 		player.currentTime = 0;
+		player.setAttribute('src', '');
 		player.pause();
 
 		// Clear any existing chapters
@@ -2693,7 +2694,7 @@
 			});
 		}
 
-		// Clear any DASH qualities
+		// Clear all qualities
 		let qualityMenus = document.querySelectorAll('.vjs-quality-selector');
 		if (qualityMenus && typeof qualityMenus[1] !== 'undefined') {
 			let menuInner = qualityMenus[1].querySelector('ul');
