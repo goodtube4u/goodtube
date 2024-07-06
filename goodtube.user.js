@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.031
+// @version      4.500
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -409,7 +409,6 @@
 	let goodTube_player_loadAssetAttempts = 0;
 	let goodTube_player_loadVideoDataAttempts = 0;
 	let goodTube_player_loadChaptersAttempts = 0;
-	let goodTube_player_downloadFileAsBlobAttempts = [];
 	let goodTube_player_vttThumbnailsFunction = false;
 	let goodTube_player_reloadVideoAttempts = 1;
 	let goodTube_player_ended = false;
@@ -1555,7 +1554,7 @@
 
 	// Select API
 	let goodTube_automaticServerIndex = 0;
-	function goodTube_player_selectApi(url) {
+	function goodTube_player_selectApi(url, reloadVideoData) {
 		// Target the source menu
 		let menu = document.querySelector('.vjs-source-button .vjs-menu');
 
@@ -1620,7 +1619,6 @@
 			goodTube_automaticServerIndex = 0;
 		}
 
-
 		// Select the currently selected item
 		let menuItems = menu.querySelectorAll('ul li');
 		menuItems.forEach((menuItem) => {
@@ -1628,6 +1626,11 @@
 				menuItem.classList.add('vjs-selected');
 			}
 		});
+
+		// Reload video data
+		if (reloadVideoData) {
+			goodTube_player_reloadVideoData();
+		}
 	}
 
 	// Pause
@@ -1651,7 +1654,6 @@
 	}
 
 	// Load video
-	let goodTube_fetchTimeout = false;
 	function goodTube_player_loadVideo(player) {
 		// If we're not viewing a video
 		if (typeof goodTube_getParams['v'] === 'undefined') {
@@ -1706,31 +1708,12 @@
 			apiEndpoint = goodTube_api_url+"/streams/"+goodTube_getParams['v'];
 		}
 
-		// Clear any fetch timeouts
-		if (goodTube_fetchTimeout) {
-			clearTimeout(goodTube_fetchTimeout);
-		}
-
-		// Make sure fetch completes in 5s
-		goodTube_fetchTimeout = setTimeout(function() {
-			goodTube_player_selectApi('automatic');
-
-			// Debug message
-			if (goodTube_debug) {
-				console.log('\n-------------------------\n\n');
-				console.log('[GoodTube] Loading video data from '+goodTube_api_name+'...');
-			}
-		}, 5000);
-
-		// Get the video data (and die after 5s)
-		fetch(apiEndpoint, { signal: AbortSignal.timeout(5000) })
+		// Call the API (die after 5s)
+		fetch(apiEndpoint, {
+			signal: AbortSignal.timeout(5000)
+		})
 		.then(response => response.text())
 		.then(data => {
-			// Clear any fetch timeouts
-			if (goodTube_fetchTimeout) {
-				clearTimeout(goodTube_fetchTimeout);
-			}
-
 			// Add the loading state
 			goodTube_player_addLoadingState();
 
@@ -2031,11 +2014,6 @@
 		})
 		// If there's any issues loading the video data, try again (after configured delay time)
 		.catch((error) => {
-			// Clear any fetch timeouts
-			if (goodTube_fetchTimeout) {
-				clearTimeout(goodTube_fetchTimeout);
-			}
-
 			if (typeof goodTube_pendingRetry['loadVideoData'] !== 'undefined') {
 				clearTimeout(goodTube_pendingRetry['loadVideoData']);
 			}
@@ -2419,8 +2397,10 @@
 		}
 		goodTube_otherDataServersIndex_subtitles++;
 
-		// Get the subtitle
-		fetch(subtitleApi+subtitleData[0]['url'])
+		// Get the subtitle (die after 5s)
+		fetch(subtitleApi+subtitleData[0]['url'], {
+			signal: AbortSignal.timeout(5000)
+		})
 		.then(response => response.text())
 		.then(data => {
 			// If the data wasn't right, try the next fallback server
@@ -2488,8 +2468,10 @@
 		if (goodTube_api_type === 3) {
 			let apiEndpoint = goodTube_otherDataServers[fallbackServerIndex]+"/api/v1/videos/"+goodTube_getParams['v'];
 
-			// Get the video data
-			fetch(apiEndpoint)
+			// Get the video data (die after 5s)
+			fetch(apiEndpoint, {
+				signal: AbortSignal.timeout(5000)
+			})
 			.then(response => response.text())
 			.then(data => {
 				// Turn video data into JSON
@@ -2547,7 +2529,10 @@
 		}
 		// Otherwise we have data, so check the storyboard returned actually loads
 		else {
-			fetch(storyboardApi+storyboardData[0]['url'])
+			// Call the API (die after 5s)
+			fetch(storyboardApi+storyboardData[0]['url'], {
+				signal: AbortSignal.timeout(5000)
+			})
 			.then(response => response.text())
 			.then(data => {
 				// If it failed to get WEBVTT format, try the next fallback server
@@ -2573,7 +2558,10 @@
 
 					// If we found the URL of the first storyboard image, check it loads
 					if (gotTheUrl) {
-						fetch(storyboardUrl)
+						// Call the API (die after 5s)
+						fetch(storyboardUrl, {
+							signal: AbortSignal.timeout(5000)
+						})
 						.then(response => response.text())
 						.then(data => {
 							// Check the data returned, it should be an image not a HTML document (this often comes back when it fails to load)
@@ -2677,7 +2665,7 @@
 		goodTube_player_videojs_hideError();
 		player.classList.add('goodTube_hidden');
 		player.currentTime = 0;
-		player.setAttribute('src', '');
+		// player.setAttribute('src', '');
 		player.pause();
 
 		// Clear any existing chapters
@@ -2868,6 +2856,7 @@
 	let goodTube_videojs_fastForward = false;
 	let goodTube_qualityApi = false;
 	let goodTube_bufferingTimeout = false;
+	let goodTube_loadingTimeout = false;
 
 	// Init video js
 	function goodTube_player_videojs() {
@@ -2975,16 +2964,13 @@
 						goodTube_automaticServerIndex = 0;
 					}
 
-					// Set the new API
-					goodTube_player_selectApi(menuItem.getAttribute('api'));
-
 					// Set the player time to be restored when the new server loads
 					if (goodTube_player.currentTime > 0) {
 						goodTube_player_restoreTime = goodTube_player.currentTime;
 					}
 
-					// Reload the video data
-					goodTube_player_reloadVideoData();
+					// Set the new API
+					goodTube_player_selectApi(menuItem.getAttribute('api'), true);
 				}
 			});
 		});
@@ -3508,7 +3494,7 @@
 			}
 
 			// Init the API selection
-			goodTube_player_selectApi(goodTube_helper_getCookie('goodTube_api_withauto'));
+			goodTube_player_selectApi(goodTube_helper_getCookie('goodTube_api_withauto'), false);
 
 			// Update the video js player
 			goodTube_player_videojs_update();
@@ -3532,13 +3518,11 @@
 							console.log('[GoodTube] Video not loading fast enough - selecting next video source...');
 						}
 
-						goodTube_player_selectApi('automatic');
-
 						// Set the player time to be restored when the new server loads
 						goodTube_player_restoreTime = goodTube_player.currentTime;
 
-						// Reload the video data
-						goodTube_player_reloadVideoData();
+						// Get the next server
+						goodTube_player_selectApi('automatic', true);
 					}
 				}, 10000);
 			}
@@ -3557,6 +3541,11 @@
 
 		// Once the metadata has loaded
 		goodTube_videojs_player.on('loadedmetadata', function() {
+			// Clear any loading timeouts
+			if (goodTube_loadingTimeout) {
+				clearTimeout(goodTube_loadingTimeout);
+			}
+
 			// Skip to remembered time once loaded metadata (if there's a get param of 't')
 			if (typeof goodTube_getParams['t'] !== 'undefined') {
 				let time = goodTube_getParams['t'].replace('s', '');
@@ -3579,9 +3568,24 @@
 
 		// Debug message to show the video is loading
 		goodTube_videojs_player.on('loadstart', function() {
+			// Clear any loading timeouts
+			if (goodTube_loadingTimeout) {
+				clearTimeout(goodTube_loadingTimeout);
+			}
+
+			// If we've been waiting more than 10s, select the next server
+			goodTube_loadingTimeout = setTimeout(function() {
+				// Debug message
+				if (goodTube_debug) {
+					console.log('[GoodTube] Video not loading fast enough - selecting next video source...');
+				}
+
+				// Get the next server
+				goodTube_player_selectApi('automatic', true);
+			}, 10000);
+
 			// Enable the player
 			goodTube_player.classList.remove('goodTube_hidden');
-
 
 			// Server 1 quality stuff
 			if (goodTube_api_type === 1) {
@@ -4696,6 +4700,14 @@
 
 	// Show an error on screen, or select next server if we're on automatic mode
 	function goodTube_player_videojs_handleError() {
+		// Clear any buffering and loading timeouts
+		if (goodTube_bufferingTimeout) {
+			clearTimeout(goodTube_bufferingTimeout);
+		}
+		if (goodTube_loadingTimeout) {
+			clearTimeout(goodTube_loadingTimeout);
+		}
+
 		// What api are we on?
 		let selectedApi = goodTube_helper_getCookie('goodTube_api_withauto');
 
@@ -4712,6 +4724,9 @@
 			// Remove the loading state
 			goodTube_player_removeLoadingState();
 
+			// Clear the player
+			goodTube_player_clear(goodTube_player);
+
 			let error = document.createElement('div');
 			error.setAttribute('id', 'goodTube_error');
 			error.innerHTML = "Video could not be loaded. The servers are not responding :(<br><small>Please refresh the page / try again soon!</small>";
@@ -4726,16 +4741,13 @@
 				console.log('[GoodTube] Video could not be loaded - selecting next video source...');
 			}
 
-			// Select next server
-			goodTube_player_selectApi('automatic');
-
 			// Set the player time to be restored when the new server loads
 			if (goodTube_player.currentTime > 0) {
 				goodTube_player_restoreTime = goodTube_player.currentTime;
 			}
 
-			// Reload the video data
-			goodTube_player_reloadVideoData();
+			// Select next server
+			goodTube_player_selectApi('automatic', true);
 		}
 
 
@@ -4746,17 +4758,14 @@
 				console.log('[GoodTube] Video could not be loaded - selecting next video source...');
 			}
 
-			// Go to automatic mode
-			goodTube_automaticServerIndex = 0;
-			goodTube_player_selectApi('automatic');
-
 			// Set the player time to be restored when the new server loads
 			if (goodTube_player.currentTime > 0) {
 				goodTube_player_restoreTime = goodTube_player.currentTime;
 			}
 
-			// Reload the video data
-			goodTube_player_reloadVideoData();
+			// Go to automatic mode
+			goodTube_automaticServerIndex = 0;
+			goodTube_player_selectApi('automatic', true);
 		}
 	}
 
@@ -4936,13 +4945,6 @@
 			'proxy': true,
 			'url': 'https://pipedapi.r4fo.com'
 		},
-		// // FAST
-		// {
-		// 	'name': 'Phoenix (US)',
-		// 	'type': 3,
-		// 	'proxy': true,
-		// 	'url': 'https://pipedapi.drgns.space'
-		// },
 		// FAST
 		{
 			'name': 'Ra (US)',
@@ -4963,6 +4965,13 @@
 			'type': 3,
 			'proxy': true,
 			'url': 'https://pipedapi.darkness.services'
+		},
+		// FAST
+		{
+			'name': 'Phoenix (US)',
+			'type': 3,
+			'proxy': true,
+			'url': 'https://pipedapi.drgns.space'
 		},
 		// FAST
 		{
@@ -5062,6 +5071,7 @@
 			'proxy': true,
 			'url': 'https://schaunapi.ehwurscht.at'
 		},
+
 		// // SLOW
 		// {
 		// 	'name': 'Centaur (FR)',
@@ -5509,6 +5519,9 @@
 			return;
 		}
 
+		// Show the downloading indicator
+		goodTube_player_videojs_showDownloading();
+
 		// Delay calling the API 3s since it was last called
 		let delaySeconds = 0;
 		let currentTimeSeconds = new Date().getTime() / 1000;
@@ -5523,8 +5536,12 @@
 		goodTube_helper_setCookie('goodTube_lastDownloadTimeSeconds', (currentTimeSeconds + delaySeconds));
 
 		goodTube_downloadTimeouts[youtubeId] = setTimeout(function() {
-			// Show the downloading indicator
-			goodTube_player_videojs_showDownloading();
+			// Debug message
+			if (goodTube_debug) {
+				if (typeof fileName !== 'undefined') {
+					console.log('[GoodTube] Downloading '+type+' - '+fileName+'...');
+				}
+			}
 
 			// CODEC:
 			// Desktop tries in this order: vp9, av1, h264
@@ -5556,8 +5573,9 @@
 				'isAudioOnly': isAudioOnly
 			});
 
-			// Call the API
+			// Call the API (die after 10s)
 			fetch(goodTube_downloadServers[serverIndex]+'/api/json', {
+				signal: AbortSignal.timeout(10000),
 				method: 'POST',
 				headers: {
 					'Accept': 'application/json',
@@ -5567,6 +5585,7 @@
 			})
 			.then(response => response.text())
 			.then(data => {
+				// console.log('success', data);
 				// Stop if this is no longer a pending download
 				if (typeof goodTube_pendingDownloads[youtubeId] === 'undefined') {
 					return;
@@ -5590,23 +5609,6 @@
 
 				// If there was an error returned from the API
 				if (typeof data['status'] !== 'undefined' && data['status'] === 'error') {
-
-					// Try again if the API is down.
-					// There should be an error with the word 'api' in it if this happens.
-					if (typeof data['text'] !== 'undefined' && data['text'].toLowerCase().indexOf('api') !== -1) {
-						if (typeof goodTube_pendingRetry['download_'+youtubeId] !== 'undefined') {
-							clearTimeout(goodTube_pendingRetry['download_'+youtubeId]);
-						}
-
-						serverIndex++;
-
-						goodTube_pendingRetry['download_'+youtubeId] = setTimeout(function() {
-							goodTube_download(serverIndex, type, youtubeId, fileName);
-						}, goodTube_retryDelay);
-
-						return;
-					}
-
 					// If there was an issue with the codec, try the next one.
 					// There should be an error with the word 'settings' in it if this happens.
 					let nextCodec = false;
@@ -5624,7 +5626,7 @@
 						}
 
 						// Mobile
-						if (window.location.href.indexOf('m.youtube') === -1) {
+						if (window.location.href.indexOf('m.youtube') !== -1) {
 							if (vCodec === 'h264') {
 								nextCodec = 'av1';
 							}
@@ -5666,6 +5668,20 @@
 							return;
 						}
 					}
+					// All other errors, just try again
+					else {
+						if (typeof goodTube_pendingRetry['download_'+youtubeId] !== 'undefined') {
+							clearTimeout(goodTube_pendingRetry['download_'+youtubeId]);
+						}
+
+						serverIndex++;
+
+						goodTube_pendingRetry['download_'+youtubeId] = setTimeout(function() {
+							goodTube_download(serverIndex, type, youtubeId, fileName);
+						}, goodTube_retryDelay);
+
+						return;
+					}
 				}
 
 				// If the data is all good
@@ -5691,12 +5707,14 @@
 					}
 					// Download the file with a file name (as a blob, this is used for playlists - DESKTOP ONLY)
 					else {
-						goodTube_downloadFileAsBlob(data['url'], type, fileName, youtubeId);
+						goodTube_downloadFileAsBlob(data['url'], type, fileName, youtubeId, serverIndex);
 					}
 				}
 			})
 			// If anything went wrong, try again
 			.catch((error) => {
+				// console.log('error', error);
+
 				if (typeof goodTube_pendingRetry['download_'+youtubeId] !== 'undefined') {
 					clearTimeout(goodTube_pendingRetry['download_'+youtubeId]);
 				}
@@ -5747,7 +5765,7 @@
 		// Make sure the data is all good
 		if (playlistItems.length <= 0) {
 			if (goodTube_debug) {
-				console.log('[GoodTube] Downloading failed, could not find playlist data');
+				console.log('[GoodTube] Downloading failed, could not find playlist data.');
 			}
 
 			return;
@@ -5772,7 +5790,7 @@
 			// Make sure the data is all good
 			if (!fileName || !url) {
 				if (goodTube_debug) {
-					console.log('[GoodTube] Downloading failed, could not find playlist data');
+					console.log('[GoodTube] Downloading failed, could not find playlist data.');
 				}
 
 				return;
@@ -5802,37 +5820,14 @@
 	}
 
 	// Download a file as blob (this allows us to name it - so we use it for playlists - but it's doesn't actually download the file until fully loaded in the browser, which is kinda bad UX - but for now, it works!)
-	function goodTube_downloadFileAsBlob(url, type, fileName, youtubeId) {
+	function goodTube_downloadFileAsBlob(url, type, fileName, youtubeId, serverIndex) {
 		// Stop if this is no longer a pending download
 		if (typeof goodTube_pendingDownloads[youtubeId] === 'undefined') {
 			return;
 		}
 
-		// Only re-attempt to download the max configured retry attempts
-		if (typeof goodTube_player_downloadFileAsBlobAttempts[url] === 'undefined') {
-			goodTube_player_downloadFileAsBlobAttempts[url] = 0;
-		}
-
-		goodTube_player_downloadFileAsBlobAttempts[url]++;
-		if (goodTube_player_downloadFileAsBlobAttempts[url] > goodTube_retryAttempts) {
-			// Debug message
-			if (goodTube_debug) {
-				console.log('[GoodTube] '+type.charAt(0).toUpperCase()+type.slice(1)+' - '+fileName+' could not be downloaded. Please try again soon.');
-			}
-
-			// Hide the downloading indicator
-			goodTube_player_videojs_hideDownloading();
-
-			return;
-		}
-
 		// Show the downloading indicator
 		goodTube_player_videojs_showDownloading();
-
-		// Debug message
-		if (goodTube_debug) {
-			console.log('[GoodTube] Downloading '+type+' - '+fileName+'...');
-		}
 
 		// Set the file extension based on the type
 		let fileExtension = '.mp4';
@@ -5840,7 +5835,10 @@
 			fileExtension = '.mp3';
 		}
 
-		fetch(url)
+		// Call the API (die after 10s)
+		fetch(url, {
+			signal: AbortSignal.timeout(10000)
+		})
 		.then(response => response.blob())
 		.then(blob => {
 			// Stop if this is no longer a pending download
@@ -5849,12 +5847,12 @@
 			}
 
 			// Get the blob
-			let url = URL.createObjectURL(blob);
+			let blobUrl = URL.createObjectURL(blob);
 
 			// Create a download link element and set params
 			let a = document.createElement('a');
 			a.style.display = 'none';
-			a.href = url;
+			a.href = blobUrl;
 			a.download = fileName+fileExtension;
 			document.body.appendChild(a);
 
@@ -5862,7 +5860,7 @@
 			a.click();
 
 			// Remove the blob from memory
-			window.URL.revokeObjectURL(url);
+			window.URL.revokeObjectURL(blobUrl);
 
 			// Remove the link
 			a.remove();
@@ -5880,14 +5878,16 @@
 			// Hide the downloading indicator
 			goodTube_player_videojs_hideDownloading();
 		})
-		// If anything went wrong, try again
+		// If anything went wrong, try again (next download server)
 		.catch((error) => {
-			if (typeof goodTube_pendingRetry['downloadFileAsBlob_'+url] !== 'undefined') {
-				clearTimeout(goodTube_pendingRetry['downloadFileAsBlob_'+url]);
+			if (typeof goodTube_pendingRetry['download_'+youtubeId] !== 'undefined') {
+				clearTimeout(goodTube_pendingRetry['download_'+youtubeId]);
 			}
 
-			goodTube_pendingRetry['downloadFileAsBlob_'+url] = setTimeout(function() {
-				goodTube_downloadFileAsBlob(url, type, fileName, youtubeId);
+			serverIndex++;
+
+			goodTube_pendingRetry['download_'+youtubeId] = setTimeout(function() {
+				goodTube_download(serverIndex, type, youtubeId, fileName);
 			}, goodTube_retryDelay);
 		});
 	}
@@ -6086,7 +6086,7 @@
 					goodTube_player_restoreTime = 0;
 
 					if (goodTube_helper_getCookie('goodTube_api_withauto') === 'automatic') {
-						goodTube_player_selectApi('automatic');
+						goodTube_player_selectApi('automatic', false);
 					}
 
 					// Debug message
@@ -6183,6 +6183,11 @@
 			});
 		}
 
+		// Ensure that if they close the window in the middle of downloads, we reset the last download time
+		window.addEventListener("beforeunload", (event) => {
+			goodTube_helper_setCookie('goodTube_lastDownloadTimeSeconds', (new Date().getTime() / 1000));
+		});
+
 		// Mute, pause and skip ads on all Youtube as much as possible
 		setInterval(goodTube_youtube_mutePauseSkipAds, 1);
 
@@ -6227,6 +6232,5 @@
 	/* Start GoodTube
 	------------------------------------------------------------------------------------------ */
 	goodTube_init();
-
 
 })();
