@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.501
+// @version      4.503
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -4987,13 +4987,13 @@
 			'proxy': true,
 			'url': 'https://invidious.jing.rocks'
 		},
-		// MEDIUM
-		{
-			'name': 'Hunter (NL)',
-			'type': 3,
-			'proxy': true,
-			'url': 'https://pipedapi.ducks.party'
-		},
+		// // MEDIUM
+		// {
+		// 	'name': 'Hunter (NL)',
+		// 	'type': 3,
+		// 	'proxy': true,
+		// 	'url': 'https://pipedapi.ducks.party'
+		// },
 		// MEDIUM
 		{
 			'name': 'Sapphire (IN)',
@@ -5043,20 +5043,20 @@
 			'proxy': true,
 			'url': 'https://iv.datura.network'
 		},
-		// MEDIUM
-		{
-			'name': 'Andromeda (FI)',
-			'type': 3,
-			'proxy': true,
-			'url': 'https://pipedapi-libre.kavin.rocks'
-		},
-		// MEDIUM
-		{
-			'name': 'Lilith (INT)',
-			'type': 3,
-			'proxy': true,
-			'url': 'https://pipedapi.syncpundit.io'
-		},
+		// // MEDIUM
+		// {
+		// 	'name': 'Andromeda (FI)',
+		// 	'type': 3,
+		// 	'proxy': true,
+		// 	'url': 'https://pipedapi-libre.kavin.rocks'
+		// },
+		// // MEDIUM
+		// {
+		// 	'name': 'Lilith (INT)',
+		// 	'type': 3,
+		// 	'proxy': true,
+		// 	'url': 'https://pipedapi.syncpundit.io'
+		// },
 		// MEDIUM
 		{
 			'name': 'Basilisk (DE)',
@@ -5129,12 +5129,12 @@
 			'proxy': false,
 			'url': 'https://invidious.perennialte.ch'
 		},
-		{
-			'name': '360p - Jade (SG)',
-			'type': 1,
-			'proxy': true,
-			'url': 'https://vid.lilay.dev'
-		},
+		// {
+		// 	'name': '360p - Jade (SG)',
+		// 	'type': 1,
+		// 	'proxy': true,
+		// 	'url': 'https://vid.lilay.dev'
+		// },
 		{
 			'name': '360p - Nymph (AT)',
 			'type': 1,
@@ -5147,18 +5147,18 @@
 			'proxy': true,
 			'url': 'https://invidious.drgns.space'
 		},
-		{
-			'name': '360p - Velvet (CL)',
-			'type': 1,
-			'proxy': true,
-			'url': 'https://inv.nadeko.net'
-		},
-		{
-			'name': '360p - Druid (DE)',
-			'type': 1,
-			'proxy': true,
-			'url': 'https://invidious.projectsegfau.lt'
-		}
+		// {
+		// 	'name': '360p - Velvet (CL)',
+		// 	'type': 1,
+		// 	'proxy': true,
+		// 	'url': 'https://inv.nadeko.net'
+		// },
+		// {
+		// 	'name': '360p - Druid (DE)',
+		// 	'type': 1,
+		// 	'proxy': true,
+		// 	'url': 'https://invidious.projectsegfau.lt'
+		// }
 	];
 
 	// Set the starting server to automatic mode
