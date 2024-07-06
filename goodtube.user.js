@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.500
+// @version      4.501
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -3510,7 +3510,7 @@
 			if ((goodTube_api_type === 2 || goodTube_api_type === 3) && goodTube_player.currentTime > 0) {
 				let bufferStartTime = goodTube_player.currentTime;
 
-				// If we've been waiting more than 10s, select the next server
+				// If we've been waiting more than 15s, select the next server
 				goodTube_bufferingTimeout = setTimeout(function() {
 					if (goodTube_player.currentTime === bufferStartTime) {
 						// Debug message
@@ -3524,7 +3524,7 @@
 						// Get the next server
 						goodTube_player_selectApi('automatic', true);
 					}
-				}, 10000);
+				}, 15000);
 			}
 		});
 
@@ -3573,7 +3573,7 @@
 				clearTimeout(goodTube_loadingTimeout);
 			}
 
-			// If we've been waiting more than 10s, select the next server
+			// If we've been waiting more than 15s, select the next server
 			goodTube_loadingTimeout = setTimeout(function() {
 				// Debug message
 				if (goodTube_debug) {
@@ -3582,7 +3582,7 @@
 
 				// Get the next server
 				goodTube_player_selectApi('automatic', true);
-			}, 10000);
+			}, 15000);
 
 			// Enable the player
 			goodTube_player.classList.remove('goodTube_hidden');
@@ -4952,13 +4952,13 @@
 			'proxy': true,
 			'url': 'https://pipedapi.us.projectsegfau.lt'
 		},
-		// FAST
-		{
-			'name': 'Obsidian (AT)',
-			'type': 3,
-			'proxy': true,
-			'url': 'https://pipedapi.leptons.xyz'
-		},
+		// // FAST
+		// {
+		// 	'name': 'Obsidian (AT)',
+		// 	'type': 3,
+		// 	'proxy': true,
+		// 	'url': 'https://pipedapi.leptons.xyz'
+		// },
 		// FAST
 		{
 			'name': 'Sphere (US)',
