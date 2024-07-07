@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.504
+// @version      4.505
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -431,7 +431,7 @@
 	let goodTube_updateChapters = false;
 	let goodTube_chapterTitleInterval = false;
 	let goodTube_chaptersChangeInterval = false;
-	let goodTube_selectHighestManifestQualityTimeout = false;
+	let goodTube_updateManifestQualityTimeout = false;
 
 	// Init
 	function goodTube_player_init() {
@@ -1943,15 +1943,8 @@
 						type: manifestType
 					});
 
-					// Show the correct quality menu item
-					let qualityButtons = document.querySelectorAll('.vjs-quality-selector');
-					if (qualityButtons.length === 2) {
-						qualityButtons[0].style.display = 'none';
-						qualityButtons[1].style.display = 'block';
-					}
-
-					// Select the highest DASH quality
-					goodTube_player_selectHighestManifestQuality();
+					// Update manifest quality menu
+					goodTube_player_updateManifestQualityMenu();
 				}
 
 				// Piped (HD)
@@ -1983,15 +1976,8 @@
 						type: manifestType
 					});
 
-					// Show the correct quality menu item
-					let qualityButtons = document.querySelectorAll('.vjs-quality-selector');
-					if (qualityButtons.length === 2) {
-						qualityButtons[0].style.display = 'none';
-						qualityButtons[1].style.display = 'block';
-					}
-
-					// Select the highest quality
-					goodTube_player_selectHighestManifestQuality();
+					// Update manifest quality menu
+					goodTube_player_updateManifestQualityMenu();
 				}
 
 
@@ -2024,6 +2010,7 @@
 		})
 		// If there's any issues loading the video data, try again (after configured delay time)
 		.catch((error) => {
+			console.log(error);
 			if (typeof goodTube_pendingRetry['loadVideoData'] !== 'undefined') {
 				clearTimeout(goodTube_pendingRetry['loadVideoData']);
 			}
@@ -2037,43 +2024,141 @@
 		});
 	}
 
-	// Select highest quality by default (when using a manifest file)
-	function goodTube_player_selectHighestManifestQuality() {
-		// This stops it from ever accidentially firing twice
-		if (goodTube_selectHighestManifestQualityTimeout) {
-			clearTimeout(goodTube_selectHighestManifestQualityTimeout);
+	// Update manifest quality menu
+	function goodTube_player_updateManifestQualityMenu() {
+		// This stops this function from ever accidentially firing twice
+		if (goodTube_updateManifestQualityTimeout) {
+			clearTimeout(goodTube_updateManifestQualityTimeout);
 		}
 
 		// Find and click the highest quality button (if it can't be found, this will call itself again until it works)
-		let qualityMenus = document.querySelectorAll('.vjs-quality-selector');
-		if (qualityMenus && typeof qualityMenus[1] !== 'undefined') {
-			let highestQualityButton = qualityMenus[1].querySelector('li:first-child');
-			if (highestQualityButton) {
-				highestQualityButton.click();
+		let qualityButtons = document.querySelectorAll('.vjs-quality-selector');
+		if (qualityButtons && typeof qualityButtons[1] !== 'undefined') {
+			if (qualityButtons.length === 2) {
+				// Show the correct quality menu item
+				qualityButtons[0].style.display = 'none';
+				qualityButtons[1].style.display = 'block';
 
-				let highestQualityButtonText = highestQualityButton.querySelector('.vjs-menu-item-text').innerHTML;
+				// Target the manifest quality menu
+				let manifestQualityMenu = qualityButtons[1].querySelector('ul');
 
-				// Debug message
-				if (goodTube_debug) {
-					console.log('[GoodTube] Selecting highest quality - '+highestQualityButtonText);
+				// Check if the first menu item is "Always use max"
+				let firstMenuItem = manifestQualityMenu.querySelector('li.vjs-menu-item:first-child .vjs-menu-item-text');
+
+				// If it's not populated yet, try again
+				if (!firstMenuItem) {
+					if (goodTube_updateManifestQualityTimeout) {
+						clearTimeout(goodTube_updateManifestQualityTimeout);
+					}
+
+					goodTube_updateManifestQualityTimeout = setTimeout(goodTube_player_updateManifestQualityMenu, 100);
+					return;
 				}
-			}
-			else {
-				if (goodTube_selectHighestManifestQualityTimeout) {
-					clearTimeout(goodTube_selectHighestManifestQualityTimeout);
+
+				// Does the 'always use max' menu item exist?
+				let alwaysMaxMenuItem = firstMenuItem;
+
+				// If not
+				if (firstMenuItem.innerHTML !== 'Always use max') {
+					// Add the 'always use max' menu item
+					alwaysMaxMenuItem = document.createElement('li');
+					alwaysMaxMenuItem.classList.add('vjs-menu-item');
+					alwaysMaxMenuItem.classList.add('always-max');
+					alwaysMaxMenuItem.innerHTML = `
+						<span class="vjs-menu-item-text">Always use max</span>
+						<span class="vjs-control-text" aria-live="polite"></span>
+					`;
+					alwaysMaxMenuItem.addEventListener('click', goodTube_player_selectHighestManifestQuality);
+					manifestQualityMenu.prepend(alwaysMaxMenuItem);
+
+					// Add a click action to all the other menu options (this turns off 'always use max')
+					let otherMenuItems = manifestQualityMenu.querySelectorAll('li.vjs-menu-item:not(.always-max)');
+					otherMenuItems.forEach((otherMenuItem) => {
+						otherMenuItem.addEventListener('click', goodTube_player_turnOffHighestManifestQuality);
+
+						// For some reason we need this to support mobile devices, but not for other event listeners here? Weird.
+						otherMenuItem.addEventListener('touchstart', goodTube_player_turnOffHighestManifestQuality);
+					});
 				}
 
-				goodTube_selectHighestManifestQualityTimeout = setTimeout(goodTube_player_selectHighestManifestQuality, 100);
-				return;
+				// Check the cookie, are we always using max?
+				let alwaysUseMax = goodTube_helper_getCookie('goodTube_alwaysUseMax');
+
+				// If we are, then select the highest quality
+				if (alwaysUseMax && alwaysUseMax === 'true') {
+					goodTube_player_selectHighestManifestQuality();
+				}
 			}
 		}
 		else {
-			if (goodTube_selectHighestManifestQualityTimeout) {
-				clearTimeout(goodTube_selectHighestManifestQualityTimeout);
+			if (goodTube_updateManifestQualityTimeout) {
+				clearTimeout(goodTube_updateManifestQualityTimeout);
 			}
 
-			goodTube_selectHighestManifestQualityTimeout = setTimeout(goodTube_player_selectHighestManifestQuality, 100);
+			goodTube_updateManifestQualityTimeout = setTimeout(goodTube_player_updateManifestQualityMenu, 100);
 			return;
+		}
+	}
+
+	// Select the highest manifest quality
+	let goodTube_dontTurnOffMaxFromClick = false;
+	function goodTube_player_selectHighestManifestQuality() {
+		// Set the cookie to remember this
+		goodTube_helper_setCookie('goodTube_alwaysUseMax', 'true');
+
+		// Find the manifest quality menu
+		let qualityMenu = document.querySelectorAll('.vjs-quality-selector')[1];
+
+		// Find the highest quality button (second in the list)
+		let highestQualityButton = qualityMenu.querySelectorAll('li.vjs-menu-item')[1];
+
+		// Ensure the click doesn't turn off the max option
+		goodTube_dontTurnOffMaxFromClick = true;
+
+		// Click it
+		highestQualityButton.click();
+
+		// Add an auto selected class (half white)
+		highestQualityButton.classList.add('vjs-auto-selected');
+
+		// Deselect it
+		highestQualityButton.classList.remove('vjs-selected');
+
+		// Select the 'Always use max option'
+		qualityMenu.querySelector('li.always-max').classList.add('vjs-selected');
+
+		// Debug message
+		if (goodTube_debug) {
+			console.log('[GoodTube] Selecting highest quality - '+highestQualityButton.querySelector('.vjs-menu-item-text').innerHTML);
+		}
+	}
+
+	// Turn off the highest manifest quality option
+	function goodTube_player_turnOffHighestManifestQuality() {
+		// Allow this once only, so the max quality selection doesn't turn itself off!
+		if (goodTube_dontTurnOffMaxFromClick) {
+			goodTube_dontTurnOffMaxFromClick = false;
+			return;
+		}
+
+		// Set the cookie to remember this
+		goodTube_helper_setCookie('goodTube_alwaysUseMax', 'false');
+
+		// Find the manifest quality menu
+		let qualityMenu = document.querySelectorAll('.vjs-quality-selector')[1];
+
+		// Find the 'always use max' quality button
+		let alwaysMaxMenuItem = qualityMenu.querySelector('li.always-max');
+
+		// Remove the selected class
+		if (alwaysMaxMenuItem.classList.contains('vjs-selected')) {
+			alwaysMaxMenuItem.classList.remove('vjs-selected');
+		}
+
+		// Remove any auto selected classes
+		let autoSelectedItem = qualityMenu.querySelector('li.vjs-auto-selected')
+		if (autoSelectedItem) {
+			autoSelectedItem.classList.remove('vjs-auto-selected');
 		}
 	}
 
@@ -4208,9 +4293,7 @@
 				background-color: rgba(35, 35, 35, 0.75);
 			}
 
-			.video-js .vjs-menu li.vjs-menu-item:not(.vjs-selected),
-			.video-js .vjs-menu li.vjs-menu-item:not(.vjs-selected):focus,
-			.video-js .vjs-menu li.vjs-menu-item:not(.vjs-selected):active {
+			.video-js .vjs-menu li.vjs-menu-item:not(.vjs-selected) {
 				background-color: transparent !important;
 				color: #ffffff !important;
 			}
@@ -4324,7 +4407,8 @@
 				padding-bottom: 12px !important;
 			}
 
-			.video-js .vjs-menu li.vjs-menu-item:not(.vjs-selected):hover {
+			.video-js .vjs-menu li.vjs-menu-item:not(.vjs-selected):hover,
+			.video-js .vjs-menu li.vjs-menu-item.vjs-auto-selected {
 				background-color: rgba(255, 255, 255, .2) !important;
 				color: #ffffff !important;
 			}
@@ -5602,7 +5686,6 @@
 			})
 			.then(response => response.text())
 			.then(data => {
-				// console.log('success', data);
 				// Stop if this is no longer a pending download
 				if (typeof goodTube_pendingDownloads[youtubeId] === 'undefined') {
 					return;
@@ -5730,8 +5813,6 @@
 			})
 			// If anything went wrong, try again
 			.catch((error) => {
-				// console.log('error', error);
-
 				if (typeof goodTube_pendingRetry['download_'+youtubeId] !== 'undefined') {
 					clearTimeout(goodTube_pendingRetry['download_'+youtubeId]);
 				}
