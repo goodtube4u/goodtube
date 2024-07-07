@@ -1730,10 +1730,13 @@
 			// Turn video data into JSON
 			let videoData = JSON.parse(data);
 
+			console.log(videoData);
+
 			// Setup variables to hold the data
 			let sourceData = false;
 			let subtitleData = false;
 			let storyboardData = false;
+			let chaptersData = false;
 			let videoDescription = false;
 			let videoDuration = false;
 
@@ -1751,6 +1754,7 @@
 					storyboardData = videoData['storyboards'];
 					videoDescription = videoData['description'];
 					videoDuration = videoData['lengthSeconds'];
+					chaptersData = false;
 				}
 			}
 			// Invidious (HD)
@@ -1764,6 +1768,7 @@
 					storyboardData = videoData['storyboards'];
 					videoDescription = videoData['description'];
 					videoDuration = videoData['lengthSeconds'];
+					chaptersData = false;
 				}
 			}
 			// Piped (HD)
@@ -1781,6 +1786,17 @@
 					// Replace <br> with a newline, and strip the html from the desc. We need this to generate chapters properly.
 					videoDescription = videoData['description'].replace(/<br>/g, '\r\n').replace(/<[^>]*>?/gm, '');
 					videoDuration = videoData['duration'];
+
+					// Chapters come from the API
+					if (typeof videoData['chapters'] !== 'undefined' && videoData['chapters'].length && videoData['chapters'].length > 0) {
+						chaptersData = [];
+						videoData['chapters'].forEach((chapter) => {
+							chaptersData.push({
+								time: parseFloat(chapter['start']),
+								title: chapter['title']
+							});
+						});
+					}
 				}
 			}
 
@@ -1995,7 +2011,7 @@
 					console.log('[GoodTube] Loading chapters...');
 				}
 
-				goodTube_player_loadChapters(player, videoDescription, videoDuration);
+				goodTube_player_loadChapters(player, videoDescription, videoDuration, chaptersData);
 
 				// Load storyboards into the player (desktop only)
 				if (window.location.href.indexOf('m.youtube') === -1) {
@@ -2010,7 +2026,6 @@
 		})
 		// If there's any issues loading the video data, try again (after configured delay time)
 		.catch((error) => {
-			console.log(error);
 			if (typeof goodTube_pendingRetry['loadVideoData'] !== 'undefined') {
 				clearTimeout(goodTube_pendingRetry['loadVideoData']);
 			}
@@ -2163,80 +2178,93 @@
 	}
 
 	// Load chapters
-	function goodTube_player_loadChapters(player, description, totalDuration) {
+	function goodTube_player_loadChapters(player, description, totalDuration, chaptersData) {
 		// Clear any existing chapters
 		goodTube_player_clearChapters();
 
 		// Create a variable to store the chapters
 		let chapters = [];
 
-		// First up, try to get the chapters from the video description
-		let lines = description.split("\n");
-		let regex = /(\d{0,2}:?\d{1,2}:\d{2})/g;
+		// If we don't have chapters data already
+		if (!chaptersData) {
+			// First up, try to get the chapters from the video description
+			let lines = description.split("\n");
+			let regex = /(\d{0,2}:?\d{1,2}:\d{2})/g;
 
-		for (let line of lines) {
-			const matches = line.match(regex);
-			if (matches) {
-				let ts = matches[0];
-				let title = line
-					.split(" ")
-					.filter((l) => !l.includes(ts))
-					.join(" ");
+			for (let line of lines) {
+				const matches = line.match(regex);
+				if (matches) {
+					let ts = matches[0];
+					let title = line
+						.split(" ")
+						.filter((l) => !l.includes(ts))
+						.join(" ");
 
-				chapters.push({
-					time: ts,
-					title: title,
-				});
-			}
-		}
-
-		// Ensure the first chapter is 0 (sometimes the video descriptions are off)
-		if (!chapters.length || chapters.length <= 0 || chapters[0]['time'].split(':').reduce((acc,time) => (60 * acc) + +time) > 0) {
-			chapters = [];
-		}
-
-		// If that didn't work, get them from the DOM (this works for desktop only)
-		if ((!chapters.length || chapters.length <= 0) && window.location.href.indexOf('m.youtube') === -1) {
-			// Target the chapters in the DOM
-			let uiChapters = Array.from(document.querySelectorAll("#panels ytd-engagement-panel-section-list-renderer:nth-child(2) #content ytd-macro-markers-list-renderer #contents ytd-macro-markers-list-item-renderer #endpoint #details"));
-
-			// If the chapters from the DOM change, reload the chapters. This is important because it's async data that changes.
-			// ----------------------------------------
-			if (goodTube_chaptersChangeInterval) {
-				clearInterval(goodTube_chaptersChangeInterval);
-			}
-
-			let prevUIChapters = JSON.stringify(document.querySelectorAll("#panels ytd-engagement-panel-section-list-renderer:nth-child(2) #content ytd-macro-markers-list-renderer #contents ytd-macro-markers-list-item-renderer #endpoint #details"));
-			goodTube_chaptersChangeInterval = setInterval(function() {
-				let chaptersInnerHTML = JSON.stringify(document.querySelectorAll("#panels ytd-engagement-panel-section-list-renderer:nth-child(2) #content ytd-macro-markers-list-renderer #contents ytd-macro-markers-list-item-renderer #endpoint #details"));
-
-				if (chaptersInnerHTML !== prevUIChapters) {
-					prevUIChapters = chaptersInnerHTML;
-					goodTube_player_loadChapters(player, description, totalDuration);
+					chapters.push({
+						time: ts,
+						title: title,
+					});
 				}
-			}, 1000);
-			// ----------------------------------------
+			}
 
-			let withTitleAndTime = uiChapters.map((node) => ({
-				title: node.querySelector(".macro-markers")?.textContent,
-				time: node.querySelector("#time")?.textContent,
-			}));
+			// Ensure the first chapter is 0 (sometimes the video descriptions are off)
+			if (!chapters.length || chapters.length <= 0 || chapters[0]['time'].split(':').reduce((acc,time) => (60 * acc) + +time) > 0) {
+				chapters = [];
+			}
 
-			let filtered = withTitleAndTime.filter(
-				(element) =>
-					element.title !== undefined &&
-					element.title !== null &&
-					element.time !== undefined &&
-					element.time !== null
-			);
+			// If that didn't work, get them from the DOM (this works for desktop only)
+			if ((!chapters.length || chapters.length <= 0) && window.location.href.indexOf('m.youtube') === -1) {
+				// Target the chapters in the DOM
+				let uiChapters = Array.from(document.querySelectorAll("#panels ytd-engagement-panel-section-list-renderer:nth-child(2) #content ytd-macro-markers-list-renderer #contents ytd-macro-markers-list-item-renderer #endpoint #details"));
 
-			chapters = [
-				...new Map(filtered.map((node) => [node.time, node])).values(),
-			];
+				// If the chapters from the DOM change, reload the chapters. This is important because it's async data that changes.
+				// ----------------------------------------
+				if (goodTube_chaptersChangeInterval) {
+					clearInterval(goodTube_chaptersChangeInterval);
+				}
+
+				let prevUIChapters = JSON.stringify(document.querySelectorAll("#panels ytd-engagement-panel-section-list-renderer:nth-child(2) #content ytd-macro-markers-list-renderer #contents ytd-macro-markers-list-item-renderer #endpoint #details"));
+				goodTube_chaptersChangeInterval = setInterval(function() {
+					let chaptersInnerHTML = JSON.stringify(document.querySelectorAll("#panels ytd-engagement-panel-section-list-renderer:nth-child(2) #content ytd-macro-markers-list-renderer #contents ytd-macro-markers-list-item-renderer #endpoint #details"));
+
+					if (chaptersInnerHTML !== prevUIChapters) {
+						prevUIChapters = chaptersInnerHTML;
+						goodTube_player_loadChapters(player, description, totalDuration);
+					}
+				}, 1000);
+				// ----------------------------------------
+
+				let withTitleAndTime = uiChapters.map((node) => ({
+					title: node.querySelector(".macro-markers")?.textContent,
+					time: node.querySelector("#time")?.textContent,
+				}));
+
+				let filtered = withTitleAndTime.filter(
+					(element) =>
+						element.title !== undefined &&
+						element.title !== null &&
+						element.time !== undefined &&
+						element.time !== null
+				);
+
+				chapters = [
+					...new Map(filtered.map((node) => [node.time, node])).values(),
+				];
+			}
+		}
+		// If we do have chapters data
+		else {
+			chapters = chaptersData;
 		}
 
 		// Ensure the first chapter is 0 (sometimes the video descriptions are off)
-		if (!chapters.length || chapters.length <= 0 || chapters[0]['time'].split(':').reduce((acc,time) => (60 * acc) + +time) > 0) {
+		let firstChapterTime = chapters[0]['time'];
+
+		if (typeof firstChapterTime !== 'number') {
+			firstChapterTime = firstChapterTime.split(':').reduce((acc,time) => (60 * acc) + +time);
+		}
+
+		if (!chapters.length || chapters.length <= 0 || firstChapterTime > 0) {
 			chapters = [];
 		}
 
