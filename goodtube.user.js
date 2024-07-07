@@ -1730,8 +1730,6 @@
 			// Turn video data into JSON
 			let videoData = JSON.parse(data);
 
-			console.log(videoData);
-
 			// Setup variables to hold the data
 			let sourceData = false;
 			let subtitleData = false;
