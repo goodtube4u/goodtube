@@ -1,20 +1,30 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.503
+// @version      4.504
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
 // @icon         https://cdn-icons-png.flaticon.com/256/1384/1384060.png
 // @run-at       document-start
-// @grant        none
 // @updateURL    https://github.com/goodtube4u/goodtube/raw/main/goodtube.user.js
 // @downloadURL  https://github.com/goodtube4u/goodtube/raw/main/goodtube.user.js
+// @grant        GM.download
+// @grant        GM_download
 // @noframes
 // ==/UserScript==
 
 (function() {
 	'use strict';
+
+	// Support cross script stuff for Tampermoney, Violentmonkey, etc.
+	if (typeof GM === 'undefined') {
+		let GM = {};
+	}
+
+	if (typeof GM.download === 'undefined' && typeof GM_download !== 'undefined') {
+		GM.download = GM_download;
+	}
 
 	/* Config
 	------------------------------------------------------------------------------------------ */
@@ -450,7 +460,7 @@
 			/* Automatic server styling */
 			#goodTube_player_wrapper1.goodTube_automaticServer #goodTube_player_wrapper2 .vjs-source-button ul li:first-child {
 				background: #ffffff !important;
-   		 	color: #000000 !important;
+				color: #000000 !important;
 			}
 
 			#goodTube_player_wrapper1.goodTube_automaticServer .vjs-source-button ul li.vjs-selected {
@@ -4879,10 +4889,11 @@
 	];
 
 	// Download servers
+
+	// We first try these servers, recommended by "ihatespawn".
+	// As I understand it these are ok to use, not trying to step on anyone's toes here.
+	// Any issues with this implementation, please contact me. I am happy to work with you, so long as we let people download from somewhere.
 	let goodTube_downloadServers = [
-		// We first try these servers, recommended by "ihatespawn".
-		// As I understand it these are ok to use, not trying to step on anyone's toes here.
-		// Any issues with this implementation, please contact me. I am happy to work with you, so long as we let people download from somewhere.
 		'https://dl01.yt-dl.click',
 		'https://dl02.yt-dl.click',
 		'https://dl03.yt-dl.click',
@@ -4891,8 +4902,11 @@
 		'https://apicloud8.filsfkwtlfjas.xyz',
 		'https://apicloud4.filsfkwtlfjas.xyz',
 		'https://apicloud5.filsfkwtlfjas.xyz',
+	];
 
-		// Only if they fail; we then fallback to using community instances.
+	// Only if they fail; we then fallback to using community instances.
+	// This array is also shuffled to take the load off any single community instance.
+	let goodTube_downloadServers_community = [
 		'https://sea-downloadapi.stuff.solutions',
 		'https://ca.haloz.at',
 		'https://cobalt.wither.ing',
@@ -4916,14 +4930,17 @@
 		'https://dl01.yt-dl.click'
 	];
 
-	// // Shuffle the download servers to take the load off any one instance
-	// let currentIndex = goodTube_downloadServers.length;
-	// while (currentIndex != 0) {
-	// 	let randomIndex = Math.floor(Math.random() * currentIndex);
-	// 	currentIndex--;
+	// Shuffle community instances
+	let currentIndex = goodTube_downloadServers_community.length;
+	while (currentIndex != 0) {
+		let randomIndex = Math.floor(Math.random() * currentIndex);
+		currentIndex--;
 
-	// 	[goodTube_downloadServers[currentIndex], goodTube_downloadServers[randomIndex]] = [goodTube_downloadServers[randomIndex], goodTube_downloadServers[currentIndex]];
-	// }
+		[goodTube_downloadServers_community[currentIndex], goodTube_downloadServers_community[randomIndex]] = [goodTube_downloadServers_community[randomIndex], goodTube_downloadServers_community[currentIndex]];
+	}
+
+	// Combine the download servers
+	goodTube_downloadServers = goodTube_downloadServers.concat(goodTube_downloadServers_community);
 
 	// API Endpoints
 	let goodTube_apis = [
@@ -5686,8 +5703,8 @@
 
 				// If the data is all good
 				else if (typeof data['status'] !== 'undefined' && typeof data['url'] !== 'undefined') {
-					// Download the file, without a file name (also just do this on mobile because we can't download blobs)
-					if (typeof fileName === 'undefined' || window.location.href.indexOf('m.youtube') !== -1) {
+					// Download the file, without a file name
+					if (typeof fileName === 'undefined') {
 						window.open(data['url'], '_self');
 
 						// Debug message
@@ -5705,7 +5722,7 @@
 							goodTube_player_videojs_hideDownloading();
 						}, 1000);
 					}
-					// Download the file with a file name (as a blob, this is used for playlists - DESKTOP ONLY)
+					// Download the file with a file name (as a blob, this is used for playlists)
 					else {
 						goodTube_downloadFileAsBlob(data['url'], type, fileName, youtubeId, serverIndex);
 					}
@@ -5835,61 +5852,104 @@
 			fileExtension = '.mp3';
 		}
 
-		// Call the API (die after 10s)
-		fetch(url, {
-			signal: AbortSignal.timeout(10000)
-		})
-		.then(response => response.blob())
-		.then(blob => {
-			// Stop if this is no longer a pending download
-			if (typeof goodTube_pendingDownloads[youtubeId] === 'undefined') {
-				return;
-			}
+		// Use userscript downloader for mobile because it doesn't support blobs
+		if (window.location.href.indexOf('m.youtube') !== -1) {
+			goodTube_pendingDownloads[youtubeId] = GM.download({
+				url: url,
+				name: fileName+fileExtension,
+				// Success
+				onload: (e) => {
+					// Stop if this is no longer a pending download
+					if (typeof goodTube_pendingDownloads[youtubeId] === 'undefined') {
+						return;
+					}
 
-			// Get the blob
-			let blobUrl = URL.createObjectURL(blob);
+					// Debug message
+					if (goodTube_debug) {
+						console.log('[GoodTube] Downloaded '+type+' - '+fileName);
+					}
 
-			// Create a download link element and set params
-			let a = document.createElement('a');
-			a.style.display = 'none';
-			a.href = blobUrl;
-			a.download = fileName+fileExtension;
-			document.body.appendChild(a);
+					// Remove from pending downloads
+					if (typeof goodTube_pendingDownloads[youtubeId] !== 'undefined') {
+						delete goodTube_pendingDownloads[youtubeId];
+					}
 
-			// Click the link to download
-			a.click();
+					// Hide the downloading indicator
+					goodTube_player_videojs_hideDownloading();
+				},
+				// Error
+				onerror: (e) => {
+					// If anything went wrong, try again (next download server)
+					if (typeof goodTube_pendingRetry['download_'+youtubeId] !== 'undefined') {
+						clearTimeout(goodTube_pendingRetry['download_'+youtubeId]);
+					}
 
-			// Remove the blob from memory
-			window.URL.revokeObjectURL(blobUrl);
+					serverIndex++;
 
-			// Remove the link
-			a.remove();
+					goodTube_pendingRetry['download_'+youtubeId] = setTimeout(function() {
+						goodTube_download(serverIndex, type, youtubeId, fileName);
+					}, goodTube_retryDelay);
+				}
+			});
+		}
+		// Download as a blob for desktop
+		else {
+			// Get the file (die after 10s)
+			fetch(url, {
+				signal: AbortSignal.timeout(10000)
+			})
+			.then(response => response.blob())
+			.then(blob => {
+				// Stop if this is no longer a pending download
+				if (typeof goodTube_pendingDownloads[youtubeId] === 'undefined') {
+					return;
+				}
 
-			// Debug message
-			if (goodTube_debug) {
-				console.log('[GoodTube] Downloaded '+type+' - '+fileName);
-			}
+				// Get the blob
+				let blobUrl = URL.createObjectURL(blob);
 
-			// Remove from pending downloads
-			if (typeof goodTube_pendingDownloads[youtubeId] !== 'undefined') {
-				delete goodTube_pendingDownloads[youtubeId];
-			}
+				// Create a download link element and set params
+				let a = document.createElement('a');
+				a.style.display = 'none';
+				a.href = blobUrl;
+				a.download = fileName+fileExtension;
+				document.body.appendChild(a);
 
-			// Hide the downloading indicator
-			goodTube_player_videojs_hideDownloading();
-		})
-		// If anything went wrong, try again (next download server)
-		.catch((error) => {
-			if (typeof goodTube_pendingRetry['download_'+youtubeId] !== 'undefined') {
-				clearTimeout(goodTube_pendingRetry['download_'+youtubeId]);
-			}
+				// Click the link to download
+				a.click();
 
-			serverIndex++;
+				// Remove the blob from memory
+				window.URL.revokeObjectURL(blobUrl);
 
-			goodTube_pendingRetry['download_'+youtubeId] = setTimeout(function() {
-				goodTube_download(serverIndex, type, youtubeId, fileName);
-			}, goodTube_retryDelay);
-		});
+				// Remove the link
+				a.remove();
+
+				// Debug message
+				if (goodTube_debug) {
+					console.log('[GoodTube] Downloaded '+type+' - '+fileName);
+				}
+
+				// Remove from pending downloads
+				if (typeof goodTube_pendingDownloads[youtubeId] !== 'undefined') {
+					delete goodTube_pendingDownloads[youtubeId];
+				}
+
+				// Hide the downloading indicator
+				goodTube_player_videojs_hideDownloading();
+			})
+			// If anything went wrong, try again (next download server)
+			.catch((error) => {
+				if (typeof goodTube_pendingRetry['download_'+youtubeId] !== 'undefined') {
+					clearTimeout(goodTube_pendingRetry['download_'+youtubeId]);
+				}
+
+				serverIndex++;
+
+				goodTube_pendingRetry['download_'+youtubeId] = setTimeout(function() {
+					goodTube_download(serverIndex, type, youtubeId, fileName);
+				}, goodTube_retryDelay);
+			});
+		}
 	}
 
 	// Cancel all pending downloads
@@ -5897,6 +5957,13 @@
 		// Show "are you sure" prompt
 		if (!confirm("Are you sure you want to cancel all downloads?")) {
 			return;
+		}
+
+		// Abort all pending downloads
+		for (let key in goodTube_pendingDownloads) {
+			if (typeof goodTube_pendingDownloads[key].abort === 'function') {
+				goodTube_pendingDownloads[key].abort();
+			}
 		}
 
 		// Remove all pending downloads
