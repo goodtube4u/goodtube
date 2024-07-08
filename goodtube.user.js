@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.506
+// @version      4.507
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -5586,10 +5586,6 @@
 
 		// If we didn't click a playlist item, autoplay next video (only if they pressed the next button or autoplay is on)
 		if (!clickedPlaylistItem && (autoplay !== 'off' || pressedButton)) {
-
-
-			console.log(clickedPlaylistItem);
-
 			let youtubeFrameAPI = document.getElementById('movie_player');
 			youtubeFrameAPI.nextVideo();
 
