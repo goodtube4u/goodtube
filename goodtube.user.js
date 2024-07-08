@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.509
+// @version      4.510
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -438,6 +438,7 @@
 	let goodTube_chapterTitleInterval = false;
 	let goodTube_chaptersChangeInterval = false;
 	let goodTube_updateManifestQualityTimeout = false;
+	let goodTube_currentVideoTitle = false;
 
 	// Init
 	function goodTube_player_init() {
@@ -1759,6 +1760,9 @@
 					videoDescription = videoData['description'];
 					videoDuration = videoData['lengthSeconds'];
 					chaptersData = false;
+
+					// Set the title of the current video (used for downloads)
+					goodTube_currentVideoTitle = videoData['title'];
 				}
 			}
 			// Invidious (HD)
@@ -1773,6 +1777,9 @@
 					videoDescription = videoData['description'];
 					videoDuration = videoData['lengthSeconds'];
 					chaptersData = false;
+
+					// Set the title of the current video (used for downloads)
+					goodTube_currentVideoTitle = videoData['title'];
 				}
 			}
 			// Piped (HD)
@@ -1801,6 +1808,9 @@
 							});
 						});
 					}
+
+					// Set the title of the current video (used for downloads)
+					goodTube_currentVideoTitle = videoData['title'];
 				}
 			}
 
@@ -3213,7 +3223,7 @@
 								goodTube_pendingDownloads[goodTube_getParams['v']] = true;
 
 								// Download the video
-								goodTube_download(0, 'video', goodTube_getParams['v']);
+								goodTube_queDownload(0, 'video', goodTube_getParams['v']);
 							},
 						},
 						{
@@ -3228,7 +3238,7 @@
 								goodTube_pendingDownloads[goodTube_getParams['v']] = true;
 
 								// Download the audio
-								goodTube_download(0, 'audio', goodTube_getParams['v']);
+								goodTube_queDownload(0, 'audio', goodTube_getParams['v']);
 							},
 						},
 						{
@@ -5596,11 +5606,16 @@
 		}
 	}
 
-	// Download video / audio for a specificed youtube ID
-	function goodTube_download(serverIndex, type, youtubeId, fileName, codec) {
+	// Que download video / audio for a specificed youtube ID
+	function goodTube_queDownload(serverIndex, type, youtubeId, fileName, codec) {
 		// Stop if this is no longer a pending download
 		if (typeof goodTube_pendingDownloads[youtubeId] === 'undefined') {
 			return;
+		}
+
+		// If there's no filename, use the one we got from the API video data
+		if (typeof fileName === 'undefined') {
+			fileName = goodTube_currentVideoTitle;
 		}
 
 		// If we're out of download servers to try, show an error
@@ -5694,9 +5709,6 @@
 			})
 			.then(response => response.text())
 			.then(data => {
-
-				console.log(data);
-
 				// Stop if this is no longer a pending download
 				if (typeof goodTube_pendingDownloads[youtubeId] === 'undefined') {
 					return;
@@ -5712,7 +5724,7 @@
 					}
 
 					goodTube_pendingRetry['download_'+youtubeId] = setTimeout(function() {
-						goodTube_download(serverIndex, type, youtubeId, fileName);
+						goodTube_queDownload(serverIndex, type, youtubeId, fileName);
 					}, goodTube_retryDelay);
 
 					return;
@@ -5754,7 +5766,7 @@
 							}
 
 							goodTube_pendingRetry['download_'+youtubeId] = setTimeout(function() {
-								goodTube_download(serverIndex, type, youtubeId, fileName, nextCodec);
+								goodTube_queDownload(serverIndex, type, youtubeId, fileName, nextCodec);
 							}, goodTube_retryDelay);
 
 							return;
@@ -5788,7 +5800,7 @@
 						serverIndex++;
 
 						goodTube_pendingRetry['download_'+youtubeId] = setTimeout(function() {
-							goodTube_download(serverIndex, type, youtubeId, fileName);
+							goodTube_queDownload(serverIndex, type, youtubeId, fileName);
 						}, goodTube_retryDelay);
 
 						return;
@@ -5797,29 +5809,8 @@
 
 				// If the data is all good
 				else if (typeof data['status'] !== 'undefined' && typeof data['url'] !== 'undefined') {
-					// Download the file, without a file name
-					if (typeof fileName === 'undefined') {
-						window.open(data['url'], '_self');
-
-						// Debug message
-						if (goodTube_debug) {
-							console.log('[GoodTube] Downloaded '+type);
-						}
-
-						// Remove from pending downloads
-						if (typeof goodTube_pendingDownloads[youtubeId] !== 'undefined') {
-							delete goodTube_pendingDownloads[youtubeId];
-						}
-
-						// Hide the downloading indicator
-						setTimeout(function() {
-							goodTube_player_videojs_hideDownloading();
-						}, 1000);
-					}
-					// Download the file with a file name (as a blob, this is used for playlists)
-					else {
-						goodTube_downloadFileAsBlob(data['url'], type, fileName, youtubeId, serverIndex);
-					}
+					// Download the file
+					goodTube_downloadFile(data['url'], type, fileName, youtubeId, serverIndex);
 				}
 			})
 			// If anything went wrong, try again
@@ -5831,7 +5822,7 @@
 				serverIndex++;
 
 				goodTube_pendingRetry['download_'+youtubeId] = setTimeout(function() {
-					goodTube_download(serverIndex, type, youtubeId, fileName);
+					goodTube_queDownload(serverIndex, type, youtubeId, fileName);
 				}, goodTube_retryDelay);
 			});
 		}, (delaySeconds * 1000));
@@ -5893,14 +5884,14 @@
 			goodTube_pendingDownloads[id] = true;
 
 			// Download the video
-			goodTube_download(0, type, id, fileName);
+			goodTube_queDownload(0, type, id, fileName);
 
 			track++;
 		});
 	}
 
 	// Download a file as blob (this allows us to name it - so we use it for playlists - but it's doesn't actually download the file until fully loaded in the browser, which is kinda bad UX - but for now, it works!)
-	function goodTube_downloadFileAsBlob(url, type, fileName, youtubeId, serverIndex) {
+	function goodTube_downloadFile(url, type, fileName, youtubeId, serverIndex) {
 		// Stop if this is no longer a pending download
 		if (typeof goodTube_pendingDownloads[youtubeId] === 'undefined') {
 			return;
@@ -5949,7 +5940,7 @@
 				serverIndex++;
 
 				goodTube_pendingRetry['download_'+youtubeId] = setTimeout(function() {
-					goodTube_download(serverIndex, type, youtubeId, fileName);
+					goodTube_queDownload(serverIndex, type, youtubeId, fileName);
 				}, goodTube_retryDelay);
 			}
 		});
