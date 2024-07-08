@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.505
+// @version      4.506
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -324,21 +324,27 @@
 		let autoplayButton = false;
 
 		// Desktop
-		if (window.location.href.indexOf('m.youtube') === -1) {
-			autoplayButton = document.querySelector('.ytp-autonav-toggle-button');
+		if (!goodTube_mobile) {
+			autoplayButton = document.querySelector('.ytp-autonav-toggle-button[aria-checked="true"]');
 
 			// Turn off the youtube autoplay button
-			if (autoplayButton && autoplayButton.getAttribute('aria-checked') === 'true') {
+			if (autoplayButton) {
 				autoplayButton.click();
 			}
 		}
 		// Mobile
 		else {
-			autoplayButton = document.querySelector('.ytm-autonav-toggle-button-container[aria-label="Autoplay is on"]');
+			autoplayButton = document.querySelector('.ytm-autonav-toggle-button-container[aria-pressed="true"]');
 
 			// Turn off the youtube autoplay button
 			if (autoplayButton) {
 				autoplayButton.click();
+			}
+			// Click the player, this helps to actually make the autoplay button show (after ads)
+			else {
+				document.querySelector('#player .html5-video-player')?.click();
+				document.querySelector('#player')?.click();
+				document.querySelector('.ytp-unmute')?.click();
 			}
 		}
 	}
@@ -438,7 +444,7 @@
 		// If the target Youtube page element does not exist OR the assets are not loaded, call this function again next drawframe
 		let youtubePageElement = false;
 		// Desktop
-		if (window.location.href.indexOf('m.youtube') === -1) {
+		if (!goodTube_mobile) {
 			youtubePageElement = document.getElementById('below');
 		}
 		// Mobile
@@ -1193,7 +1199,7 @@
 		// Add player to the page
 
 		// Desktop
-		if (window.location.href.indexOf('m.youtube') === -1) {
+		if (!goodTube_mobile) {
 			youtubePageElement.before(player_wrapper1);
 
 			// Offset top of stuff when in theater mode
@@ -1491,7 +1497,7 @@
 		}, true);
 
 		// If we're on mobile, set the volume to 100%
-		if (window.location.href.indexOf('m.youtube') !== -1) {
+		if (goodTube_mobile) {
 			goodTube_player_volume(goodTube_player, 1);
 		}
 	}
@@ -2012,7 +2018,7 @@
 				goodTube_player_loadChapters(player, videoDescription, videoDuration, chaptersData);
 
 				// Load storyboards into the player (desktop only)
-				if (window.location.href.indexOf('m.youtube') === -1) {
+				if (!goodTube_mobile) {
 					// Debug message
 					if (goodTube_debug) {
 						console.log('[GoodTube] Loading storyboard...');
@@ -2211,7 +2217,7 @@
 			}
 
 			// If that didn't work, get them from the DOM (this works for desktop only)
-			if ((!chapters.length || chapters.length <= 0) && window.location.href.indexOf('m.youtube') === -1) {
+			if ((!chapters.length || chapters.length <= 0) && !goodTube_mobile) {
 				// Target the chapters in the DOM
 				let uiChapters = Array.from(document.querySelectorAll("#panels ytd-engagement-panel-section-list-renderer:nth-child(2) #content ytd-macro-markers-list-renderer #contents ytd-macro-markers-list-item-renderer #endpoint #details"));
 
@@ -2256,10 +2262,14 @@
 		}
 
 		// Ensure the first chapter is 0 (sometimes the video descriptions are off)
-		let firstChapterTime = chapters[0]['time'];
+		let firstChapterTime = 0;
 
-		if (typeof firstChapterTime !== 'number') {
-			firstChapterTime = firstChapterTime.split(':').reduce((acc,time) => (60 * acc) + +time);
+		if (chapters.length && chapters.length > 0) {
+			firstChapterTime = chapters[0]['time'];
+
+			if (typeof firstChapterTime !== 'number') {
+				firstChapterTime = firstChapterTime.split(':').reduce((acc,time) => (60 * acc) + +time);
+			}
 		}
 
 		if (!chapters.length || chapters.length <= 0 || firstChapterTime > 0) {
@@ -2317,7 +2327,7 @@
 			}
 
 			// Add a hover action to show the title in the tooltip (desktop only)
-			if (window.location.href.indexOf('m.youtube') === -1) {
+			if (!goodTube_mobile) {
 				chapterDiv.addEventListener('mouseover', function() {
 					document.querySelector('#goodTube_player_wrapper1 .vjs-progress-control .vjs-mouse-display .vjs-time-tooltip')?.setAttribute('chapter-title', chapter['title']);
 				});
@@ -2376,7 +2386,7 @@
 		});
 
 		// Add an action to show the title next to the time duration (mobile only)
-		if (window.location.href.indexOf('m.youtube') !== -1) {
+		if (goodTube_mobile) {
 			goodTube_chapterTitleInterval = setInterval(function() {
 				let currentPlayerTime = parseFloat(player.currentTime);
 				let currentChapterTitle = false;
@@ -2892,7 +2902,7 @@
 			// Prev track
 			if (goodTube_videojs_prevButton) {
 				navigator.mediaSession.setActionHandler("previoustrack", () => {
-					goodTube_prevVideo(true);
+					goodTube_prevVideo();
 				});
 			}
 			else {
@@ -2920,7 +2930,7 @@
 	// Miniplayer
 	function goodTube_player_miniplayerUpdate() {
 		// This is needed to show it differently when we're off a video page, desktop only
-		if (window.location.href.indexOf('m.youtube') === -1) {
+		if (!goodTube_mobile) {
 			let youtube_wrapper = document.querySelector('ytd-watch-flexy');
 
 			if (youtube_wrapper) {
@@ -3031,7 +3041,7 @@
 		class PrevButton extends Button {
 			handleClick(event) {
 				event.stopImmediatePropagation();
-				goodTube_prevVideo(true);
+				goodTube_prevVideo();
 			}
 		}
 		videojs.registerComponent('PrevButton', PrevButton);
@@ -3310,7 +3320,7 @@
 			goodTube_player = document.querySelector('#goodTube_player video');
 
 			// Attach mobile seeking events
-			if (window.location.href.indexOf('m.youtube') !== -1) {
+			if (goodTube_mobile) {
 				// Attach the backwards seek button
 				let goodTube_seekBackwards = document.createElement('div');
 				goodTube_seekBackwards.id = 'goodTube_seekBackwards';
@@ -3431,14 +3441,14 @@
 			}
 
 			// Double click to fullscreen (desktop only)
-			if (window.location.href.indexOf('m.youtube') === -1) {
+			if (!goodTube_mobile) {
 				goodTube_target.addEventListener('dblclick', function(event) {
 					document.querySelector('.vjs-fullscreen-control')?.click();
 				});
 			}
 
 			// Position timestamp every 100ms (mobile only)
-			if (window.location.href.indexOf('m.youtube') !== -1) {
+			if (goodTube_mobile) {
 				setInterval(function() {
 					let currentTime = document.querySelector('.vjs-current-time');
 					let divider = document.querySelector('.vjs-time-divider');
@@ -3456,7 +3466,7 @@
 			}
 
 			// Active and inactive control based on mouse movement (desktop only)
-			if (window.location.href.indexOf('m.youtube') === -1) {
+			if (!goodTube_mobile) {
 				// Mouse off make inactive
 				goodTube_target.addEventListener('mouseout', function(event) {
 					if (goodTube_target.classList.contains('vjs-user-active') && !goodTube_target.classList.contains('vjs-paused')) {
@@ -4587,94 +4597,6 @@
 		}
 	}
 
-	// Show or hide the next and previous button
-	function goodTube_player_videojs_showHideNextPrevButtons() {
-		goodTube_videojs_prevButton = false;
-		goodTube_videojs_nextButton = true;
-
-		// Don't show next / prev in the miniplayer / pip unless we're viewing a video
-		if ((goodTube_player_miniplayer || goodTube_player_pip) && typeof goodTube_getParams['v'] === 'undefined') {
-			goodTube_videojs_prevButton = false;
-			goodTube_videojs_nextButton = false;
-		}
-		else {
-			// Mobile
-			if (window.location.href.indexOf('m.youtube') !== -1) {
-				// If we're viewing a playlist
-				if (typeof goodTube_getParams['i'] !== 'undefined' || typeof goodTube_getParams['index'] !== 'undefined' || typeof goodTube_getParams['list'] !== 'undefined') {
-					let playlist = document.querySelectorAll('ytm-playlist-panel-renderer ytm-playlist-panel-video-renderer, ytm-playlist-video-list-renderer ytm-playlist-video-renderer');
-
-					if (!playlist || playlist.length <= 0) {
-						return;
-					}
-
-					// If the first video is NOT selected, enable previous
-					let firstItemSelected = playlist[0].getAttribute('aria-selected');
-					if (firstItemSelected === 'false') {
-						goodTube_videojs_prevButton = true;
-					}
-
-					// If the last video is NOT selected, enable previous
-					let lastItemSelected = playlist[playlist.length-1].getAttribute('aria-selected');
-					if (lastItemSelected === 'true') {
-						goodTube_videojs_nextButton = false;
-					}
-				}
-				// Otherwise we're not in a playlist, so if a previous video exists
-				else if (goodTube_videojs_previousVideo[goodTube_videojs_previousVideo.length - 2] && goodTube_videojs_previousVideo[goodTube_videojs_previousVideo.length - 2] !== window.location.href) {
-					// Enable the previous button
-					goodTube_videojs_prevButton = true;
-				}
-			}
-			// Desktop
-			else {
-				goodTube_videojs_nextButton = true;
-
-				// If we're viewing a playlist
-				if (typeof goodTube_getParams['i'] !== 'undefined' || typeof goodTube_getParams['index'] !== 'undefined' || typeof goodTube_getParams['list'] !== 'undefined') {
-					// If we're not viewing the first video in the playlist
-					let playlist = document.querySelectorAll('#secondary .playlist-items ytd-playlist-panel-video-renderer:not([hidden]), #below .playlist-items ytd-playlist-panel-video-renderer:not([hidden])');
-
-					if (!playlist || playlist.length <= 0) {
-						return;
-					}
-
-					if (playlist && !playlist[0].selected) {
-						// Enable the previous button
-						goodTube_videojs_prevButton = true;
-					}
-				}
-				// Otherwise we're not in a playlist, so if a previous video exists
-				else if (goodTube_videojs_previousVideo[goodTube_videojs_previousVideo.length - 2] && goodTube_videojs_previousVideo[goodTube_videojs_previousVideo.length - 2] !== window.location.href) {
-					// Enable the previous button
-					goodTube_videojs_prevButton = true;
-				}
-			}
-		}
-
-		// Show or hide the previous button
-		let prevButton = document.querySelector('.vjs-prev-button');
-		if (prevButton) {
-			if (!goodTube_videojs_prevButton) {
-				goodTube_helper_hideElement(prevButton);
-			}
-			else {
-				goodTube_helper_showElement(prevButton);
-			}
-		}
-
-		// Show or hide the next button
-		let nextButton = document.querySelector('.vjs-next-button');
-		if (nextButton) {
-			if (!goodTube_videojs_nextButton) {
-				goodTube_helper_hideElement(nextButton);
-			}
-			else {
-				goodTube_helper_showElement(nextButton);
-			}
-		}
-	}
-
 	// Play / pause
 	function goodTube_player_videojs_playPause() {
 		let playPauseButton = document.querySelector('.vjs-play-control');
@@ -4768,7 +4690,7 @@
 			onClickOrTap(item, (e) => {
 				let delay = 0;
 
-				if (window.location.href.indexOf('m.youtube') !== -1) {
+				if (goodTube_mobile) {
 					delay = 400;
 				}
 
@@ -4782,7 +4704,7 @@
 		});
 
 		// Add a hover bar to the DOM if we haven't alread (desktop only)
-		if (window.location.href.indexOf('m.youtube') === -1) {
+		if (!goodTube_mobile) {
 			if (!document.querySelector('.goodTube_hoverBar')) {
 				let hoverBar = document.createElement('div');
 				hoverBar.classList.add('goodTube_hoverBar');
@@ -4808,7 +4730,7 @@
 		}
 
 		let delay = 0;
-		if (window.location.href.indexOf('m.youtube') !== -1) {
+		if (goodTube_mobile) {
 			delay = 400;
 		}
 
@@ -4975,6 +4897,62 @@
 		}
 	}
 
+	// Show or hide the next and previous button
+	function goodTube_player_videojs_showHideNextPrevButtons() {
+		goodTube_videojs_prevButton = false;
+		goodTube_videojs_nextButton = true;
+
+		// Don't show next / prev in the miniplayer / pip unless we're viewing a video
+		if ((goodTube_player_miniplayer || goodTube_player_pip) && typeof goodTube_getParams['v'] === 'undefined') {
+			goodTube_videojs_prevButton = false;
+			goodTube_videojs_nextButton = false;
+		}
+		// For the regular player
+		else {
+			// If we're viewing a playlist
+			if (typeof goodTube_getParams['i'] !== 'undefined' || typeof goodTube_getParams['index'] !== 'undefined' || typeof goodTube_getParams['list'] !== 'undefined') {
+				let playlist = document.querySelectorAll('#goodTube_playlistContainer a');
+
+				if (!playlist || !playlist.length) {
+					return;
+				}
+
+				// If the first video is NOT selected
+				if (!playlist[0].classList.contains('goodTube_selected')) {
+					// Enable the previous button
+					goodTube_videojs_prevButton = true;
+				}
+			}
+			// Otherwise we're not in a playlist, so if a previous video exists
+			else if (goodTube_videojs_previousVideo[goodTube_videojs_previousVideo.length - 2] && goodTube_videojs_previousVideo[goodTube_videojs_previousVideo.length - 2] !== window.location.href) {
+				// Enable the previous button
+				goodTube_videojs_prevButton = true;
+			}
+		}
+
+		// Show or hide the previous button
+		let prevButton = document.querySelector('.vjs-prev-button');
+		if (prevButton) {
+			if (!goodTube_videojs_prevButton) {
+				goodTube_helper_hideElement(prevButton);
+			}
+			else {
+				goodTube_helper_showElement(prevButton);
+			}
+		}
+
+		// Show or hide the next button
+		let nextButton = document.querySelector('.vjs-next-button');
+		if (nextButton) {
+			if (!goodTube_videojs_nextButton) {
+				goodTube_helper_hideElement(nextButton);
+			}
+			else {
+				goodTube_helper_showElement(nextButton);
+			}
+		}
+	}
+
 
 	/* GoodTube general functions
 	------------------------------------------------------------------------------------------ */
@@ -4984,6 +4962,8 @@
 	let goodTube_getParams = false;
 	let goodTube_downloadTimeouts = [];
 	let goodTube_pendingDownloads = [];
+	let goodTube_mobile = false;
+	let goodTube_clickedPlaylistOpen = false;
 
 	// API subtitle / storyboard servers
 	let goodTube_otherDataServersIndex_subtitles = 0;
@@ -5389,227 +5369,233 @@
 		document.dispatchEvent(e);
 	}
 
-	// Play the previous video
-	function goodTube_prevVideo(pressedButton = false) {
+	// Generate playlist links
+	function goodTube_generatePlaylistLinks() {
+		// Target the playlist container
+		let playlistContainer = document.getElementById('goodTube_playlistContainer');
+
+		// Add the playlist container if we don't have it
+		if (!playlistContainer) {
+			playlistContainer = document.createElement('div');
+			playlistContainer.setAttribute('id', 'goodTube_playlistContainer');
+			playlistContainer.style.display = 'none';
+			document.body.appendChild(playlistContainer);
+		}
+
+		// Empty the playlist container
+		playlistContainer.innerHTML = '';
+
+		// If we're not viewing a playlist, just return.
+		if (typeof goodTube_getParams['i'] === 'undefined' && typeof goodTube_getParams['index'] === 'undefined' && typeof goodTube_getParams['list'] === 'undefined') {
+			return;
+		}
+
+		// Otherwise we are viewing a playlist, so populate the playlist container
+		let youtubeFrameAPI = document.getElementById('movie_player');
+
+		// Get the playlist items
+		let playlistLinks = false;
+		let playlistTitles = false;
+
+		// Desktop
+		if (!goodTube_mobile) {
+			playlistLinks = document.querySelectorAll('#playlist-items > a');
+			playlistTitles = document.querySelectorAll('#playlist-items #video-title');
+		}
 		// Mobile
-		if (window.location.href.indexOf('m.youtube') !== -1) {
-			// If we're viewing a playlist
-			if (typeof goodTube_getParams['i'] !== 'undefined' || typeof goodTube_getParams['index'] !== 'undefined' || typeof goodTube_getParams['list'] !== 'undefined') {
-				let playlist = document.querySelectorAll('ytm-playlist-panel-renderer ytm-playlist-panel-video-renderer, ytm-playlist-video-list-renderer ytm-playlist-video-renderer');
-				let selectedItem = document.querySelectorAll('ytm-playlist-panel-renderer ytm-playlist-panel-video-renderer[aria-selected="true"], ytm-playlist-video-list-renderer ytm-playlist-video-renderer[aria-selected="true"]');
+		else {
+			playlistLinks = document.querySelectorAll('ytm-playlist-panel-renderer a.compact-media-item-image');
+			playlistTitles = document.querySelectorAll('ytm-playlist-panel-renderer .compact-media-item-headline span');
+		}
 
-				// Re-open the playlist if it's closed and try again
-				if (!playlist || playlist.length <= 0 || !selectedItem || selectedItem.length <= 0) {
-					document.querySelector('ytm-playlist-panel-entry-point')?.click();
+		// If we couldn't find the playlist items, retry (the DOM can take some time to load)
+		if (!playlistLinks || !playlistLinks.length) {
+			setTimeout(goodTube_generatePlaylistLinks, 100);
+		}
 
-					setTimeout(function() {
-						goodTube_prevVideo(true);
-					}, 100);
+		// For each playlist item
+		let i = 0;
+		playlistLinks.forEach((playlistItem) => {
+			// Create a link element
+			let playlistItemElement = document.createElement('a');
 
-					return;
-				}
+			// Set the href
+			playlistItemElement.href = playlistItem.href;
 
-				let prevEnabled = false;
+			// Set the title
+			playlistItemElement.innerHTML = playlistTitles[i].innerHTML.trim();
 
-				// If the last video is NOT selected, enable next
-				let firstItemSelected = playlist[0].getAttribute('aria-selected');
-				if (firstItemSelected === 'false') {
-					prevEnabled = true;
-				}
+			// If we're currently on this item, set the selected class
+			if (playlistItem.href.indexOf(goodTube_getParams['v']) !== -1) {
+				playlistItemElement.classList.add('goodTube_selected');
+			}
 
-				if (prevEnabled) {
-					// Debug message
-					if (goodTube_debug) {
-						console.log('[GoodTube] Playing previous video in playlist...');
+			// Add the item to the playlist container
+			playlistContainer.appendChild(playlistItemElement);
+
+			i++;
+		});
+	}
+
+	// Play the previous video
+	function goodTube_prevVideo() {
+		// Check if we clicked a playlist item
+		let clickedPlaylistItem = false;
+
+		// If we are viewing a playlist
+		if (typeof goodTube_getParams['i'] !== 'undefined' || typeof goodTube_getParams['index'] !== 'undefined' || typeof goodTube_getParams['list'] !== 'undefined') {
+			// Get the playlist items
+			let playlistItems = document.querySelectorAll('#goodTube_playlistContainer a');
+
+			// For each playlist item
+			let clickNext = false;
+
+			// Loop in reverse
+			for (let i = (playlistItems.length - 1); i >= 0; i--) {
+				let playlistItem = playlistItems[i];
+
+				if (clickNext) {
+					// Find the matching playlist item on the page and click it
+					let bits = playlistItem.href.split('/watch');
+					let findUrl = '/watch'+bits[1];
+
+					// Desktop
+					if (!goodTube_mobile) {
+						clickedPlaylistItem = true;
+						document.querySelector('#playlist-items > a[href="'+findUrl+'"]')?.click();
+					}
+					// Mobile
+					else {
+						clickedPlaylistItem = true;
+						document.querySelector('ytm-playlist-panel-renderer a.compact-media-item-image[href="'+findUrl+'"]')?.click();
 					}
 
-					let playNextInLoop = false;
-					for (let i = playlist.length - 1; i >= 0; i--) {
-						if (playNextInLoop) {
-							playlist[i].querySelector('a.compact-media-item-image').click();
+					if (clickedPlaylistItem) {
+						clickedPlaylistItem = true;
+
+						// Double check that the playlist is open, if not - open it.
+						let playlistContainer = document.querySelector('ytm-playlist-panel-renderer');
+						if (!playlistContainer) {
+							let openButton = document.querySelector('ytm-playlist-panel-entry-point');
+
+							if (openButton && !goodTube_clickedPlaylistOpen) {
+								goodTube_clickedPlaylistOpen = true;
+								openButton.click();
+								setTimeout(goodTube_prevVideo, 500);
+							}
+
 							return;
 						}
 
-						if (playlist[i].getAttribute('aria-selected') === 'true') {
-							playNextInLoop = true;
-						}
+						goodTube_clickedPlaylistOpen = false;
+
+						// Click the matching playlist item
+						document.querySelector('ytm-playlist-panel-renderer a.compact-media-item-image[href="'+findUrl+'"]')?.click();
 					}
 				}
-			}
-			// Otherwise we're not viewing a playlist, so if autoplay is on or we've pressed the prev button, and a previous video exists
-			else if ((goodTube_helper_getCookie('goodTube_autoplay') === 'on' || pressedButton) && goodTube_videojs_previousVideo[goodTube_videojs_previousVideo.length - 2] && goodTube_videojs_previousVideo[goodTube_videojs_previousVideo.length - 2] !== window.location.href) {
-				// Debug message
-				if (goodTube_debug) {
-					console.log('[GoodTube] Autoplaying previous video...');
-				}
 
-				// Go back to the previous video
-				setTimeout(function() {
-					goodTube_helper_setCookie('goodTube_previous', 'true');
-					window.history.go(-1);
-				}, 0);
+				if (playlistItem.classList.contains('goodTube_selected')) {
+					clickNext = true;
+				}
+				else {
+					clickNext = false;
+				}
 			}
 		}
-		// Desktop
-		else {
-			// If we're viewing a playlist
-			if (typeof goodTube_getParams['i'] !== 'undefined' || typeof goodTube_getParams['index'] !== 'undefined' || typeof goodTube_getParams['list'] !== 'undefined') {
-				let playlist = document.querySelectorAll('#secondary .playlist-items ytd-playlist-panel-video-renderer:not([hidden]), #below .playlist-items ytd-playlist-panel-video-renderer:not([hidden])');
 
-				// If we're not viewing the first video in the playlist
-				if (playlist && !playlist[0].selected) {
-					// Debug message
-					if (goodTube_debug) {
-						console.log('[GoodTube] Playing previous video in playlist...');
-					}
-
-					goodTube_shortcut('prev');
-				}
-				// Otherwise we're at the first video of the playlist, so if autoplay is on or we've pressed the prev button, and a previous video exists
-				else if ((goodTube_helper_getCookie('goodTube_autoplay') === 'on' || pressedButton) && goodTube_videojs_previousVideo[goodTube_videojs_previousVideo.length - 2] && goodTube_videojs_previousVideo[goodTube_videojs_previousVideo.length - 2] !== window.location.href) {
-					// Debug message
-					if (goodTube_debug) {
-						console.log('[GoodTube] Autoplaying previous video...');
-					}
-
-					// Go back to the previous video
-					setTimeout(function() {
-						goodTube_helper_setCookie('goodTube_previous', 'true');
-						window.history.go(-1);
-					}, 0);
-				}
+		// If we didn't click a playlist item, play previous video (if it exists in our history)
+		if (!clickedPlaylistItem && goodTube_videojs_previousVideo[goodTube_videojs_previousVideo.length - 2] && goodTube_videojs_previousVideo[goodTube_videojs_previousVideo.length - 2] !== window.location.href) {
+			// Debug message
+			if (goodTube_debug) {
+				console.log('[GoodTube] Playing previous video...');
 			}
-			// Otherwise we're not viewing a playlist, so if autoplay is on or we've pressed the prev button, and a previous video exists
-			else if ((goodTube_helper_getCookie('goodTube_autoplay') === 'on' || pressedButton) && goodTube_videojs_previousVideo[goodTube_videojs_previousVideo.length - 2] && goodTube_videojs_previousVideo[goodTube_videojs_previousVideo.length - 2] !== window.location.href) {
-				// Debug message
-				if (goodTube_debug) {
-					console.log('[GoodTube] Autoplaying previous video...');
-				}
 
-				// Go back to the previous video
-				setTimeout(function() {
-					goodTube_helper_setCookie('goodTube_previous', 'true');
-					window.history.go(-1);
-				}, 0);
-			}
+			// Go back to the previous video
+			goodTube_helper_setCookie('goodTube_previous', 'true');
+			window.history.go(-1);
 		}
 	}
 
 	// Play the next video
 	function goodTube_nextVideo(pressedButton = false) {
-		// Mobile
-		if (window.location.href.indexOf('m.youtube') !== -1) {
-			// If we're viewing a playlist
-			if (typeof goodTube_getParams['i'] !== 'undefined' || typeof goodTube_getParams['index'] !== 'undefined' || typeof goodTube_getParams['list'] !== 'undefined') {
-				let playlist = document.querySelectorAll('#secondary .playlist-items ytd-playlist-panel-video-renderer:not([hidden]), #below .playlist-items ytd-playlist-panel-video-renderer:not([hidden])');
-				let selectedItem = document.querySelectorAll('ytm-playlist-panel-renderer ytm-playlist-panel-video-renderer[aria-selected="true"], ytm-playlist-video-list-renderer ytm-playlist-video-renderer[aria-selected="true"]');
+		// Is autoplay turned on?
+		let autoplay = goodTube_helper_getCookie('goodTube_autoplay');
 
-				// Re-open the playlist if it's closed and try again
-				if (!playlist || playlist.length <= 0 || !selectedItem || selectedItem.length <= 0) {
-					document.querySelector('ytm-playlist-panel-entry-point')?.click();
+		// Check if we clicked a playlist item
+		let clickedPlaylistItem = false;
 
-					setTimeout(function() {
-						goodTube_nextVideo(true);
-					}, 100);
+		// If we are viewing a playlist
+		if (typeof goodTube_getParams['i'] !== 'undefined' || typeof goodTube_getParams['index'] !== 'undefined' || typeof goodTube_getParams['list'] !== 'undefined') {
+			// Get the playlist items
+			let playlistItems = document.querySelectorAll('#goodTube_playlistContainer a');
 
-					return;
-				}
+			// For each playlist item
+			let clickNext = false;
 
-				let nextEnabled = false;
+			playlistItems.forEach((playlistItem) => {
+				if (clickNext) {
+					// Find the matching playlist item on the page and click it
+					let bits = playlistItem.href.split('/watch');
+					let findUrl = '/watch'+bits[1];
 
-				// If the last video is NOT selected, enable next
-				let lastItemSelected = playlist[playlist.length - 1].getAttribute('aria-selected');
-				if (lastItemSelected === 'false') {
-					nextEnabled = true;
-				}
-
-				if (nextEnabled) {
-					// Debug message
-					if (goodTube_debug) {
-						console.log('[GoodTube] Playing next video in playlist...');
+					// Desktop
+					if (!goodTube_mobile) {
+						clickedPlaylistItem = true;
+						document.querySelector('#playlist-items > a[href="'+findUrl+'"]')?.click();
 					}
+					// Mobile
+					else {
+						clickedPlaylistItem = true;
 
-					let playNextInLoop = false;
-					for (let i = 0; i < playlist.length; i++) {
-						if (playNextInLoop) {
-							playlist[i].querySelector('a.compact-media-item-image').click();
+						// Double check that the playlist is open, if not - open it.
+						let playlistContainer = document.querySelector('ytm-playlist-panel-renderer');
+						if (!playlistContainer) {
+							let openButton = document.querySelector('ytm-playlist-panel-entry-point');
+
+							if (openButton && !goodTube_clickedPlaylistOpen) {
+								goodTube_clickedPlaylistOpen = true;
+								openButton.click();
+								setTimeout(goodTube_nextVideo, 500);
+							}
+
 							return;
 						}
 
-						if (playlist[i].getAttribute('aria-selected') === 'true') {
-							playNextInLoop = true;
+						goodTube_clickedPlaylistOpen = false;
+
+						// Click the matching playlist item
+						document.querySelector('ytm-playlist-panel-renderer a.compact-media-item-image[href="'+findUrl+'"]')?.click();
+					}
+
+					if (clickedPlaylistItem) {
+						// Debug message
+						if (goodTube_debug) {
+							console.log('[GoodTube] Playing next video in playlist...');
 						}
 					}
 				}
-			}
-			// Otherwise we're not viewing a playlist, so if autoplay is on, play the next autoplay video
-			else if (goodTube_helper_getCookie('goodTube_autoplay') === 'on' || pressedButton) {
-				// Debug message
-				if (goodTube_debug) {
-					console.log('[GoodTube] Autoplaying next video...');
+
+				if (playlistItem.classList.contains('goodTube_selected')) {
+					clickNext = true;
 				}
-
-				function goodTube_clickNextButtonMobile() {
-					// Skip to the end of the video
-					goodTube_player_skipTo(goodTube_player, goodTube_player.duration);
-
-					// Sync the players, this helps the Youtube next button to populate
-					goodTube_youtube_syncPlayers();
-
-					// Click the next button
-					let nextButton = document.querySelector('.icon-button[aria-label="Next video"');
-
-					if (nextButton) {
-						nextButton.click();
-					}
-					else {
-						setTimeout(goodTube_clickNextButtonMobile, 0);
-					}
+				else {
+					clickNext = false;
 				}
-
-				// Play the next video
-				setTimeout(goodTube_clickNextButtonMobile, 0);
-			}
+			});
 		}
-		// Desktop
-		else {
-			// If we're viewing a playlist
-			if (typeof goodTube_getParams['i'] !== 'undefined' || typeof goodTube_getParams['index'] !== 'undefined' || typeof goodTube_getParams['list'] !== 'undefined') {
-				let playlist = document.querySelectorAll('#secondary .playlist-items ytd-playlist-panel-video-renderer:not([hidden]), #below .playlist-items ytd-playlist-panel-video-renderer:not([hidden])');
 
-				// If we're not viewing the last video in the playlist
-				if (playlist && !playlist[playlist.length - 1].selected) {
-					// Debug message
-					if (goodTube_debug) {
-						console.log('[GoodTube] Playing next video in playlist...');
-					}
+		// If we didn't click a playlist item, autoplay next video (only if they pressed the next button or autoplay is on)
+		if (!clickedPlaylistItem && (autoplay !== 'off' || pressedButton)) {
 
-					goodTube_shortcut('next');
-				}
-				// Otherwise we're at the last video of the playlist,  so if autoplay is on or we've pressed the next button, play the next autoplay video
-				else if (goodTube_helper_getCookie('goodTube_autoplay') === 'on' || pressedButton) {
-					// Debug message
-					if (goodTube_debug) {
-						console.log('[GoodTube] Autoplaying next video...');
-					}
 
-					// Play the next video
-					setTimeout(function() {
-						goodTube_shortcut('next');
-					}, 0);
-				}
-			}
-			// Otherwise we're not viewing a playlist,  so if autoplay is on or we've pressed the next button, play the next autoplay video
-			else if (goodTube_helper_getCookie('goodTube_autoplay') === 'on' || pressedButton) {
-				// Debug message
-				if (goodTube_debug) {
-					console.log('[GoodTube] Autoplaying next video...');
-				}
+			console.log(clickedPlaylistItem);
 
-				// Play the next video
-				setTimeout(function() {
-					goodTube_shortcut('next');
-				}, 0);
+			let youtubeFrameAPI = document.getElementById('movie_player');
+			youtubeFrameAPI.nextVideo();
+
+			// Debug message
+			if (goodTube_debug) {
+				console.log('[GoodTube] Autoplaying next video...');
 			}
 		}
 	}
@@ -5676,7 +5662,7 @@
 
 			// Set the default codec (first download call)
 			let vCodec = 'vp9';
-			if (window.location.href.indexOf('m.youtube') !== -1) {
+			if (goodTube_mobile) {
 				vCodec = 'h264';
 			}
 
@@ -5742,7 +5728,7 @@
 						// Select the next codec
 
 						// Desktop
-						if (window.location.href.indexOf('m.youtube') === -1) {
+						if (!goodTube_mobile) {
 							if (vCodec === 'vp9') {
 								nextCodec = 'av1';
 							}
@@ -5752,7 +5738,7 @@
 						}
 
 						// Mobile
-						if (window.location.href.indexOf('m.youtube') !== -1) {
+						if (goodTube_mobile) {
 							if (vCodec === 'h264') {
 								nextCodec = 'av1';
 							}
@@ -5867,7 +5853,7 @@
 		let playlistItems = [];
 
 		// Mobile - get playlist items
-		if (window.location.href.indexOf('m.youtube') !== -1) {
+		if (goodTube_mobile) {
 			playlistItems = document.querySelectorAll('ytm-playlist-panel-renderer ytm-playlist-panel-video-renderer, ytm-playlist-video-list-renderer ytm-playlist-video-renderer');
 
 			// Re-open the playlist if it's closed and try again
@@ -5901,7 +5887,7 @@
 			let url = '';
 
 			// Mobile - get playlist info
-			if (window.location.href.indexOf('m.youtube') !== -1) {
+			if (goodTube_mobile) {
 				fileName = goodTube_helper_padNumber((track + 1), 2)+' - '+element.querySelector('.compact-media-item-headline > span').innerHTML.trim();
 				url = element.querySelector('.compact-media-item-image').getAttribute('href');
 			}
@@ -5960,7 +5946,7 @@
 		}
 
 		// Use userscript downloader for mobile because it doesn't support blobs
-		if (window.location.href.indexOf('m.youtube') !== -1) {
+		if (goodTube_mobile) {
 			goodTube_pendingDownloads[youtubeId] = GM.download({
 				url: url,
 				name: fileName+fileExtension,
@@ -6242,7 +6228,7 @@
 				// If we're viewing a video
 				if (typeof goodTube_getParams['v'] !== 'undefined') {
 					// Show the player (mobile only)
-					if (window.location.href.indexOf('m.youtube') !== -1) {
+					if (goodTube_mobile) {
 						goodTube_player_show(player);
 					}
 
@@ -6268,6 +6254,10 @@
 						console.log('[GoodTube] Loading video data from '+goodTube_api_name+'...');
 					}
 
+					// Generate the playlist links
+					goodTube_generatePlaylistLinks();
+
+					// Load the video
 					goodTube_player_loadVideo(player);
 
 					// Usage stats
@@ -6279,7 +6269,7 @@
 					goodTube_player_clear(goodTube_player);
 
 					// Hide the player (mobile only)
-					if (window.location.href.indexOf('m.youtube') !== -1) {
+					if (goodTube_mobile) {
 						goodTube_player_hide(player);
 					}
 
@@ -6342,6 +6332,11 @@
 		if (goodTube_debug) {
 			console.log('\n==================================================\n    ______                ________      __\n   / ____/___  ____  ____/ /_  __/_  __/ /_  ___\n  / / __/ __ \\/ __ \\/ __  / / / / / / / __ \\/ _ \\\n / /_/ / /_/ / /_/ / /_/ / / / / /_/ / /_/ /  __/\n \\____/\\____/\\____/\\____/ /_/  \\____/_____/\\___/\n\n==================================================');
 			console.log('[GoodTube] Initiating...');
+		}
+
+		// Check if we're on mobile or not
+		if (window.location.href.indexOf('m.youtube') !== -1) {
+			goodTube_mobile = true;
 		}
 
 		// If there's a cookie for our previously chosen API, select it
