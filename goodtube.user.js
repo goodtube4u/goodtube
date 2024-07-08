@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.510
+// @version      4.512
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -9,22 +9,11 @@
 // @run-at       document-start
 // @updateURL    https://github.com/goodtube4u/goodtube/raw/main/goodtube.user.js
 // @downloadURL  https://github.com/goodtube4u/goodtube/raw/main/goodtube.user.js
-// @grant        GM.download
-// @grant        GM_download
 // @noframes
 // ==/UserScript==
 
 (function() {
 	'use strict';
-
-	// Support cross script stuff for Tampermoney, Violentmonkey, etc.
-	if (typeof GM === 'undefined') {
-		let GM = {};
-	}
-
-	if (typeof GM.download === 'undefined' && typeof GM_download !== 'undefined') {
-		GM.download = GM_download;
-	}
 
 	/* Config
 	------------------------------------------------------------------------------------------ */
@@ -43,24 +32,18 @@
 
 	/* Helper functions
 	------------------------------------------------------------------------------------------ */
-	// Convert seconds to HH:MM:SS
-	function goodTube_helper_formatTime(secs) {
-		var sec_num = parseInt(secs, 10);
-		var hours = Math.floor(sec_num / 3600);
-		var minutes = Math.floor(sec_num / 60) % 60;
-		var seconds = sec_num % 60;
-
-		return [hours,minutes,seconds]
-		.map(v => v < 10 ? "0" + v : v)
-		.filter((v,i) => v !== "00" || i > 0)
-		.join(":");
-	}
-
-	// Find all HTML tags that match a regular expression
-	function goodTube_helper_tagMatches(regEx) {
-		return Array.prototype.slice.call(document.querySelectorAll('*')).filter(function(element) {
-			return element.tagName.match(regEx);
-		});
+	// Are you on iOS?
+	function goodTube_helper_iOS() {
+		return [
+			'iPad Simulator',
+			'iPhone Simulator',
+			'iPod Simulator',
+			'iPad',
+			'iPhone',
+			'iPod'
+		].includes(navigator.platform)
+		// iPad on iOS 13 detection
+		|| (navigator.userAgent.includes("Mac") && "ontouchend" in document)
 	}
 
 	// Pad a number with leading zeros
@@ -438,7 +421,6 @@
 	let goodTube_chapterTitleInterval = false;
 	let goodTube_chaptersChangeInterval = false;
 	let goodTube_updateManifestQualityTimeout = false;
-	let goodTube_currentVideoTitle = false;
 
 	// Init
 	function goodTube_player_init() {
@@ -1760,9 +1742,6 @@
 					videoDescription = videoData['description'];
 					videoDuration = videoData['lengthSeconds'];
 					chaptersData = false;
-
-					// Set the title of the current video (used for downloads)
-					goodTube_currentVideoTitle = videoData['title'];
 				}
 			}
 			// Invidious (HD)
@@ -1777,9 +1756,6 @@
 					videoDescription = videoData['description'];
 					videoDuration = videoData['lengthSeconds'];
 					chaptersData = false;
-
-					// Set the title of the current video (used for downloads)
-					goodTube_currentVideoTitle = videoData['title'];
 				}
 			}
 			// Piped (HD)
@@ -1808,9 +1784,6 @@
 							});
 						});
 					}
-
-					// Set the title of the current video (used for downloads)
-					goodTube_currentVideoTitle = videoData['title'];
 				}
 			}
 
@@ -3214,11 +3187,6 @@
 						{
 							label: "Download video",
 							clickHandler() {
-								// Debug message
-								if (goodTube_debug) {
-									console.log('[GoodTube] Downloading video...');
-								}
-
 								// Add to pending downloads
 								goodTube_pendingDownloads[goodTube_getParams['v']] = true;
 
@@ -3229,11 +3197,6 @@
 						{
 							label: "Download audio",
 							clickHandler() {
-								// Debug message
-								if (goodTube_debug) {
-									console.log('[GoodTube] Downloading audio...');
-								}
-
 								// Add to pending downloads
 								goodTube_pendingDownloads[goodTube_getParams['v']] = true;
 
@@ -3632,6 +3595,14 @@
 					sourceMenuItem.setAttribute('api', goodTube_apis[i]['url']);
 					i++;
 				});
+			}
+
+			// If they're on iOS - hide the download button
+			if (goodTube_helper_iOS()) {
+				let downloadButton = document.querySelector('.vjs-download-button');
+				if (downloadButton) {
+					downloadButton.remove();
+				}
 			}
 
 			// Init the API selection
@@ -5608,14 +5579,14 @@
 
 	// Que download video / audio for a specificed youtube ID
 	function goodTube_queDownload(serverIndex, type, youtubeId, fileName, codec) {
+		// Ensure filename as a value
+		if (typeof fileName === 'undefined') {
+			fileName = '';
+		}
+
 		// Stop if this is no longer a pending download
 		if (typeof goodTube_pendingDownloads[youtubeId] === 'undefined') {
 			return;
-		}
-
-		// If there's no filename, use the one we got from the API video data
-		if (typeof fileName === 'undefined') {
-			fileName = goodTube_currentVideoTitle;
 		}
 
 		// If we're out of download servers to try, show an error
@@ -5662,8 +5633,11 @@
 		goodTube_downloadTimeouts[youtubeId] = setTimeout(function() {
 			// Debug message
 			if (goodTube_debug) {
-				if (typeof fileName !== 'undefined') {
+				if (fileName !== '') {
 					console.log('[GoodTube] Downloading '+type+' - '+fileName+'...');
+				}
+				else {
+					console.log('[GoodTube] Downloading '+type+'...');
 				}
 			}
 
@@ -5906,16 +5880,35 @@
 			fileExtension = '.mp3';
 		}
 
-		// Use userscript downloader for mobile because it doesn't support blobs
-		goodTube_pendingDownloads[youtubeId] = GM.download({
-			url: url,
-			name: fileName+fileExtension,
-			// Success
-			onload: (e) => {
+		// Download as a blob on desktop (only if we have a filename / as that's a playlist)
+		if (!goodTube_mobile && fileName !== '') {
+			// Get the file
+			fetch(url)
+			.then(response => response.blob())
+			.then(blob => {
 				// Stop if this is no longer a pending download
 				if (typeof goodTube_pendingDownloads[youtubeId] === 'undefined') {
 					return;
 				}
+
+				// Get the blob
+				let blobUrl = URL.createObjectURL(blob);
+
+				// Create a download link element and set params
+				let a = document.createElement('a');
+				a.style.display = 'none';
+				a.href = blobUrl;
+				a.download = fileName+fileExtension;
+				document.body.appendChild(a);
+
+				// Click the link to download
+				a.click();
+
+				// Remove the blob from memory
+				window.URL.revokeObjectURL(blobUrl);
+
+				// Remove the link
+				a.remove();
 
 				// Debug message
 				if (goodTube_debug) {
@@ -5929,10 +5922,9 @@
 
 				// Hide the downloading indicator
 				goodTube_player_videojs_hideDownloading();
-			},
-			// Error
-			onerror: (e) => {
-				// If anything went wrong, try again (next download server)
+			})
+			// If anything went wrong, try again (next download server)
+			.catch((error) => {
 				if (typeof goodTube_pendingRetry['download_'+youtubeId] !== 'undefined') {
 					clearTimeout(goodTube_pendingRetry['download_'+youtubeId]);
 				}
@@ -5942,8 +5934,32 @@
 				goodTube_pendingRetry['download_'+youtubeId] = setTimeout(function() {
 					goodTube_queDownload(serverIndex, type, youtubeId, fileName);
 				}, goodTube_retryDelay);
+			});
+		}
+		// Just open the stream URL on mobile (or for single files without a filename)
+		else {
+			window.open(url, '_self');
+
+			// Debug message
+			if (goodTube_debug) {
+				if (fileName !== '') {
+					console.log('[GoodTube] Downloaded '+type+' - '+fileName);
+				}
+				else {
+					console.log('[GoodTube] Downloaded '+type);
+				}
 			}
-		});
+
+			// Remove from pending downloads
+			if (typeof goodTube_pendingDownloads[youtubeId] !== 'undefined') {
+				delete goodTube_pendingDownloads[youtubeId];
+			}
+
+			// Hide the downloading indicator
+			setTimeout(function() {
+				goodTube_player_videojs_hideDownloading();
+			}, 1000);
+		}
 	}
 
 	// Cancel all pending downloads
@@ -5951,13 +5967,6 @@
 		// Show "are you sure" prompt
 		if (!confirm("Are you sure you want to cancel all downloads?")) {
 			return;
-		}
-
-		// Abort all pending downloads
-		for (let key in goodTube_pendingDownloads) {
-			if (typeof goodTube_pendingDownloads[key].abort === 'function') {
-				goodTube_pendingDownloads[key].abort();
-			}
 		}
 
 		// Remove all pending downloads
