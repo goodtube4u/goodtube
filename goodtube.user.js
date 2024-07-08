@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.507
+// @version      4.508
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -5846,27 +5846,8 @@
 			console.log('[GoodTube] Downloading '+type+' playlist...');
 		}
 
-		let playlistItems = [];
-
-		// Mobile - get playlist items
-		if (goodTube_mobile) {
-			playlistItems = document.querySelectorAll('ytm-playlist-panel-renderer ytm-playlist-panel-video-renderer, ytm-playlist-video-list-renderer ytm-playlist-video-renderer');
-
-			// Re-open the playlist if it's closed and try again
-			if (!playlistItems || playlistItems.length <= 0) {
-				document.querySelector('ytm-playlist-panel-entry-point')?.click();
-
-				setTimeout(function() {
-					goodTube_downloadPlaylist(type, true);
-				}, 100);
-
-				return;
-			}
-		}
-		// Desktop - get playlist items
-		else {
-			playlistItems = document.querySelectorAll('#secondary .playlist-items ytd-playlist-panel-video-renderer:not([hidden]), #below .playlist-items ytd-playlist-panel-video-renderer:not([hidden])');
-		}
+		// Get the playlist items
+		let playlistItems = document.querySelectorAll('#goodTube_playlistContainer a');
 
 		// Make sure the data is all good
 		if (playlistItems.length <= 0) {
@@ -5878,20 +5859,10 @@
 		}
 
 		let track = 0;
-		playlistItems.forEach((element) => {
-			let fileName = '';
-			let url = '';
-
-			// Mobile - get playlist info
-			if (goodTube_mobile) {
-				fileName = goodTube_helper_padNumber((track + 1), 2)+' - '+element.querySelector('.compact-media-item-headline > span').innerHTML.trim();
-				url = element.querySelector('.compact-media-item-image').getAttribute('href');
-			}
-			// Desktop - get playlist info
-			else {
-				fileName = goodTube_helper_padNumber((track + 1), 2)+' - '+element.querySelector('#video-title').innerHTML.trim();
-				url = element.querySelector('#wc-endpoint').getAttribute('href');
-			}
+		playlistItems.forEach((playlistItem) => {
+			// Get playlist info
+			let fileName = goodTube_helper_padNumber((track + 1), 2)+' - '+playlistItem.innerHTML.trim();
+			let url = playlistItem.href;
 
 			// Make sure the data is all good
 			if (!fileName || !url) {
