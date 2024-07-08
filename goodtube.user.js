@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.508
+// @version      4.509
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -5694,6 +5694,9 @@
 			})
 			.then(response => response.text())
 			.then(data => {
+
+				console.log(data);
+
 				// Stop if this is no longer a pending download
 				if (typeof goodTube_pendingDownloads[youtubeId] === 'undefined') {
 					return;
@@ -5913,76 +5916,15 @@
 		}
 
 		// Use userscript downloader for mobile because it doesn't support blobs
-		if (goodTube_mobile) {
-			goodTube_pendingDownloads[youtubeId] = GM.download({
-				url: url,
-				name: fileName+fileExtension,
-				// Success
-				onload: (e) => {
-					// Stop if this is no longer a pending download
-					if (typeof goodTube_pendingDownloads[youtubeId] === 'undefined') {
-						return;
-					}
-
-					// Debug message
-					if (goodTube_debug) {
-						console.log('[GoodTube] Downloaded '+type+' - '+fileName);
-					}
-
-					// Remove from pending downloads
-					if (typeof goodTube_pendingDownloads[youtubeId] !== 'undefined') {
-						delete goodTube_pendingDownloads[youtubeId];
-					}
-
-					// Hide the downloading indicator
-					goodTube_player_videojs_hideDownloading();
-				},
-				// Error
-				onerror: (e) => {
-					// If anything went wrong, try again (next download server)
-					if (typeof goodTube_pendingRetry['download_'+youtubeId] !== 'undefined') {
-						clearTimeout(goodTube_pendingRetry['download_'+youtubeId]);
-					}
-
-					serverIndex++;
-
-					goodTube_pendingRetry['download_'+youtubeId] = setTimeout(function() {
-						goodTube_download(serverIndex, type, youtubeId, fileName);
-					}, goodTube_retryDelay);
-				}
-			});
-		}
-		// Download as a blob for desktop
-		else {
-			// Get the file (die after 10s)
-			fetch(url, {
-				signal: AbortSignal.timeout(10000)
-			})
-			.then(response => response.blob())
-			.then(blob => {
+		goodTube_pendingDownloads[youtubeId] = GM.download({
+			url: url,
+			name: fileName+fileExtension,
+			// Success
+			onload: (e) => {
 				// Stop if this is no longer a pending download
 				if (typeof goodTube_pendingDownloads[youtubeId] === 'undefined') {
 					return;
 				}
-
-				// Get the blob
-				let blobUrl = URL.createObjectURL(blob);
-
-				// Create a download link element and set params
-				let a = document.createElement('a');
-				a.style.display = 'none';
-				a.href = blobUrl;
-				a.download = fileName+fileExtension;
-				document.body.appendChild(a);
-
-				// Click the link to download
-				a.click();
-
-				// Remove the blob from memory
-				window.URL.revokeObjectURL(blobUrl);
-
-				// Remove the link
-				a.remove();
 
 				// Debug message
 				if (goodTube_debug) {
@@ -5996,9 +5938,10 @@
 
 				// Hide the downloading indicator
 				goodTube_player_videojs_hideDownloading();
-			})
-			// If anything went wrong, try again (next download server)
-			.catch((error) => {
+			},
+			// Error
+			onerror: (e) => {
+				// If anything went wrong, try again (next download server)
 				if (typeof goodTube_pendingRetry['download_'+youtubeId] !== 'undefined') {
 					clearTimeout(goodTube_pendingRetry['download_'+youtubeId]);
 				}
@@ -6008,8 +5951,8 @@
 				goodTube_pendingRetry['download_'+youtubeId] = setTimeout(function() {
 					goodTube_download(serverIndex, type, youtubeId, fileName);
 				}, goodTube_retryDelay);
-			});
-		}
+			}
+		});
 	}
 
 	// Cancel all pending downloads
