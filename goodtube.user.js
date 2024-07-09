@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.513
+// @version      4.514
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -5035,17 +5035,17 @@
 		},
 		// FAST
 		{
-			'name': 'Sphynx (JP)',
-			'type': 2,
-			'proxy': true,
-			'url': 'https://invidious.jing.rocks'
-		},
-		// FAST
-		{
 			'name': 'Ra (US)',
 			'type': 3,
 			'proxy': true,
 			'url': 'https://pipedapi.us.projectsegfau.lt'
+		},
+		// FAST
+		{
+			'name': 'Sphynx (JP)',
+			'type': 2,
+			'proxy': true,
+			'url': 'https://invidious.jing.rocks'
 		},
 		// // FAST
 		// {
