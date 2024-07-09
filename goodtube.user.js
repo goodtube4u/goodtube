@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.514
+// @version      4.518
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -1197,36 +1197,38 @@
 			youtubePageElement.appendChild(player_wrapper1);
 
 			setInterval(function() {
-				if (typeof goodTube_getParams['v'] !== 'undefined') {
-					// Match width and height of mobile player
-					let youtubeSize_element = document.querySelector('.player-size.player-placeholder');
-					if (youtubeSize_element) {
-						if (youtubeSize_element.offsetHeight > 0) {
-							player_wrapper1.style.height = youtubeSize_element.offsetHeight+'px';
-							player_wrapper1.style.width = youtubeSize_element.offsetWidth+'px';
-						}
-						else {
-							youtubeSize_element = document.querySelector('#player');
+				window.requestAnimationFrame(function() {
+					if (typeof goodTube_getParams['v'] !== 'undefined') {
+						// Match width and height of mobile player
+						let youtubeSize_element = document.querySelector('.player-size.player-placeholder');
+						if (youtubeSize_element) {
 							if (youtubeSize_element.offsetHeight > 0) {
 								player_wrapper1.style.height = youtubeSize_element.offsetHeight+'px';
 								player_wrapper1.style.width = youtubeSize_element.offsetWidth+'px';
 							}
+							else {
+								youtubeSize_element = document.querySelector('#player');
+								if (youtubeSize_element.offsetHeight > 0) {
+									player_wrapper1.style.height = youtubeSize_element.offsetHeight+'px';
+									player_wrapper1.style.width = youtubeSize_element.offsetWidth+'px';
+								}
+							}
+						}
+
+						// Match sticky mode of mobile player
+						let youtubeSticky_element = document.querySelector('.player-container.sticky-player');
+						if (youtubeSticky_element) {
+							player_wrapper1.style.position = 'fixed';
+						}
+						else {
+							player_wrapper1.style.position = 'absolute';
 						}
 					}
-
-					// Match sticky mode of mobile player
-					let youtubeSticky_element = document.querySelector('.player-container.sticky-player');
-					if (youtubeSticky_element) {
-						player_wrapper1.style.position = 'fixed';
-					}
 					else {
-						player_wrapper1.style.position = 'absolute';
+						player_wrapper1.style.height = '0';
+						player_wrapper1.style.width = '0';
 					}
-				}
-				else {
-					player_wrapper1.style.height = '0';
-					player_wrapper1.style.width = '0';
-				}
+				});
 			}, 1);
 		}
 
