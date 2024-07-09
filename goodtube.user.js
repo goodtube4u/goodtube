@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.518
+// @version      4.520
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -332,12 +332,16 @@
 
 	// Mute, pause and skip ads on all Youtube videos
 	function goodTube_youtube_mutePauseSkipAds() {
-		// Always mute the youtube video - this helps to fix the audio flash on load
-		if (!goodTube_syncing || !goodTube_player) {
-			let youtubeFrameApi = document.querySelector('#movie_player');
-			if (youtubeFrameApi) {
-				youtubeFrameApi.mute();
-			}
+		// Mute hard
+		let youtubeVideo = document.querySelector('#movie_player video');
+		if (youtubeVideo) {
+			youtubeVideo.muted = true;
+			youtubeVideo.volume = 0;
+		}
+
+		let youtubeFrameApi = document.querySelector('#movie_player');
+		if (youtubeFrameApi) {
+			youtubeFrameApi.mute();
 		}
 
 		// Always skip the ads as soon as possible by clicking the skip button
@@ -350,9 +354,13 @@
 		let youtubeVideos = document.querySelectorAll('video:not(#goodTube_player):not(#goodTube_player_html5_api)');
 		youtubeVideos.forEach((element) => {
 			// Don't touch the thumbnail hover player
-			if (!element.closest('#inline-player')) {
+			if (!element.closest('#inline-player') && !element.closest('#movie_player')) {
 				element.muted = true;
-				element.pause();
+				element.volume = 0;
+
+				if (!goodTube_syncing) {
+					element.pause();
+				}
 			}
 		});
 	}
@@ -379,9 +387,13 @@
 
 			// Play for 10ms to make history work
 			youtube_player.play();
+			youtube_player.muted = true;
+			youtube_player.volume = 0;
 
 			setTimeout(function() {
 				youtube_player.pause();
+				youtube_player.muted = true;
+				youtube_player.volume = 0;
 
 				// We've finished syncing
 				goodTube_syncing = false;
