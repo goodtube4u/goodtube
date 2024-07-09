@@ -228,12 +228,10 @@
 
 	// Remove that annoying "Are you still watching" prompt
 	function goodTube_youtube_areYouStillWatching() {
-		let textElements = document.querySelectorAll('yt-confirm-dialog-renderer yt-formatted-string:not(.goodTube_clicked)');
-		textElements.forEach((element) => {
+		let confirButtons = document.querySelectorAll('tp-yt-paper-dialog #confirm-button:not(.goodTube_clicked)');
+		confirButtons.forEach((element) => {
 			element.classList.add('goodTube_clicked');
-			if (element.innerHTML.toLowerCase().indexOf('continue watching') !== -1) {
-				document.querySelector('yt-confirm-dialog-renderer button').click();
-			}
+			element.click();
 		});
 	}
 
