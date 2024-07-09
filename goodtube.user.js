@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.512
+// @version      4.513
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -5035,6 +5035,13 @@
 		},
 		// FAST
 		{
+			'name': 'Sphynx (JP)',
+			'type': 2,
+			'proxy': true,
+			'url': 'https://invidious.jing.rocks'
+		},
+		// FAST
+		{
 			'name': 'Ra (US)',
 			'type': 3,
 			'proxy': true,
@@ -5049,6 +5056,13 @@
 		// },
 		// FAST
 		{
+			'name': 'Acid (US)',
+			'type': 2,
+			'proxy': true,
+			'url': 'https://invidious.incogniweb.net'
+		},
+		// FAST
+		{
 			'name': 'Sphere (US)',
 			'type': 3,
 			'proxy': true,
@@ -5060,20 +5074,6 @@
 			'type': 3,
 			'proxy': true,
 			'url': 'https://pipedapi.drgns.space'
-		},
-		// FAST
-		{
-			'name': 'Acid (US)',
-			'type': 2,
-			'proxy': true,
-			'url': 'https://invidious.incogniweb.net'
-		},
-		// FAST
-		{
-			'name': 'Sphynx (JP)',
-			'type': 2,
-			'proxy': true,
-			'url': 'https://invidious.jing.rocks'
 		},
 		// // MEDIUM
 		// {
@@ -6151,7 +6151,15 @@
 					goodTube_player_videojs_setupPrevHistory();
 
 					// Load the video data
-					goodTube_automaticServerIndex = 0;
+					if (goodTube_api_name.indexOf('360p') !== -1 || goodTube_api_type === 3) {
+						// Reset to first server for automatic, only if we're on 360p or Piped.
+						goodTube_automaticServerIndex = 0;
+					}
+					else if (goodTube_automaticServerIndex > 0) {
+						// Otherwise stay on the same server
+						goodTube_automaticServerIndex--;
+					}
+
 					goodTube_player_loadVideoDataAttempts = 0;
 					goodTube_player_restoreTime = 0;
 
