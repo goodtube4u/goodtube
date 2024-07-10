@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.521
+// @version      4.522
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -4956,6 +4956,7 @@
 	------------------------------------------------------------------------------------------ */
 	let goodTube_stopUpdates = false;
 	let goodTube_previousUrl = false;
+	let goodTube_previousPlaylist = false;
 	let goodTube_player = false;
 	let goodTube_getParams = false;
 	let goodTube_downloadTimeouts = [];
@@ -6144,6 +6145,8 @@
 		// Check that the assets are loaded AND the player is loaded before continuing
 		let player = goodTube_player;
 		if (goodTube_player_loadedAssets >= goodTube_player_assets.length && goodTube_videojs_player_loaded) {
+			// Setup the previous and new URL
+
 			// Remove hashes, these mess with things sometimes
 			let prevURL = goodTube_previousUrl;
 			if (prevURL) {
@@ -6175,20 +6178,32 @@
 					// Setup the previous button history
 					goodTube_player_videojs_setupPrevHistory();
 
-					// Load the video data
-					if (goodTube_api_name.indexOf('360p') !== -1 || goodTube_api_type === 3) {
-						// Reset to first server for automatic, only if we're on 360p or Piped.
-						goodTube_automaticServerIndex = 0;
-					}
-					else if (goodTube_automaticServerIndex > 0) {
-						// Otherwise stay on the same server
-						goodTube_automaticServerIndex--;
-					}
-
+					// Reset the load video attempts
 					goodTube_player_loadVideoDataAttempts = 0;
+
+					// Remove the "restore to" time
 					goodTube_player_restoreTime = 0;
 
+					// Setup the previous and new playlist (if we're on one)
+					let prevPlaylist = goodTube_previousPlaylist;
+
+					let currentPlaylist = false;
+					if (typeof goodTube_getParams['list'] !== 'undefined') {
+						currentPlaylist = goodTube_getParams['list'];
+					}
+
+					// Select the server if we're on automatic
 					if (goodTube_helper_getCookie('goodTube_api_withauto') === 'automatic') {
+						// Reset to first server for automatic, only if we've changed playlist.
+						if (!currentPlaylist || prevPlaylist !== currentPlaylist) {
+							goodTube_automaticServerIndex = 0;
+						}
+						else if (goodTube_automaticServerIndex > 0) {
+							// Otherwise stay on the same server
+							goodTube_automaticServerIndex--;
+						}
+
+						// Select the automatic server
 						goodTube_player_selectApi('automatic', false);
 					}
 
@@ -6227,7 +6242,17 @@
 					}
 				}
 
-				// Ok, we've done what we need to with our player so let's pause this part of the loop until the URL changes
+				// Ok, we've done what we need to with our player
+
+				// Set the previous playlist
+				if (typeof goodTube_getParams['list'] !== 'undefined') {
+					goodTube_previousPlaylist = goodTube_getParams['list'];
+				}
+				else {
+					goodTube_previousPlaylist = false;
+				}
+
+				// Set the previous URL (which pauses this part of the loop until the URL changes again)
 				goodTube_previousUrl = window.location.href;
 			}
 		}
