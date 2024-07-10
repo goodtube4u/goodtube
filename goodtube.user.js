@@ -1274,8 +1274,8 @@
 
 		// Listen for keyboard shortcuts
 		document.addEventListener('keydown', function(event) {
-			// Don't do anything if we're holding shift or control, or we're not viewing a video
-			if (event.shiftKey || event.ctrlKey || typeof goodTube_getParams['v'] === 'undefined') {
+			// Don't do anything if we're holding control, or we're not viewing a video
+			if (event.ctrlKey || typeof goodTube_getParams['v'] === 'undefined') {
 				return;
 			}
 
@@ -1311,109 +1311,8 @@
 			) {
 				let keyPressed = event.key.toLowerCase();
 
-				// If we're focused on the video element
-				if (focusedElement && typeof focusedElement.closest !== 'undefined' && focusedElement.closest('#goodTube_player')) {
-					// Volume down
-					if (keyPressed === 'arrowdown') {
-						if (player.volume >= .05) {
-							player.volume -= .05;
-						}
-						else {
-							player.volume = 0;
-						}
-
-						// No scroll
-						event.preventDefault();
-					}
-
-					// Volume up
-					if (keyPressed === 'arrowup') {
-						if (player.volume <= .95) {
-							player.volume += .05;
-						}
-						else {
-							player.volume = 1;
-						}
-
-						// No scroll
-						event.preventDefault();
-					}
-
-					// Theater mode (focus the body, this makes the default youtube shortcut work)
-					if (keyPressed === 't') {
-						document.querySelector('body').focus();
-					}
-				}
-
-				// Prev 5 seconds
-				if (keyPressed === 'arrowleft') {
-					player.currentTime -= 5;
-				}
-
-				// Next 5 seconds
-				if (keyPressed === 'arrowright') {
-					player.currentTime += 5;
-				}
-
-				// Toggle play/pause
-				if (keyPressed === ' ') {
-					if (player.paused || player.ended) {
-						player.play();
-					}
-					else {
-						player.pause();
-					}
-				}
-
-				// Toggle mute
-				if (keyPressed === 'm') {
-					// Also check the volume, because player.muted isn't reliable
-					if (player.muted || player.volume <= 0) {
-						player.muted = false;
-
-						// Small fix to make unmute work if you've manually turned it all the way down
-						if (player.volume <= 0) {
-							player.volume = 1;
-						}
-					}
-					else {
-						player.muted = true;
-					}
-				}
-
-				// Toggle miniplayer
-				if (keyPressed === 'i') {
-					event.stopImmediatePropagation();
-					goodTube_player_miniplayerShowHide();
-				}
-
-				// Toggle fullscreen
-				if (keyPressed === 'f') {
-					document.querySelector('.vjs-fullscreen-control')?.click();
-				}
-
-				// Prev 10 seconds
-				else if (keyPressed === 'j') {
-					player.currentTime -= 10;
-				}
-
-				// Next 10 seconds
-				else if (keyPressed === 'l') {
-					player.currentTime += 10;
-				}
-
-				// Start of video
-				else if (keyPressed === 'home') {
-					player.currentTime = 0;
-				}
-
-				// End of video
-				else if (keyPressed === 'end') {
-					player.currentTime += player.duration;
-				}
-
 				// Speed up playback
-				else if (keyPressed === '>') {
+				if (keyPressed === '>') {
 					if (parseFloat(player.playbackRate) == .25) {
 						player.playbackRate = .5;
 					}
@@ -1462,36 +1361,141 @@
 					}
 				}
 
-				// Skip to percentage
-				if (keyPressed === '0') {
-					player.currentTime = 0;
-				}
-				else if (keyPressed === '1') {
-					player.currentTime = ((player.duration / 100) * 10);
-				}
-				else if (keyPressed === '2') {
-					player.currentTime = ((player.duration / 100) * 20);
-				}
-				else if (keyPressed === '3') {
-					player.currentTime = ((player.duration / 100) * 30);
-				}
-				else if (keyPressed === '4') {
-					player.currentTime = ((player.duration / 100) * 40);
-				}
-				else if (keyPressed === '5') {
-					player.currentTime = ((player.duration / 100) * 50);
-				}
-				else if (keyPressed === '6') {
-					player.currentTime = ((player.duration / 100) * 60);
-				}
-				else if (keyPressed === '7') {
-					player.currentTime = ((player.duration / 100) * 70);
-				}
-				else if (keyPressed === '8') {
-					player.currentTime = ((player.duration / 100) * 80);
-				}
-				else if (keyPressed === '9') {
-					player.currentTime = ((player.duration / 100) * 90);
+				// If we're not holding down the shift key
+				if (!event.shiftKey) {
+
+					// If we're focused on the video element
+					if (focusedElement && typeof focusedElement.closest !== 'undefined' && focusedElement.closest('#goodTube_player')) {
+						// Volume down
+						if (keyPressed === 'arrowdown') {
+							if (player.volume >= .05) {
+								player.volume -= .05;
+							}
+							else {
+								player.volume = 0;
+							}
+
+							// No scroll
+							event.preventDefault();
+						}
+
+						// Volume up
+						if (keyPressed === 'arrowup') {
+							if (player.volume <= .95) {
+								player.volume += .05;
+							}
+							else {
+								player.volume = 1;
+							}
+
+							// No scroll
+							event.preventDefault();
+						}
+
+						// Theater mode (focus the body, this makes the default youtube shortcut work)
+						if (keyPressed === 't') {
+							document.querySelector('body').focus();
+						}
+					}
+
+					// Prev 5 seconds
+					if (keyPressed === 'arrowleft') {
+						player.currentTime -= 5;
+					}
+
+					// Next 5 seconds
+					if (keyPressed === 'arrowright') {
+						player.currentTime += 5;
+					}
+
+					// Toggle play/pause
+					if (keyPressed === ' ') {
+						if (player.paused || player.ended) {
+							player.play();
+						}
+						else {
+							player.pause();
+						}
+					}
+
+					// Toggle mute
+					if (keyPressed === 'm') {
+						// Also check the volume, because player.muted isn't reliable
+						if (player.muted || player.volume <= 0) {
+							player.muted = false;
+
+							// Small fix to make unmute work if you've manually turned it all the way down
+							if (player.volume <= 0) {
+								player.volume = 1;
+							}
+						}
+						else {
+							player.muted = true;
+						}
+					}
+
+					// Toggle miniplayer
+					if (keyPressed === 'i') {
+						event.stopImmediatePropagation();
+						goodTube_player_miniplayerShowHide();
+					}
+
+					// Toggle fullscreen
+					if (keyPressed === 'f') {
+						document.querySelector('.vjs-fullscreen-control')?.click();
+					}
+
+					// Prev 10 seconds
+					else if (keyPressed === 'j') {
+						player.currentTime -= 10;
+					}
+
+					// Next 10 seconds
+					else if (keyPressed === 'l') {
+						player.currentTime += 10;
+					}
+
+					// Start of video
+					else if (keyPressed === 'home') {
+						player.currentTime = 0;
+					}
+
+					// End of video
+					else if (keyPressed === 'end') {
+						player.currentTime += player.duration;
+					}
+
+					// Skip to percentage
+					if (keyPressed === '0') {
+						player.currentTime = 0;
+					}
+					else if (keyPressed === '1') {
+						player.currentTime = ((player.duration / 100) * 10);
+					}
+					else if (keyPressed === '2') {
+						player.currentTime = ((player.duration / 100) * 20);
+					}
+					else if (keyPressed === '3') {
+						player.currentTime = ((player.duration / 100) * 30);
+					}
+					else if (keyPressed === '4') {
+						player.currentTime = ((player.duration / 100) * 40);
+					}
+					else if (keyPressed === '5') {
+						player.currentTime = ((player.duration / 100) * 50);
+					}
+					else if (keyPressed === '6') {
+						player.currentTime = ((player.duration / 100) * 60);
+					}
+					else if (keyPressed === '7') {
+						player.currentTime = ((player.duration / 100) * 70);
+					}
+					else if (keyPressed === '8') {
+						player.currentTime = ((player.duration / 100) * 80);
+					}
+					else if (keyPressed === '9') {
+						player.currentTime = ((player.duration / 100) * 90);
+					}
 				}
 			}
 		}, true);
@@ -5831,7 +5835,7 @@
 	// Download the entire playlist (currently only works on desktop cus frame API limitations)
 	function goodTube_downloadPlaylist(type, noPrompt) {
 		// Show a "are you sure cus it takes some time" sort of message
-		if (typeof noPrompt === 'undefined' && !confirm("Are you sure you want to download this playlist ("+type+")?\r\rYou can keep playing and downloading other videos, just don't close the the tab :)")) {
+		if (typeof noPrompt === 'undefined' && !confirm("Are you sure you want to download this playlist ("+type+")?\r\rYou can keep playing and downloading other videos, just don't close the tab :)")) {
 			return;
 		}
 
