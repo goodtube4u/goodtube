@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.525
+// @version      4.526
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -42,7 +42,6 @@
 			'iPhone',
 			'iPod'
 		].includes(navigator.platform)
-		// iPad on iOS 13 detection
 		|| (navigator.userAgent.includes("Mac") && "ontouchend" in document)
 	}
 
@@ -94,7 +93,7 @@
 		return null;
 	}
 
-	// Hide an element (without Youtube knowing)
+	// Hide or show an element (without Youtube knowing)
 	function goodTube_helper_hideElement_init() {
 		let style = document.createElement('style');
 		style.textContent = `
@@ -125,9 +124,6 @@
 
 	/* Youtube functions
 	------------------------------------------------------------------------------------------ */
-	let goodTube_syncing = true;
-	let goodTube_previousSyncTime = 0;
-
 	// Hide ads, shorts, etc - init
 	function goodTube_youtube_hideAdsShortsEtc_init() {
 		let style = document.createElement('style');
@@ -217,11 +213,13 @@
 		}
 
 		// Hide shorts links
-		let shortsLinks = document.querySelectorAll('a');
+		let shortsLinks = document.querySelectorAll('a:not(.goodTube_hidden)');
 		shortsLinks.forEach((element) => {
 			if (element.href.indexOf('shorts/') !== -1) {
 				goodTube_helper_hideElement(element);
 				goodTube_helper_hideElement(element.closest('ytd-video-renderer'));
+				goodTube_helper_hideElement(element.closest('ytd-compact-video-renderer'));
+				goodTube_helper_hideElement(element.closest('ytd-rich-grid-media'));
 			}
 		});
 	}
@@ -233,7 +231,7 @@
 			confirmButton.classList.add('goodTube_clicked');
 			confirmButton.click();
 
-			// Allow it to be clicked multiple times
+			// Allow it to be clicked multiple times, you might be watching all day!
 			setTimeout(function() {
 				confirmButton.classList.remove('goodTube_clicked');
 			}, 1000);
@@ -288,9 +286,9 @@
 			goodTube_helper_hideElement(element);
 		});
 
-		// Hide the mobile buttons
-		let mobileButtons = document.querySelectorAll('#player-control-container:not(.goodTube_hidden)');
-		mobileButtons.forEach((element) => {
+		// Hide the mobile controls
+		let mobileControls = document.querySelectorAll('#player-control-container:not(.goodTube_hidden)');
+		mobileControls.forEach((element) => {
 			goodTube_helper_hideElement(element);
 		});
 
@@ -326,7 +324,7 @@
 			if (autoplayButton) {
 				autoplayButton.click();
 			}
-			// Click the player, this helps to actually make the autoplay button show (after ads)
+			// Click the player a bit, this helps to actually make the autoplay button show (after ads)
 			else {
 				document.querySelector('#player .html5-video-player')?.click();
 				document.querySelector('#player')?.click();
@@ -337,16 +335,36 @@
 
 	// Mute, pause and skip ads on all Youtube videos
 	function goodTube_youtube_mutePauseSkipAds() {
-		// Mute hard
+		// Mute the youtube player and make it 16x playback speed via JS
 		let youtubeVideo = document.querySelector('#movie_player video');
 		if (youtubeVideo) {
 			youtubeVideo.muted = true;
 			youtubeVideo.volume = 0;
+			youtubeVideo.playbackRate = 16;
+
+			if (!goodTube_youtube_syncing) {
+				youtubeVideo.pause();
+			}
 		}
 
+		// Mute the youtube player and make it 16x playback speed via the frame API
 		let youtubeFrameApi = document.querySelector('#movie_player');
 		if (youtubeFrameApi) {
-			youtubeFrameApi.mute();
+			if (typeof youtubeFrameApi.mute === 'function') {
+				youtubeFrameApi.mute();
+			}
+
+			if (typeof youtubeFrameApi.setVolume === 'function') {
+				youtubeFrameApi.setVolume(0);
+			}
+
+			if (typeof youtubeFrameApi.setPlaybackRate === 'function') {
+				youtubeFrameApi.setPlaybackRate(16);
+			}
+
+			if (!goodTube_youtube_syncing && typeof youtubeFrameApi.pauseVideo === 'function') {
+				youtubeFrameApi.pauseVideo();
+			}
 		}
 
 		// Always skip the ads as soon as possible by clicking the skip button
@@ -355,53 +373,70 @@
 			skipButton.click();
 		}
 
-		// Also pause and mute all videos on the page
+		// Also pause and mute all other HTML videos on the page
 		let youtubeVideos = document.querySelectorAll('video:not(#goodTube_player):not(#goodTube_player_html5_api)');
 		youtubeVideos.forEach((element) => {
 			// Don't touch the thumbnail hover player
 			if (!element.closest('#inline-player') && !element.closest('#movie_player')) {
 				element.muted = true;
 				element.volume = 0;
-
-				if (!goodTube_syncing) {
-					element.pause();
-				}
+				element.pause();
 			}
 		});
 	}
 
 	// Sync players
+	let goodTube_youtube_syncing = true;
+	let goodTube_youtube_previousSyncTime = 0;
 	function goodTube_youtube_syncPlayers() {
-		let youtube_player = document.querySelector('#player video');
+		let youtubeVideo = document.querySelector('#movie_player video');
 
 		// If the youtube player exists, our player is loaded and we're viewing a video
-		if (youtube_player && goodTube_videojs_player_loaded && typeof goodTube_getParams['v'] !== 'undefined') {
-			// Don't keep syncing the same time over and over unless it's 0
-			let sync_time = goodTube_player.currentTime;
-			if (sync_time === goodTube_previousSyncTime && parseFloat(sync_time) > 0) {
+		if (youtubeVideo && goodTube_videojs_player_loaded && typeof goodTube_getParams['v'] !== 'undefined') {
+			// Don't keep syncing the same time over and over unless it's the start of the video
+			let syncTime = goodTube_player.currentTime;
+			if (syncTime === goodTube_youtube_previousSyncTime && parseFloat(syncTime) > 0) {
 				return;
 			}
 
-			goodTube_previousSyncTime = sync_time;
+			// Setup the previous sync time
+			goodTube_youtube_previousSyncTime = syncTime;
 
 			// Set the current time of the Youtube player to match ours (this makes history and watched time work correctly)
-			youtube_player.currentTime = sync_time;
+			youtubeVideo.currentTime = syncTime;
 
-			// We're syncing
-			goodTube_syncing = true;
+			// We're syncing (this turns off the pausing of the Youtube video in goodTube_youtube_mutePauseSkipAds)
+			goodTube_youtube_syncing = true;
 
-			// Play for 10ms to make history work
-			youtube_player.play();
-			youtube_player.muted = true;
-			youtube_player.volume = 0;
+			// Play for 10ms to make history work via JS
+			youtubeVideo.playbackRate = 1;
+			youtubeVideo.play();
+			youtubeVideo.muted = true;
+			youtubeVideo.volume = 0;
 
+			// Play for 10ms to make history work via the frame API
+			let youtubeFrameApi = document.querySelector('#movie_player');
+			if (youtubeFrameApi) {
+				if (typeof youtubeFrameApi.setPlaybackRate === 'function') {
+					youtubeFrameApi.setPlaybackRate(1);
+				}
+
+				if (typeof youtubeFrameApi.playVideo === 'function') {
+					youtubeFrameApi.playVideo();
+				}
+
+				if (typeof youtubeFrameApi.mute === 'function') {
+					youtubeFrameApi.mute();
+				}
+
+				if (typeof youtubeFrameApi.setVolume === 'function') {
+					youtubeFrameApi.setVolume(0);
+				}
+			}
+
+			// Stop syncing after 10ms (this turns on the pausing of the Youtube video in goodTube_youtube_mutePauseSkipAds)
 			setTimeout(function() {
-				youtube_player.pause();
-				youtube_player.muted = true;
-				youtube_player.volume = 0;
-
-				// We've finished syncing
-				goodTube_syncing = false;
+				goodTube_youtube_syncing = false;
 			}, 10);
 		}
 	}
@@ -2508,15 +2543,23 @@
 
 	// Load subtitles
 	function goodTube_player_loadSubtitles(player, subtitleData) {
-		// If subtitle data exists
-		if (subtitleData.length > 0) {
+		// If subtitle data is set to false (so we always do it for Piped servers), or if it exists for an invidious server
+		if (!subtitleData || subtitleData.length > 0) {
 			// Debug message
 			if (goodTube_debug) {
 				console.log('[GoodTube] Loading subtitles...');
 			}
 
+			// If there's no subtitle data, start with the first fallback server (Piped)
+			if (!subtitleData) {
+				goodTube_otherDataServersIndex_subtitles = 1;
+			}
+			// Otherwise start with your current server (Invidious)
+			else {
+				goodTube_otherDataServersIndex_subtitles = 0;
+			}
+
 			// Check the subtitle server works
-			goodTube_otherDataServersIndex_subtitles = 0;
 			goodTube_player_checkSubtitleServer(player, subtitleData, goodTube_api_url);
 		}
 	}
@@ -2537,28 +2580,83 @@
 
 			// Otherwise select the next fallback server
 			subtitleApi = goodTube_otherDataServers[(goodTube_otherDataServersIndex_subtitles-1)];
-		}
-		goodTube_otherDataServersIndex_subtitles++;
 
-		// Get the subtitle (die after 5s)
-		fetch(subtitleApi+subtitleData[0]['url'], {
-			signal: AbortSignal.timeout(5000)
-		})
-		.then(response => response.text())
-		.then(data => {
-			// If the data wasn't right, try the next fallback server
-			if (data.substr(0,6) !== 'WEBVTT') {
+			// Re fetch the video data for this server (always invidious)
+
+			// Call the API (die after 5s)
+			fetch(subtitleApi+"/api/v1/videos/"+goodTube_getParams['v'], {
+				signal: AbortSignal.timeout(5000)
+			})
+			.then(response => response.text())
+			.then(data => {
+				// Turn video data into JSON
+				let videoData = JSON.parse(data);
+
+				// Get the subtitle data
+				let subtitleData = videoData['captions'];
+
+				// If there are subtitles
+				if (subtitleData && subtitleData.length > 0) {
+					// Get the subtitle (die after 5s)
+					fetch(subtitleApi+subtitleData[0]['url'], {
+						signal: AbortSignal.timeout(5000)
+					})
+					.then(response => response.text())
+					.then(data => {
+						// If the data wasn't right, try the next fallback server
+						if (data.substr(0,6) !== 'WEBVTT') {
+							goodTube_player_checkSubtitleServer(player, subtitleData, subtitleApi);
+						}
+						// If the data was good, load the subtitles
+						else {
+							goodTube_player_loadSubtitlesAfterCheck(player, subtitleData, subtitleApi);
+						}
+					})
+					// If the fetch failed, try the next fallback server
+					.catch((error) => {
+						goodTube_player_checkSubtitleServer(player, subtitleData, subtitleApi);
+					});
+				}
+				else {
+					// Debug message
+					if (goodTube_debug) {
+						console.log('[GoodTube] This video does not have subtitles');
+					}
+
+					return;
+				}
+			})
+			// If the fetch failed, try the next fallback server
+			.catch((error) => {
 				goodTube_player_checkSubtitleServer(player, subtitleData, subtitleApi);
-			}
-			// If the data was good, load the subtitles
-			else {
-				goodTube_player_loadSubtitlesAfterCheck(player, subtitleData, subtitleApi);
-			}
-		})
-		// If the fetch failed, try the next fallback server
-		.catch((error) => {
-			goodTube_player_checkSubtitleServer(player, subtitleData, subtitleApi);
-		});
+			});
+
+
+		}
+		// If our selected index is 0, just use the data from the current subtitle server (Invidious)
+		else {
+			// Get the subtitle (die after 5s)
+			fetch(subtitleApi+subtitleData[0]['url'], {
+				signal: AbortSignal.timeout(5000)
+			})
+			.then(response => response.text())
+			.then(data => {
+				// If the data wasn't right, try the next fallback server
+				if (data.substr(0,6) !== 'WEBVTT') {
+					goodTube_player_checkSubtitleServer(player, subtitleData, subtitleApi);
+				}
+				// If the data was good, load the subtitles
+				else {
+					goodTube_player_loadSubtitlesAfterCheck(player, subtitleData, subtitleApi);
+				}
+			})
+			// If the fetch failed, try the next fallback server
+			.catch((error) => {
+				goodTube_player_checkSubtitleServer(player, subtitleData, subtitleApi);
+			});
+		}
+
+		goodTube_otherDataServersIndex_subtitles++;
 	}
 
 	function goodTube_player_loadSubtitlesAfterCheck(player, subtitleData, subtitleApi) {
@@ -4980,13 +5078,21 @@
 	let goodTube_otherDataServersIndex_subtitles = 0;
 	let goodTube_otherDataServersIndex_storyboard = 0;
 	let goodTube_otherDataServers = [
-		'https://invidious.perennialte.ch',
 		'https://yt.artemislena.eu',
-		'https://vid.lilay.dev',
+		'https://invidious.perennialte.ch',
 		'https://invidious.private.coffee',
 		'https://invidious.drgns.space',
 		'https://inv.nadeko.net',
-		'https://invidious.projectsegfau.lt'
+		'https://invidious.projectsegfau.lt',
+		'https://invidious.jing.rocks',
+		'https://invidious.incogniweb.net',
+		'https://invidious.privacyredirect.com',
+		'https://invidious.fdn.fr',
+		'https://iv.datura.network',
+		'https://pipedapi-libre.kavin.rocks',
+		'https://pipedapi.syncpundit.io',
+		'https://invidious.protokolla.fi',
+		'https://iv.melmac.space'
 	];
 
 	// Download servers
