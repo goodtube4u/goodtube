@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.527
+// @version      4.528
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -21,7 +21,7 @@
 	let goodTube_github = 'https://raw.githubusercontent.com/goodtube4u/GoodTube/main';
 
 	// Select how long to wait before trying to load something again (in milliseconds)
-	let goodTube_retryDelay = 100;
+	let goodTube_retryDelay = 500;
 
 	// Select how many times to try and load something again
 	let goodTube_retryAttempts = 3;
