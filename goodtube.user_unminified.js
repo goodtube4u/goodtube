@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.526
+// @version      4.527
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -3098,6 +3098,8 @@
 	let goodTube_qualityApi = false;
 	let goodTube_bufferingTimeout = false;
 	let goodTube_loadingTimeout = false;
+	let goodTube_seeking = false;
+	let goodTube_bufferCount = 0;
 
 	// Init video js
 	function goodTube_player_videojs() {
@@ -3739,14 +3741,56 @@
 			goodTube_player_videojs_update();
 		});
 
+		// Seeking events
+		goodTube_videojs_player.on('seeking', function() {
+			goodTube_seeking = true;
+		});
+
+		goodTube_videojs_player.on('seeked', function() {
+			goodTube_seeking = false;
+
+			// Sync the Youtube player for watch history
+			goodTube_youtube_syncPlayers();
+		});
+
 		// On buffering / loading
 		goodTube_videojs_player.on('waiting', function() {
 			if (goodTube_bufferingTimeout) {
 				clearTimeout(goodTube_bufferingTimeout);
 			}
 
-			// Only do this for HD servers (and we're part of the way through the video)
-			if ((goodTube_api_type === 2 || goodTube_api_type === 3) && goodTube_player.currentTime > 0) {
+			// If we're at the start of the video, don't do anything
+			if (goodTube_player.currentTime <= 0) {
+				return;
+			}
+
+			// If we're not seeking
+			if (!goodTube_seeking) {
+				// And we've had to wait for it to buffer 3 times, select the next server
+				goodTube_bufferCount++;
+
+				if (goodTube_bufferCount >= 3) {
+					// Debug message
+					if (goodTube_debug) {
+						console.log('[GoodTube] Video buffering too often - selecting next video source...');
+					}
+
+					// Reset the buffer count
+					goodTube_bufferCount = 0;
+
+					// Set the player time to be restored when the new server loads
+					goodTube_player_restoreTime = goodTube_player.currentTime;
+
+					// Select the next server
+					goodTube_player_selectApi('automatic', true);
+
+					return;
+				}
+			}
+
+			// Only do this for HD servers (Invidious and Piped)
+			if ((goodTube_api_type === 2 || goodTube_api_type === 3)) {
+				// Save the time we started buffering
 				let bufferStartTime = goodTube_player.currentTime;
 
 				// If we've been waiting more than 15s, select the next server
@@ -3760,7 +3804,7 @@
 						// Set the player time to be restored when the new server loads
 						goodTube_player_restoreTime = goodTube_player.currentTime;
 
-						// Get the next server
+						// Select the next server
 						goodTube_player_selectApi('automatic', true);
 					}
 				}, 15000);
@@ -3798,11 +3842,6 @@
 
 			// Focus the video player once loaded metadata
 			goodTube_player.focus();
-		});
-
-		// Sync players when you seek
-		goodTube_videojs_player.on('seeking', function() {
-			goodTube_youtube_syncPlayers();
 		});
 
 		// Debug message to show the video is loading
@@ -3892,6 +3931,9 @@
 
 		// Once loaded data
 		goodTube_videojs_player.on('loadeddata', function() {
+			// Reset the buffer count
+			goodTube_bufferCount = 0;
+
 			// Autoplay the video
 			// Only autoplay if the user hasn't paused the video prior to it loading
 			if (!goodTube_player.paused) {
