@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.528
+// @version      4.529
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -99,10 +99,10 @@
 		style.textContent = `
 			.goodTube_hidden {
 				position: fixed !important;
-				pointer-events: none !important;
-				top: -999px !important;
-				left: -999px !important;
+				top: -9999px !important;
+				left: -9999px !important;
 				opacity: 0 !important;
+				pointer-events: none !important;
 			}
 		`;
 
@@ -340,7 +340,6 @@
 		if (youtubeVideo) {
 			youtubeVideo.muted = true;
 			youtubeVideo.volume = 0;
-			youtubeVideo.playbackRate = 16;
 
 			if (!goodTube_youtube_syncing) {
 				youtubeVideo.pause();
@@ -356,10 +355,6 @@
 
 			if (typeof youtubeFrameApi.setVolume === 'function') {
 				youtubeFrameApi.setVolume(0);
-			}
-
-			if (typeof youtubeFrameApi.setPlaybackRate === 'function') {
-				youtubeFrameApi.setPlaybackRate(16);
 			}
 
 			if (!goodTube_youtube_syncing && typeof youtubeFrameApi.pauseVideo === 'function') {
@@ -389,6 +384,7 @@
 	let goodTube_youtube_syncing = true;
 	let goodTube_youtube_previousSyncTime = 0;
 	function goodTube_youtube_syncPlayers() {
+		console.log('SYNC');
 		let youtubeVideo = document.querySelector('#movie_player video');
 
 		// If the youtube player exists, our player is loaded and we're viewing a video
@@ -409,7 +405,6 @@
 			goodTube_youtube_syncing = true;
 
 			// Play for 10ms to make history work via JS
-			youtubeVideo.playbackRate = 1;
 			youtubeVideo.play();
 			youtubeVideo.muted = true;
 			youtubeVideo.volume = 0;
@@ -417,10 +412,6 @@
 			// Play for 10ms to make history work via the frame API
 			let youtubeFrameApi = document.querySelector('#movie_player');
 			if (youtubeFrameApi) {
-				if (typeof youtubeFrameApi.setPlaybackRate === 'function') {
-					youtubeFrameApi.setPlaybackRate(1);
-				}
-
 				if (typeof youtubeFrameApi.playVideo === 'function') {
 					youtubeFrameApi.playVideo();
 				}
@@ -3385,6 +3376,9 @@
 		// After video JS has loaded
 		goodTube_videojs_player.on('ready', function() {
 			goodTube_videojs_player_loaded = true;
+
+			// Sync the Youtube player for watch history
+			goodTube_youtube_syncPlayers();
 
 			// Enable the qualities API
 			goodTube_qualityApi = goodTube_videojs_player.hlsQualitySelector();
