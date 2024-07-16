@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.530
+// @version      4.531
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -1994,6 +1994,11 @@
 						manifestUrl = videoData['dashUrl']+'?local='+proxyUrlPart+'&amp;unique_res=1';
 						manifestType = 'application/dash+xml';
 					}
+
+					// check if the manifestUrl starts with a slash, if so, add the api url
+                    if (manifestUrl && manifestUrl[0] === '/') {
+                        manifestUrl = goodTube_api_url + manifestUrl;
+                    }
 
 					// Add the HLS or DASH source
 					goodTube_videojs_player.src({
