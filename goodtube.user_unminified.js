@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.530
+// @version      4.531
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -384,7 +384,6 @@
 	let goodTube_youtube_syncing = true;
 	let goodTube_youtube_previousSyncTime = 0;
 	function goodTube_youtube_syncPlayers() {
-		console.log('SYNC');
 		let youtubeVideo = document.querySelector('#movie_player video');
 
 		// If the youtube player exists, our player is loaded and we're viewing a video
@@ -1995,6 +1994,12 @@
 						manifestType = 'application/dash+xml';
 					}
 
+					// Does the manifest URL start with a slash?
+					if (manifestUrl && manifestUrl[0] === '/') {
+						// If this happens, prepend the API url to make the link whole.
+						manifestUrl = goodTube_api_url+manifestUrl;
+					}
+
 					// Add the HLS or DASH source
 					goodTube_videojs_player.src({
 						src: manifestUrl,
@@ -2026,6 +2031,12 @@
 					else if (typeof videoData['dash'] !== 'undefined' && videoData['dash']) {
 						manifestUrl = videoData['dash'];
 						manifestType = 'application/dash+xml';
+					}
+
+					// Does the manifest URL start with a slash?
+					if (manifestUrl && manifestUrl[0] === '/') {
+						// If this happens, prepend the API url to make the link whole.
+						manifestUrl = goodTube_api_url+manifestUrl;
 					}
 
 					// Add the HLS or DASH source
@@ -5214,18 +5225,25 @@
 		},
 		// FAST
 		{
-			'name': 'Sphynx (JP)',
+			'name': 'Hades (DE)',
+			'type': 3,
+			'proxy': true,
+			'url': 'https://pipedapi.dedyn.io'
+		},
+		// FAST
+		{
+			'name': 'Rain (DE)',
+			'type': 3,
+			'proxy': true,
+			'url': 'https://pipedapi.andreafortuna.org'
+		},
+		// FAST
+		{
+			'name': 'Serpent (US)',
 			'type': 2,
 			'proxy': true,
-			'url': 'https://invidious.jing.rocks'
+			'url': 'https://invidious.darkness.services'
 		},
-		// // FAST
-		// {
-		// 	'name': 'Obsidian (AT)',
-		// 	'type': 3,
-		// 	'proxy': true,
-		// 	'url': 'https://pipedapi.leptons.xyz'
-		// },
 		// FAST
 		{
 			'name': 'Acid (US)',
@@ -5233,6 +5251,21 @@
 			'proxy': true,
 			'url': 'https://invidious.incogniweb.net'
 		},
+		// FAST
+		{
+			'name': 'Sphynx (JP)',
+			'type': 2,
+			'proxy': true,
+			'url': 'https://invidious.jing.rocks'
+		},
+
+		// // FAST
+		// {
+		// 	'name': 'Obsidian (AT)',
+		// 	'type': 3,
+		// 	'proxy': true,
+		// 	'url': 'https://pipedapi.leptons.xyz'
+		// },
 		// FAST
 		{
 			'name': 'Sphere (US)',
@@ -5303,13 +5336,13 @@
 			'proxy': true,
 			'url': 'https://iv.datura.network'
 		},
-		// // MEDIUM
-		// {
-		// 	'name': 'Andromeda (FI)',
-		// 	'type': 3,
-		// 	'proxy': true,
-		// 	'url': 'https://pipedapi-libre.kavin.rocks'
-		// },
+		// MEDIUM
+		{
+			'name': 'Andromeda (FI)',
+			'type': 3,
+			'proxy': true,
+			'url': 'https://pipedapi-libre.kavin.rocks'
+		},
 		// // MEDIUM
 		// {
 		// 	'name': 'Lilith (INT)',
