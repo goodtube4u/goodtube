@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.531
+// @version      4.532
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -335,7 +335,7 @@
 
 	// Mute, pause and skip ads on all Youtube videos
 	function goodTube_youtube_mutePauseSkipAds() {
-		// Mute the youtube player and make it 16x playback speed via JS
+		// Mute the youtube player and pause it via JS
 		let youtubeVideo = document.querySelector('#movie_player video');
 		if (youtubeVideo) {
 			youtubeVideo.muted = true;
@@ -346,7 +346,7 @@
 			}
 		}
 
-		// Mute the youtube player and make it 16x playback speed via the frame API
+		// Also mute the youtube player and pause it via the frame API (just to be sure)
 		let youtubeFrameApi = document.querySelector('#movie_player');
 		if (youtubeFrameApi) {
 			if (typeof youtubeFrameApi.mute === 'function') {
@@ -3096,12 +3096,14 @@
 	let goodTube_videojs_nextButton = true;
 	let goodTube_videojs_tapTimer_backwards = false;
 	let goodTube_videojs_tapTimer_forwards = false;
+	let goodTube_videojs_fastForwardTimeout = false;
 	let goodTube_videojs_fastForward = false;
 	let goodTube_qualityApi = false;
 	let goodTube_bufferingTimeout = false;
 	let goodTube_loadingTimeout = false;
 	let goodTube_seeking = false;
 	let goodTube_bufferCount = 0;
+	let goodTube_videojs_playbackRate = 1;
 
 	// Init video js
 	function goodTube_player_videojs() {
@@ -3512,38 +3514,39 @@
 				// On touch start
 				goodTube_target.addEventListener('touchstart', function(e) {
 					// Start fast forward after 1 second
-					goodTube_videojs_fastForward = setTimeout(function() {
+					goodTube_videojs_fastForwardTimeout = setTimeout(function() {
 						// Remove active state and hide overlays (so you can see the video properly)
 						goodTube_target.classList.remove('vjs-user-active');
 						goodTube_target.classList.add('vjs-user-inactive');
 
+						// Save the current playback rate
+						goodTube_videojs_playbackRate = goodTube_player.playbackRate;
+
 						// Set playback rate to 2x (fast forward)
 						goodTube_player.playbackRate = 2;
+
+						// Set a variable to indicate that we're fast forwarding
+						goodTube_videojs_fastForward = true;
 					}, 1000);
 				});
 
-				// On touch move
-				goodTube_target.addEventListener('touchmove', function(e) {
-					// Remove any pending timeouts to fast forward
-					if (goodTube_videojs_fastForward) {
-						clearTimeout(goodTube_videojs_fastForward);
-					}
-					goodTube_videojs_fastForward = false;
+				// On touch move / touch end
+				['touchmove','touchend'].forEach(eventType => {
+					goodTube_target.addEventListener(eventType, function(e) {
+						// Remove any pending timeouts to fast forward
+						if (goodTube_videojs_fastForwardTimeout) {
+							clearTimeout(goodTube_videojs_fastForwardTimeout);
+						}
 
-					// Set the playback rate to 1x (normal)
-					goodTube_player.playbackRate = 1;
-				});
+						// If we are fast forwarding
+						if (goodTube_videojs_fastForward) {
+							// Restore the current playback rate
+							goodTube_player.playbackRate = goodTube_videojs_playbackRate;
 
-				// On touch end
-				goodTube_target.addEventListener('touchend', function(e) {
-					// Remove any pending timeouts to fast forward
-					if (goodTube_videojs_fastForward) {
-						clearTimeout(goodTube_videojs_fastForward);
-					}
-					goodTube_videojs_fastForward = false;
-
-					// Set the playback rate to 1x (normal)
-					goodTube_player.playbackRate = 1;
+							// Set a variable to indicate that we're not fast forwarding anymore
+							goodTube_videojs_fastForward = false;
+						}
+					});
 				});
 			}
 
