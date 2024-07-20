@@ -2401,15 +2401,6 @@
 		// Click the quality menu item
 		defaultQualityButton.click();
 
-		// Remove any existing auto selected class (half white)
-		document.querySelector('.vjs-quality-selector .vjs-auto-selected')?.classList.remove('vjs-auto-selected');
-
-		// Add an auto selected class to the quality menu item (half white)
-		defaultQualityButton.classList.add('vjs-auto-selected');
-
-		// Deselect the quality menu item (this comes from the click)
-		defaultQualityButton.classList.remove('vjs-selected');
-
 		// Debug message
 		if (goodTube_debug) {
 			if (defaultQuality.toLowerCase() === 'auto') {
