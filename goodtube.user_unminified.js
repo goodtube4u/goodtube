@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.544
+// @version      4.545
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -3761,8 +3761,8 @@
 			// Double click to fullscreen (desktop only)
 			if (!goodTube_mobile) {
 				goodTube_target.addEventListener('dblclick', function(event) {
-					// Make sure we're not clicking the control bar
-					if (!event.target.closest('.vjs-control-bar')) {
+					// Make sure we're not clicking a menu button or the seek bar
+					if (!event.target.closest('.vjs-progress-control') && !event.target.closest('.vjs-menu-button') && !event.target.closest('.vjs-control')) {
 						// Click the fullscreen button
 						document.querySelector('.vjs-fullscreen-control')?.click();
 					}
