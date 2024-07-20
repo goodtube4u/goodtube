@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.541
+// @version      4.542
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -2405,9 +2405,6 @@
 		// Deselect the quality menu item (this comes from the click)
 		defaultQualityButton.classList.remove('vjs-selected');
 
-		// Select the 'Select default quality' option
-		document.querySelector('.vjs-quality-selector li.select-default').classList.add('vjs-selected');
-
 		// Debug message
 		if (goodTube_debug) {
 			if (defaultQuality.toLowerCase() === 'auto') {
@@ -2426,9 +2423,6 @@
 			goodTube_dontTurnOffDefaultFromClick = false;
 			return;
 		}
-
-		// Deselect the modal option
-		document.querySelector('.goodTube_defaultQualityModal_selected')?.classList.remove('goodTube_defaultQualityModal_selected');
 
 		// Find the manifest quality menu
 		let qualityMenu = document.querySelectorAll('.vjs-quality-selector')[1];
