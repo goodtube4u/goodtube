@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.536
+// @version      4.537
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -493,7 +493,7 @@
 		style.textContent = `
 			/* Default quality modal */
 			#goodTube_player_wrapper3 .goodTube_defaultQualityModal {
-				position: fixed;
+				position: absolute;
 				z-index: 99999;
 				top: 0;
 				left: 0;
@@ -527,7 +527,7 @@
 				transform: translate(-50%, -50%);
 				width: 264px;
 				max-width: calc(100% - 32px);
-				max-height: calc(100% - 96px);
+				max-height: calc(100% - 32px);
 				overflow: auto;
 				background: #ffffff;
 				border-radius: 12px;
@@ -2195,7 +2195,7 @@
 					<div class='goodTube_defaultQualityModal_option' id='goodTube_defaultQualityModal_option_480'>480p</div>
 					<div class='goodTube_defaultQualityModal_option' id='goodTube_defaultQualityModal_option_360'>360p</div>
 					<div class='goodTube_defaultQualityModal_option' id='goodTube_defaultQualityModal_option_240'>240p</div>
-					<div class='goodTube_defaultQualityModal_option' id='goodTube_defaultQualityModal_option_140'>140p</div>
+					<div class='goodTube_defaultQualityModal_option' id='goodTube_defaultQualityModal_option_144'>144p</div>
 				</div> <!-- .goodTube_defaultQualityModal_inner -->
 			</div> <!-- .goodTube_defaultQualityModal_options -->
 		`;
