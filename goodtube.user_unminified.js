@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.533
+// @version      4.534
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -491,6 +491,87 @@
 		// Add CSS styles for the player
 		let style = document.createElement('style');
 		style.textContent = `
+			/* Default quality modal */
+			#goodTube_player_wrapper3 .goodTube_defaultQualityModal {
+				position: fixed;
+				z-index: 99999;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				padding: 24px;
+				transition: opacity .2s linear;
+				opacity: 0;
+				pointer-events: none;
+			}
+
+			#goodTube_player_wrapper3 .goodTube_defaultQualityModal .goodTube_defaultQualityModal_overlay {
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background: rgba(0,0,0,.8);
+				z-index: 1;
+			}
+
+			#goodTube_player_wrapper3 .goodTube_defaultQualityModal.goodTube_defaultQualityModal_visible {
+				opacity: 1;
+				pointer-events: all;
+			}
+
+			#goodTube_player_wrapper3 .goodTube_defaultQualityModal .goodTube_defaultQualityModal_inner {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				width: 264px;
+				max-width: calc(100% - 32px);
+				max-height: calc(100% - 96px);
+				overflow: auto;
+				background: #ffffff;
+				border-radius: 12px;
+				padding: 0;
+				z-index: 2;
+			}
+
+			#goodTube_player_wrapper3 .goodTube_defaultQualityModal .goodTube_defaultQualityModal_title {
+				color: rgba(15, 15, 15);
+				font-size: 16px;
+				font-weight: 700;
+				padding: 12px;
+				text-align: center;
+				width: 100%;
+				box-sizing: border-box;
+			}
+
+			#goodTube_player_wrapper3 .goodTube_defaultQualityModal .goodTube_defaultQualityModal_options {
+				padding-bottom: 12px;
+			}
+
+			#goodTube_player_wrapper3 .goodTube_defaultQualityModal .goodTube_defaultQualityModal_options .goodTube_defaultQualityModal_option {
+				color: rgba(15, 15, 15);
+				font-size: 14px;
+				display: block;
+				width: 100%;
+				padding: 10px;
+				text-align: center;
+				font-weight: 500;
+				text-decoration: none;
+				box-sizing: border-box;
+				transition: background-color .2s linear;
+				cursor: pointer;
+			}
+
+			#goodTube_player_wrapper3 .goodTube_defaultQualityModal .goodTube_defaultQualityModal_options .goodTube_defaultQualityModal_option.goodTube_defaultQualityModal_selected {
+				background: rgba(15,15,15,.2);
+			}
+
+			#goodTube_player_wrapper3 .goodTube_defaultQualityModal .goodTube_defaultQualityModal_options .goodTube_defaultQualityModal_option:hover {
+				background: rgba(15,15,15,.1);
+			}
+
+
 			/* Automatic server styling */
 			#goodTube_player_wrapper1.goodTube_automaticServer #goodTube_player_wrapper2 .vjs-source-button ul li:first-child {
 				background: #ffffff !important;
@@ -1299,6 +1380,9 @@
 		// Init videojs
 		goodTube_player_videojs();
 
+		// Init default quality modal
+		goodTube_player_defaultQualityModalInit();
+
 		// Sync players every 10s
 		setInterval(goodTube_youtube_syncPlayers, 10000);
 
@@ -2092,14 +2176,72 @@
 		});
 	}
 
-	// Update manifest quality menu
+	// Setup the default quality modal
+	function goodTube_player_defaultQualityModalInit() {
+		// Create the modal
+		let defaultQualityModal = document.createElement('div');
+		defaultQualityModal.classList.add('goodTube_defaultQualityModal');
+		defaultQualityModal.innerHTML = `
+			<div class='goodTube_defaultQualityModal_overlay'></div>
+
+			<div class='goodTube_defaultQualityModal_inner'>
+				<div class='goodTube_defaultQualityModal_title'>Select default quality</div>
+				<div class='goodTube_defaultQualityModal_options'>
+					<div class='goodTube_defaultQualityModal_option' id='goodTube_defaultQualityModal_option_4320'>4320p</div>
+					<div class='goodTube_defaultQualityModal_option' id='goodTube_defaultQualityModal_option_2160'>2160p</div>
+					<div class='goodTube_defaultQualityModal_option' id='goodTube_defaultQualityModal_option_1440'>1440p</div>
+					<div class='goodTube_defaultQualityModal_option' id='goodTube_defaultQualityModal_option_1080'>1080p</div>
+					<div class='goodTube_defaultQualityModal_option' id='goodTube_defaultQualityModal_option_720'>720p</div>
+					<div class='goodTube_defaultQualityModal_option' id='goodTube_defaultQualityModal_option_480'>480p</div>
+					<div class='goodTube_defaultQualityModal_option' id='goodTube_defaultQualityModal_option_360'>360p</div>
+					<div class='goodTube_defaultQualityModal_option' id='goodTube_defaultQualityModal_option_240'>240p</div>
+					<div class='goodTube_defaultQualityModal_option' id='goodTube_defaultQualityModal_option_140'>140p</div>
+				</div> <!-- .goodTube_defaultQualityModal_inner -->
+			</div> <!-- .goodTube_defaultQualityModal_options -->
+		`;
+
+		// Add it to the DOM
+		document.querySelector('#goodTube_player_wrapper3').appendChild(defaultQualityModal);
+
+		// Add click events to buttons
+		let defaultQualityOptions = document.querySelectorAll('.goodTube_defaultQualityModal .goodTube_defaultQualityModal_option');
+		defaultQualityOptions.forEach((defaultQualityOption) => {
+			defaultQualityOption.addEventListener('click', function() {
+				goodTube_player_selectDefaultManifestQuality(this.innerHTML.replace('p', ''));
+			});
+		});
+
+		// Add close click event to overlay
+		document.querySelector('.goodTube_defaultQualityModal .goodTube_defaultQualityModal_overlay').addEventListener('click', function() {
+			// Target the default quality modal
+			let defaultQualityModal = document.querySelector('.goodTube_defaultQualityModal');
+
+			// Hide it
+			if (defaultQualityModal.classList.contains('goodTube_defaultQualityModal_visible')) {
+				defaultQualityModal.classList.remove('goodTube_defaultQualityModal_visible');
+			}
+		});
+
+		// Esc keypress to close
+		document.addEventListener('keydown', function(event) {
+			// Target the default quality modal
+			let defaultQualityModal = document.querySelector('.goodTube_defaultQualityModal');
+
+			// Hide it
+			if (defaultQualityModal.classList.contains('goodTube_defaultQualityModal_visible')) {
+				defaultQualityModal.classList.remove('goodTube_defaultQualityModal_visible');
+			}
+		}, true);
+	}
+
+	// Update default manifest quality menu
 	function goodTube_player_updateManifestQualityMenu() {
 		// This stops this function from ever accidentially firing twice
 		if (goodTube_updateManifestQualityTimeout) {
 			clearTimeout(goodTube_updateManifestQualityTimeout);
 		}
 
-		// Find and click the highest quality button (if it can't be found, this will call itself again until it works)
+		// Find and click the default quality button (if it can't be found, this will call itself again until it works)
 		let qualityButtons = document.querySelectorAll('.vjs-quality-selector');
 		if (qualityButtons && typeof qualityButtons[1] !== 'undefined') {
 			if (qualityButtons.length === 2) {
@@ -2110,7 +2252,7 @@
 				// Target the manifest quality menu
 				let manifestQualityMenu = qualityButtons[1].querySelector('ul');
 
-				// Check if the first menu item is "Always use max"
+				// Check if the first menu item is "Select default quality"
 				let firstMenuItem = manifestQualityMenu.querySelector('li.vjs-menu-item:first-child .vjs-menu-item-text');
 
 				// If it's not populated yet, try again
@@ -2123,38 +2265,38 @@
 					return;
 				}
 
-				// Does the 'always use max' menu item exist?
-				let alwaysMaxMenuItem = firstMenuItem;
+				// Does the 'Select default quality' menu item exist?
+				let selectDefaultMenuItem = firstMenuItem;
 
 				// If not
-				if (firstMenuItem.innerHTML !== 'Always use max') {
+				if (firstMenuItem.innerHTML !== 'Select default quality') {
 					// Add the 'always use max' menu item
-					alwaysMaxMenuItem = document.createElement('li');
-					alwaysMaxMenuItem.classList.add('vjs-menu-item');
-					alwaysMaxMenuItem.classList.add('always-max');
-					alwaysMaxMenuItem.innerHTML = `
-						<span class="vjs-menu-item-text">Always use max</span>
+					selectDefaultMenuItem = document.createElement('li');
+					selectDefaultMenuItem.classList.add('vjs-menu-item');
+					selectDefaultMenuItem.classList.add('select-default');
+					selectDefaultMenuItem.innerHTML = `
+						<span class="vjs-menu-item-text">Select default quality</span>
 						<span class="vjs-control-text" aria-live="polite"></span>
 					`;
-					alwaysMaxMenuItem.addEventListener('click', goodTube_player_selectHighestManifestQuality);
-					manifestQualityMenu.prepend(alwaysMaxMenuItem);
+					selectDefaultMenuItem.addEventListener('click', function() { goodTube_player_selectDefaultManifestQuality(false); });
+					manifestQualityMenu.prepend(selectDefaultMenuItem);
 
-					// Add a click action to all the other menu options (this turns off 'always use max')
-					let otherMenuItems = manifestQualityMenu.querySelectorAll('li.vjs-menu-item:not(.always-max)');
+					// Add a click action to all the other menu options (this turns off 'Select default quality')
+					let otherMenuItems = manifestQualityMenu.querySelectorAll('li.vjs-menu-item:not(.select-default)');
 					otherMenuItems.forEach((otherMenuItem) => {
-						otherMenuItem.addEventListener('click', goodTube_player_turnOffHighestManifestQuality);
+						otherMenuItem.addEventListener('click', goodTube_player_turnOffDefaultManifestQuality);
 
 						// For some reason we need this to support mobile devices, but not for other event listeners here? Weird.
-						otherMenuItem.addEventListener('touchstart', goodTube_player_turnOffHighestManifestQuality);
+						otherMenuItem.addEventListener('touchstart', goodTube_player_turnOffDefaultManifestQuality);
 					});
 				}
 
-				// Check the cookie, are we always using max?
-				let alwaysUseMax = goodTube_helper_getCookie('goodTube_alwaysUseMax');
+				// Check the cookie, are we selecting a default quality?
+				let defaultQuality = goodTube_helper_getCookie('goodTube_selectDefault');
 
-				// If we are, then select the highest quality
-				if (alwaysUseMax && alwaysUseMax === 'true') {
-					goodTube_player_selectHighestManifestQuality();
+				// If we are, then select the default quality
+				if (defaultQuality && defaultQuality !== 'false') {
+					goodTube_player_selectDefaultManifestQuality(defaultQuality);
 				}
 			}
 		}
@@ -2168,63 +2310,109 @@
 		}
 	}
 
-	// Select the highest manifest quality
-	let goodTube_dontTurnOffMaxFromClick = false;
-	function goodTube_player_selectHighestManifestQuality() {
-		// Set the cookie to remember this
-		goodTube_helper_setCookie('goodTube_alwaysUseMax', 'true');
+	// Select the default manifest quality
+	let goodTube_dontTurnOffDefaultFromClick = false;
+	function goodTube_player_selectDefaultManifestQuality(defaultQuality) {
+		// Target the default quality modal
+		let defaultQualityModal = document.querySelector('.goodTube_defaultQualityModal');
 
-		// Find the manifest quality menu
-		let qualityMenu = document.querySelectorAll('.vjs-quality-selector')[1];
+		// If we haven't passed in a default quality
+		if (!defaultQuality) {
+			// Show the modal to select a default quality
+			if (!defaultQualityModal.classList.contains('goodTube_defaultQualityModal_visible')) {
+				defaultQualityModal.classList.add('goodTube_defaultQualityModal_visible');
+			}
+			return;
+		}
+		// Otherwise, we're setting the default quality
+		else {
+			// Turn the quality option into a number
+			defaultQuality = parseFloat(defaultQuality);
 
-		// Find the highest quality button (second in the list)
-		let highestQualityButton = qualityMenu.querySelectorAll('li.vjs-menu-item')[1];
+			// Set the cookie to remember this
+			goodTube_helper_setCookie('goodTube_selectDefault', defaultQuality);
 
-		// Ensure the click doesn't turn off the max option
-		goodTube_dontTurnOffMaxFromClick = true;
+			// Hide the modal if it's showing
+			if (defaultQualityModal.classList.contains('goodTube_defaultQualityModal_visible')) {
+				defaultQualityModal.classList.remove('goodTube_defaultQualityModal_visible');
+			}
 
-		// Click it
-		highestQualityButton.click();
+			// Select the modal option
+			document.querySelector('.goodTube_defaultQualityModal_selected')?.classList.remove('goodTube_defaultQualityModal_selected');
+			document.querySelector('#goodTube_defaultQualityModal_option_'+defaultQuality).classList.add('goodTube_defaultQualityModal_selected');
 
-		// Add an auto selected class (half white)
-		highestQualityButton.classList.add('vjs-auto-selected');
+			// Find the correct manifest quality menu item
+			let defaultQualityButton = false;
 
-		// Deselect it
-		highestQualityButton.classList.remove('vjs-selected');
+			// Get the quality menu items
+			let qualityMenuItems = document.querySelectorAll('.vjs-quality-selector li.vjs-menu-item');
 
-		// Select the 'Always use max option'
-		qualityMenu.querySelector('li.always-max').classList.add('vjs-selected');
+			// For each quality menu item (this will be highest to lowest order)
+			qualityMenuItems.forEach((qualityMenuItem) => {
+				// Get the value of this quality menu item as a number (e.g. '1080p' -> 1080)
+				let value = parseFloat(qualityMenuItem.querySelector('.vjs-menu-item-text').innerHTML.replace('p', ''));
 
-		// Debug message
-		if (goodTube_debug) {
-			console.log('[GoodTube] Selecting highest quality - '+highestQualityButton.querySelector('.vjs-menu-item-text').innerHTML);
+				// If the value is less than or equal to the default quality AND we haven't found one yet
+				if (value && value <= defaultQuality && !defaultQualityButton) {
+					// Target the default quality button
+					defaultQualityButton = qualityMenuItem;
+				}
+			});
+
+			// If we didn't find the quality menu item, just return - safety check
+			if (!defaultQualityButton) {
+				return;
+			}
+
+			// Ensure the click doesn't turn off the 'Select default' option
+			goodTube_dontTurnOffDefaultFromClick = true;
+
+			// Click the quality menu item
+			defaultQualityButton.click();
+
+			// Remove any existing auto selected class (half white)
+			document.querySelector('.vjs-quality-selector .vjs-auto-selected')?.classList.remove('vjs-auto-selected');
+
+			// Add an auto selected class to the quality menu item (half white)
+			defaultQualityButton.classList.add('vjs-auto-selected');
+
+			// Deselect the quality menu item (this comes from the click)
+			defaultQualityButton.classList.remove('vjs-selected');
+
+			// Select the 'Select default quality' option
+			document.querySelector('.vjs-quality-selector li.select-default').classList.add('vjs-selected');
+
+			// Debug message
+			if (goodTube_debug) {
+				console.log('[GoodTube] Selecting nearest default quality to '+defaultQuality+'p ('+defaultQualityButton.querySelector('.vjs-menu-item-text').innerHTML+')');
+			}
 		}
 	}
 
-	// Turn off the highest manifest quality option
-	function goodTube_player_turnOffHighestManifestQuality() {
-		// Allow this once only, so the max quality selection doesn't turn itself off!
-		if (goodTube_dontTurnOffMaxFromClick) {
-			goodTube_dontTurnOffMaxFromClick = false;
+	// Turn off the default manifest quality option
+	function goodTube_player_turnOffDefaultManifestQuality() {
+		// Allow this once only, so the default quality selection doesn't turn itself off!
+		if (goodTube_dontTurnOffDefaultFromClick) {
+			goodTube_dontTurnOffDefaultFromClick = false;
 			return;
 		}
 
 		// Set the cookie to remember this
-		goodTube_helper_setCookie('goodTube_alwaysUseMax', 'false');
+		goodTube_helper_setCookie('goodTube_selectDefault', 'false');
 
 		// Find the manifest quality menu
 		let qualityMenu = document.querySelectorAll('.vjs-quality-selector')[1];
 
-		// Find the 'always use max' quality button
-		let alwaysMaxMenuItem = qualityMenu.querySelector('li.always-max');
+		// Find the 'Select default quality' quality button
+		let selectDefaultMenuItem = qualityMenu.querySelector('li.select-default');
 
 		// Remove the selected class
-		if (alwaysMaxMenuItem.classList.contains('vjs-selected')) {
-			alwaysMaxMenuItem.classList.remove('vjs-selected');
+		if (selectDefaultMenuItem.classList.contains('vjs-selected')) {
+			selectDefaultMenuItem.classList.remove('vjs-selected');
 		}
 
 		// Remove any auto selected classes
-		let autoSelectedItem = qualityMenu.querySelector('li.vjs-auto-selected')
+		let autoSelectedItem = qualityMenu.querySelector('li.vjs-auto-selected');
 		if (autoSelectedItem) {
 			autoSelectedItem.classList.remove('vjs-auto-selected');
 		}
