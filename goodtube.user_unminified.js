@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.537
+// @version      4.538
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -104,6 +104,13 @@
 				transform: scale(0) !important;
 				pointer-events: none !important;
 			}
+
+			.goodTube_hiddenPlayer {
+				width: 0 !important;
+				height: 0 !important;
+				transform: scale(0);
+				pointer-events: none !important;
+			}
 		`;
 
 		document.head.appendChild(style);
@@ -112,6 +119,12 @@
 	function goodTube_helper_hideElement(element) {
 		if (element && !element.classList.contains('goodTube_hidden')) {
 			element.classList.add('goodTube_hidden');
+		}
+	}
+
+	function goodTube_helper_hideElementPlayer(element) {
+		if (element && !element.classList.contains('goodTube_hiddenPlayer')) {
+			element.classList.add('goodTube_hiddenPlayer');
 		}
 	}
 
@@ -283,25 +296,25 @@
 		// Hide the normal Youtube player
 		let regularPlayers = document.querySelectorAll('#player:not(.ytd-channel-video-player-renderer):not(.goodTube_hidden)');
 		regularPlayers.forEach((element) => {
-			goodTube_helper_hideElement(element);
+			goodTube_helper_hideElementPlayer(element);
 		});
 
 		// Hide the mobile controls
 		let mobileControls = document.querySelectorAll('#player-control-container:not(.goodTube_hidden)');
 		mobileControls.forEach((element) => {
-			goodTube_helper_hideElement(element);
+			goodTube_helper_hideElementPlayer(element);
 		});
 
 		// Remove the full screen Youtube player
 		let fullscreenPlayers = document.querySelectorAll('#full-bleed-container:not(.goodTube_hidden)');
 		fullscreenPlayers.forEach((element) => {
-			goodTube_helper_hideElement(element);
+			goodTube_helper_hideElementPlayer(element);
 		});
 
 		// Hide the Youtube miniplayer
 		let miniPlayers = document.querySelectorAll('ytd-miniplayer:not(.goodTube_hidden)');
 		miniPlayers.forEach((element) => {
-			goodTube_helper_hideElement(element);
+			goodTube_helper_hideElementPlayer(element);
 		});
 
 		// Turn off autoplay
