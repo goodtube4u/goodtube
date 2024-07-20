@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.542
+// @version      4.543
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -552,6 +552,7 @@
 				border-radius: 12px;
 				padding: 0;
 				z-index: 2;
+				box-shadow: 0 0 16px rgba(15, 15, 15, .3);
 			}
 
 			#goodTube_player_wrapper3 .goodTube_defaultQualityModal .goodTube_defaultQualityModal_title {
@@ -559,9 +560,11 @@
 				font-size: 16px;
 				font-weight: 700;
 				padding: 12px;
+				padding-top: 16px;
 				text-align: center;
 				width: 100%;
 				box-sizing: border-box;
+				font-family: Roboto, Arial, Helvetica, sans-serif;
 			}
 
 			#goodTube_player_wrapper3 .goodTube_defaultQualityModal .goodTube_defaultQualityModal_options {
@@ -575,15 +578,17 @@
 				width: 100%;
 				padding: 10px;
 				text-align: center;
-				font-weight: 500;
+				font-weight: 400;
 				text-decoration: none;
 				box-sizing: border-box;
 				transition: background-color .2s linear;
 				cursor: pointer;
+				font-family: Roboto, Arial, Helvetica, sans-serif;
 			}
 
 			#goodTube_player_wrapper3 .goodTube_defaultQualityModal .goodTube_defaultQualityModal_options .goodTube_defaultQualityModal_option.goodTube_defaultQualityModal_selected {
-				background: rgba(15,15,15,.2);
+				background: rgba(15,15,15,.15);
+				font-weight: 700;
 			}
 
 			#goodTube_player_wrapper3 .goodTube_defaultQualityModal .goodTube_defaultQualityModal_options .goodTube_defaultQualityModal_option:hover {
