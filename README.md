@@ -10,7 +10,7 @@ What is GoodTube you ask? It's a little plugin for Youtube (just works) and;
 - Allows you to download the audio / video / entire playlist in up to 8K quality with the click of a button (at the bottom of the player).
 - Works on both desktop and mobile (iOS and Android).
 - Works in all major browsers (Chrome, Firefox, Opera, etc).
-- Proxies in Youtube videos from different servers (in up to 1080p).
+- Proxies in Youtube videos from different servers (in up to 4k quality).
 - Removes shorts.
 - Removes unwanted search results ("You might also like this", "Other people also watched", etc).
 - Removes thumbnails for other recommended videos that pop up when a video finishes (I really hate these, try without it's nice).
