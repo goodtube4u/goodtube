@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.535
+// @version      4.536
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -2398,6 +2398,9 @@
 			goodTube_dontTurnOffDefaultFromClick = false;
 			return;
 		}
+
+		// Deselect the modal option
+		document.querySelector('.goodTube_defaultQualityModal_selected')?.classList.remove('goodTube_defaultQualityModal_selected');
 
 		// Set the cookie to remember this
 		goodTube_helper_setCookie('goodTube_selectDefault', 'false');
