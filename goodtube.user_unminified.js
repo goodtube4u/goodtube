@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.540
+// @version      4.541
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -2215,6 +2215,7 @@
 					<div class='goodTube_defaultQualityModal_option' id='goodTube_defaultQualityModal_option_360'>360p</div>
 					<div class='goodTube_defaultQualityModal_option' id='goodTube_defaultQualityModal_option_240'>240p</div>
 					<div class='goodTube_defaultQualityModal_option' id='goodTube_defaultQualityModal_option_144'>144p</div>
+					<div class='goodTube_defaultQualityModal_option' id='goodTube_defaultQualityModal_option_auto'>Auto</div>
 				</div> <!-- .goodTube_defaultQualityModal_inner -->
 			</div> <!-- .goodTube_defaultQualityModal_options -->
 		`;
@@ -2299,7 +2300,7 @@
 						<span class="vjs-menu-item-text">Select default quality</span>
 						<span class="vjs-control-text" aria-live="polite"></span>
 					`;
-					selectDefaultMenuItem.addEventListener('click', function() { goodTube_player_selectDefaultManifestQuality(false); });
+					selectDefaultMenuItem.addEventListener('click', goodTube_player_defaultQualityModalShow);
 					manifestQualityMenu.prepend(selectDefaultMenuItem);
 
 					// Add a click action to all the other menu options (this turns off 'Select default quality')
@@ -2312,13 +2313,17 @@
 					});
 				}
 
-				// Check the cookie, are we selecting a default quality?
-				let defaultQuality = goodTube_helper_getCookie('goodTube_selectDefault');
+				// Get the default quality cookie
+				let defaultQuality = goodTube_helper_getCookie('goodTube_selectDefaultNew');
 
-				// If we are, then select the default quality
-				if (defaultQuality && defaultQuality !== 'false') {
-					goodTube_player_selectDefaultManifestQuality(defaultQuality);
+				// If it's not set, use 1080p by default
+				if (!defaultQuality) {
+					goodTube_helper_setCookie('goodTube_selectDefaultNew', '1080');
+					defaultQuality = '1080';
 				}
+
+				// Select the default quality
+				goodTube_player_selectDefaultManifestQuality(defaultQuality);
 			}
 		}
 		else {
@@ -2331,80 +2336,84 @@
 		}
 	}
 
-	// Select the default manifest quality
-	let goodTube_dontTurnOffDefaultFromClick = false;
-	function goodTube_player_selectDefaultManifestQuality(defaultQuality) {
+	// Show the default quality modal
+	function goodTube_player_defaultQualityModalShow() {
 		// Target the default quality modal
 		let defaultQualityModal = document.querySelector('.goodTube_defaultQualityModal');
 
-		// If we haven't passed in a default quality
-		if (!defaultQuality) {
-			// Show the modal to select a default quality
-			if (!defaultQualityModal.classList.contains('goodTube_defaultQualityModal_visible')) {
-				defaultQualityModal.classList.add('goodTube_defaultQualityModal_visible');
+		// Show it
+		if (!defaultQualityModal.classList.contains('goodTube_defaultQualityModal_visible')) {
+			defaultQualityModal.classList.add('goodTube_defaultQualityModal_visible');
+		}
+	}
+
+	// Select the default manifest quality
+	let goodTube_dontTurnOffDefaultFromClick = false;
+	function goodTube_player_selectDefaultManifestQuality(defaultQuality) {
+		// Set the cookie to remember the default quality
+		goodTube_helper_setCookie('goodTube_selectDefaultNew', defaultQuality);
+
+		// Target the default quality modal
+		let defaultQualityModal = document.querySelector('.goodTube_defaultQualityModal');
+
+		// Hide the modal if it's showing
+		if (defaultQualityModal.classList.contains('goodTube_defaultQualityModal_visible')) {
+			defaultQualityModal.classList.remove('goodTube_defaultQualityModal_visible');
+		}
+
+		// Select the modal option
+		document.querySelector('.goodTube_defaultQualityModal_selected')?.classList.remove('goodTube_defaultQualityModal_selected');
+		document.querySelector('#goodTube_defaultQualityModal_option_'+defaultQuality.toLowerCase())?.classList.add('goodTube_defaultQualityModal_selected');
+
+		// Find the correct manifest quality menu item
+		let defaultQualityButton = false;
+
+		// Get the quality menu items
+		let qualityMenuItems = document.querySelectorAll('.vjs-quality-selector li.vjs-menu-item');
+
+		// For each quality menu item (this will be highest to lowest order)
+		qualityMenuItems.forEach((qualityMenuItem) => {
+			// Get the value of this quality menu item
+			let value = qualityMenuItem.querySelector('.vjs-menu-item-text').innerHTML.replace('p', '');
+
+			// If they selected 'auto' and the item is 'Auto'
+			// OR
+			// If the value is less than or equal to the default quality AND we haven't found one yet
+			if ((value.toLowerCase() === 'auto' && defaultQuality.toLowerCase() === 'auto') || (parseFloat(value) <= parseFloat(defaultQuality) && !defaultQualityButton)) {
+				// Target the default quality button
+				defaultQualityButton = qualityMenuItem;
 			}
+		});
+
+		// If we didn't find the quality menu item, just return - safety check
+		if (!defaultQualityButton) {
 			return;
 		}
-		// Otherwise, we're setting the default quality
-		else {
-			// Turn the quality option into a number
-			defaultQuality = parseFloat(defaultQuality);
 
-			// Set the cookie to remember this
-			goodTube_helper_setCookie('goodTube_selectDefault', defaultQuality);
+		// Ensure the click doesn't turn off the 'Select default' option
+		goodTube_dontTurnOffDefaultFromClick = true;
 
-			// Hide the modal if it's showing
-			if (defaultQualityModal.classList.contains('goodTube_defaultQualityModal_visible')) {
-				defaultQualityModal.classList.remove('goodTube_defaultQualityModal_visible');
+		// Click the quality menu item
+		defaultQualityButton.click();
+
+		// Remove any existing auto selected class (half white)
+		document.querySelector('.vjs-quality-selector .vjs-auto-selected')?.classList.remove('vjs-auto-selected');
+
+		// Add an auto selected class to the quality menu item (half white)
+		defaultQualityButton.classList.add('vjs-auto-selected');
+
+		// Deselect the quality menu item (this comes from the click)
+		defaultQualityButton.classList.remove('vjs-selected');
+
+		// Select the 'Select default quality' option
+		document.querySelector('.vjs-quality-selector li.select-default').classList.add('vjs-selected');
+
+		// Debug message
+		if (goodTube_debug) {
+			if (defaultQuality.toLowerCase() === 'auto') {
+				console.log('[GoodTube] Setting default quality to '+defaultQuality[0].toUpperCase()+defaultQuality.slice(1));
 			}
-
-			// Select the modal option
-			document.querySelector('.goodTube_defaultQualityModal_selected')?.classList.remove('goodTube_defaultQualityModal_selected');
-			document.querySelector('#goodTube_defaultQualityModal_option_'+defaultQuality).classList.add('goodTube_defaultQualityModal_selected');
-
-			// Find the correct manifest quality menu item
-			let defaultQualityButton = false;
-
-			// Get the quality menu items
-			let qualityMenuItems = document.querySelectorAll('.vjs-quality-selector li.vjs-menu-item');
-
-			// For each quality menu item (this will be highest to lowest order)
-			qualityMenuItems.forEach((qualityMenuItem) => {
-				// Get the value of this quality menu item as a number (e.g. '1080p' -> 1080)
-				let value = parseFloat(qualityMenuItem.querySelector('.vjs-menu-item-text').innerHTML.replace('p', ''));
-
-				// If the value is less than or equal to the default quality AND we haven't found one yet
-				if (value && value <= defaultQuality && !defaultQualityButton) {
-					// Target the default quality button
-					defaultQualityButton = qualityMenuItem;
-				}
-			});
-
-			// If we didn't find the quality menu item, just return - safety check
-			if (!defaultQualityButton) {
-				return;
-			}
-
-			// Ensure the click doesn't turn off the 'Select default' option
-			goodTube_dontTurnOffDefaultFromClick = true;
-
-			// Click the quality menu item
-			defaultQualityButton.click();
-
-			// Remove any existing auto selected class (half white)
-			document.querySelector('.vjs-quality-selector .vjs-auto-selected')?.classList.remove('vjs-auto-selected');
-
-			// Add an auto selected class to the quality menu item (half white)
-			defaultQualityButton.classList.add('vjs-auto-selected');
-
-			// Deselect the quality menu item (this comes from the click)
-			defaultQualityButton.classList.remove('vjs-selected');
-
-			// Select the 'Select default quality' option
-			document.querySelector('.vjs-quality-selector li.select-default').classList.add('vjs-selected');
-
-			// Debug message
-			if (goodTube_debug) {
+			else {
 				console.log('[GoodTube] Selecting nearest default quality to '+defaultQuality+'p ('+defaultQualityButton.querySelector('.vjs-menu-item-text').innerHTML+')');
 			}
 		}
