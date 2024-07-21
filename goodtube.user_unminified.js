@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.546
+// @version      4.547
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -5451,38 +5451,10 @@
 		// --------------------------------------------------------------------------------
 		// FAST
 		{
-			'name': 'Anubis (DE)',
+			'name': 'Phoenix (US)',
 			'type': 3,
 			'proxy': true,
-			'url': 'https://pipedapi.r4fo.com'
-		},
-		// FAST
-		{
-			'name': 'Ra (US)',
-			'type': 3,
-			'proxy': true,
-			'url': 'https://pipedapi.us.projectsegfau.lt'
-		},
-		// FAST
-		{
-			'name': 'Hades (DE)',
-			'type': 3,
-			'proxy': true,
-			'url': 'https://pipedapi.dedyn.io'
-		},
-		// FAST
-		{
-			'name': 'Rain (DE)',
-			'type': 3,
-			'proxy': true,
-			'url': 'https://pipedapi.andreafortuna.org'
-		},
-		// FAST
-		{
-			'name': 'Serpent (US)',
-			'type': 2,
-			'proxy': true,
-			'url': 'https://invidious.darkness.services'
+			'url': 'https://pipedapi.drgns.space'
 		},
 		// FAST
 		{
@@ -5493,19 +5465,46 @@
 		},
 		// FAST
 		{
-			'name': 'Sphynx (JP)',
-			'type': 2,
+			'name': 'Anubis (DE)',
+			'type': 3,
 			'proxy': true,
-			'url': 'https://invidious.jing.rocks'
+			'url': 'https://pipedapi.r4fo.com'
 		},
-
 		// // FAST
 		// {
-		// 	'name': 'Obsidian (AT)',
+		// 	'name': 'Ra (US)',
 		// 	'type': 3,
 		// 	'proxy': true,
-		// 	'url': 'https://pipedapi.leptons.xyz'
+		// 	'url': 'https://pipedapi.us.projectsegfau.lt'
 		// },
+		// // FAST
+		// {
+		// 	'name': 'Hades (DE)',
+		// 	'type': 3,
+		// 	'proxy': true,
+		// 	'url': 'https://pipedapi.dedyn.io'
+		// },
+		// // FAST
+		// {
+		// 	'name': 'Rain (DE)',
+		// 	'type': 3,
+		// 	'proxy': true,
+		// 	'url': 'https://pipedapi.andreafortuna.org'
+		// },
+		// FAST
+		{
+			'name': 'Nymph (AT)',
+			'type': 2,
+			'proxy': true,
+			'url': 'https://invidious.private.coffee'
+		},
+		// FAST
+		{
+			'name': 'Serpent (US)',
+			'type': 2,
+			'proxy': true,
+			'url': 'https://invidious.darkness.services'
+		},
 		// FAST
 		{
 			'name': 'Sphere (US)',
@@ -5513,13 +5512,13 @@
 			'proxy': true,
 			'url': 'https://pipedapi.darkness.services'
 		},
-		// FAST
-		{
-			'name': 'Phoenix (US)',
-			'type': 3,
-			'proxy': true,
-			'url': 'https://pipedapi.drgns.space'
-		},
+		// // FAST
+		// {
+		// 	'name': 'Obsidian (AT)',
+		// 	'type': 3,
+		// 	'proxy': true,
+		// 	'url': 'https://pipedapi.leptons.xyz'
+		// },
 		// // MEDIUM
 		// {
 		// 	'name': 'Hunter (NL)',
@@ -5534,13 +5533,20 @@
 			'proxy': true,
 			'url': 'https://pipedapi.in.projectsegfau.lt'
 		},
-		// MEDIUM
+		// FAST
 		{
-			'name': 'Space (DE)',
-			'type': 3,
+			'name': 'Sphynx (JP)',
+			'type': 2,
 			'proxy': true,
-			'url': 'https://pipedapi.smnz.de'
+			'url': 'https://invidious.jing.rocks'
 		},
+		// // MEDIUM
+		// {
+		// 	'name': 'Space (DE)',
+		// 	'type': 3,
+		// 	'proxy': true,
+		// 	'url': 'https://pipedapi.smnz.de'
+		// },
 		// MEDIUM
 		{
 			'name': 'Orchid (DE)',
@@ -5569,20 +5575,20 @@
 			'proxy': true,
 			'url': 'https://invidious.fdn.fr'
 		},
-		// MEDIUM
-		{
-			'name': 'Indigo (FI)',
-			'type': 2,
-			'proxy': true,
-			'url': 'https://iv.datura.network'
-		},
-		// MEDIUM
-		{
-			'name': 'Andromeda (FI)',
-			'type': 3,
-			'proxy': true,
-			'url': 'https://pipedapi-libre.kavin.rocks'
-		},
+		// // MEDIUM
+		// {
+		// 	'name': 'Indigo (FI)',
+		// 	'type': 2,
+		// 	'proxy': true,
+		// 	'url': 'https://iv.datura.network'
+		// },
+		// // MEDIUM
+		// {
+		// 	'name': 'Andromeda (FI)',
+		// 	'type': 3,
+		// 	'proxy': true,
+		// 	'url': 'https://pipedapi-libre.kavin.rocks'
+		// },
 		// // MEDIUM
 		// {
 		// 	'name': 'Lilith (INT)',
@@ -5590,20 +5596,20 @@
 		// 	'proxy': true,
 		// 	'url': 'https://pipedapi.syncpundit.io'
 		// },
-		// MEDIUM
-		{
-			'name': 'Basilisk (DE)',
-			'type': 3,
-			'proxy': true,
-			'url': 'https://pipedapi.adminforge.de'
-		},
-		// MEDIUM
-		{
-			'name': 'Golem (AT)',
-			'type': 3,
-			'proxy': true,
-			'url': 'https://schaunapi.ehwurscht.at'
-		},
+		// // MEDIUM
+		// {
+		// 	'name': 'Basilisk (DE)',
+		// 	'type': 3,
+		// 	'proxy': true,
+		// 	'url': 'https://pipedapi.adminforge.de'
+		// },
+		// // MEDIUM
+		// {
+		// 	'name': 'Golem (AT)',
+		// 	'type': 3,
+		// 	'proxy': true,
+		// 	'url': 'https://schaunapi.ehwurscht.at'
+		// },
 
 		// // SLOW
 		// {
@@ -5668,12 +5674,6 @@
 		// 	'proxy': true,
 		// 	'url': 'https://vid.lilay.dev'
 		// },
-		{
-			'name': '360p - Nymph (AT)',
-			'type': 1,
-			'proxy': true,
-			'url': 'https://invidious.private.coffee'
-		},
 		{
 			'name': '360p - Raptor (US)',
 			'type': 1,
