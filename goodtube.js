@@ -1,17 +1,3 @@
-// ==UserScript==
-// @name         GoodTube
-// @namespace    http://tampermonkey.net/
-// @version      4.549
-// @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
-// @author       GoodTube
-// @match        https://*.youtube.com/*
-// @icon         https://cdn-icons-png.flaticon.com/256/1384/1384060.png
-// @run-at       document-start
-// @updateURL    https://github.com/goodtube4u/goodtube/raw/main/goodtube.user.js
-// @downloadURL  https://github.com/goodtube4u/goodtube/raw/main/goodtube.user.js
-// @noframes
-// ==/UserScript==
-
 (function() {
 	'use strict';
 
@@ -374,21 +360,7 @@
 			}
 		}
 
-		// Also mute the youtube player and pause it via the frame API (just to be sure)
-		let youtubeFrameApi = document.querySelector('#movie_player');
-		if (youtubeFrameApi) {
-			if (typeof youtubeFrameApi.mute === 'function') {
-				youtubeFrameApi.mute();
-			}
 
-			if (typeof youtubeFrameApi.setVolume === 'function') {
-				youtubeFrameApi.setVolume(0);
-			}
-
-			if (!goodTube_youtube_syncing && typeof youtubeFrameApi.pauseVideo === 'function') {
-				youtubeFrameApi.pauseVideo();
-			}
-		}
 
 		// Always skip the ads as soon as possible by clicking the skip button
 		// let skipButton = document.querySelector('.ytp-skip-ad-button');
@@ -1701,9 +1673,6 @@
 				if (goodTube_debug) {
 					console.log('[GoodTube] Player assets loaded');
 				}
-
-				// Check for updates
-				goodTube_checkForUpdates();
 			}
 			// Otherwise load the next asset
 			else {
@@ -5351,7 +5320,6 @@
 
 	/* GoodTube general functions
 	------------------------------------------------------------------------------------------ */
-	let goodTube_stopUpdates = false;
 	let goodTube_previousUrl = false;
 	let goodTube_previousPlaylist = false;
 	let goodTube_player = false;
@@ -6440,111 +6408,6 @@
 		}
 	}
 
-	// Check for updates
-	function goodTube_checkForUpdates() {
-		if (goodTube_stopUpdates) {
-			return;
-		}
-
-		const scriptUrl = goodTube_github+'/goodtube.user.js?i'+Date.now();
-
-		// Debug message
-		if (goodTube_debug) {
-			console.log('[GoodTube] Checking for updates...');
-		}
-
-		fetch(scriptUrl)
-		.then(response => response.text())
-		.then(data => {
-			// Extract version from the script on GitHub
-			const match = data.match(/@version\s+(\d+\.\d+)/);
-
-			// If we can't find the version, just return
-			if (!match) {
-				return;
-			}
-
-			const currentVersion = parseFloat(GM_info.script.version);
-			const githubVersion = parseFloat(match[1]);
-
-			// There's no updates, so just return
-			if (githubVersion <= currentVersion) {
-				// Debug message
-				if (goodTube_debug) {
-					console.log('[GoodTube] No updates found');
-				}
-				return;
-			}
-
-			// If a version is skipped, don't show the update message again until the next version
-			if (parseFloat(localStorage.getItem('goodTube_stopUpdates')) === githubVersion) {
-				return;
-			}
-
-			// Style SweetAlert2
-			let style = document.createElement('style');
-			style.textContent = `
-				html body .swal2-container {
-					z-index: 2400;
-				}
-
-				html body .swal2-title {
-					font-size: 18px;
-				}
-
-				html body .swal2-html-container {
-					font-size: 14px;
-					margin-top: 8px;
-					margin-bottom: 12px;
-				}
-
-				html body .swal2-actions {
-					margin: 0 !important;
-					display: flex;
-					flex-wrap: wrap;
-					gap: 8px;
-				}
-
-				html body .swal2-actions button {
-					margin: 0 !important;
-					font-size: 12px;
-				}
-			`;
-			document.head.appendChild(style);
-
-			// Show the update prompt
-			Swal.fire({
-				position: "top-end",
-				backdrop: false,
-				title: 'GoodTube: a new version is available.',
-				text: 'Do you want to update?',
-				showCancelButton: true,
-				showDenyButton: true,
-				confirmButtonText: 'Update',
-				denyButtonText:'Skip',
-				cancelButtonText: 'Close'
-			})
-			.then((result) => {
-				if (result.isConfirmed) {
-					window.location = scriptUrl;
-				}
-				else if (result.isDenied) {
-					localStorage.setItem('goodTube_stopUpdates', githubVersion);
-				}
-			});
-
-			// Debug message
-			if (goodTube_debug) {
-				console.log('[GoodTube] New version found - '+githubVersion);
-			}
-		})
-		.catch(error => {
-			goodTube_stopUpdates = true;
-		});
-
-		goodTube_stopUpdates = true;
-	}
-
 	// Actions
 	function goodTube_actions() {
 		// Hide youtube players
@@ -6716,12 +6579,6 @@
 
 	// Init
 	function goodTube_init() {
-		// Debug message
-		if (goodTube_debug) {
-			console.log('\n==================================================\n    ______                ________      __\n   / ____/___  ____  ____/ /_  __/_  __/ /_  ___\n  / / __/ __ \\/ __ \\/ __  / / / / / / / __ \\/ _ \\\n / /_/ / /_/ / /_/ / /_/ / / / / /_/ / /_/ /  __/\n \\____/\\____/\\____/\\____/ /_/  \\____/_____/\\___/\n\n==================================================');
-			console.log('[GoodTube] Initiating...');
-		}
-
 		// Check if we're on mobile or not
 		if (window.location.href.indexOf('m.youtube') !== -1) {
 			goodTube_mobile = true;
