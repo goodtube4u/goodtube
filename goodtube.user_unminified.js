@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.545
+// @version      4.546
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -106,9 +106,8 @@
 			}
 
 			.goodTube_hiddenPlayer {
-				width: 0 !important;
-				height: 0 !important;
-				transform: scale(0);
+				position: absolute !important;
+				transform: scale(0) !important;
 				pointer-events: none !important;
 			}
 		`;
@@ -123,9 +122,19 @@
 	}
 
 	function goodTube_helper_hideElementPlayer(element) {
-		if (element && !element.classList.contains('goodTube_hiddenPlayer')) {
-			element.classList.add('goodTube_hiddenPlayer');
+		// Add a wrapping div to help avoid detection
+		if (!element.closest('.goodTube_hiddenPlayer')) {
+			let parent = element.parentNode;
+			let wrapper = document.createElement('div');
+			wrapper.classList.add('goodTube_hiddenPlayer');
+			parent.replaceChild(wrapper, element);
+			wrapper.appendChild(element);
 		}
+
+		// Old method of applying the class directly to the element
+		// if (element && !element.classList.contains('goodTube_hiddenPlayer')) {
+		// 	element.classList.add('goodTube_hiddenPlayer');
+		// }
 	}
 
 	function goodTube_helper_showElement(element) {
@@ -3442,6 +3451,15 @@
 			userActions: {
 				doubleClick: false
 			},
+			// This fixes issues with the quality selector on iOS
+			html5: {
+				vhs: {
+					overrideNative: true
+				},
+				hls: {
+					overrideNative: true
+				}
+			},
 			controlBar: {
 				children: [
 					'playToggle',
@@ -3597,6 +3615,13 @@
 		// After video JS has loaded
 		goodTube_videojs_player.on('ready', function() {
 			goodTube_videojs_player_loaded = true;
+
+			// Add the playsinline attributes (this stops iOS from automatically going fullscreen)
+			let video = document.querySelector('#goodTube_player video');
+			if (video) {
+				video.setAttribute('playsinline', '');
+				video.setAttribute('webkit-playsinline', '');
+			}
 
 			// Sync the Youtube player for watch history
 			goodTube_youtube_syncPlayers();
