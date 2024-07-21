@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.548
+// @version      4.549
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -391,10 +391,10 @@
 		}
 
 		// Always skip the ads as soon as possible by clicking the skip button
-		let skipButton = document.querySelector('.ytp-skip-ad-button');
-		if (skipButton) {
-			skipButton.click();
-		}
+		// let skipButton = document.querySelector('.ytp-skip-ad-button');
+		// if (skipButton) {
+		// 	skipButton.click();
+		// }
 
 		// Also pause and mute all other HTML videos on the page
 		let youtubeVideos = document.querySelectorAll('video:not(#goodTube_player):not(#goodTube_player_html5_api)');
