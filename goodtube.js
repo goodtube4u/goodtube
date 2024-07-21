@@ -3286,6 +3286,7 @@
 	let goodTube_videojs_fastForward = false;
 	let goodTube_qualityApi = false;
 	let goodTube_bufferingTimeout = false;
+	let goodTube_bufferCountTimeout = false;
 	let goodTube_loadingTimeout = false;
 	let goodTube_seeking = false;
 	let goodTube_bufferCount = 0;
@@ -3969,8 +3970,12 @@
 
 		// On buffering / loading
 		goodTube_videojs_player.on('waiting', function() {
+			// Clear any buffering timeouts
 			if (goodTube_bufferingTimeout) {
 				clearTimeout(goodTube_bufferingTimeout);
+			}
+			if (goodTube_bufferCountTimeout) {
+				clearTimeout(goodTube_bufferCountTimeout);
 			}
 
 			// If we're at the start of the video, don't do anything
@@ -3980,26 +3985,36 @@
 
 			// If we're not seeking
 			if (!goodTube_seeking) {
-				// And we've had to wait for it to buffer 3 times, select the next server
-				goodTube_bufferCount++;
+				goodTube_bufferCountTimeout = setTimeout(function() {
+					// And we've had to wait for it to buffer for 3 seconds 3 times, select the next server
+					goodTube_bufferCount++;
 
-				if (goodTube_bufferCount >= 3) {
-					// Debug message
-					if (goodTube_debug) {
-						console.log('[GoodTube] Video buffering too often - selecting next video source...');
+					if (goodTube_bufferCount >= 3) {
+						// Clear any buffering timeouts
+						if (goodTube_bufferingTimeout) {
+							clearTimeout(goodTube_bufferingTimeout);
+						}
+						if (goodTube_bufferCountTimeout) {
+							clearTimeout(goodTube_bufferCountTimeout);
+						}
+
+						// Debug message
+						if (goodTube_debug) {
+							console.log('[GoodTube] Video buffering too often - selecting next video source...');
+						}
+
+						// Reset the buffer count
+						goodTube_bufferCount = 0;
+
+						// Set the player time to be restored when the new server loads
+						goodTube_player_restoreTime = goodTube_player.currentTime;
+
+						// Select the next server
+						goodTube_player_selectApi('automatic', true);
+
+						return;
 					}
-
-					// Reset the buffer count
-					goodTube_bufferCount = 0;
-
-					// Set the player time to be restored when the new server loads
-					goodTube_player_restoreTime = goodTube_player.currentTime;
-
-					// Select the next server
-					goodTube_player_selectApi('automatic', true);
-
-					return;
-				}
+				}, 3000);
 			}
 
 			// Only do this for HD servers (Invidious and Piped)
@@ -4010,6 +4025,14 @@
 				// If we've been waiting more than 15s, select the next server
 				goodTube_bufferingTimeout = setTimeout(function() {
 					if (goodTube_player.currentTime === bufferStartTime) {
+						// Clear any buffering timeouts
+						if (goodTube_bufferingTimeout) {
+							clearTimeout(goodTube_bufferingTimeout);
+						}
+						if (goodTube_bufferCountTimeout) {
+							clearTimeout(goodTube_bufferCountTimeout);
+						}
+
 						// Debug message
 						if (goodTube_debug) {
 							console.log('[GoodTube] Video not loading fast enough - selecting next video source...');
@@ -5109,6 +5132,9 @@
 		// Clear any buffering and loading timeouts
 		if (goodTube_bufferingTimeout) {
 			clearTimeout(goodTube_bufferingTimeout);
+		}
+		if (goodTube_bufferCountTimeout) {
+			clearTimeout(goodTube_bufferCountTimeout);
 		}
 		if (goodTube_loadingTimeout) {
 			clearTimeout(goodTube_loadingTimeout);
