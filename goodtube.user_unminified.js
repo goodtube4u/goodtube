@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      4.547
+// @version      4.548
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -303,31 +303,31 @@
 	// Hide all Youtube players
 	function goodTube_youtube_hidePlayers() {
 		// Hide the normal Youtube player
-		let regularPlayers = document.querySelectorAll('#player:not(.ytd-channel-video-player-renderer):not(.goodTube_hiddenPlayer)');
+		let regularPlayers = document.querySelectorAll('#player:not(.ytd-channel-video-player-renderer)');
 		regularPlayers.forEach((element) => {
 			goodTube_helper_hideElementPlayer(element);
 		});
 
 		// Hide the player containers
-		let playerContainers = document.querySelectorAll('.player-container:not(.goodTube_hiddenPlayer)');
+		let playerContainers = document.querySelectorAll('.player-container');
 		playerContainers.forEach((element) => {
 			goodTube_helper_hideElementPlayer(element);
 		});
 
 		// Hide the mobile controls
-		let mobileControls = document.querySelectorAll('#player-control-container:not(.goodTube_hiddenPlayer)');
+		let mobileControls = document.querySelectorAll('#player-control-container');
 		mobileControls.forEach((element) => {
 			goodTube_helper_hideElementPlayer(element);
 		});
 
 		// Remove the full screen Youtube player
-		let fullscreenPlayers = document.querySelectorAll('#full-bleed-container:not(.goodTube_hiddenPlayer)');
+		let fullscreenPlayers = document.querySelectorAll('#full-bleed-container');
 		fullscreenPlayers.forEach((element) => {
 			goodTube_helper_hideElementPlayer(element);
 		});
 
 		// Hide the Youtube miniplayer
-		let miniPlayers = document.querySelectorAll('ytd-miniplayer:not(.goodTube_hiddenPlayer)');
+		let miniPlayers = document.querySelectorAll('ytd-miniplayer');
 		miniPlayers.forEach((element) => {
 			goodTube_helper_hideElementPlayer(element);
 		});
