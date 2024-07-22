@@ -316,33 +316,60 @@
 		miniPlayers.forEach((element) => {
 			goodTube_helper_hideElement(element);
 		});
+	}
 
-		// Turn off autoplay
+	// Turn off autoplay
+	let goodTube_turnedOffAutoplay = false;
+	function goodTube_youtube_turnOffAutoplay() {
+		if (goodTube_turnedOffAutoplay) {
+			return;
+		}
+
 		let autoplayButton = false;
 
 		// Desktop
 		if (!goodTube_mobile) {
-			autoplayButton = document.querySelector('.ytp-autonav-toggle-button[aria-checked="true"]');
+			// Target the autoplay button
+			autoplayButton = document.querySelector('.ytp-autonav-toggle-button');
 
-			// Turn off the youtube autoplay button
+			// If we found it
 			if (autoplayButton) {
-				autoplayButton.click();
+				// Set a variable if autoplay has been turned off
+				if (autoplayButton.getAttribute('aria-checked') === 'false') {
+					goodTube_turnedOffAutoplay = true;
+					return;
+				}
+				// Otherwise click the button
+				else {
+					autoplayButton.click();
+				}
 			}
 		}
 		// Mobile
 		else {
-			autoplayButton = document.querySelector('.ytm-autonav-toggle-button-container[aria-pressed="true"]');
+			// Autoplay is always on for mobile now, we can't control it sadly...
 
-			// Turn off the youtube autoplay button
-			if (autoplayButton) {
-				autoplayButton.click();
-			}
-			// Click the player a bit, this helps to actually make the autoplay button show (after ads)
-			else {
-				document.querySelector('#player .html5-video-player')?.click();
-				document.querySelector('#player')?.click();
-				document.querySelector('.ytp-unmute')?.click();
-			}
+			// // Target the autoplay button
+			// autoplayButton = document.querySelector('.ytm-autonav-toggle-button-container');
+
+			// // If we found it
+			// if (autoplayButton) {
+			// 	// Set a variable if autoplay has been turned off
+			// 	if (autoplayButton.getAttribute('aria-pressed') === 'false') {
+			// 		goodTube_turnedOffAutoplay = true;
+			// 		return;
+			// 	}
+			// 	// Otherwise click the button
+			// 	else {
+			// 		autoplayButton.click();
+			// 	}
+			// }
+			// // If we didn't find it - click the player a bit, this helps to actually make the autoplay button show (after ads)
+			// else {
+			// 	document.querySelector('#player .html5-video-player')?.click();
+			// 	document.querySelector('#player').click();
+			// 	document.querySelector('.ytp-unmute')?.click();
+			// }
 		}
 	}
 
@@ -1136,7 +1163,8 @@
 			@media (max-width: 480px) {
 				html body #goodTube_playerWrapper.goodTube_mobile .video-js .vjs-source-button .vjs-menu,
 				html body #goodTube_playerWrapper.goodTube_miniplayer .video-js .vjs-source-button .vjs-menu {
-					left: 60px !important;
+					left: auto !important;
+					transform: none !important;
 				}
 			}
 
@@ -1178,7 +1206,7 @@
 			}
 
 			#goodTube_playerWrapper.goodTube_mobile .video-js .vjs-theater-button,
-			#goodTube_playerWrapper.goodTube_mobile .video-js .vjs-miniplayer-button {
+			#goodTube_playerWrapper.goodTube_mobile .video-js .vjs-autoplay-button {
 				display: none !important;
 			}
 
@@ -3786,8 +3814,8 @@
 
 
 			// Autoplay
-			// If autoplay cookie doesn't exist, turn autoplay on
-			if (!goodTube_helper_getCookie('goodTube_autoplay')) {
+			// If autoplay cookie doesn't exist, or we're on mobile, turn autoplay on (as it's forced for mobile now)
+			if (!goodTube_helper_getCookie('goodTube_autoplay') || goodTube_mobile) {
 				goodTube_helper_setCookie('goodTube_autoplay', 'on');
 			}
 
