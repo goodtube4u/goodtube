@@ -5699,6 +5699,7 @@
 	}
 
 	// Generate playlist links
+	let goodTube_playlistLinks = [];
 	function goodTube_generatePlaylistLinks() {
 		// Target the playlist container
 		let playlistContainer = document.getElementById('goodTube_playlistContainer');
@@ -5737,33 +5738,37 @@
 			playlistTitles = document.querySelectorAll('ytm-playlist-panel-renderer .compact-media-item-headline span');
 		}
 
-		// If we couldn't find the playlist items, retry (the DOM can take some time to load)
-		if (!playlistLinks || !playlistLinks.length) {
-			setTimeout(goodTube_generatePlaylistLinks, 100);
+		// If the playlist links have changed
+		if (playlistLinks.length > 0 && playlistLinks.length !== goodTube_playlistLinks.length) {
+			// For each playlist item
+			let i = 0;
+			playlistLinks.forEach((playlistItem) => {
+				// Create a link element
+				let playlistItemElement = document.createElement('a');
+
+				// Set the href
+				playlistItemElement.href = playlistItem.href;
+
+				// Set the title
+				playlistItemElement.innerHTML = playlistTitles[i].innerHTML.trim();
+
+				// If we're currently on this item, set the selected class
+				if (playlistItem.href.indexOf(goodTube_getParams['v']) !== -1) {
+					playlistItemElement.classList.add('goodTube_selected');
+				}
+
+				// Add the item to the playlist container
+				playlistContainer.appendChild(playlistItemElement);
+
+				i++;
+			});
+
+			// Save the playlist links
+			goodTube_playlistLinks = playlistLinks;
 		}
 
-		// For each playlist item
-		let i = 0;
-		playlistLinks.forEach((playlistItem) => {
-			// Create a link element
-			let playlistItemElement = document.createElement('a');
-
-			// Set the href
-			playlistItemElement.href = playlistItem.href;
-
-			// Set the title
-			playlistItemElement.innerHTML = playlistTitles[i].innerHTML.trim();
-
-			// If we're currently on this item, set the selected class
-			if (playlistItem.href.indexOf(goodTube_getParams['v']) !== -1) {
-				playlistItemElement.classList.add('goodTube_selected');
-			}
-
-			// Add the item to the playlist container
-			playlistContainer.appendChild(playlistItemElement);
-
-			i++;
-		});
+		// Keep retrying, as the DOM takes time to load and changes on the fly
+		setTimeout(goodTube_generatePlaylistLinks, 100);
 	}
 
 	// Play the previous video
