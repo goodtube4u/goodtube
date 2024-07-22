@@ -92,9 +92,18 @@
 			}
 
 			.goodTube_hiddenPlayer {
-				position: absolute !important;
-				transform: scale(0) !important;
-				pointer-events: none !important;
+				position: relative;
+			}
+
+			.goodTube_hiddenPlayer::before {
+				content: '';
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background: #ffffff;
+				z-index: 998;
 			}
 		`;
 
@@ -116,11 +125,6 @@
 			parent.replaceChild(wrapper, element);
 			wrapper.appendChild(element);
 		}
-
-		// Old method of applying the class directly to the element
-		// if (element && !element.classList.contains('goodTube_hiddenPlayer')) {
-		// 	element.classList.add('goodTube_hiddenPlayer');
-		// }
 	}
 
 	function goodTube_helper_showElement(element) {
@@ -294,28 +298,22 @@
 			goodTube_helper_hideElementPlayer(element);
 		});
 
-		// Hide the player containers
-		let playerContainers = document.querySelectorAll('.player-container');
-		playerContainers.forEach((element) => {
+		// Remove the full screen and theater Youtube player
+		let fullscreenPlayers = document.querySelectorAll('#full-bleed-container');
+		fullscreenPlayers.forEach((element) => {
 			goodTube_helper_hideElementPlayer(element);
 		});
 
 		// Hide the mobile controls
 		let mobileControls = document.querySelectorAll('#player-control-container');
 		mobileControls.forEach((element) => {
-			goodTube_helper_hideElementPlayer(element);
-		});
-
-		// Remove the full screen Youtube player
-		let fullscreenPlayers = document.querySelectorAll('#full-bleed-container');
-		fullscreenPlayers.forEach((element) => {
-			goodTube_helper_hideElementPlayer(element);
+			goodTube_helper_hideElement(element);
 		});
 
 		// Hide the Youtube miniplayer
 		let miniPlayers = document.querySelectorAll('ytd-miniplayer');
 		miniPlayers.forEach((element) => {
-			goodTube_helper_hideElementPlayer(element);
+			goodTube_helper_hideElement(element);
 		});
 
 		// Turn off autoplay
@@ -363,10 +361,10 @@
 
 
 		// Always skip the ads as soon as possible by clicking the skip button
-		// let skipButton = document.querySelector('.ytp-skip-ad-button');
-		// if (skipButton) {
-		// 	skipButton.click();
-		// }
+		let skipButton = document.querySelector('.ytp-skip-ad-button');
+		if (skipButton) {
+			skipButton.click();
+		}
 
 		// Also pause and mute all other HTML videos on the page
 		let youtubeVideos = document.querySelectorAll('video:not(#goodTube_player):not(#goodTube_player_html5_api)');
@@ -469,18 +467,8 @@
 
 	// Init
 	function goodTube_player_init() {
-		// If the target Youtube page element does not exist OR the assets are not loaded, call this function again next drawframe
-		let youtubePageElement = false;
-		// Desktop
-		if (!goodTube_mobile) {
-			youtubePageElement = document.getElementById('below');
-		}
-		// Mobile
-		else {
-			youtubePageElement = document.querySelector('body');
-		}
-
-		if (!youtubePageElement || goodTube_player_loadedAssets < goodTube_player_assets.length) {
+		// Wait until the assets and page are loaded
+		if (goodTube_player_loadedAssets < goodTube_player_assets.length) {
 			setTimeout(function() {
 				goodTube_player_init();
 			}, 0);
@@ -492,7 +480,7 @@
 		let style = document.createElement('style');
 		style.textContent = `
 			/* Default quality modal */
-			#goodTube_player_wrapper3 .goodTube_defaultQualityModal {
+			#goodTube_playerWrapper .goodTube_defaultQualityModal {
 				position: absolute;
 				z-index: 99999;
 				top: 0;
@@ -505,7 +493,7 @@
 				pointer-events: none;
 			}
 
-			#goodTube_player_wrapper3 .goodTube_defaultQualityModal .goodTube_defaultQualityModal_overlay {
+			#goodTube_playerWrapper .goodTube_defaultQualityModal .goodTube_defaultQualityModal_overlay {
 				position: absolute;
 				top: 0;
 				left: 0;
@@ -515,12 +503,12 @@
 				z-index: 1;
 			}
 
-			#goodTube_player_wrapper3 .goodTube_defaultQualityModal.goodTube_defaultQualityModal_visible {
+			#goodTube_playerWrapper .goodTube_defaultQualityModal.goodTube_defaultQualityModal_visible {
 				opacity: 1;
 				pointer-events: all;
 			}
 
-			#goodTube_player_wrapper3 .goodTube_defaultQualityModal .goodTube_defaultQualityModal_inner {
+			#goodTube_playerWrapper .goodTube_defaultQualityModal .goodTube_defaultQualityModal_inner {
 				position: absolute;
 				top: 50%;
 				left: 50%;
@@ -536,7 +524,7 @@
 				box-shadow: 0 0 16px rgba(15, 15, 15, .3);
 			}
 
-			#goodTube_player_wrapper3 .goodTube_defaultQualityModal .goodTube_defaultQualityModal_title {
+			#goodTube_playerWrapper .goodTube_defaultQualityModal .goodTube_defaultQualityModal_title {
 				color: rgba(15, 15, 15);
 				font-size: 16px;
 				font-weight: 700;
@@ -548,11 +536,11 @@
 				font-family: Roboto, Arial, Helvetica, sans-serif;
 			}
 
-			#goodTube_player_wrapper3 .goodTube_defaultQualityModal .goodTube_defaultQualityModal_options {
+			#goodTube_playerWrapper .goodTube_defaultQualityModal .goodTube_defaultQualityModal_options {
 				padding-bottom: 12px;
 			}
 
-			#goodTube_player_wrapper3 .goodTube_defaultQualityModal .goodTube_defaultQualityModal_options .goodTube_defaultQualityModal_option {
+			#goodTube_playerWrapper .goodTube_defaultQualityModal .goodTube_defaultQualityModal_options .goodTube_defaultQualityModal_option {
 				color: rgba(15, 15, 15);
 				font-size: 14px;
 				display: block;
@@ -567,30 +555,30 @@
 				font-family: Roboto, Arial, Helvetica, sans-serif;
 			}
 
-			#goodTube_player_wrapper3 .goodTube_defaultQualityModal .goodTube_defaultQualityModal_options .goodTube_defaultQualityModal_option.goodTube_defaultQualityModal_selected {
+			#goodTube_playerWrapper .goodTube_defaultQualityModal .goodTube_defaultQualityModal_options .goodTube_defaultQualityModal_option.goodTube_defaultQualityModal_selected {
 				background: rgba(15,15,15,.15);
 				font-weight: 700;
 			}
 
-			#goodTube_player_wrapper3 .goodTube_defaultQualityModal .goodTube_defaultQualityModal_options .goodTube_defaultQualityModal_option:hover {
+			#goodTube_playerWrapper .goodTube_defaultQualityModal .goodTube_defaultQualityModal_options .goodTube_defaultQualityModal_option:hover {
 				background: rgba(15,15,15,.1);
 			}
 
 
 			/* Automatic server styling */
-			#goodTube_player_wrapper1.goodTube_automaticServer #goodTube_player_wrapper2 .vjs-source-button ul li:first-child {
+			#goodTube_playerWrapper.goodTube_automaticServer .vjs-source-button ul li:first-child {
 				background: #ffffff !important;
 				color: #000000 !important;
 			}
 
-			#goodTube_player_wrapper1.goodTube_automaticServer .vjs-source-button ul li.vjs-selected {
+			#goodTube_playerWrapper.goodTube_automaticServer .vjs-source-button ul li.vjs-selected {
 				background-color: rgba(255, 255, 255, .2) !important;
 				color: #ffffff !important;
 			}
 
 
 			/* Hide the volume tooltip */
-			#goodTube_player_wrapper1 .vjs-volume-bar .vjs-mouse-display {
+			#goodTube_playerWrapper .vjs-volume-bar .vjs-mouse-display {
 				display: none !important;
 			}
 
@@ -599,17 +587,17 @@
 			}
 
 			/* Live streams */
-			#goodTube_player_wrapper1 .vjs-live .vjs-progress-control {
+			#goodTube_playerWrapper .vjs-live .vjs-progress-control {
 				display: block;
 			}
 
-			#goodTube_player_wrapper1 .vjs-live .vjs-duration-display,
-			#goodTube_player_wrapper1 .vjs-live .vjs-time-divider {
+			#goodTube_playerWrapper .vjs-live .vjs-duration-display,
+			#goodTube_playerWrapper .vjs-live .vjs-time-divider {
 				display: none !important;
 			}
 
 			/* Seek bar */
-			#goodTube_player_wrapper1 .vjs-progress-control {
+			#goodTube_playerWrapper .vjs-progress-control {
 				position: absolute;
 				bottom: 48px;
 				left: 0;
@@ -618,7 +606,7 @@
 				height: calc(24px + 3px);
 			}
 
-			#goodTube_player_wrapper1 .vjs-progress-control .vjs-slider {
+			#goodTube_playerWrapper .vjs-progress-control .vjs-slider {
 				margin: 0;
 				background: transparent;
 				position: absolute;
@@ -630,13 +618,13 @@
 				z-index: 1;
 			}
 
-			#goodTube_player_wrapper1 .vjs-progress-control:hover .vjs-slider {
+			#goodTube_playerWrapper .vjs-progress-control:hover .vjs-slider {
 				pointer-events: none;
 				height: 5px;
 				bottom: 2px;
 			}
 
-			#goodTube_player_wrapper1 .vjs-progress-control .vjs-slider .vjs-load-progress {
+			#goodTube_playerWrapper .vjs-progress-control .vjs-slider .vjs-load-progress {
 				height: 100%;
 				background: rgba(255, 255, 255, .2);
 				transition: none;
@@ -645,25 +633,25 @@
 				transition: margin .1s linear;
 			}
 
-			#goodTube_player_wrapper1 .vjs-progress-control:hover .vjs-slider .vjs-load-progress {
+			#goodTube_playerWrapper .vjs-progress-control:hover .vjs-slider .vjs-load-progress {
 				margin-bottom: -5px;
 			}
 
-			#goodTube_player_wrapper1 .vjs-progress-control .vjs-slider .vjs-load-progress .vjs-control-text {
+			#goodTube_playerWrapper .vjs-progress-control .vjs-slider .vjs-load-progress .vjs-control-text {
 				display: none;
 			}
 
-			#goodTube_player_wrapper1 .vjs-progress-control .vjs-slider .vjs-load-progress > div {
+			#goodTube_playerWrapper .vjs-progress-control .vjs-slider .vjs-load-progress > div {
 				background: transparent !important;
 			}
 
-			#goodTube_player_wrapper1 .vjs-progress-control .vjs-slider .vjs-play-progress {
+			#goodTube_playerWrapper .vjs-progress-control .vjs-slider .vjs-play-progress {
 				background: transparent;
 				position: static;
 				z-index: 1;
 			}
 
-			#goodTube_player_wrapper1 .vjs-progress-control .vjs-slider .vjs-play-progress::before {
+			#goodTube_playerWrapper .vjs-progress-control .vjs-slider .vjs-play-progress::before {
 				content: '';
 				background: #ff0000;
 				width: 100%;
@@ -672,7 +660,7 @@
 				display: block;
 			}
 
-			#goodTube_player_wrapper1 .vjs-progress-control .vjs-slider .vjs-play-progress::after {
+			#goodTube_playerWrapper .vjs-progress-control .vjs-slider .vjs-play-progress::after {
 				content: '';
 				display: block;
 				float: right;
@@ -687,14 +675,14 @@
 				position: relative;
 			}
 
-			#goodTube_player_wrapper1 .vjs-progress-control:hover .vjs-slider .vjs-play-progress::after {
+			#goodTube_playerWrapper .vjs-progress-control:hover .vjs-slider .vjs-play-progress::after {
 				opacity: 1;
 				top: -9px;
 			}
 
 
 			/* Without chapters */
-			#goodTube_player_wrapper1:not(.goodTube_hasChapters) .vjs-progress-control::before {
+			#goodTube_playerWrapper:not(.goodTube_hasChapters) .vjs-progress-control::before {
 				content: '';
 				position: absolute;
 				bottom: 3px;
@@ -705,14 +693,14 @@
 				transition: height .1s linear, bottom .1s linear;
 			}
 
-			#goodTube_player_wrapper1:not(.goodTube_hasChapters) .vjs-progress-control:hover::before {
+			#goodTube_playerWrapper:not(.goodTube_hasChapters) .vjs-progress-control:hover::before {
 				height: 5px;
 				bottom: 2px;
 			}
 
 
 			/* With chapters */
-			#goodTube_player_wrapper1.goodTube_hasChapters .vjs-progress-control .goodTube_chapters {
+			#goodTube_playerWrapper.goodTube_hasChapters .vjs-progress-control .goodTube_chapters {
 				position: absolute;
 				top: 0;
 				bottom: 0;
@@ -720,12 +708,12 @@
 				right: 8px;
 			}
 
-			#goodTube_player_wrapper1.goodTube_hasChapters .vjs-progress-control .goodTube_chapters .goodTube_chapter {
+			#goodTube_playerWrapper.goodTube_hasChapters .vjs-progress-control .goodTube_chapters .goodTube_chapter {
 				height: 100%;
 				position: absolute;
 			}
 
-			#goodTube_player_wrapper1.goodTube_hasChapters .vjs-progress-control .goodTube_chapters .goodTube_chapter::before {
+			#goodTube_playerWrapper.goodTube_hasChapters .vjs-progress-control .goodTube_chapters .goodTube_chapter::before {
 				content: '';
 				background: rgba(255, 255, 255, .2);
 				position: absolute;
@@ -736,26 +724,26 @@
 				transition: height .1s linear, bottom .1s linear, background .1s linear;
 			}
 
-			#goodTube_player_wrapper1.goodTube_hasChapters .vjs-progress-control .goodTube_chapters .goodTube_chapter.goodTube_redChapter::before {
+			#goodTube_playerWrapper.goodTube_hasChapters .vjs-progress-control .goodTube_chapters .goodTube_chapter.goodTube_redChapter::before {
 				background: #ff0000 !important;
 			}
 
-			#goodTube_player_wrapper1.goodTube_hasChapters .vjs-progress-control .goodTube_chapters .goodTube_chapter:last-child::before {
+			#goodTube_playerWrapper.goodTube_hasChapters .vjs-progress-control .goodTube_chapters .goodTube_chapter:last-child::before {
 				right: 0;
 			}
 
-			#goodTube_player_wrapper1.goodTube_hasChapters .vjs-progress-control:hover .goodTube_chapters .goodTube_chapter::before {
+			#goodTube_playerWrapper.goodTube_hasChapters .vjs-progress-control:hover .goodTube_chapters .goodTube_chapter::before {
 				height: 5px;
 				bottom: 2px;
 			}
 
-			#goodTube_player_wrapper1.goodTube_hasChapters:not(.goodTube_mobile) .vjs-progress-control .goodTube_chapters .goodTube_chapter:hover::before {
+			#goodTube_playerWrapper.goodTube_hasChapters:not(.goodTube_mobile) .vjs-progress-control .goodTube_chapters .goodTube_chapter:hover::before {
 				height: 9px;
 				bottom: 0;
 				background: rgba(255, 255, 255, .4);
 			}
 
-			#goodTube_player_wrapper1.goodTube_hasChapters .vjs-progress-control .goodTube_markers {
+			#goodTube_playerWrapper.goodTube_hasChapters .vjs-progress-control .goodTube_markers {
 				position: absolute;
 				top: 0;
 				left: 0;
@@ -764,7 +752,7 @@
 				pointer-events: none;
 			}
 
-			#goodTube_player_wrapper1.goodTube_hasChapters .vjs-progress-control .goodTube_marker {
+			#goodTube_playerWrapper.goodTube_hasChapters .vjs-progress-control .goodTube_marker {
 				width: 2px;
 				height: 100%;
 				position: absolute;
@@ -772,26 +760,26 @@
 				margin-left: -2px;
 			}
 
-			#goodTube_player_wrapper1.goodTube_hasChapters .vjs-progress-control .goodTube_marker.goodTube_showMarker {
+			#goodTube_playerWrapper.goodTube_hasChapters .vjs-progress-control .goodTube_marker.goodTube_showMarker {
 				background: rgba(0, 0, 0, .6);
 			}
 
-			#goodTube_player_wrapper1.goodTube_hasChapters .vjs-progress-control .goodTube_marker:last-child {
+			#goodTube_playerWrapper.goodTube_hasChapters .vjs-progress-control .goodTube_marker:last-child {
 				display: none;
 			}
 
-			#goodTube_player_wrapper1 .vjs-progress-control .vjs-mouse-display {
+			#goodTube_playerWrapper .vjs-progress-control .vjs-mouse-display {
 				background: transparent;
 			}
 
-			#goodTube_player_wrapper1.goodTube_hasChapters .vjs-progress-control .vjs-mouse-display .vjs-time-tooltip::before {
+			#goodTube_playerWrapper.goodTube_hasChapters .vjs-progress-control .vjs-mouse-display .vjs-time-tooltip::before {
 				content: attr(chapter-title);
 				display: block;
 				white-space: nowrap;
 				margin-bottom: 4px;
 			}
 
-			#goodTube_player_wrapper1 .vjs-progress-control .goodTube_hoverBar {
+			#goodTube_playerWrapper .vjs-progress-control .goodTube_hoverBar {
 				background: rgba(255, 255, 255, .4);
 				position: absolute;
 				bottom: 3px;
@@ -801,39 +789,39 @@
 				transition: height .1s linear, bottom .1s linear, opacity .1s linear;
 			}
 
-			#goodTube_player_wrapper1 .vjs-progress-control:hover .goodTube_hoverBar {
+			#goodTube_playerWrapper .vjs-progress-control:hover .goodTube_hoverBar {
 				height: 5px;
 				bottom: 2px;
 				opacity: 1;
 			}
 
-			#goodTube_player_wrapper1.goodTube_mobile .vjs-time-control .vjs-duration-display {
+			#goodTube_playerWrapper.goodTube_mobile .vjs-time-control .vjs-duration-display {
 				white-space: nowrap;
 			}
 
-			#goodTube_player_wrapper1.goodTube_mobile .vjs-time-control .vjs-duration-display::after {
+			#goodTube_playerWrapper.goodTube_mobile .vjs-time-control .vjs-duration-display::after {
 				content: attr(chapter-title);
 				display: inline-block;
 				color: #ffffff;
 				margin-left: 3px;
 			}
 
-			#goodTube_player_wrapper1.goodTube_mobile .vjs-progress-control .vjs-slider,
-			#goodTube_player_wrapper1.goodTube_mobile:not(.goodTube_hasChapters) .vjs-progress-control::before,
-			#goodTube_player_wrapper1.goodTube_mobile.goodTube_hasChapters .vjs-progress-control .goodTube_chapters,
-			#goodTube_player_wrapper1.goodTube_mobile .vjs-progress-control .goodTube_hoverBar {
+			#goodTube_playerWrapper.goodTube_mobile .vjs-progress-control .vjs-slider,
+			#goodTube_playerWrapper.goodTube_mobile:not(.goodTube_hasChapters) .vjs-progress-control::before,
+			#goodTube_playerWrapper.goodTube_mobile.goodTube_hasChapters .vjs-progress-control .goodTube_chapters,
+			#goodTube_playerWrapper.goodTube_mobile .vjs-progress-control .goodTube_hoverBar {
 				left: 16px;
 				right: 16px;
 			}
 
 
 			/* Audio only view */
-			#goodTube_player_wrapper3.goodTube_audio {
+			#goodTube_playerWrapper.goodTube_audio {
 				background: #000000;
 				position: relative;
 			}
 
-			#goodTube_player_wrapper3.goodTube_audio .video-js::after {
+			#goodTube_playerWrapper.goodTube_audio .video-js::after {
 				content: '\\f107';
 				position: absolute;
 				top: 50%;
@@ -848,12 +836,12 @@
 			}
 
 			@media (max-width: 768px) {
-				#goodTube_player_wrapper3.goodTube_audio .video-js::after {
+				#goodTube_playerWrapper.goodTube_audio .video-js::after {
 					font-size: 100px;
 				}
 			}
 
-			#goodTube_player_wrapper1.goodTube_mobile #goodTube_player_wrapper3.goodTube_audio .video-js::after {
+			#goodTube_playerWrapper.goodTube_mobile #goodTube_playerWrapper.goodTube_audio .video-js::after {
 				font-size: 100px;
 			}
 
@@ -876,90 +864,37 @@
 				width: 25%;
 			}
 
-			/* Theater mode */
-			ytd-watch-flexy[theater] #goodTube_player_wrapper1:not(.goodTube_mobile) {
-				width: 100%;
+			/* Desktop */
+			#goodTube_playerWrapper {
+				border-radius: 12px;
+				background: #ffffff;
 				position: absolute;
-				top: 56px;
+				top: 0;
 				left: 0;
-				right: 0;
+				z-index: 999;
+				overflow: hidden;
+			}
+
+			/* Mobile */
+			#goodTube_playerWrapper.goodTube_mobile {
+				position: fixed;
+				background: #000000;
+				border-radius: 0;
+				z-index: 2;
+			}
+
+			/* Theater mode */
+			#goodTube_playerWrapper.goodTube_theater {
 				background: #000000;
 				border-radius: 0;
 			}
 
-			ytd-watch-flexy:not(ytd-watch-flexy[theater]) #below,
-			ytd-watch-flexy:not(ytd-watch-flexy[theater]) #secondary {
-				margin-top: 0 !important;
-			}
-
-			ytd-watch-flexy[theater] #below {
-				padding-top: 8px !important;
-			}
-
-			ytd-watch-flexy[theater] #secondary {
-				padding-top: 16px !important;
-			}
-
-			ytd-watch-flexy[theater] #goodTube_player_wrapper1:not(.goodTube_mobile) {
-				padding-top: min(var(--ytd-watch-flexy-max-player-height), (calc(var(--ytd-watch-flexy-height-ratio) / var(--ytd-watch-flexy-width-ratio) * 100%))) !important;
-			}
-
-			ytd-watch-flexy[theater] #goodTube_player_wrapper1:not(.goodTube_mobile) #goodTube_player_wrapper3,
-			ytd-watch-flexy[theater] #goodTube_player_wrapper1:not(.goodTube_mobile) #goodTube_player_wrapper3 #goodTube_player {
-				border-radius: 0;
-			}
-
-			/* Desktop */
-			#goodTube_player_wrapper1:not(.goodTube_mobile) {
-				position: relative;
-				height: 0;
-				padding-top: min(var(--ytd-watch-flexy-max-player-height), (calc(var(--ytd-watch-flexy-height-ratio) / var(--ytd-watch-flexy-width-ratio) * 100%))) !important;
-				box-sizing: border-box;
-				min-height: var(--ytd-watch-flexy-min-player-height);
-			}
-
-			#goodTube_player_wrapper1:not(.goodTube_mobile) #goodTube_player_wrapper2 {
-				position: absolute;
-				top: 0;
-				left: 0;
-				right: 0;
-				bottom: 0;
-				margin: 0 auto;
-				min-height: 240px;
-			}
-
-			#goodTube_player_wrapper1:not(.goodTube_mobile) #goodTube_player_wrapper3 {
-				box-sizing: border-box;
-				position: absolute;
-				top: 0;
-				left: 0;
-				right: 0;
-				bottom: 0;
-				min-height: 240px;
-			}
-
-			#goodTube_player_wrapper1:not(.goodTube_mobile):not(.goodTube_miniplayer) #goodTube_player {
-				border-radius: 12px;
-			}
-
-			#goodTube_player_wrapper1.goodTube_miniplayer.goodTube_mobile {
-				position: absolute !important;
-			}
-
-			#goodTube_player_wrapper3 {
-				overflow: hidden;
-			}
-
-			#goodTube_player_wrapper1:not(.goodTube_mobile) #goodTube_player_wrapper3 {
-				border-radius: 12px;
-			}
-
 			/* Miniplayer */
-			#goodTube_player_wrapper1.goodTube_miniplayer {
+			#goodTube_playerWrapper.goodTube_miniplayer {
 				z-index: 999 !important;
 			}
 
-			#goodTube_player_wrapper1.goodTube_miniplayer #goodTube_player_wrapper3 .video-js {
+			#goodTube_playerWrapper.goodTube_miniplayer .video-js {
 				position: fixed;
 				bottom: 12px;
 				right: 12px;
@@ -972,11 +907,15 @@
 				left: auto;
 				aspect-ratio: 16 / 9;
 				top: auto;
-				border-radius: 12px;
 				overflow: hidden;
+				background: #000000;
+				border-radius: 12px;
+			}
+			#goodTube_playerWrapper.goodTube_miniplayer .video-js::before {
+				content: none !important;
 			}
 
-			#goodTube_player_wrapper1.goodTube_miniplayer.goodTube_mobile  #goodTube_player_wrapper3 .video-js {
+			#goodTube_playerWrapper.goodTube_miniplayer.goodTube_mobile .video-js {
 				bottom: 60px;
 			}
 
@@ -990,15 +929,15 @@
 				left: -9999px;
 			}
 
-			#goodTube_player_wrapper1.goodTube_miniplayer #goodTube_player_wrapper3 .video-js .vjs-source-button,
-			#goodTube_player_wrapper1.goodTube_miniplayer #goodTube_player_wrapper3 .video-js .vjs-autoplay-button,
-			#goodTube_player_wrapper1.goodTube_miniplayer #goodTube_player_wrapper3 .video-js .vjs-miniplayer-button,
-			#goodTube_player_wrapper1.goodTube_miniplayer #goodTube_player_wrapper3 .video-js .vjs-theater-button {
+			#goodTube_playerWrapper.goodTube_miniplayer .video-js .vjs-source-button,
+			#goodTube_playerWrapper.goodTube_miniplayer .video-js .vjs-autoplay-button,
+			#goodTube_playerWrapper.goodTube_miniplayer .video-js .vjs-miniplayer-button,
+			#goodTube_playerWrapper.goodTube_miniplayer .video-js .vjs-theater-button {
 				display: none !important;
 			}
 
-			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js #goodTube_miniplayer_closeButton,
-			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js #goodTube_miniplayer_expandButton {
+			html body #goodTube_playerWrapper.goodTube_miniplayer .video-js #goodTube_miniplayer_closeButton,
+			html body #goodTube_playerWrapper.goodTube_miniplayer .video-js #goodTube_miniplayer_expandButton {
 				font-family: VideoJS;
 				font-weight: 400;
 				font-style: normal;
@@ -1016,16 +955,16 @@
 			}
 
 
-			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js #goodTube_miniplayer_closeButton::after {
+			html body #goodTube_playerWrapper.goodTube_miniplayer .video-js #goodTube_miniplayer_closeButton::after {
 				content: 'Close';
 				right: 12px;
 			}
-			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js #goodTube_miniplayer_expandButton::after {
+			html body #goodTube_playerWrapper.goodTube_miniplayer .video-js #goodTube_miniplayer_expandButton::after {
 				content: 'Expand';
 				left: 12px;
 			}
-			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js #goodTube_miniplayer_closeButton::after,
-			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js #goodTube_miniplayer_expandButton::after {
+			html body #goodTube_playerWrapper.goodTube_miniplayer .video-js #goodTube_miniplayer_closeButton::after,
+			html body #goodTube_playerWrapper.goodTube_miniplayer .video-js #goodTube_miniplayer_expandButton::after {
 				position: absolute;
 				bottom: -24px;
 				background: rgba(0, 0, 0, .75);
@@ -1042,16 +981,16 @@
 				font-family: 'MS Shell Dlg 2', sans-serif;
 				line-height: initial;
 			}
-			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js #goodTube_miniplayer_closeButton:hover::after,
-			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js #goodTube_miniplayer_expandButton:hover::after {
+			html body #goodTube_playerWrapper.goodTube_miniplayer .video-js #goodTube_miniplayer_closeButton:hover::after,
+			html body #goodTube_playerWrapper.goodTube_miniplayer .video-js #goodTube_miniplayer_expandButton:hover::after {
 				opacity: 1;
 			}
 
-			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js #goodTube_miniplayer_closeButton {
+			html body #goodTube_playerWrapper.goodTube_miniplayer .video-js #goodTube_miniplayer_closeButton {
 				right: 0;
 				font-size: 24px;
 			}
-			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js #goodTube_miniplayer_closeButton::before {
+			html body #goodTube_playerWrapper.goodTube_miniplayer .video-js #goodTube_miniplayer_closeButton::before {
 				content: "\\f119";
 				position: absolute;
 				top: 50%;
@@ -1059,11 +998,11 @@
 				transform: translate(-50%, -50%);
 			}
 
-			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js #goodTube_miniplayer_expandButton {
+			html body #goodTube_playerWrapper.goodTube_miniplayer .video-js #goodTube_miniplayer_expandButton {
 				left: 0;
 				font-size: 18px;
 			}
-			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js #goodTube_miniplayer_expandButton::before {
+			html body #goodTube_playerWrapper.goodTube_miniplayer .video-js #goodTube_miniplayer_expandButton::before {
 				content: "\\f128";
 				position: absolute;
 				top: 50%;
@@ -1072,35 +1011,19 @@
 			}
 
 
-			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js.vjs-paused:not(.vjs-user-inactive) #goodTube_miniplayer_expandButton,
-			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js.vjs-user-active #goodTube_miniplayer_expandButton,
-			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js.vjs-paused:not(.vjs-user-inactive) #goodTube_miniplayer_closeButton,
-			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js.vjs-user-active #goodTube_miniplayer_closeButton {
+			html body #goodTube_playerWrapper.goodTube_miniplayer .video-js.vjs-paused:not(.vjs-user-inactive) #goodTube_miniplayer_expandButton,
+			html body #goodTube_playerWrapper.goodTube_miniplayer .video-js.vjs-user-active #goodTube_miniplayer_expandButton,
+			html body #goodTube_playerWrapper.goodTube_miniplayer .video-js.vjs-paused:not(.vjs-user-inactive) #goodTube_miniplayer_closeButton,
+			html body #goodTube_playerWrapper.goodTube_miniplayer .video-js.vjs-user-active #goodTube_miniplayer_closeButton {
 				opacity: 1;
 			}
 
 			/* Mobile */
-			html body #goodTube_player_wrapper1.goodTube_mobile {
-				position: fixed;
-				top: 48px;
-				left: 0;
-				right: 0;
-				width: 100%;
-				z-index: 1;
+			html body #goodTube_playerWrapper.goodTube_mobile {
 			}
 
-			html body #goodTube_player_wrapper1.goodTube_mobile #goodTube_player_wrapper2 {
-				width: 100%;
-				height: 100%;
-			}
-
-			html body #goodTube_player_wrapper1.goodTube_mobile #goodTube_player_wrapper3 {
-				width: 100%;
-				height: 100%;
-			}
-
-			html body #goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-control.vjs-play-control,
-			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js .vjs-control.vjs-play-control {
+			html body #goodTube_playerWrapper.goodTube_mobile .video-js .vjs-control.vjs-play-control,
+			html body #goodTube_playerWrapper.goodTube_miniplayer .video-js .vjs-control.vjs-play-control {
 				position: absolute;
 				top: calc(50% - 48px);
 				left: calc(50% - 32px);
@@ -1109,14 +1032,15 @@
 				background: rgba(0, 0, 0, .3);
 				border-radius: 50%;
 				max-width: 999px !important;
+				box-sizing: border-box;
 			}
-			html body #goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-play-control .vjs-icon-placeholder::before,
-			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js .vjs-play-control .vjs-icon-placeholder::before {
+			html body #goodTube_playerWrapper.goodTube_mobile .video-js .vjs-play-control .vjs-icon-placeholder::before,
+			html body #goodTube_playerWrapper.goodTube_miniplayer .video-js .vjs-play-control .vjs-icon-placeholder::before {
 				font-size: 44px !important;
 			}
 
-			html body #goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-prev-button,
-			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js .vjs-prev-button {
+			html body #goodTube_playerWrapper.goodTube_mobile .video-js .vjs-prev-button,
+			html body #goodTube_playerWrapper.goodTube_miniplayer .video-js .vjs-prev-button {
 				position: absolute;
 				top: calc(50% - 40px);
 				left: calc(50% - 104px);
@@ -1126,13 +1050,13 @@
 				border-radius: 50%;
 				max-width: 999px !important;
 			}
-			html body #goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-prev-button .vjs-icon-placeholder::before,
-			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js .vjs-prev-button .vjs-icon-placeholder::before {
+			html body #goodTube_playerWrapper.goodTube_mobile .video-js .vjs-prev-button .vjs-icon-placeholder::before,
+			html body #goodTube_playerWrapper.goodTube_miniplayer .video-js .vjs-prev-button .vjs-icon-placeholder::before {
 				font-size: 32px !important;
 			}
 
-			html body #goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-next-button,
-			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js .vjs-next-button {
+			html body #goodTube_playerWrapper.goodTube_mobile .video-js .vjs-next-button,
+			html body #goodTube_playerWrapper.goodTube_miniplayer .video-js .vjs-next-button {
 				position: absolute;
 				top: calc(50% - 40px);
 				left: calc(50% + 56px);
@@ -1142,13 +1066,13 @@
 				border-radius: 50%;
 				max-width: 999px !important;
 			}
-			html body #goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-next-button .vjs-icon-placeholder::before,
-			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js .vjs-next-button .vjs-icon-placeholder::before {
+			html body #goodTube_playerWrapper.goodTube_mobile .video-js .vjs-next-button .vjs-icon-placeholder::before,
+			html body #goodTube_playerWrapper.goodTube_miniplayer .video-js .vjs-next-button .vjs-icon-placeholder::before {
 				font-size: 32px !important;
 			}
 
-			html body #goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-control-bar,
-			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js .vjs-control-bar {
+			html body #goodTube_playerWrapper.goodTube_mobile .video-js .vjs-control-bar,
+			html body #goodTube_playerWrapper.goodTube_miniplayer .video-js .vjs-control-bar {
 				z-index: 1;
 				position: static;
 				margin-top: auto;
@@ -1164,7 +1088,7 @@
 					min-width: 636px !important;
 				}
 
-				ytd-watch-flexy:not([theater]) #goodTube_player_wrapper1:not(.goodTube_mobile) .video-js .vjs-control-bar .vjs-button {
+				ytd-watch-flexy:not([theater]) #goodTube_playerWrapper:not(.goodTube_mobile) .video-js .vjs-control-bar .vjs-button {
 					zoom: .88;
 				}
 			}
@@ -1174,57 +1098,57 @@
 					min-width: 0 !important;
 				}
 
-				ytd-watch-flexy:not([theater]) #goodTube_player_wrapper1:not(.goodTube_mobile) .video-js .vjs-control-bar .vjs-button {
+				ytd-watch-flexy:not([theater]) #goodTube_playerWrapper:not(.goodTube_mobile) .video-js .vjs-control-bar .vjs-button {
 					zoom: 1;
 				}
 			}
 
 			@media (max-width: 786px) {
-				ytd-watch-flexy:not([theater]) #goodTube_player_wrapper1:not(.goodTube_mobile) .video-js .vjs-control-bar .vjs-button {
+				ytd-watch-flexy:not([theater]) #goodTube_playerWrapper:not(.goodTube_mobile) .video-js .vjs-control-bar .vjs-button {
 					zoom: .9;
 				}
 			}
 
 			@media (max-width: 715px) {
-				ytd-watch-flexy:not([theater]) #goodTube_player_wrapper1:not(.goodTube_mobile) .video-js .vjs-control-bar .vjs-button {
+				ytd-watch-flexy:not([theater]) #goodTube_playerWrapper:not(.goodTube_mobile) .video-js .vjs-control-bar .vjs-button {
 					zoom: .85;
 				}
 			}
 
 			@media (max-width: 680px) {
-				ytd-watch-flexy:not([theater]) #goodTube_player_wrapper1:not(.goodTube_mobile) .video-js .vjs-control-bar .vjs-button {
+				ytd-watch-flexy:not([theater]) #goodTube_playerWrapper:not(.goodTube_mobile) .video-js .vjs-control-bar .vjs-button {
 					zoom: .8;
 				}
 			}
 
-			html body #goodTube_player_wrapper1.goodTube_mobile .video-js,
-			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js {
+			html body #goodTube_playerWrapper.goodTube_mobile .video-js,
+			html body #goodTube_playerWrapper.goodTube_miniplayer .video-js {
 				display: flex;
 			}
 
-			html body #goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-source-button,
-			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js .vjs-source-button {
+			html body #goodTube_playerWrapper.goodTube_mobile .video-js .vjs-source-button,
+			html body #goodTube_playerWrapper.goodTube_miniplayer .video-js .vjs-source-button {
 				margin-left: 0 !important;
 			}
 
 			@media (max-width: 480px) {
-				html body #goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-source-button .vjs-menu,
-				html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js .vjs-source-button .vjs-menu {
+				html body #goodTube_playerWrapper.goodTube_mobile .video-js .vjs-source-button .vjs-menu,
+				html body #goodTube_playerWrapper.goodTube_miniplayer .video-js .vjs-source-button .vjs-menu {
 					left: 60px !important;
 				}
 			}
 
-			html body #goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-loading-spinner,
-			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js .vjs-loading-spinner {
+			html body #goodTube_playerWrapper.goodTube_mobile .video-js .vjs-loading-spinner,
+			html body #goodTube_playerWrapper.goodTube_miniplayer .video-js .vjs-loading-spinner {
 				top: calc(50% - 16px);
 			}
 
-			html body #goodTube_player_wrapper1 .video-js.vjs-loading {
+			html body #goodTube_playerWrapper .video-js.vjs-loading {
 				background: #000000;
 			}
 
-			html body #goodTube_player_wrapper1.goodTube_mobile .video-js::before,
-			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js::before {
+			html body #goodTube_playerWrapper.goodTube_mobile .video-js::before,
+			html body #goodTube_playerWrapper.goodTube_miniplayer .video-js::before {
 				content: '';
 				background: transparent;
 				transition: background .2s ease-in-out;
@@ -1237,22 +1161,22 @@
 				z-index: 1;
 			}
 
-			html body #goodTube_player_wrapper1.goodTube_mobile .video-js.vjs-paused::before,
-			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js.vjs-paused::before,
-			html body #goodTube_player_wrapper1.goodTube_mobile .video-js.vjs-user-active::before,
-			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js.vjs-user-active::before {
+			html body #goodTube_playerWrapper.goodTube_mobile .video-js.vjs-paused::before,
+			html body #goodTube_playerWrapper.goodTube_miniplayer .video-js.vjs-paused::before,
+			html body #goodTube_playerWrapper.goodTube_mobile .video-js.vjs-user-active::before,
+			html body #goodTube_playerWrapper.goodTube_miniplayer .video-js.vjs-user-active::before {
 				background: rgba(0,0,0,.6);
 			}
 
-			html body #goodTube_player_wrapper1.goodTube_mobile .video-js.vjs-user-inactive:not(.vjs-paused) .vjs-control-bar,
-			html body #goodTube_player_wrapper1.goodTube_miniplayer .video-js.vjs-user-inactive:not(.vjs-paused) .vjs-control-bar {
+			html body #goodTube_playerWrapper.goodTube_mobile .video-js.vjs-user-inactive:not(.vjs-paused) .vjs-control-bar,
+			html body #goodTube_playerWrapper.goodTube_miniplayer .video-js.vjs-user-inactive:not(.vjs-paused) .vjs-control-bar {
 				visibility: visible;
 				opacity: 0;
 				pointer-events: none;
 			}
 
-			#goodTube_player_wrapper1.goodTube_mobile #goodTube_player_wrapper3 .video-js .vjs-theater-button,
-			#goodTube_player_wrapper1.goodTube_mobile #goodTube_player_wrapper3 .video-js .vjs-miniplayer-button {
+			#goodTube_playerWrapper.goodTube_mobile .video-js .vjs-theater-button,
+			#goodTube_playerWrapper.goodTube_mobile .video-js .vjs-miniplayer-button {
 				display: none !important;
 			}
 
@@ -1269,7 +1193,7 @@
 				z-index: 1;
 			}
 
-			#goodTube_player_wrapper1.goodTube_mobile #goodTube_player,
+			#goodTube_playerWrapper.goodTube_mobile #goodTube_player,
 			#goodTube_player.vjs-loading {
 				background: #000000;
 			}
@@ -1301,72 +1225,19 @@
 		document.head.appendChild(style);
 
 		// Setup player layout
-		let player_wrapper1 = document.createElement('div');
-		player_wrapper1.id = 'goodTube_player_wrapper1';
+		let playerWrapper = document.createElement('div');
+		playerWrapper.id = 'goodTube_playerWrapper';
 
-		let player_wrapper2 = document.createElement('div');
-		player_wrapper2.id = 'goodTube_player_wrapper2';
+		// Add a mobile class
+		if (goodTube_mobile) {
+			playerWrapper.classList.add('goodTube_mobile');
+		}
 
-		let player_wrapper3 = document.createElement('div');
-		player_wrapper3.id = 'goodTube_player_wrapper3';
+		// Setup player dynamic positioning and sizing
+		goodTube_player_positionAndSize(playerWrapper);
 
 		// Add player to the page
-
-		// Desktop
-		if (!goodTube_mobile) {
-			youtubePageElement.before(player_wrapper1);
-
-			// Offset top of stuff when in theater mode
-			setInterval(function() {
-				let offsetElements = document.querySelectorAll('ytd-watch-flexy[theater] #below, ytd-watch-flexy[theater] #secondary');
-				offsetElements.forEach((element) => {
-					element.style.marginTop = player_wrapper1.offsetHeight+'px';
-				});
-			}, 1);
-		}
-		// Mobile
-		else {
-			player_wrapper1.classList.add('goodTube_mobile');
-			youtubePageElement.appendChild(player_wrapper1);
-
-			setInterval(function() {
-				window.requestAnimationFrame(function() {
-					if (typeof goodTube_getParams['v'] !== 'undefined') {
-						// Match width and height of mobile player
-						let youtubeSize_element = document.querySelector('.player-size.player-placeholder');
-						if (youtubeSize_element) {
-							if (youtubeSize_element.offsetHeight > 0) {
-								player_wrapper1.style.height = youtubeSize_element.offsetHeight+'px';
-								player_wrapper1.style.width = youtubeSize_element.offsetWidth+'px';
-							}
-							else {
-								youtubeSize_element = document.querySelector('#player');
-								if (youtubeSize_element.offsetHeight > 0) {
-									player_wrapper1.style.height = youtubeSize_element.offsetHeight+'px';
-									player_wrapper1.style.width = youtubeSize_element.offsetWidth+'px';
-								}
-							}
-						}
-
-						// Match sticky mode of mobile player
-						let youtubeSticky_element = document.querySelector('.player-container.sticky-player');
-						if (youtubeSticky_element) {
-							player_wrapper1.style.position = 'fixed';
-						}
-						else {
-							player_wrapper1.style.position = 'absolute';
-						}
-					}
-					else {
-						player_wrapper1.style.height = '0';
-						player_wrapper1.style.width = '0';
-					}
-				});
-			}, 1);
-		}
-
-		player_wrapper1.appendChild(player_wrapper2);
-		player_wrapper2.appendChild(player_wrapper3);
+		document.body.appendChild(playerWrapper);
 
 		// Add video
 		let player = document.createElement('video');
@@ -1374,7 +1245,7 @@
 		player.classList.add('video-js');
 		player.controls = true;
 		player.setAttribute('tab-index', '1');
-		player_wrapper3.appendChild(player);
+		playerWrapper.appendChild(player);
 
 		// Expose the player globally
 		goodTube_player = player;
@@ -1625,6 +1496,72 @@
 		}
 	}
 
+	// Position and size the player
+	function goodTube_player_positionAndSize(playerWrapper) {
+		// If we're viewing a video
+		if (typeof goodTube_getParams['v'] !== 'undefined') {
+
+
+			// Desktop
+			if (!goodTube_mobile) {
+				let positionElement = false;
+
+				// Theater mode
+				if (document.querySelector('ytd-watch-flexy[theater]')) {
+					positionElement = document.getElementById('full-bleed-container');
+
+					if (!playerWrapper.classList.contains('goodTube_theater')) {
+						playerWrapper.classList.add('goodTube_theater');
+					}
+				}
+				// Regular mode
+				else {
+					positionElement = document.getElementById('player');
+
+					if (playerWrapper.classList.contains('goodTube_theater')) {
+						playerWrapper.classList.remove('goodTube_theater');
+					}
+				}
+
+				// Position the player
+				if (positionElement && positionElement.offsetHeight > 0) {
+					// Our wrapper has "position: absolute" so take into account the window scroll
+					let rect = positionElement.getBoundingClientRect();
+					playerWrapper.style.top = (rect.top + window.scrollY)+'px';
+					playerWrapper.style.left = (rect.left + window.scrollX)+'px';
+
+					// Match the size of the position element
+					playerWrapper.style.width = positionElement.offsetWidth+'px';
+					playerWrapper.style.height = positionElement.offsetHeight+'px';
+				}
+			}
+
+			// Mobile
+			else {
+				let positionElement = document.getElementById('player');
+
+				// Position the player
+				if (positionElement && positionElement.offsetHeight > 0) {
+					// Our wrapper has "position: absolute" so don't take into account the window scroll
+					let rect = positionElement.getBoundingClientRect();
+					playerWrapper.style.top = rect.top+'px';
+					playerWrapper.style.left = rect.left+'px';
+
+					// Match the size of the position element
+					playerWrapper.style.width = positionElement.offsetWidth+'px';
+					playerWrapper.style.height = positionElement.offsetHeight+'px';
+				}
+			}
+
+
+		}
+
+		// Call this function again on next draw frame
+		window.requestAnimationFrame(function() {
+			goodTube_player_positionAndSize(playerWrapper);
+		});
+	}
+
 	// Load assets
 	function goodTube_player_loadAssets() {
 		// Debug message
@@ -1724,7 +1661,7 @@
 			goodTube_helper_setCookie('goodTube_api_withauto', url);
 
 			// Add class from wrapper for styling automatic option
-			let wrapper = document.querySelector('#goodTube_player_wrapper1');
+			let wrapper = document.querySelector('#goodTube_playerWrapper');
 			if (!wrapper.classList.contains('goodTube_automaticServer')) {
 				wrapper.classList.add('goodTube_automaticServer');
 			}
@@ -1749,7 +1686,7 @@
 			});
 
 			// Remove class from wrapper for styling automatic option
-			let wrapper = document.querySelector('#goodTube_player_wrapper1');
+			let wrapper = document.querySelector('#goodTube_playerWrapper');
 			if (wrapper.classList.contains('goodTube_automaticServer')) {
 				wrapper.classList.remove('goodTube_automaticServer');
 			}
@@ -2204,7 +2141,7 @@
 		`;
 
 		// Add it to the DOM
-		document.querySelector('#goodTube_player_wrapper3 .video-js').appendChild(defaultQualityModal);
+		document.querySelector('#goodTube_playerWrapper .video-js').appendChild(defaultQualityModal);
 
 		// Add click events to buttons
 		let defaultQualityOptions = document.querySelectorAll('.goodTube_defaultQualityModal .goodTube_defaultQualityModal_option');
@@ -2564,7 +2501,7 @@
 			// Add a hover action to show the title in the tooltip (desktop only)
 			if (!goodTube_mobile) {
 				chapterDiv.addEventListener('mouseover', function() {
-					document.querySelector('#goodTube_player_wrapper1 .vjs-progress-control .vjs-mouse-display .vjs-time-tooltip')?.setAttribute('chapter-title', chapter['title']);
+					document.querySelector('#goodTube_playerWrapper .vjs-progress-control .vjs-mouse-display .vjs-time-tooltip')?.setAttribute('chapter-title', chapter['title']);
 				});
 			}
 
@@ -2641,20 +2578,20 @@
 				});
 
 				if (currentChapterTitle) {
-					document.querySelector('#goodTube_player_wrapper1 .vjs-time-control .vjs-duration-display')?.setAttribute('chapter-title', '· '+currentChapterTitle);
+					document.querySelector('#goodTube_playerWrapper .vjs-time-control .vjs-duration-display')?.setAttribute('chapter-title', '· '+currentChapterTitle);
 				}
 			}, 10);
 		}
 
 		// Add the chapters container to the player
-		document.querySelector('#goodTube_player_wrapper1 .vjs-progress-control')?.appendChild(chaptersContainer);
+		document.querySelector('#goodTube_playerWrapper .vjs-progress-control')?.appendChild(chaptersContainer);
 
 		// Add the markers container to the player
-		document.querySelector('#goodTube_player_wrapper1 .vjs-progress-control .vjs-play-progress')?.appendChild(markersContainer);
+		document.querySelector('#goodTube_playerWrapper .vjs-progress-control .vjs-play-progress')?.appendChild(markersContainer);
 
 		// Add chapters class to the player
-		if (!document.querySelector('#goodTube_player_wrapper1').classList.contains('goodTube_hasChapters')) {
-			document.querySelector('#goodTube_player_wrapper1').classList.add('goodTube_hasChapters');
+		if (!document.querySelector('#goodTube_playerWrapper').classList.contains('goodTube_hasChapters')) {
+			document.querySelector('#goodTube_playerWrapper').classList.add('goodTube_hasChapters');
 		}
 
 		// Update the chapters display as we play the video
@@ -2721,11 +2658,11 @@
 		}
 
 		// Remove interface elements
-		document.querySelector('#goodTube_player_wrapper1 .vjs-time-control .vjs-duration-display')?.setAttribute('chapter-title', '');
+		document.querySelector('#goodTube_playerWrapper .vjs-time-control .vjs-duration-display')?.setAttribute('chapter-title', '');
 		document.querySelector('.goodTube_chapters')?.remove();
 		document.querySelector('.goodTube_markers')?.remove();
-		if (document.querySelector('#goodTube_player_wrapper1').classList.contains('goodTube_hasChapters')) {
-			document.querySelector('#goodTube_player_wrapper1').classList.remove('goodTube_hasChapters');
+		if (document.querySelector('#goodTube_playerWrapper').classList.contains('goodTube_hasChapters')) {
+			document.querySelector('#goodTube_playerWrapper').classList.remove('goodTube_hasChapters');
 		}
 	}
 
@@ -3123,12 +3060,12 @@
 
 	// Hide the player
 	function goodTube_player_hide(player) {
-		goodTube_helper_hideElement(player.closest('#goodTube_player_wrapper1'));
+		goodTube_helper_hideElement(player.closest('#goodTube_playerWrapper'));
 	}
 
 	// Show the player
 	function goodTube_player_show(player) {
-		goodTube_helper_showElement(player.closest('#goodTube_player_wrapper1'));
+		goodTube_helper_showElement(player.closest('#goodTube_playerWrapper'));
 	}
 
 	// Add loading state
@@ -3254,7 +3191,7 @@
 			return;
 		}
 
-		let goodTube_wrapper = document.querySelector('#goodTube_player_wrapper1');
+		let goodTube_wrapper = document.querySelector('#goodTube_playerWrapper');
 
 		if (goodTube_player_miniplayer) {
 			goodTube_wrapper.classList.remove('goodTube_miniplayer');
@@ -3986,7 +3923,7 @@
 			// If we're not seeking
 			if (!goodTube_seeking) {
 				goodTube_bufferCountTimeout = setTimeout(function() {
-					// And we've had to wait for it to buffer for 3 seconds 3 times, select the next server
+					// And we've had to wait for it to buffer for at least 1 second 3 times, select the next server
 					goodTube_bufferCount++;
 
 					if (goodTube_bufferCount >= 3) {
@@ -4014,7 +3951,7 @@
 
 						return;
 					}
-				}, 3000);
+				}, 1000);
 			}
 
 			// Only do this for HD servers (Invidious and Piped)
@@ -4125,7 +4062,7 @@
 				}
 
 				// Target the outer wrapper
-				let goodTube_target = document.querySelector('#goodTube_player_wrapper3');
+				let goodTube_target = document.querySelector('#goodTube_playerWrapper');
 
 				// If the quality is audio, add the audio style to the player
 				if (newQuality === 'audio') {
@@ -4150,7 +4087,7 @@
 			// Server type 2 (dash) quality stuff
 			else if (goodTube_api_type === 2 || goodTube_api_type === 3) {
 				// Target the outer wrapper
-				let goodTube_target = document.querySelector('#goodTube_player_wrapper3');
+				let goodTube_target = document.querySelector('#goodTube_playerWrapper');
 
 				// Remove any audio styles from the player
 				if (goodTube_target.classList.contains('goodTube_audio')) {
@@ -4222,10 +4159,6 @@
 	function goodTube_player_videojs_loadSkin() {
 		let style = document.createElement('style');
 		style.textContent = `
-			#goodTube_player_wrapper1:not(.goodTube_mobile) {
-				border-radius: 12px;
-			}
-
 			.video-js {
 				overflow: hidden;
 			}
@@ -4492,7 +4425,7 @@
 			}
 
 			/* Time control */
-			html body #goodTube_player_wrapper1 .video-js .vjs-time-control {
+			html body #goodTube_playerWrapper .video-js .vjs-time-control {
 				font-family: "YouTube Noto", Roboto, Arial, Helvetica, sans-serif !important;
 				order: 4;
 				font-size: 13.0691px !important;
@@ -4503,7 +4436,7 @@
 				z-index: 1;
 			}
 
-			html body #goodTube_player_wrapper1 .video-js .vjs-time-control * {
+			html body #goodTube_playerWrapper .video-js .vjs-time-control * {
 				min-width: 0 !important;
 			}
 
@@ -4519,14 +4452,14 @@
 				margin-right: 0 !important;
 			}
 
-			#goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-time-control {
+			#goodTube_playerWrapper.goodTube_mobile .video-js .vjs-time-control {
 				position: absolute;
 				top: calc(100% - 98px);
 				font-weight: 500;
 				pointer-events: none;
 			}
 
-			#goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-current-time {
+			#goodTube_playerWrapper.goodTube_mobile .video-js .vjs-current-time {
 				color: #ffffff !important;
 			}
 
@@ -4575,21 +4508,30 @@
 				background: transparent !important;
 			}
 
-			.video-js .vjs-control-bar::before {
+			#goodTube_playerWrapper:not(.goodTube_mobile) .video-js::before {
 				content: '';
 				position: absolute;
 				left: 0;
 				right: 0;
 				bottom: 0;
+				height: 25%;
 				background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAD1CAYAAACRFp+GAAAAAXNSR0IArs4c6QAAASpJREFUOE9lyOlHGAAcxvHuY63Wta3WsdWqdaz7vtfduoyZSBLJmCSSSCaSSBJJJIkk0h+Z7/Pm59Hz4sP3SUh4tUSeIIkMkkmR4qSSIs1JJ4MMUmQ6b0iR5bwlg2xS5DjvSJHr5JFBPikKnEIyeE+KD85HUhQ5xWTwiRQlTikpypxyMvhMii9OBSkqna9kUEWKaqeGDL6RotapI0W900AG30nR6DSRotlpIYNWUrQ57aTocDrJoIsU3U4PKXqdPjLoJ8WAM0gGQ6QYdn6QYsQZJYMxUow7E6SYdKbIYJoUP50ZUsw6c2QwTy7AL/gNf2ARlmAZVmAV1mAd/sI/2IBN2IJt2IFd2IN9+A8HcAhHcAwncApncA4XcAlXcA03cAt3cA8P8AhP8PwCakcyvVVFagcAAAAASUVORK5CYII=");
 				background-size: cover;
 				background-repeat: repeat-x;
 				background-position: bottom;
 				background-size: contain;
-				height: calc(var(--ytd-watch-flexy-max-player-height) / 2.5);
 				pointer-events: none;
+				opacity: 0;
+				transition: opacity .1s linear;
 			}
-			#goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-control-bar::before {
+
+			#goodTube_playerWrapper:not(.goodTube_mobile) .video-js.vjs-paused::before,
+			#goodTube_playerWrapper:not(.goodTube_mobile) .video-js.vjs-user-active::before,
+			#goodTube_playerWrapper:not(.goodTube_mobile) .video-js:hover::before {
+				opacity: 1;
+			}
+
+			#goodTube_playerWrapper.goodTube_mobile .video-js .vjs-control-bar::before {
 				display: none;
 				content: none;
 			}
@@ -4642,12 +4584,12 @@
 				min-width: 48px !important;
 			}
 
-			#goodTube_player_wrapper1:not(goodTube_mobile) .video-js .vjs-control-bar > .vjs-play-control {
+			#goodTube_playerWrapper:not(goodTube_mobile) .video-js .vjs-control-bar > .vjs-play-control {
 				padding-left: 8px;
 				box-sizing: content-box;
 			}
 
-			#goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-control:not(.vjs-progress-control) {
+			#goodTube_playerWrapper.goodTube_mobile .video-js .vjs-control:not(.vjs-progress-control) {
 				min-width: 0 !important;
 				flex-grow: 1 !important;
 				max-width: 9999px !important;
@@ -4655,8 +4597,8 @@
 				padding-right: 0 !important;
 			}
 
-			#goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-control.vjs-volume-panel,
-			#goodTube_player_wrapper1.goodTube_miniplayer #goodTube_player_wrapper3 .video-js .vjs-control.vjs-volume-panel {
+			#goodTube_playerWrapper.goodTube_mobile .video-js .vjs-control.vjs-volume-panel,
+			#goodTube_playerWrapper.goodTube_miniplayer .video-js .vjs-control.vjs-volume-panel {
 				display: none;
 			}
 
@@ -4699,7 +4641,7 @@
 				max-height: calc(var(--ytd-watch-flexy-panel-max-height) - 72px) !important;
 			}
 
-			#goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-menu-content {
+			#goodTube_playerWrapper.goodTube_mobile .video-js .vjs-menu-content {
 				max-height: 156px !important;
 			}
 
@@ -4916,8 +4858,8 @@
 				z-index: 1;
 			}
 
-			#goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-control-bar button.vjs-menu-button::before,
-			#goodTube_player_wrapper1.goodTube_mobile .video-js .vjs-control-bar .vjs-button:not(.vjs-menu-button)::before {
+			#goodTube_playerWrapper.goodTube_mobile .video-js .vjs-control-bar button.vjs-menu-button::before,
+			#goodTube_playerWrapper.goodTube_mobile .video-js .vjs-control-bar .vjs-button:not(.vjs-menu-button)::before {
 				display: none !important;
 				content: none !important;
 			}
@@ -5445,13 +5387,6 @@
 		// --------------------------------------------------------------------------------
 		// FAST
 		{
-			'name': 'Phoenix (US)',
-			'type': 3,
-			'proxy': true,
-			'url': 'https://pipedapi.drgns.space'
-		},
-		// FAST
-		{
 			'name': 'Acid (US)',
 			'type': 2,
 			'proxy': true,
@@ -5463,6 +5398,13 @@
 			'type': 3,
 			'proxy': true,
 			'url': 'https://pipedapi.r4fo.com'
+		},
+		// FAST
+		{
+			'name': 'Phoenix (US)',
+			'type': 3,
+			'proxy': true,
+			'url': 'https://pipedapi.drgns.space'
 		},
 		// // FAST
 		// {
@@ -6659,7 +6601,7 @@
 		goodTube_player_loadAssets();
 
 		// Init our player
-		goodTube_player_init();
+		document.addEventListener('DOMContentLoaded', goodTube_player_init);
 
 		// Usage stats
 		goodTube_stats_unique();
