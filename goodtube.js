@@ -5701,27 +5701,10 @@
 	// Generate playlist links
 	let goodTube_playlistLinks = [];
 	function goodTube_generatePlaylistLinks() {
-		// Target the playlist container
-		let playlistContainer = document.getElementById('goodTube_playlistContainer');
-
-		// Add the playlist container if we don't have it
-		if (!playlistContainer) {
-			playlistContainer = document.createElement('div');
-			playlistContainer.setAttribute('id', 'goodTube_playlistContainer');
-			playlistContainer.style.display = 'none';
-			document.body.appendChild(playlistContainer);
-		}
-
-		// Empty the playlist container
-		playlistContainer.innerHTML = '';
-
 		// If we're not viewing a playlist, just return.
 		if (typeof goodTube_getParams['i'] === 'undefined' && typeof goodTube_getParams['index'] === 'undefined' && typeof goodTube_getParams['list'] === 'undefined') {
 			return;
 		}
-
-		// Otherwise we are viewing a playlist, so populate the playlist container
-		let youtubeFrameAPI = document.getElementById('movie_player');
 
 		// Get the playlist items
 		let playlistLinks = false;
@@ -5740,6 +5723,20 @@
 
 		// If the playlist links have changed
 		if (playlistLinks.length > 0 && playlistLinks.length !== goodTube_playlistLinks.length) {
+			// Target the playlist container
+			let playlistContainer = document.getElementById('goodTube_playlistContainer');
+
+			// Add the playlist container if we don't have it
+			if (!playlistContainer) {
+				playlistContainer = document.createElement('div');
+				playlistContainer.setAttribute('id', 'goodTube_playlistContainer');
+				playlistContainer.style.display = 'none';
+				document.body.appendChild(playlistContainer);
+			}
+
+			// Empty the playlist container
+			playlistContainer.innerHTML = '';
+
 			// For each playlist item
 			let i = 0;
 			playlistLinks.forEach((playlistItem) => {
