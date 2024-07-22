@@ -321,6 +321,7 @@
 	// Turn off autoplay
 	let goodTube_turnedOffAutoplay = false;
 	function goodTube_youtube_turnOffAutoplay() {
+		// If we've already turned off autoplay, just return
 		if (goodTube_turnedOffAutoplay) {
 			return;
 		}
@@ -6345,10 +6346,13 @@
 		// Make the youtube player the lowest quality to save on bandwidth
 		goodTube_youtube_lowestQuality();
 
+		// Turn off autoplay
+		goodTube_youtube_turnOffAutoplay();
+
 		// Hide ads, shorts, etc - real time
 		goodTube_youtube_hideAdsShortsEtc_realTime();
 
-		// Remove that annoying "Are you still watching" prompt
+		// Remove the "Are you still watching" prompt
 		goodTube_youtube_areYouStillWatching();
 
 		// Support timestamp links in comments
