@@ -1501,12 +1501,10 @@
 	function goodTube_player_positionAndSize(playerWrapper) {
 		// If we're viewing a video
 		if (typeof goodTube_getParams['v'] !== 'undefined') {
-
+			let positionElement = false;
 
 			// Desktop
 			if (!goodTube_mobile) {
-				let positionElement = false;
-
 				// Theater mode
 				if (document.querySelector('ytd-watch-flexy[theater]')) {
 					positionElement = document.getElementById('full-bleed-container');
@@ -1539,7 +1537,7 @@
 
 			// Mobile
 			else {
-				let positionElement = document.getElementById('player');
+				positionElement = document.getElementById('player');
 
 				// Position the player
 				if (positionElement && positionElement.offsetHeight > 0) {
@@ -1552,6 +1550,14 @@
 					playerWrapper.style.width = positionElement.offsetWidth+'px';
 					playerWrapper.style.height = positionElement.offsetHeight+'px';
 				}
+			}
+
+			// Fix the menu max heights
+			if (positionElement) {
+				let menus = document.querySelectorAll('.vjs-menu-content');
+				menus.forEach((menu) => {
+					menu.style.maxHeight = (positionElement.offsetHeight - 72)+'px';
+				});
 			}
 
 
@@ -4638,14 +4644,6 @@
 				text-shadow: 0 0 10px rgba(0, 0, 0, .5) !important;
 				font-family: "YouTube Noto", Roboto, Arial, Helvetica, sans-serif !important;
 				font-weight: 500 !important;
-			}
-
-			.video-js .vjs-menu-content {
-				max-height: calc(var(--ytd-watch-flexy-panel-max-height) - 72px) !important;
-			}
-
-			#goodTube_playerWrapper.goodTube_mobile .video-js .vjs-menu-content {
-				max-height: 156px !important;
 			}
 
 			.video-js .vjs-control-bar::-webkit-scrollbar {
