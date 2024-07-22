@@ -401,15 +401,6 @@
 	let goodTube_pendingRetry = [];
 	let goodTube_player_restoreTime = 0;
 	let goodTube_player_assets = [
-		// Unminified
-		// goodTube_github+'/js/video.min.js',
-		// goodTube_github+'/js/videojs-hls-quality-selector.js',
-		// goodTube_github+'/js/videojs-vtt-thumbnails.js',
-		// goodTube_github+'/js/videojs-quality-selector.js',
-		// goodTube_github+'/css/videojs-core.css',
-		// goodTube_github+'/css/videojs-vtt-thumbnails.css'
-
-		// Minified
 		goodTube_github+'/js/assets.min.js',
 		goodTube_github+'/css/assets.min.css'
 	];
@@ -438,7 +429,12 @@
 				goodTube_player_init();
 			}, 0);
 
+			console.log('assets not loaded');
+
 			return;
+		}
+		else {
+			console.log('assets loaded');
 		}
 
 		// Add CSS styles for the player
