@@ -94,6 +94,7 @@
 			.goodTube_hiddenPlayer {
 				position: relative;
 				overflow: hidden;
+				z-index: 1;
 			}
 
 			.goodTube_hiddenPlayer::before {
@@ -845,7 +846,7 @@
 				position: fixed;
 				background: #000000;
 				border-radius: 0;
-				z-index: 2;
+				z-index: 3;
 			}
 
 			/* Theater mode */
