@@ -93,6 +93,7 @@
 
 			.goodTube_hiddenPlayer {
 				position: relative;
+				overflow: hidden;
 			}
 
 			.goodTube_hiddenPlayer::before {
