@@ -375,6 +375,17 @@
 
 	// Mute, pause and skip ads on all Youtube videos
 	function goodTube_youtube_mutePauseSkipAds() {
+		// Mute the youtube player and pause it via JS
+		let youtubeVideo = document.querySelector('#movie_player video');
+		if (youtubeVideo) {
+			youtubeVideo.muted = true;
+			youtubeVideo.volume = 0;
+
+			// if (!goodTube_youtube_syncing) {
+				youtubeVideo.pause();
+			// }
+		}
+
 		// // Always skip the ads as soon as possible by clicking the skip button
 		// let skipButton = document.querySelector('.ytp-skip-ad-button');
 		// if (skipButton) {
@@ -393,38 +404,35 @@
 		});
 	}
 
-	// // Sync players
-	// let goodTube_youtube_syncing = false;
-	// let goodTube_youtube_previousSyncTime = 0;
-	// function goodTube_youtube_syncPlayers() {
-	// 	// Turn this off for now, it's potentially causing issues
-	// 	return;
+	// Sync players
+	let goodTube_youtube_syncing = false;
+	let goodTube_youtube_previousSyncTime = 0;
+	function goodTube_youtube_syncPlayers() {
+		let youtubeVideo = document.querySelector('#movie_player video');
 
-	// 	let youtubeVideo = document.querySelector('#movie_player video');
+		// If the youtube player exists, our player is loaded and we're viewing a video
+		if (youtubeVideo && goodTube_videojs_player_loaded && typeof goodTube_getParams['v'] !== 'undefined') {
+			// Don't keep syncing the same time over and over unless it's the start of the video
+			let syncTime = goodTube_player.currentTime;
+			if (syncTime === goodTube_youtube_previousSyncTime && parseFloat(syncTime) > 0) {
+				return;
+			}
 
-	// 	// If the youtube player exists, our player is loaded and we're viewing a video
-	// 	if (youtubeVideo && goodTube_videojs_player_loaded && typeof goodTube_getParams['v'] !== 'undefined') {
-	// 		// Don't keep syncing the same time over and over unless it's the start of the video
-	// 		let syncTime = goodTube_player.currentTime;
-	// 		if (syncTime === goodTube_youtube_previousSyncTime && parseFloat(syncTime) > 0) {
-	// 			return;
-	// 		}
+			// Setup the previous sync time
+			goodTube_youtube_previousSyncTime = syncTime;
 
-	// 		// Setup the previous sync time
-	// 		goodTube_youtube_previousSyncTime = syncTime;
+			// Set the current time of the Youtube player to match ours (this makes history and watched time work correctly)
+			youtubeVideo.currentTime = syncTime;
 
-	// 		// Set the current time of the Youtube player to match ours (this makes history and watched time work correctly)
-	// 		youtubeVideo.currentTime = syncTime;
+			// We're syncing (this turns off the pausing of the Youtube video in goodTube_youtube_mutePauseSkipAds)
+			goodTube_youtube_syncing = true;
 
-	// 		// We're syncing (this turns off the pausing of the Youtube video in goodTube_youtube_mutePauseSkipAds)
-	// 		goodTube_youtube_syncing = true;
-
-	// 		// Play for 10ms to make history work via JS
-	// 		youtubeVideo.play();
-	// 		youtubeVideo.muted = true;
-	// 		youtubeVideo.volume = 0;
-	// 	}
-	// }
+			// Play for 10ms to make history work via JS
+			youtubeVideo.play();
+			youtubeVideo.muted = true;
+			youtubeVideo.volume = 0;
+		}
+	}
 
 
 	/* Player functions
