@@ -274,7 +274,7 @@
 		});
 	}
 
-	// Make the youtube player the lowest quality to save on bandwidth
+	// Make the youtube player the lowest quality to save on bandwidth (via the frame API)
 	function goodTube_youtube_lowestQuality() {
 		let youtubeFrameAPI = document.getElementById('movie_player');
 
@@ -6153,7 +6153,7 @@
 		}, (delaySeconds * 1000));
 	}
 
-	// Download the entire playlist (currently only works on desktop cus frame API limitations)
+	// Download the entire playlist
 	function goodTube_downloadPlaylist(type, noPrompt) {
 		// Show a "are you sure cus it takes some time" sort of message
 		if (typeof noPrompt === 'undefined' && !confirm("Are you sure you want to download this playlist ("+type+")?\r\rYou can keep playing and downloading other videos, just don't close the tab :)")) {
