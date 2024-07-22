@@ -375,17 +375,6 @@
 
 	// Mute, pause and skip ads on all Youtube videos
 	function goodTube_youtube_mutePauseSkipAds() {
-		// Mute the youtube player and pause it via JS
-		let youtubeVideo = document.querySelector('#movie_player video');
-		if (youtubeVideo) {
-			youtubeVideo.muted = true;
-			youtubeVideo.volume = 0;
-
-			// if (!goodTube_youtube_syncing) {
-				youtubeVideo.pause();
-			// }
-		}
-
 		// // Always skip the ads as soon as possible by clicking the skip button
 		// let skipButton = document.querySelector('.ytp-skip-ad-button');
 		// if (skipButton) {
@@ -396,42 +385,12 @@
 		let youtubeVideos = document.querySelectorAll('video:not(#goodTube_player):not(#goodTube_player_html5_api)');
 		youtubeVideos.forEach((element) => {
 			// Don't touch the thumbnail hover player
-			if (!element.closest('#inline-player') && !element.closest('#movie_player')) {
+			if (!element.closest('#inline-player')) {
 				element.muted = true;
 				element.volume = 0;
 				element.pause();
 			}
 		});
-	}
-
-	// Sync players
-	let goodTube_youtube_syncing = false;
-	let goodTube_youtube_previousSyncTime = 0;
-	function goodTube_youtube_syncPlayers() {
-		let youtubeVideo = document.querySelector('#movie_player video');
-
-		// If the youtube player exists, our player is loaded and we're viewing a video
-		if (youtubeVideo && goodTube_videojs_player_loaded && typeof goodTube_getParams['v'] !== 'undefined') {
-			// Don't keep syncing the same time over and over unless it's the start of the video
-			let syncTime = goodTube_player.currentTime;
-			if (syncTime === goodTube_youtube_previousSyncTime && parseFloat(syncTime) > 0) {
-				return;
-			}
-
-			// Setup the previous sync time
-			goodTube_youtube_previousSyncTime = syncTime;
-
-			// Set the current time of the Youtube player to match ours (this makes history and watched time work correctly)
-			youtubeVideo.currentTime = syncTime;
-
-			// We're syncing (this turns off the pausing of the Youtube video in goodTube_youtube_mutePauseSkipAds)
-			goodTube_youtube_syncing = true;
-
-			// Play for 10ms to make history work via JS
-			youtubeVideo.play();
-			youtubeVideo.muted = true;
-			youtubeVideo.volume = 0;
-		}
 	}
 
 
@@ -458,7 +417,6 @@
 	let goodTube_player_loadChaptersAttempts = 0;
 	let goodTube_player_vttThumbnailsFunction = false;
 	let goodTube_player_reloadVideoAttempts = 1;
-	let goodTube_player_ended = false;
 	let goodTube_player_pip = false;
 	let goodTube_player_miniplayer = false;
 	let goodTube_player_miniplayer_video = false;
@@ -1265,9 +1223,6 @@
 
 		// Init default quality modal
 		goodTube_player_defaultQualityModalInit();
-
-		// Sync players every 10s
-		// setInterval(goodTube_youtube_syncPlayers, 10000);
 
 		// Listen for keyboard shortcuts
 		document.addEventListener('keydown', function(event) {
@@ -3049,11 +3004,10 @@
 
 	// Clear the player
 	function goodTube_player_clear(player) {
-		goodTube_player_ended = false;
 		goodTube_player_videojs_hideError();
 		player.classList.add('goodTube_hidden');
 		player.currentTime = 0;
-		// player.setAttribute('src', '');
+		player.setAttribute('src', '');
 		player.pause();
 
 		// Clear any existing chapters
@@ -3552,9 +3506,6 @@
 				video.setAttribute('webkit-playsinline', '');
 			}
 
-			// Sync the Youtube player for watch history
-			// goodTube_youtube_syncPlayers();
-
 			// Enable the qualities API
 			goodTube_qualityApi = goodTube_videojs_player.hlsQualitySelector();
 
@@ -3922,9 +3873,6 @@
 
 		goodTube_videojs_player.on('seeked', function() {
 			goodTube_seeking = false;
-
-			// Sync the Youtube player for watch history
-			// goodTube_youtube_syncPlayers();
 		});
 
 		// On buffering / loading
@@ -4161,8 +4109,6 @@
 
 		// Play next video this video has ended
 		goodTube_videojs_player.on('ended', function() {
-			goodTube_player_ended = true;
-			// goodTube_youtube_syncPlayers();
 			goodTube_nextVideo();
 		});
 
