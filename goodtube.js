@@ -386,13 +386,11 @@
 			}
 		}
 
-
-
-		// Always skip the ads as soon as possible by clicking the skip button
-		let skipButton = document.querySelector('.ytp-skip-ad-button');
-		if (skipButton) {
-			skipButton.click();
-		}
+		// // Always skip the ads as soon as possible by clicking the skip button
+		// let skipButton = document.querySelector('.ytp-skip-ad-button');
+		// if (skipButton) {
+		// 	skipButton.click();
+		// }
 
 		// Also pause and mute all other HTML videos on the page
 		let youtubeVideos = document.querySelectorAll('video:not(#goodTube_player):not(#goodTube_player_html5_api)');
@@ -433,27 +431,6 @@
 			youtubeVideo.play();
 			youtubeVideo.muted = true;
 			youtubeVideo.volume = 0;
-
-			// Play for 10ms to make history work via the frame API
-			let youtubeFrameApi = document.querySelector('#movie_player');
-			if (youtubeFrameApi) {
-				if (typeof youtubeFrameApi.playVideo === 'function') {
-					youtubeFrameApi.playVideo();
-				}
-
-				if (typeof youtubeFrameApi.mute === 'function') {
-					youtubeFrameApi.mute();
-				}
-
-				if (typeof youtubeFrameApi.setVolume === 'function') {
-					youtubeFrameApi.setVolume(0);
-				}
-			}
-
-			// Stop syncing after 10ms (this turns on the pausing of the Youtube video in goodTube_youtube_mutePauseSkipAds)
-			setTimeout(function() {
-				goodTube_youtube_syncing = false;
-			}, 10);
 		}
 	}
 
@@ -1530,6 +1507,10 @@
 	function goodTube_player_positionAndSize(playerWrapper) {
 		// If we're viewing a video
 		if (typeof goodTube_getParams['v'] !== 'undefined') {
+			// Show the GoodTube player
+			goodTube_helper_showElement(playerWrapper);
+
+			// This is used to position and size the player
 			let positionElement = false;
 
 			// Desktop
@@ -1590,6 +1571,11 @@
 			}
 
 
+		}
+		// If we're not viewing a video
+		else {
+			// Hide the GoodTube player
+			goodTube_helper_hideElement(playerWrapper);
 		}
 
 		// Call this function again on next draw frame
