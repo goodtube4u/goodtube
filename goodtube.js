@@ -4507,6 +4507,7 @@
 				scrollbar-width: none;
 				height: 48px !important;
 				background: transparent !important;
+				z-index: 2 !important;
 			}
 
 			#goodTube_playerWrapper:not(.goodTube_mobile) .video-js::before {
@@ -4524,6 +4525,7 @@
 				pointer-events: none;
 				opacity: 0;
 				transition: opacity .1s linear;
+				z-index: 1;
 			}
 
 			#goodTube_playerWrapper:not(.goodTube_mobile) .video-js.vjs-paused::before,
