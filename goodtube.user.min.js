@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      5.006
+// @version      5.007
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -42,7 +42,7 @@
 		loadAttempts++;
 
 		// Load GoodTube
-		fetch('https://raw.githubusercontent.com/goodtube4u/GoodTube/main/goodtube.min.js')
+		fetch('https://raw.githubusercontent.com/goodtube4u/GoodTube/main/goodtube.min.js?i='+Date.now())
 		// Success
 		.then(response => response.text())
 		.then(data => {
