@@ -566,7 +566,8 @@
 
 
 			/* Automatic server styling */
-			#goodTube_playerWrapper.goodTube_automaticServer .vjs-source-button ul li:first-child {
+			#goodTube_playerWrapper.goodTube_automaticServer .vjs-source-button ul li:first-child,
+			#goodTube_playerWrapper.goodTube_automaticServer .vjs-source-button ul li.vjs-selected:first-child {
 				background: #ffffff !important;
 				color: #000000 !important;
 			}
