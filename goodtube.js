@@ -4536,8 +4536,7 @@
 			}
 
 			#goodTube_playerWrapper:not(.goodTube_mobile) .video-js.vjs-paused::before,
-			#goodTube_playerWrapper:not(.goodTube_mobile) .video-js.vjs-user-active::before,
-			#goodTube_playerWrapper:not(.goodTube_mobile) .video-js:hover::before {
+			#goodTube_playerWrapper:not(.goodTube_mobile) .video-js.vjs-user-active::before {
 				opacity: 1;
 			}
 
