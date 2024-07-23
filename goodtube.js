@@ -6606,7 +6606,7 @@
 		goodTube_player_loadAssets();
 
 		// Init our player
-		document.addEventListener('DOMContentLoaded', goodTube_player_init);
+		goodTube_player_init();
 
 		// Usage stats
 		goodTube_stats_unique();
