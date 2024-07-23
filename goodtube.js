@@ -50,6 +50,19 @@
 			getParams[decode(arguments[1])] = decode(arguments[2]);
 		});
 
+		// If we're on a playlist, but we don't have a video id in the URL - then get it from the frame API
+		if (typeof getParams['list'] !== 'undefined' && typeof getParams['v'] === 'undefined') {
+			let youtubeFrameAPI = document.getElementById('movie_player');
+
+			if (youtubeFrameAPI && typeof youtubeFrameAPI.getVideoData === 'function') {
+				let videoData = youtubeFrameAPI.getVideoData();
+
+				if (typeof videoData['video_id'] !== 'undefined') {
+					getParams['v'] = videoData['video_id'];
+				}
+			}
+		}
+
 		return getParams;
 	}
 
