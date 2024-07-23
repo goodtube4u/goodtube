@@ -5694,7 +5694,6 @@
 	}
 
 	// Generate playlist links
-	let goodTube_playlistLinks = [];
 	function goodTube_generatePlaylistLinks() {
 		// If we're not viewing a playlist, just return.
 		if (typeof goodTube_getParams['i'] === 'undefined' && typeof goodTube_getParams['index'] === 'undefined' && typeof goodTube_getParams['list'] === 'undefined') {
@@ -5716,8 +5715,8 @@
 			playlistTitles = document.querySelectorAll('ytm-playlist-panel-renderer .compact-media-item-headline span');
 		}
 
-		// If the playlist links have changed
-		if (playlistLinks.length > 0 && playlistLinks.length !== goodTube_playlistLinks.length) {
+		// If the playlist links exist
+		if (playlistLinks.length > 0) {
 			// Target the playlist container
 			let playlistContainer = document.getElementById('goodTube_playlistContainer');
 
@@ -5745,7 +5744,7 @@
 				playlistItemElement.innerHTML = playlistTitles[i].innerHTML.trim();
 
 				// If we're currently on this item, set the selected class
-				if (playlistItem.href.indexOf(goodTube_getParams['v']) !== -1) {
+				if (playlistItem.href.indexOf('v='+goodTube_getParams['v']) !== -1) {
 					playlistItemElement.classList.add('goodTube_selected');
 				}
 
@@ -5754,13 +5753,10 @@
 
 				i++;
 			});
-
-			// Save the playlist links
-			goodTube_playlistLinks = playlistLinks;
 		}
 
-		// Keep retrying, as the DOM takes time to load and changes on the fly
-		setTimeout(goodTube_generatePlaylistLinks, 100);
+		// Keep generating these every 500ms, as the DOM takes time to load and changes on the fly
+		setTimeout(goodTube_generatePlaylistLinks, 500);
 	}
 
 	// Play the previous video
