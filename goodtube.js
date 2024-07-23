@@ -57,7 +57,7 @@
 			if (youtubeFrameAPI && typeof youtubeFrameAPI.getVideoData === 'function') {
 				let videoData = youtubeFrameAPI.getVideoData();
 
-				if (typeof videoData['video_id'] !== 'undefined') {
+				if (typeof videoData['video_id'] !== 'undefined' && videoData['video_id']) {
 					getParams['v'] = videoData['video_id'];
 				}
 			}
@@ -429,6 +429,7 @@
 	let goodTube_player_highestQuality = false;
 	let goodTube_player_selectedQuality = false;
 	let goodTube_player_manuallySelectedQuality = false;
+	let goodTube_player_storyboardLoaded = false;
 	let goodTube_updateChapters = false;
 	let goodTube_chapterTitleInterval = false;
 	let goodTube_chaptersChangeInterval = false;
@@ -2079,6 +2080,7 @@
 						console.log('[GoodTube] Loading storyboard...');
 					}
 
+					goodTube_player_storyboardLoaded = false;
 					goodTube_player_loadStoryboard(player, storyboardData, 0);
 				}
 			}
@@ -2802,6 +2804,11 @@
 
 	// Load storyboard
 	function goodTube_player_loadStoryboard(player, storyboardData, fallbackServerIndex) {
+		// If our storyboard has already loaded, just return.
+		if (goodTube_player_storyboardLoaded) {
+			return;
+		}
+
 		// If we're out of fallback servers, show an error
 		if (typeof goodTube_otherDataServers[fallbackServerIndex] === 'undefined') {
 			// Debug message
@@ -2823,6 +2830,11 @@
 			})
 			.then(response => response.text())
 			.then(data => {
+				// If our storyboard has already loaded, just return.
+				if (goodTube_player_storyboardLoaded) {
+					return;
+				}
+
 				// Turn video data into JSON
 				let videoData = JSON.parse(data);
 
@@ -2854,6 +2866,11 @@
 	}
 
 	function goodTube_player_checkStoryboardServer(player, storyboardData, storyboardApi) {
+		// If our storyboard has already loaded, just return.
+		if (goodTube_player_storyboardLoaded) {
+			return;
+		}
+
 		// If our selected index is greater than 0, the first selected server failed to load the storyboard
 		// So we use the next configured fallback server
 		if (goodTube_otherDataServersIndex_storyboard > 0) {
@@ -2884,6 +2901,11 @@
 			})
 			.then(response => response.text())
 			.then(data => {
+				// If our storyboard has already loaded, just return.
+				if (goodTube_player_storyboardLoaded) {
+					return;
+				}
+
 				// If it failed to get WEBVTT format, try the next fallback server
 				if (data.substr(0,6) !== 'WEBVTT') {
 					goodTube_player_checkStoryboardServer(player, storyboardData, storyboardApi);
@@ -2913,6 +2935,11 @@
 						})
 						.then(response => response.text())
 						.then(data => {
+							// If our storyboard has already loaded, just return.
+							if (goodTube_player_storyboardLoaded) {
+								return;
+							}
+
 							// Check the data returned, it should be an image not a HTML document (this often comes back when it fails to load)
 							if (data.indexOf('<html') === -1) {
 								// All good, load the storyboard
@@ -2942,6 +2969,11 @@
 	}
 
 	function goodTube_player_loadStoryboardAfterCheck(player, storyboardData, storyboardApi) {
+		// If our storyboard has already loaded, just return.
+		if (goodTube_player_storyboardLoaded) {
+			return;
+		}
+
 		// Go through each storyboard and find the highest quality
 		let highestQualityStoryboardUrl = false;
 		let highestQualityStoryboardWidth = 0;
@@ -2966,6 +2998,8 @@
 			goodTube_videojs_player.vttThumbnails({
 				src: storyboardApi+highestQualityStoryboardUrl
 			});
+
+			goodTube_player_storyboardLoaded = true;
 
 			// Debug message
 			if (goodTube_debug) {
