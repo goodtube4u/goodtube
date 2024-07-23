@@ -6401,14 +6401,17 @@
 			// Setup the previous and new URL
 
 			// Remove hashes, these mess with things sometimes
+			// ALso remove "index="
 			let prevURL = goodTube_previousUrl;
 			if (prevURL) {
 				prevURL = prevURL.split('#')[0];
+				prevURL = prevURL.split('index=')[0];
 			}
 
-			let currentURL = window.location.href.split('#')[0];
+			let currentURL = window.location.href;
 			if (currentURL) {
 				currentURL = currentURL.split('#')[0];
+				currentURL = currentURL.split('index=')[0];
 			}
 
 			// If the URL has changed (or on first page load)
