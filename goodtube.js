@@ -429,12 +429,7 @@
 				goodTube_player_init();
 			}, 0);
 
-			console.log('assets not loaded');
-
 			return;
-		}
-		else {
-			console.log('assets loaded');
 		}
 
 		// Add CSS styles for the player
