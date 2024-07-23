@@ -251,20 +251,6 @@
 		});
 	}
 
-	// Remove that annoying "Are you still watching" prompt
-	function goodTube_youtube_areYouStillWatching() {
-		let confirmButtons = document.querySelectorAll('tp-yt-paper-dialog #confirm-button:not(.goodTube_clicked)');
-		confirmButtons.forEach((confirmButton) => {
-			confirmButton.classList.add('goodTube_clicked');
-			confirmButton.click();
-
-			// Allow it to be clicked multiple times, you might be watching all day!
-			setTimeout(function() {
-				confirmButton.classList.remove('goodTube_clicked');
-			}, 1000);
-		});
-	}
-
 	// Support timestamp links in comments
 	function goodTube_youtube_timestampLinks() {
 		// Links in video description and comments
@@ -6388,9 +6374,6 @@
 
 		// Hide ads, shorts, etc - real time
 		goodTube_youtube_hideAdsShortsEtc_realTime();
-
-		// Remove the "Are you still watching" prompt
-		goodTube_youtube_areYouStillWatching();
 
 		// Support timestamp links in comments
 		goodTube_youtube_timestampLinks();

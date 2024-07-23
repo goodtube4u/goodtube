@@ -14,8 +14,7 @@ What is GoodTube you ask? It's a little plugin for Youtube (just works) and;
 - Removes shorts.
 - Removes unwanted search results ("You might also like this", "Other people also watched", etc).
 - Removes thumbnails for other recommended videos that pop up when a video finishes (I really hate these, try without it's nice).
-- Removes the annoying "are you still watching" popup / keeps videos playing indefinitely.
-- Keeps you up to date, prompting you to update the plugin directly from Youtube when there's a new release. These updates are mostly just new features and minor bugfixes. So far 100% of the time this plugin has worked, so you don't need to update all the time or anything like that.
+- Keeps you up to date with the latest version automatically.
 
 And it keeps the good stuff like;
 
