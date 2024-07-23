@@ -3730,7 +3730,7 @@
 				});
 
 				// On touch move / touch end
-				['touchmove','touchend'].forEach(eventType => {
+				['touchmove','touchend', 'touchcancel'].forEach(eventType => {
 					goodTube_target.addEventListener(eventType, function(e) {
 						// Remove any pending timeouts to fast forward
 						if (goodTube_videojs_fastForwardTimeout) {
