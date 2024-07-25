@@ -152,7 +152,7 @@
 	/* Youtube functions
 	------------------------------------------------------------------------------------------ */
 	// Hide ads, shorts, etc - init
-	function goodTube_youtube_hideAdsShortsEtc_init() {
+	function goodTube_youtube_hideAdsShortsEtc() {
 		let style = document.createElement('style');
 		style.textContent = `
 			ytd-shelf-renderer,
@@ -232,8 +232,8 @@
 		}
 	}
 
-	// Hide ads, shorts, etc - real time
-	function goodTube_youtube_hideAdsShortsEtc_realTime() {
+	// Hide shorts
+	function goodTube_youtube_hideShorts() {
 		// If we're on a channel page, don't hide shorts
 		if (window.location.href.indexOf('@') !== -1) {
 			return;
@@ -477,7 +477,7 @@
 
 	// Init
 	function goodTube_player_init() {
-		// Wait until the assets and page are loaded
+		// Wait until the assets are loaded
 		if (goodTube_player_loadedAssets < goodTube_player_assets.length) {
 			setTimeout(function() {
 				goodTube_player_init();
@@ -1274,7 +1274,44 @@
 		// Sync players every 10s
 		setInterval(goodTube_youtube_syncPlayers, 10000);
 
-		// Listen for keyboard shortcuts
+		// Run the main actions (these setup the player when the page changes)
+		goodTube_actions();
+		setInterval(goodTube_actions, 100);
+
+		// Support timestamp links in comments
+		setInterval(goodTube_youtube_timestampLinks, 500);
+
+		// Generate the playlist links (used by GoodTube to navigate playlists correctly)
+		setInterval(goodTube_generatePlaylistLinks, 500);
+
+		// Update our next / prev buttons to show or hide every 100ms
+		setInterval(goodTube_player_videojs_showHideNextPrevButtons, 100);
+
+		// Update the download playlist buttons visibility
+		setInterval(goodTube_player_videojs_showHideDownloadPlaylistButtons, 500);
+
+		// Update pip actions
+		setInterval(goodTube_player_pipUpdate, 100);
+
+		// Update miniplayer
+		setInterval(goodTube_player_miniplayerUpdate, 100);
+
+		// Position timestamp (mobile only)
+		if (goodTube_mobile) {
+			setInterval(goodTube_player_videojs_positionTimestamp, 100);
+		}
+
+		// Add keyboard shortcuts
+		goodTube_player_keyboardShortcuts(player);
+
+		// If we're on mobile, set the volume to 100%
+		if (goodTube_mobile) {
+			goodTube_player_volume(goodTube_player, 1);
+		}
+	}
+
+	// Add keyboard shortcuts
+	function goodTube_player_keyboardShortcuts(player) {
 		document.addEventListener('keydown', function(event) {
 			// Don't do anything if we're holding control, or we're not viewing a video
 			if (event.ctrlKey || typeof goodTube_getParams['v'] === 'undefined') {
@@ -1501,11 +1538,6 @@
 				}
 			}
 		}, true);
-
-		// If we're on mobile, set the volume to 100%
-		if (goodTube_mobile) {
-			goodTube_player_volume(goodTube_player, 1);
-		}
 	}
 
 	// Position and size the player
@@ -2585,7 +2617,7 @@
 			i++;
 		});
 
-		// Add an action to show the title next to the time duration (mobile only)
+		// Add an action to show the chapter title next to the time duration (mobile only)
 		if (goodTube_mobile) {
 			goodTube_chapterTitleInterval = setInterval(function() {
 				let currentPlayerTime = parseFloat(player.currentTime);
@@ -2608,7 +2640,7 @@
 				if (currentChapterTitle) {
 					document.querySelector('#goodTube_playerWrapper .vjs-time-control .vjs-duration-display')?.setAttribute('chapter-title', '· '+currentChapterTitle);
 				}
-			}, 10);
+			}, 100);
 		}
 
 		// Add the chapters container to the player
@@ -2660,7 +2692,7 @@
 				}
 			});
 
-		}, 10);
+		}, 100);
 
 		// Debug message
 		if (goodTube_debug) {
@@ -3171,6 +3203,10 @@
 	}
 
 	function goodTube_player_pipUpdate() {
+		if (!goodTube_player_pip) {
+			return;
+		}
+
 		// Support play and pause (but only attach these events once!)
 		if ("mediaSession" in navigator) {
 			// Play
@@ -3223,7 +3259,11 @@
 
 	// Miniplayer
 	function goodTube_player_miniplayerUpdate() {
-		// This is needed to show it differently when we're off a video page, desktop only
+		if (!goodTube_player_miniplayer) {
+			return;
+		}
+
+		// This is needed to show it differently when we're off a video page (desktop only)
 		if (!goodTube_mobile) {
 			let youtube_wrapper = document.querySelector('ytd-watch-flexy');
 
@@ -3237,7 +3277,7 @@
 			}
 		}
 
-		// Set the video id if we can, used for the expand button
+		// Set the video id, this is used for the expand button
 		if (typeof goodTube_getParams['v'] !== 'undefined') {
 			goodTube_player_miniplayer_video = goodTube_getParams['v'];
 		}
@@ -3758,24 +3798,6 @@
 						document.querySelector('.vjs-fullscreen-control')?.click();
 					}
 				});
-			}
-
-			// Position timestamp every 100ms (mobile only)
-			if (goodTube_mobile) {
-				setInterval(function() {
-					let currentTime = document.querySelector('.vjs-current-time');
-					let divider = document.querySelector('.vjs-time-divider');
-					let duration = document.querySelector('.vjs-duration');
-
-					if (currentTime && divider && duration) {
-						let leftOffset = 16;
-						let padding = 4;
-
-						currentTime.style.left = leftOffset+'px';
-						divider.style.left = (leftOffset+currentTime.offsetWidth+padding)+'px';
-						duration.style.left = (leftOffset+currentTime.offsetWidth+divider.offsetWidth+padding+padding)+'px';
-					}
-				}, 100);
 			}
 
 			// Active and inactive control based on mouse movement (desktop only)
@@ -5083,7 +5105,7 @@
 			});
 		});
 
-		// Add a hover bar to the DOM if we haven't alread (desktop only)
+		// Add a hover bar to the DOM if we haven't already (desktop only)
 		if (!goodTube_mobile) {
 			if (!document.querySelector('.goodTube_hoverBar')) {
 				let hoverBar = document.createElement('div');
@@ -5333,6 +5355,22 @@
 			else {
 				goodTube_helper_showElement(nextButton);
 			}
+		}
+	}
+
+	// Position the timestamp (mobile only)
+	function goodTube_player_videojs_positionTimestamp() {
+		let currentTime = document.querySelector('.vjs-current-time');
+		let divider = document.querySelector('.vjs-time-divider');
+		let duration = document.querySelector('.vjs-duration');
+
+		if (currentTime && divider && duration) {
+			let leftOffset = 16;
+			let padding = 4;
+
+			currentTime.style.left = leftOffset+'px';
+			divider.style.left = (leftOffset+currentTime.offsetWidth+padding)+'px';
+			duration.style.left = (leftOffset+currentTime.offsetWidth+divider.offsetWidth+padding+padding)+'px';
 		}
 	}
 
@@ -5851,9 +5889,6 @@
 				i++;
 			});
 		}
-
-		// Keep generating these every 500ms, as the DOM takes time to load and changes on the fly
-		setTimeout(goodTube_generatePlaylistLinks, 500);
 	}
 
 	// Play the previous video
@@ -6427,137 +6462,121 @@
 
 	// Actions
 	function goodTube_actions() {
-		// Hide youtube players
-		goodTube_youtube_hidePlayers();
-
-		// Make the youtube player the lowest quality to save on bandwidth
-		goodTube_youtube_lowestQuality();
-
-		// Turn off autoplay
-		goodTube_youtube_turnOffAutoplay();
-
-		// Hide ads, shorts, etc - real time
-		goodTube_youtube_hideAdsShortsEtc_realTime();
-
-		// Support timestamp links in comments
-		goodTube_youtube_timestampLinks();
-
-		// Check that the assets are loaded AND the player is loaded before continuing
-		let player = goodTube_player;
+		// If the assets are loaded AND the player is loaded
 		if (goodTube_player_loadedAssets >= goodTube_player_assets.length && goodTube_videojs_player_loaded) {
-			// Setup the previous and new URL
+			// Get the previous and current URL
 
 			// Remove hashes, these mess with things sometimes
 			// ALso remove "index="
-			let prevURL = goodTube_previousUrl;
-			if (prevURL) {
-				prevURL = prevURL.split('#')[0];
-				prevURL = prevURL.split('index=')[0];
+			let previousUrl = goodTube_previousUrl;
+			if (previousUrl) {
+				previousUrl = previousUrl.split('#')[0];
+				previousUrl = previousUrl.split('index=')[0];
 			}
 
-			let currentURL = window.location.href;
-			if (currentURL) {
-				currentURL = currentURL.split('#')[0];
-				currentURL = currentURL.split('index=')[0];
+			let currentUrl = window.location.href;
+			if (currentUrl) {
+				currentUrl = currentUrl.split('#')[0];
+				currentUrl = currentUrl.split('index=')[0];
 			}
 
-			// If the URL has changed (or on first page load)
-			if (prevURL !== currentURL) {
-				// Setup GET params
-				goodTube_getParams = goodTube_helper_parseGetParams();
+			// If the URL hasn't changed, don't do anything (this also fires on first page load)
+			if (previousUrl === currentUrl) {
+				return;
+			}
 
-				// If we're viewing a video
-				if (typeof goodTube_getParams['v'] !== 'undefined') {
-					// Show the player (mobile only)
-					if (goodTube_mobile) {
-						goodTube_player_show(player);
-					}
+			// The URL has changed, so setup our player
+			// ----------------------------------------------------------------------------------------------------
 
-					// Debug message
-					if (goodTube_debug) {
-						console.log('\n-------------------------\n\n');
-					}
+			// Setup GET params
+			goodTube_getParams = goodTube_helper_parseGetParams();
 
-					// Setup the previous button history
-					goodTube_player_videojs_setupPrevHistory();
+			// If we're viewing a video
+			if (typeof goodTube_getParams['v'] !== 'undefined') {
+				// Show the player (mobile only)
+				if (goodTube_mobile) {
+					goodTube_player_show(goodTube_player);
+				}
 
-					// Reset the load video attempts
-					goodTube_player_loadVideoDataAttempts = 0;
+				// Debug message
+				if (goodTube_debug) {
+					console.log('\n-------------------------\n\n');
+				}
 
-					// Remove the "restore to" time
-					goodTube_player_restoreTime = 0;
+				// Setup the previous button history
+				goodTube_player_videojs_setupPrevHistory();
 
-					// Setup the previous and new playlist (if we're on one)
-					let prevPlaylist = goodTube_previousPlaylist;
+				// Reset the load video attempts
+				goodTube_player_loadVideoDataAttempts = 0;
 
+				// Remove the "restore to" time
+				goodTube_player_restoreTime = 0;
+
+				// Select the server if we're on automatic
+				if (goodTube_helper_getCookie('goodTube_api_withauto') === 'automatic') {
+					// Get the current playlist (if we're on one)
 					let currentPlaylist = false;
 					if (typeof goodTube_getParams['list'] !== 'undefined') {
 						currentPlaylist = goodTube_getParams['list'];
 					}
 
-					// Select the server if we're on automatic
-					if (goodTube_helper_getCookie('goodTube_api_withauto') === 'automatic') {
-						// Reset to first server for automatic, only if we've changed playlist.
-						if (!currentPlaylist || prevPlaylist !== currentPlaylist) {
-							goodTube_automaticServerIndex = 0;
-						}
-						else if (goodTube_automaticServerIndex > 0) {
-							// Otherwise stay on the same server
-							goodTube_automaticServerIndex--;
-						}
-
-						// Select the automatic server
-						goodTube_player_selectApi('automatic', false);
+					// Reset to first server for automatic, only if we've changed playlist.
+					if (!currentPlaylist || goodTube_previousPlaylist !== currentPlaylist) {
+						goodTube_automaticServerIndex = 0;
+					}
+					else if (goodTube_automaticServerIndex > 0) {
+						// Otherwise stay on the same server
+						goodTube_automaticServerIndex--;
 					}
 
-					// Debug message
-					if (goodTube_debug) {
-						console.log('[GoodTube] Loading video data from '+goodTube_api_name+'...');
-					}
-
-					// Generate the playlist links
-					goodTube_generatePlaylistLinks();
-
-					// Load the video
-					goodTube_player_loadVideo(player);
-
-					// Usage stats
-					goodTube_stats_video();
-				}
-				// Otherwise we're not viewing a video, and we're not in the miniplayer or pip
-				else if (!goodTube_player_miniplayer && !goodTube_player_pip) {
-					// Clear the player
-					goodTube_player_clear(goodTube_player);
-
-					// Hide the player (mobile only)
-					if (goodTube_mobile) {
-						goodTube_player_hide(player);
-					}
-
-					// Empty the previous video history
-					goodTube_videojs_previousVideo = [];
-
-					// Clear any pending retry attempts
-					for (let key in goodTube_pendingRetry) {
-						if (goodTube_pendingRetry.hasOwnProperty(key)) {
-							clearTimeout(goodTube_pendingRetry[key]);
-						}
-					}
+					// Select the automatic server
+					goodTube_player_selectApi('automatic', false);
 				}
 
-				// Ok, we've done what we need to with our player
-
-				// Set the previous playlist
-				if (typeof goodTube_getParams['list'] !== 'undefined') {
-					goodTube_previousPlaylist = goodTube_getParams['list'];
-				}
-				else {
-					goodTube_previousPlaylist = false;
+				// Debug message
+				if (goodTube_debug) {
+					console.log('[GoodTube] Loading video data from '+goodTube_api_name+'...');
 				}
 
-				// Set the previous URL (which pauses this part of the loop until the URL changes again)
-				goodTube_previousUrl = window.location.href;
+				// Load the video
+				goodTube_player_loadVideo(goodTube_player);
+
+				// Usage stats
+				goodTube_stats_video();
 			}
+			// Otherwise we're not viewing a video, and we're not in the miniplayer or pip
+			else if (!goodTube_player_miniplayer && !goodTube_player_pip) {
+				// Clear the player
+				goodTube_player_clear(goodTube_player);
+
+				// Hide the player (mobile only)
+				if (goodTube_mobile) {
+					goodTube_player_hide(goodTube_player);
+				}
+
+				// Empty the previous video history
+				goodTube_videojs_previousVideo = [];
+
+				// Clear any pending retry attempts
+				for (let key in goodTube_pendingRetry) {
+					if (goodTube_pendingRetry.hasOwnProperty(key)) {
+						clearTimeout(goodTube_pendingRetry[key]);
+					}
+				}
+			}
+
+			// ----------------------------------------------------------------------------------------------------
+
+			// Set the previous playlist
+			if (typeof goodTube_getParams['list'] !== 'undefined') {
+				goodTube_previousPlaylist = goodTube_getParams['list'];
+			}
+			else {
+				goodTube_previousPlaylist = false;
+			}
+
+			// Set the previous URL (which pauses this function until the URL changes again)
+			goodTube_previousUrl = window.location.href;
 		}
 	}
 
@@ -6566,7 +6585,7 @@
 		Don't worry everyone - this is just a counter that totals unique users / how many videos were played with GoodTube.
 		It's only in here so I can have some fun and see how many people use this thing I made - no private info is tracked.
 	*/
-	function goodTube_stats_unique() {
+	function goodTube_stats_user() {
 		if (!goodTube_helper_getCookie('goodTube_unique_new2')) {
 			fetch('https://api.counterapi.dev/v1/goodtube/users/up/');
 
@@ -6599,7 +6618,9 @@
 
 	// Init
 	function goodTube_init() {
-		// Check if we're on mobile or not
+		/* General setup
+		---------------------------------------------------------------------------------------------------- */
+		// Define if we're on mobile or not
 		if (window.location.href.indexOf('m.youtube') !== -1) {
 			goodTube_mobile = true;
 		}
@@ -6622,45 +6643,52 @@
 			goodTube_helper_setCookie('goodTube_lastDownloadTimeSeconds', (new Date().getTime() / 1000));
 		});
 
-		// Mute, pause and skip ads on all Youtube as much as possible
-		setInterval(goodTube_youtube_mutePauseSkipAds, 1);
 
-		// Run the GoodTube actions initally
-		setInterval(goodTube_actions, 1);
+		/* Disable Youtube
+		---------------------------------------------------------------------------------------------------- */
+		// Add CSS to hide ads, shorts, etc
+		goodTube_youtube_hideAdsShortsEtc();
 
-		// Setup our next / prev buttons to show or hide every 100ms
-		setInterval(goodTube_player_videojs_showHideNextPrevButtons, 100);
-
-		// Setup our playlist buttons to show or hide every 100ms
-		setInterval(goodTube_player_videojs_showHideDownloadPlaylistButtons, 100);
-
-		// Sync pip properly
-		setInterval(goodTube_player_pipUpdate, 100);
-
-		// Sync miniplayer properly
-		setInterval(goodTube_player_miniplayerUpdate, 100);
-
-		// Hide ads, shorts, etc - init
-		goodTube_youtube_hideAdsShortsEtc_init();
-
-		// Support hiding elements without Youtube knowing
+		// Add CSS classes to hide elements (without Youtube knowing)
 		goodTube_helper_hideElement_init();
 
-		// Mute, pause and skip ads on all Youtube initally
+		// Mute, pause and skip ads
 		goodTube_youtube_mutePauseSkipAds();
+		setInterval(goodTube_youtube_mutePauseSkipAds, 1);
 
+		// Hide the youtube players
+		goodTube_youtube_hidePlayers();
+		setInterval(goodTube_youtube_hidePlayers, 1);
+
+		// Make the youtube player the lowest quality to save on bandwidth
+		setInterval(goodTube_youtube_lowestQuality, 1000);
+
+		// Turn off autoplay
+		setInterval(goodTube_youtube_turnOffAutoplay, 1000);
+
+		// Hide shorts
+		setInterval(goodTube_youtube_hideShorts, 100);
+
+
+		/* Load GoodTube
+		---------------------------------------------------------------------------------------------------- */
 		// Load required assets
 		goodTube_player_loadAssets();
 
-		// Init our player
-		goodTube_player_init();
+		// Init our player (after DOM is loaded)
+		document.addEventListener("DOMContentLoaded", goodTube_player_init);
+
+		// Also check if the DOM is already loaded, as if it is, the above event listener will not trigger.
+		if (document.readyState === "interactive" || document.readyState === "complete") {
+			goodTube_player_init();
+		}
 
 		// Usage stats
-		goodTube_stats_unique();
+		goodTube_stats_user();
 	}
 
 
-	/* Start GoodTube
+	/* Init GoodTube
 	------------------------------------------------------------------------------------------ */
 	goodTube_init();
 
