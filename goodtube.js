@@ -3120,7 +3120,6 @@
 	// Clear the player
 	function goodTube_player_clear(player) {
 		goodTube_player_videojs_hideError();
-		player.classList.add('goodTube_hidden');
 		player.currentTime = 0;
 		player.setAttribute('src', '');
 		player.pause();
@@ -3337,9 +3336,6 @@
 
 		// Load the skin
 		goodTube_player_videojs_loadSkin();
-
-		// Setup GET params
-		goodTube_getParams = goodTube_helper_parseGetParams();
 
 		// Add custom MENU buttons
 		const MenuItem = videojs.getComponent("MenuItem");
@@ -3974,6 +3970,17 @@
 			goodTube_player_videojs_update();
 		});
 
+		// Esc keypress close menus
+		document.addEventListener('keydown', function(event) {
+			if (event.keyCode == 27) {
+				let openMenuButtons = document.querySelectorAll('.vjs-menuOpen');
+
+				openMenuButtons.forEach((openMenuButton) => {
+					openMenuButton.classList.remove('vjs-menuOpen');
+				});
+			}
+		}, true);
+
 		// Seeking events
 		goodTube_videojs_player.on('seeking', function() {
 			goodTube_seeking = true;
@@ -4066,17 +4073,6 @@
 			}
 		});
 
-		// Esc keypress close menus
-		document.addEventListener('keydown', function(event) {
-			if (event.keyCode == 27) {
-				let openMenuButtons = document.querySelectorAll('.vjs-menuOpen');
-
-				openMenuButtons.forEach((openMenuButton) => {
-					openMenuButton.classList.remove('vjs-menuOpen');
-				});
-			}
-		}, true);
-
 		// Once the metadata has loaded
 		goodTube_videojs_player.on('loadedmetadata', function() {
 			// Clear any loading timeouts
@@ -4101,6 +4097,11 @@
 
 		// Debug message to show the video is loading
 		goodTube_videojs_player.on('loadstart', function() {
+			// Ensure we're viewing a video
+			if (!goodTube_player.getAttribute('src')) {
+				return;
+			}
+
 			// Clear any loading timeouts
 			if (goodTube_loadingTimeout) {
 				clearTimeout(goodTube_loadingTimeout);
@@ -4116,9 +4117,6 @@
 				// Get the next server
 				goodTube_player_selectApi('automatic', true);
 			}, 15000);
-
-			// Enable the player
-			goodTube_player.classList.remove('goodTube_hidden');
 
 			// Server 1 quality stuff
 			if (goodTube_api_type === 1) {
@@ -4184,7 +4182,7 @@
 			}
 		});
 
-		// Once loaded data
+		// Once data had loaded
 		goodTube_videojs_player.on('loadeddata', function() {
 			// Reset the buffer count
 			goodTube_bufferCount = 0;
