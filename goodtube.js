@@ -6122,11 +6122,11 @@
 			return;
 		}
 
-		// Go through each storyboard and find the highest quality
+		// Go through each storyboard and find the highest quality (up to max 100px in height, this helps to speed up the preview time)
 		let highestQualityStoryboardUrl = false;
 		let highestQualityStoryboardWidth = 0;
 		storyboardData.forEach((storyboard) => {
-			if (storyboard['width'] > highestQualityStoryboardWidth) {
+			if (parseFloat(storyboard['width']) > highestQualityStoryboardWidth && parseFloat(storyboard['height']) < 100) {
 				highestQualityStoryboardUrl = storyboard['url'];
 				highestQualityStoryboardWidth = parseFloat(storyboard['width']);
 			}
