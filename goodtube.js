@@ -3375,6 +3375,16 @@
 	// Add keyboard shortcuts
 	function goodTube_shortcuts_init(player) {
 		document.addEventListener('keydown', function(event) {
+			// Support bluetooth headset play/pause
+			if (event.code === 'MediaPlayPause' || event.key === 'MediaPlayPause') {
+				if (player.paused) {
+					player.play();
+				}
+				else {
+					player.pause();
+				}
+			}
+
 			// Don't do anything if we're holding control, or we're not viewing a video
 			if (event.ctrlKey || typeof goodTube_getParams['v'] === 'undefined') {
 				return;
@@ -3761,16 +3771,6 @@
 				menuInner.innerHTML = '';
 			}
 		}
-	}
-
-	// Hide the player
-	function goodTube_player_hide(player) {
-		goodTube_helper_hideElement(player.closest('#goodTube_playerWrapper'));
-	}
-
-	// Show the player
-	function goodTube_player_show(player) {
-		goodTube_helper_showElement(player.closest('#goodTube_playerWrapper'));
 	}
 
 	// Add loading state
@@ -6484,11 +6484,6 @@
 
 			// If we're viewing a video
 			if (typeof goodTube_getParams['v'] !== 'undefined') {
-				// Show the player (mobile only)
-				if (goodTube_mobile) {
-					goodTube_player_show(goodTube_player);
-				}
-
 				// Debug message
 				console.log('\n-------------------------\n\n');
 
@@ -6535,11 +6530,6 @@
 			else if (!goodTube_miniplayer && !goodTube_pip) {
 				// Clear the player
 				goodTube_player_clear(goodTube_player);
-
-				// Hide the player (mobile only)
-				if (goodTube_mobile) {
-					goodTube_player_hide(goodTube_player);
-				}
 
 				// Empty the previous video history
 				goodTube_nav_prevVideo = [];
