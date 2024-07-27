@@ -468,6 +468,10 @@
 				background: #ffffff;
 				z-index: 998;
 			}
+
+			html[dark] .goodTube_hiddenPlayer::before {
+				background: #0f0f0f;
+			}
 		`;
 
 		document.head.appendChild(style);
@@ -4287,6 +4291,10 @@
 				left: 0;
 				z-index: 999;
 				overflow: hidden;
+			}
+
+			html[dark] #goodTube_playerWrapper {
+				background: #0f0f0f;
 			}
 
 			/* Mobile */
