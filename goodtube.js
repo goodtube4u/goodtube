@@ -3375,8 +3375,11 @@
 	// Add keyboard shortcuts
 	function goodTube_shortcuts_init(player) {
 		document.addEventListener('keydown', function(event) {
+			// Get the key pressed in lower case
+			let keyPressed = event.key.toLowerCase();
+
 			// Support bluetooth headset play/pause
-			if (event.code === 'MediaPlayPause' || event.key === 'MediaPlayPause') {
+			if (keyPressed === 'mediaplaypause' || event.keyCode === 179) {
 				if (player.paused) {
 					player.play();
 				}
@@ -3420,8 +3423,6 @@
 					focusedElement_id !== 'contenteditable-root'
 				)
 			) {
-				let keyPressed = event.key.toLowerCase();
-
 				// Speed up playback
 				if (keyPressed === '>') {
 					if (parseFloat(player.playbackRate) == .25) {
