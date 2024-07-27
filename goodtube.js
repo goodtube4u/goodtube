@@ -3375,6 +3375,11 @@
 	// Add keyboard shortcuts
 	function goodTube_shortcuts_init(player) {
 		document.addEventListener('keydown', function(event) {
+			// Don't do anything if we're holding control
+			if (event.ctrlKey) {
+				return;
+			}
+
 			// Get the key pressed in lower case
 			let keyPressed = event.key.toLowerCase();
 
@@ -3386,11 +3391,6 @@
 				else {
 					player.pause();
 				}
-			}
-
-			// Don't do anything if we're holding control, or we're not viewing a video
-			if (event.ctrlKey || typeof goodTube_getParams['v'] === 'undefined') {
-				return;
 			}
 
 			// If we're not focused on a HTML form element
