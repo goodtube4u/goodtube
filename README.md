@@ -168,13 +168,11 @@ Many thanks to https://cobalt.tools for providing the amazing API we're using to
 You can also use this website to download from other platforms like SoundCloud, give it a try :)
 
 
-## Hosting your own local video server
-
-**If you host a local video server, you can make this plugin really fast!**
+## Advanced optional config - hosting your own local video server (to make this load videos really fast!)
 
 - This is for advanced users only.
-- This is not for phones. You can only do this on a desktop computer (mac, linux, windows - all work).
-- Doing this will significantly speed up GoodTube (pretty much to normal loading speed for videos).
+- This is not for phones. You can only do this on a desktop computer (Windows, Mac and Linux are all supported).
+- Doing this will significantly speed up GoodTube! You should get normal Youtube speed or very close to.
 
 
 **Here's how you do it:**
