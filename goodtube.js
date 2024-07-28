@@ -6738,14 +6738,20 @@
 	/* Check for a local video server
 	------------------------------------------------------------------------------------------ */
 	let getVars = goodTube_helper_setupGetParams();
-	if (typeof getVars['goodtube_local'] !== 'undefined' && getVars['goodtube_local'] === 'true' || goodTube_helper_getCookie('goodTube_local') === 'true') {
-		goodTube_helper_setCookie('goodTube_local', 'true');
-	}
-	else {
-		goodTube_helper_setCookie('goodTube_local', 'false');
+
+	// Check setting
+	if (typeof getVars['goodtube_local'] !== 'undefined') {
+		if (getVars['goodtube_local'] === 'true') {
+			goodTube_helper_setCookie('goodTube_local', 'true');
+		}
+		else if (getVars['goodtube_local'] === 'false') {
+			goodTube_helper_setCookie('goodTube_local', 'false');
+		}
 	}
 
+	// If local video server is enabled
 	if (goodTube_helper_getCookie('goodTube_local') === 'true') {
+		// Add local video server to servers list
 		goodTube_videoServers.splice(1, 0, {
 			'name': 'LOCAL',
 			'type': 2,
