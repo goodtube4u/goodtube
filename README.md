@@ -262,7 +262,7 @@ docker-compose up
 
 9. On the "Containers" tab you will see a thing called "Invidious". Press the play arrow to start it.
 
-10. Check it's working by going to 127.0.0.1:3000 in your browser. If you see an instance of Invidious you're good to go!
+10. Check it's working by going to http://127.0.0.1:3000 in your browser. If you see an instance of Invidious you're good to go!
 
 11. Now that's done, go to https://www.youtube.com/?goodtube_local=true in your browser to enable the local server. You only need to do this once, the setting will be remembered.
 
