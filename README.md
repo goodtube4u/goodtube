@@ -189,7 +189,8 @@ cd c:/
 git clone https://github.com/iv-org/invidious.git
 ```
 
-4. Edit the following file in a text editor like Notepad: c:/invidious/docker-compose.yml
+4. Edit the following file in a text editor like Notepad:
+`c:/invidious/docker-compose.yml`
 
 5. Delete all the code in there and replace it with:
 ```
