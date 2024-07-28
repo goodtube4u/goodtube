@@ -170,15 +170,15 @@ You can also use this website to download from other platforms like SoundCloud, 
 
 ## Hosting your own local video server
 
-If you host a local video server, you can make this plugin really fast!
-------------------------------------------------------------------------------------------
+**If you host a local video server, you can make this plugin really fast!**
+
 - This is for advanced users only.
 - This is not for phones. You can only do this on a desktop computer (mac, linux, windows - all work).
 - Doing this will significantly speed up GoodTube (pretty much to normal loading speed for videos).
 
 
-Here's how you do it:
-------------------------------------------------------------------------------------------
+**Here's how you do it:**
+
 1. Install Docker Desktop (https://www.docker.com/products/docker-desktop/)
 
 2. Install Git (https://git-scm.com/downloads)
