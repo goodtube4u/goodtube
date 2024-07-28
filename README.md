@@ -168,7 +168,7 @@ Many thanks to https://cobalt.tools for providing the amazing API we're using to
 You can also use this website to download from other platforms like SoundCloud, give it a try :)
 
 
-## Advanced optional config - hosting your own local video server (to make this load videos really fast!)
+## (Optional) Host your own local video server - to make this load videos FAST!
 
 - This is for advanced users only.
 - This is not for phones. You can only do this on a desktop computer (Windows, Mac and Linux are all supported).
