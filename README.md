@@ -264,8 +264,8 @@ docker-compose up
 
 11. Now that's done, go to https://www.youtube.com/?goodtube_local=true in your browser to enable the local server. You only need to do this once, the setting will be remembered.
 
-12. Now you can visit Youtube like normal, but at the top of the "Video Source" list you will see a server called "LOCAL". This is your local server.
+12. Now you can visit Youtube like normal, but at the top of the "Video Source" list you will see a server called "LOCAL". This is your local video server, recommended you select the "Automatic" mode from the video servers list. This will try your local server first, and if that fails, fallback to using the normal servers.
 
-13. So long as you've got your Invidious instance running in Docker Desktop, then this server will work - and should be SUPER FAST. Enjoy :)
+13. As long as you've got your Invidious instance running in Docker Desktop, then this local video server will work and should be SUPER FAST. Enjoy :)
 
 Note: If you want to turn this off, go to https://www.youtube.com/?goodtube_local=false in your browser. You only need to do this once, the setting will be remembered.
