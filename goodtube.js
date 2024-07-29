@@ -507,7 +507,7 @@
 	function goodTube_youtube_hideAdsShortsEtc() {
 		let style = document.createElement('style');
 		style.textContent = `
-			ytd-shelf-renderer,
+			.ytd-search ytd-shelf-renderer,
 			ytd-reel-shelf-renderer,
 			ytd-merch-shelf-renderer,
 			ytd-action-companion-ad-renderer,
@@ -531,10 +531,9 @@
 			div#player-ads.style-scope.ytd-watch-flexy,
 
 			ytm-rich-shelf-renderer,
-			ytm-shelf-renderer,
+			ytm-search ytm-shelf-renderer,
 			ytm-button-renderer.icon-avatar_logged_out,
 			ytm-companion-slot,
-			ytm-shelf-renderer,
 			ytm-reel-shelf-renderer,
 			ytm-merch-shelf-renderer,
 			ytm-action-companion-ad-renderer,
