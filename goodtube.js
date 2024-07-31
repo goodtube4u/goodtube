@@ -315,9 +315,9 @@
 	// As I understand it these are ok to use, not trying to step on anyone's toes here.
 	// Any issues with this implementation, please contact me. I am happy to work with you, so long as we let people download from somewhere.
 	let goodTube_downloadServers_default = [
-		'https://dl01.yt-dl.click',
-		'https://dl02.yt-dl.click',
-		'https://dl03.yt-dl.click',
+		// 'https://dl01.yt-dl.click',
+		// 'https://dl02.yt-dl.click',
+		// 'https://dl03.yt-dl.click',
 		'https://apicloud9.filsfkwtlfjas.xyz',
 		'https://apicloud3.filsfkwtlfjas.xyz',
 		'https://apicloud8.filsfkwtlfjas.xyz',
