@@ -521,7 +521,7 @@
 			ytd-banner-promo-renderer-background
 			ytd-ad-slot-renderer,
 			ytd-in-feed-ad-layout-renderer,
-			ytd-engagement-panel-section-list-renderer:not(.ytd-popup-container),
+			ytd-engagement-panel-section-list-renderer:not(.ytd-popup-container):not([target-id='engagement-panel-clip-create']),
 			ytd-compact-video-renderer:has(.goodTube_hidden),
 			ytd-rich-item-renderer:has(> #content > ytd-ad-slot-renderer)
 			.ytd-video-masthead-ad-v3-renderer,
