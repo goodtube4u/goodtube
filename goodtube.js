@@ -529,6 +529,7 @@
 			div#sparkles-container.style-scope.ytd-promoted-sparkles-web-renderer,
 			div#main-container.style-scope.ytd-promoted-video-renderer,
 			div#player-ads.style-scope.ytd-watch-flexy,
+			#clarify-box,
 
 			ytm-rich-shelf-renderer,
 			ytm-search ytm-shelf-renderer,
