@@ -3525,7 +3525,7 @@
 					}
 
 					// Toggle play/pause
-					if (keyPressed === ' ') {
+					if (keyPressed === ' ' || keyPressed === 'k') {
 						if (player.paused || player.ended) {
 							player.play();
 						}
