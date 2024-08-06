@@ -6663,7 +6663,7 @@
 		});
 
 		// Debug message
-		console.log('[GoodTube] Local video server enabled!');
+		console.log('[GoodTube] Local video server enabled! 🚀');
 	}
 
 
