@@ -6,6 +6,7 @@ This has been fixed, you can update your script by visiting this URL:
 https://github.com/goodtube4u/goodtube/raw/main/goodtube.user.js
 
 Press install / update. Everything should work again. Easy peasy.
+
 Sorry for the inconvenience - this was caused by the latest Google Chrome updates.
 
 # GoodTube
