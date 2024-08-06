@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      5.007
+// @version      5.008
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
 // @match        https://*.youtube.com/*
@@ -17,6 +17,15 @@
 
 (function() {
 	'use strict';
+
+	// Bypass CSP restrictions, introduced by the latest Chrome updates
+	if (window.trustedTypes && window.trustedTypes.createPolicy) {
+		window.trustedTypes.createPolicy('default', {
+			createHTML: string => string,
+			createScriptURL: string => string,
+			createScript: string => string
+		});
+	}
 
 	// Define load function
 	function goodTube_load(loadAttempts) {
