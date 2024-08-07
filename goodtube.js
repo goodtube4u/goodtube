@@ -2,6 +2,16 @@
 	'use strict';
 
 
+	// Bypass CSP restrictions, introduced by the latest Chrome updates
+	if (window.trustedTypes && window.trustedTypes.createPolicy) {
+		window.trustedTypes.createPolicy('default', {
+			createHTML: string => string,
+			createScriptURL: string => string,
+			createScript: string => string
+		});
+	}
+
+
 	/* General config
 	------------------------------------------------------------------------------------------ */
 	// Github location for loading assets
@@ -497,6 +507,88 @@
 			wrapper.classList.add('goodTube_hiddenPlayer');
 			parent.replaceChild(wrapper, element);
 			wrapper.appendChild(element);
+		}
+	}
+
+
+	/* Video server functions
+	------------------------------------------------------------------------------------------ */
+	// Check for custom video servers
+	function goodTube_server_custom(server) {
+		// Check setting
+		if (typeof goodTube_getParams['goodtube_customserver_'+server] !== 'undefined' && goodTube_getParams['goodtube_customserver_'+server] === 'false') {
+			goodTube_helper_setCookie('goodtube_customserver_'+server+'_name', 'false');
+			goodTube_helper_setCookie('goodtube_customserver_'+server+'_type', 'false');
+			goodTube_helper_setCookie('goodtube_customserver_'+server+'_proxy', 'false');
+			goodTube_helper_setCookie('goodtube_customserver_'+server+'_url', 'false');
+		}
+
+		if (typeof goodTube_getParams['goodtube_customserver_'+server+'_name'] !== 'undefined' && typeof goodTube_getParams['goodtube_customserver_'+server+'_type'] !== 'undefined' && typeof goodTube_getParams['goodtube_customserver_'+server+'_proxy'] !== 'undefined' && typeof goodTube_getParams['goodtube_customserver_'+server+'_url'] !== 'undefined') {
+			goodTube_helper_setCookie('goodtube_customserver_'+server+'_name', goodTube_getParams['goodtube_customserver_'+server+'_name']);
+			goodTube_helper_setCookie('goodtube_customserver_'+server+'_type', goodTube_getParams['goodtube_customserver_'+server+'_type']);
+			goodTube_helper_setCookie('goodtube_customserver_'+server+'_proxy', goodTube_getParams['goodtube_customserver_'+server+'_proxy']);
+			goodTube_helper_setCookie('goodtube_customserver_'+server+'_url', goodTube_getParams['goodtube_customserver_'+server+'_url']);
+		}
+
+		// If custom video server is enabled
+		if (goodTube_helper_getCookie('goodtube_customserver_'+server+'_name') && goodTube_helper_getCookie('goodtube_customserver_'+server+'_name') !== 'false') {
+			// Format the data (cookies are always strings)
+			let customServer_name = goodTube_helper_getCookie('goodtube_customserver_'+server+'_name');
+			let customServer_type = parseFloat(goodTube_helper_getCookie('goodtube_customserver_'+server+'_name'));
+			let customServer_url = goodTube_helper_getCookie('goodtube_customserver_'+server+'_name');
+
+			let customServer_proxy = goodTube_helper_getCookie('goodtube_customserver_'+server+'_name');
+			if (customServer_proxy === 'false') {
+				customServer_proxy = false;
+			}
+			else if (customServer_proxy === 'true') {
+				customServer_proxy = true;
+			}
+
+			// Add custom server to servers list
+			goodTube_videoServers.splice(1, 0, {
+				'name': customServer_name,
+				'type': customServer_type,
+				'proxy': customServer_proxy,
+				'url': customServer_url
+			});
+
+			// Debug message
+			console.log('[GoodTube] Custom video server '+server+' enabled ('+customServer_name+')');
+		}
+
+		// Do this for up to 10 custom servers
+		server++;
+		if (server < 10) {
+			goodTube_server_custom(server);
+		}
+	}
+
+
+	// Check for a local video server
+	function goodTube_server_local() {
+		// Check setting
+		if (typeof goodTube_getParams['goodtube_local'] !== 'undefined') {
+			if (goodTube_getParams['goodtube_local'] === 'true') {
+				goodTube_helper_setCookie('goodTube_local', 'true');
+			}
+			else if (goodTube_getParams['goodtube_local'] === 'false') {
+				goodTube_helper_setCookie('goodTube_local', 'false');
+			}
+		}
+
+		// If local video server is enabled
+		if (goodTube_helper_getCookie('goodTube_local') === 'true') {
+			// Add local video server to servers list
+			goodTube_videoServers.splice(1, 0, {
+				'name': 'LOCAL',
+				'type': 2,
+				'proxy': true,
+				'url': 'http://127.0.0.1:3000'
+			});
+
+			// Debug message
+			console.log('[GoodTube] Local video server enabled! 🚀');
 		}
 	}
 
@@ -6575,6 +6667,15 @@
 			goodTube_mobile = true;
 		}
 
+		// Setup GET parameters
+		goodTube_getParams = goodTube_helper_setupGetParams();
+
+		// Check for custom video servers
+		goodTube_server_custom(0);
+
+		// Check for a local video server
+		goodTube_server_local();
+
 		// If there's a cookie for our previously chosen API, select it
 		let goodTube_videoServer_cookie = goodTube_helper_getCookie('goodTube_videoServer_withauto');
 		if (goodTube_videoServer_cookie) {
@@ -6635,35 +6736,6 @@
 
 		// Usage stats
 		goodTube_stats_user();
-	}
-
-
-	/* Check for a local video server
-	------------------------------------------------------------------------------------------ */
-	let getVars = goodTube_helper_setupGetParams();
-
-	// Check setting
-	if (typeof getVars['goodtube_local'] !== 'undefined') {
-		if (getVars['goodtube_local'] === 'true') {
-			goodTube_helper_setCookie('goodTube_local', 'true');
-		}
-		else if (getVars['goodtube_local'] === 'false') {
-			goodTube_helper_setCookie('goodTube_local', 'false');
-		}
-	}
-
-	// If local video server is enabled
-	if (goodTube_helper_getCookie('goodTube_local') === 'true') {
-		// Add local video server to servers list
-		goodTube_videoServers.splice(1, 0, {
-			'name': 'LOCAL',
-			'type': 2,
-			'proxy': true,
-			'url': 'http://127.0.0.1:3000'
-		});
-
-		// Debug message
-		console.log('[GoodTube] Local video server enabled! 🚀');
 	}
 
 
