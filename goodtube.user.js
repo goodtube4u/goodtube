@@ -4,7 +4,7 @@
 // @version      5.008
 // @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
 // @author       GoodTube
-// @match        https://*.youtube.com/*
+// @match        https://*.youtube.com/watch*
 // @icon         https://cdn-icons-png.flaticon.com/256/1384/1384060.png
 // @run-at       document-start
 // @updateURL    https://github.com/goodtube4u/goodtube/raw/main/goodtube.user.js
