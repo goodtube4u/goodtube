@@ -2,6 +2,16 @@
 	'use strict';
 
 
+	// Bypass CSP restrictions, introduced by the latest Chrome updates
+	if (window.trustedTypes && window.trustedTypes.createPolicy && !window.trustedTypes.defaultPolicy) {
+		window.trustedTypes.createPolicy('default', {
+			createHTML: string => string,
+			createScriptURL: string => string,
+			createScript: string => string
+		});
+	}
+
+
 	/* General config
 	------------------------------------------------------------------------------------------ */
 	// Github location for loading assets
