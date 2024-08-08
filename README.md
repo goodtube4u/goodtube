@@ -274,7 +274,8 @@ Note: If you want to turn this off, go to https://www.youtube.com/?goodtube_loca
 
 ## (Optional) Add custom video servers
 
-This is for advanced users only and allows you to add your own servers to the list.
+- This is for advanced users only.
+- It allows you to add your own video servers to the list.
 
 **To add a custom video server**
 
