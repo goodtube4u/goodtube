@@ -275,7 +275,7 @@ Note: If you want to turn this off, go to https://www.youtube.com/?goodtube_loca
 
 This is for advanced users only and allows you to add your own servers to the list.
 
-** To add a custom video server **
+**To add a custom video server**
 Visit `https://www.youtube.com` with the following GET params:
 
 ```
@@ -294,11 +294,11 @@ You can do this for up to 10 servers. Just change the `0` to `1`, `2`, `3` and s
 
 You only need to do this once. It will remember the setting until you disable it.
 
-** To remove a custom video server **
+**To remove a custom video server**
 Visit youtube.com with the following GET param:
 `https://youtube.com?goodtube_customserver_0=false`
 
-** Server options **
+**Server options**
 Name:
 The name of the server
 
