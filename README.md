@@ -304,9 +304,9 @@ You only need to do this once. It will remember the setting until you disable it
 
 **To remove a custom video server**
 
-Visit youtube.com with the following GET param:
+Visit `https://www.youtube.com` with the following GET param:
 
-`https://youtube.com?goodtube_customserver_0=false`
+`https://www.youtube.com?goodtube_customserver_0=false`
 
 
 **Server options**
