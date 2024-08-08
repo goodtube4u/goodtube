@@ -276,6 +276,7 @@ Note: If you want to turn this off, go to https://www.youtube.com/?goodtube_loca
 
 - This is for advanced users only.
 - It allows you to add your own video servers to the list.
+- If you're hosting your own video server as per the above instructions, but need to change the web address or settings, this provides an easy way to do that.
 
 **To add a custom video server**
 
