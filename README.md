@@ -276,8 +276,9 @@ Note: If you want to turn this off, go to https://www.youtube.com/?goodtube_loca
 
 This is for advanced users only and allows you to add your own servers to the list.
 
-**To add a custom video server**\
-Visit `https://www.youtube.com` with the following GET params:\
+**To add a custom video server**
+
+Visit `https://www.youtube.com` with the following GET params:
 
 ```
 goodtube_customserver_0_name=My custom server
@@ -286,33 +287,50 @@ goodtube_customserver_0_proxy=true
 goodtube_customserver_0_url=https://mycustomserver.com
 ```
 
-For example:\
+For example:
+
 `https://www.youtube.com?goodtube_customserver_0_name=My custom server&goodtube_customserver_0_type=2&goodtube_customserver_0_proxy=true&goodtube_customserver_0_url=https://myawesomeserver.com`
 
-You can do this for up to 10 servers. Just change the `0` to `1`, `2`, `3` and so on. Example:\
-`goodtube_customserver_0_name` is the first server\
-`goodtube_customserver_1_name` is the second server\
+You can do this for up to 10 servers. Just change the `0` to `1`, `2`, `3` and so on. Example:
+
+`goodtube_customserver_0_name` is the first server
+
+`goodtube_customserver_1_name` is the second server
+
 
 You only need to do this once. It will remember the setting until you disable it.
 
 
 **To remove a custom video server**
-Visit youtube.com with the following GET param:\
+
+Visit youtube.com with the following GET param:
+
 `https://youtube.com?goodtube_customserver_0=false`
 
 
 **Server options**
-*Name (goodtube_customserver_XXX_name):*\
+
+*Name (goodtube_customserver_XXX_name):*
+
+```
 The name of the server
+```
 
-*Type (goodtube_customserver_XXX_type):*\
-1 = Invidious, 360p only\
-2 = Invidious, DASH stream - all qualities\
-3 = Piped - all qualities\
+*Type (goodtube_customserver_XXX_type):*
 
-*Proxy (goodtube_customserver_XXX_proxy):*\
-true = Proxy all video traffic through the server (recommended)\
-false = Do NOT proxy traffic through the server (not recommended)\
+```
+1 = Invidious, 360p only
+2 = Invidious, DASH stream - all qualities
+3 = Piped - all qualities
+```
 
-*URL (goodtube_customserver_XXX_url):*\
+*Proxy (goodtube_customserver_XXX_proxy):*
+
+```
+true = Proxy all video traffic through the server (recommended)
+false = Do NOT proxy traffic through the server (not recommended)
+```
+
+*URL (goodtube_customserver_XXX_url):*
+
 The web address of the server. Make sure this does not have a trailing slash. An example might be `https://myawesomeserver.com`
