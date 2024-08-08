@@ -564,7 +564,6 @@
 		}
 	}
 
-
 	// Check for a local video server
 	function goodTube_server_local() {
 		// Check setting
