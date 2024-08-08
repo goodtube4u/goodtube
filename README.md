@@ -339,3 +339,7 @@ URL (goodtube_customserver_XXX_url):
 The web address of the server. Make sure this does not have a trailing slash. For example:
 https://myawesomeserver.com
 ```
+
+**PLEASE NOTE**:
+
+If you're hosting your own video server, you MUST ensure that it is served over `https` instead of `http`. You can only use normal `http` if the web address is `http://127.0.0.1` (using any port you like, eg `:3000`).
