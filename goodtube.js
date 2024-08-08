@@ -534,10 +534,10 @@
 		if (goodTube_helper_getCookie('goodtube_customserver_'+server+'_name') && goodTube_helper_getCookie('goodtube_customserver_'+server+'_name') !== 'false') {
 			// Format the data (cookies are always strings)
 			let customServer_name = goodTube_helper_getCookie('goodtube_customserver_'+server+'_name');
-			let customServer_type = parseFloat(goodTube_helper_getCookie('goodtube_customserver_'+server+'_name'));
-			let customServer_url = goodTube_helper_getCookie('goodtube_customserver_'+server+'_name');
+			let customServer_type = parseFloat(goodTube_helper_getCookie('goodtube_customserver_'+server+'_type'));
+			let customServer_url = goodTube_helper_getCookie('goodtube_customserver_'+server+'_url');
 
-			let customServer_proxy = goodTube_helper_getCookie('goodtube_customserver_'+server+'_name');
+			let customServer_proxy = goodTube_helper_getCookie('goodtube_customserver_'+server+'_proxy');
 			if (customServer_proxy === 'false') {
 				customServer_proxy = false;
 			}
