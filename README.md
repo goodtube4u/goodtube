@@ -311,13 +311,13 @@ Visit `https://www.youtube.com` with the following GET param:
 
 **Server options**
 
-*Name (goodtube_customserver_XXX_name):*
+Name (goodtube_customserver_XXX_name):
 
 ```
 The name of the server
 ```
 
-*Type (goodtube_customserver_XXX_type):*
+Type (goodtube_customserver_XXX_type):
 
 ```
 1 = Invidious, 360p only
@@ -325,13 +325,16 @@ The name of the server
 3 = Piped - all qualities
 ```
 
-*Proxy (goodtube_customserver_XXX_proxy):*
+Proxy (goodtube_customserver_XXX_proxy):
 
 ```
 true = Proxy all video traffic through the server (recommended)
 false = Do NOT proxy traffic through the server (not recommended)
 ```
 
-*URL (goodtube_customserver_XXX_url):*
+URL (goodtube_customserver_XXX_url):
 
-The web address of the server. Make sure this does not have a trailing slash. An example might be `https://myawesomeserver.com`
+```
+The web address of the server. Make sure this does not have a trailing slash. For example:
+https://myawesomeserver.com
+```
