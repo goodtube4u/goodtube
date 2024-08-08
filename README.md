@@ -342,5 +342,5 @@ https://myawesomeserver.com
 
 **PLEASE NOTE**:
 
-- Custom video servers MUST be served over `https`. They will not work if they are `http`.
+- Custom video servers MUST be served over `https`. They will not work if they are served over `http`.
 - You can use `http` if the custom server web address is local, for example: `http://127.0.0.1:3000`
