@@ -2709,11 +2709,13 @@
 
 		goodTube_downloadTimeouts[youtubeId] = setTimeout(function() {
 			// Debug message
-			if (fileName !== '') {
-				console.log('[GoodTube] Downloading '+type+' - '+fileName+'...');
-			}
-			else {
-				console.log('[GoodTube] Downloading '+type+'...');
+			if (serverIndex === 0) {
+				if (fileName !== '') {
+					console.log('[GoodTube] Downloading '+type+' - '+fileName+'...');
+				}
+				else {
+					console.log('[GoodTube] Downloading '+type+'...');
+				}
 			}
 
 			// CODEC:
@@ -2747,6 +2749,7 @@
 			});
 
 			// Call the API (die after 10s)
+			console.log('trying ', fileName, goodTube_downloadServers[serverIndex]);
 			fetch(goodTube_downloadServers[serverIndex]+'/api/json', {
 				signal: AbortSignal.timeout(10000),
 				method: 'POST',
