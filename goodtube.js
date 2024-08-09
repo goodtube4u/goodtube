@@ -321,57 +321,61 @@
 
 	/* Download servers
 	------------------------------------------------------------------------------------------ */
-	// We first try these servers, recommended by "ihatespawn".
-	// As I understand it these are ok to use, not trying to step on anyone's toes here.
-	// Any issues with this implementation, please contact me. I am happy to work with you, so long as we let people download from somewhere.
-	let goodTube_downloadServers_default = [
-		// 'https://dl01.yt-dl.click',
-		// 'https://dl02.yt-dl.click',
-		// 'https://dl03.yt-dl.click',
-		// 'https://apicloud9.filsfkwtlfjas.xyz',
-		'https://apicloud3.filsfkwtlfjas.xyz',
-		'https://apicloud8.filsfkwtlfjas.xyz',
-		'https://apicloud4.filsfkwtlfjas.xyz',
-		'https://apicloud5.filsfkwtlfjas.xyz',
-	];
+	// // We first try these servers, recommended by "ihatespawn".
+	// // As I understand it these are ok to use, not trying to step on anyone's toes here.
+	// // Any issues with this implementation, please contact me. I am happy to work with you, so long as we let people download from somewhere.
+	// let goodTube_downloadServers_default = [
+	// 	// 'https://dl01.yt-dl.click',
+	// 	// 'https://dl02.yt-dl.click',
+	// 	// 'https://dl03.yt-dl.click',
+	// 	'https://apicloud9.filsfkwtlfjas.xyz',
+	// 	'https://apicloud3.filsfkwtlfjas.xyz',
+	// 	'https://apicloud8.filsfkwtlfjas.xyz',
+	// 	'https://apicloud4.filsfkwtlfjas.xyz',
+	// 	'https://apicloud5.filsfkwtlfjas.xyz'
+	// ];
 
-	// Only if they all fail, will we then fallback to using community instances.
-	// This array is also shuffled to take the load off any single community instance.
-	let goodTube_downloadServers_community = [
-		'https://sea-downloadapi.stuff.solutions',
-		'https://ca.haloz.at',
-		'https://cobalt.wither.ing',
-		'https://capi.tieren.men',
-		'https://co.tskau.team',
-		'https://apicb.tigaultraman.com',
-		'https://api-cobalt.boykisser.systems',
-		'https://cobalt.decrystalfan.app',
-		'https://wukko.wolfdo.gg',
-		'https://capi.oak.li',
-		'https://cb.nyoom.fun',
-		'https://dl.khyernet.xyz',
-		'https://cobalt-api.alexagirl.studio',
-		'https://nyc1.coapi.ggtyler.dev',
-		'https://api.dl.ixhby.dev',
-		'https://co.eepy.today',
-		'https://downloadapi.stuff.solutions',
-		'https://cobalt-api.ayo.tf',
-		'https://api.sacreations.me',
-		'https://apicloud2.filsfkwtlfjas.xyz',
-		'https://dl01.yt-dl.click'
-	];
+	// // Only if they all fail, will we then fallback to using community instances.
+	// // This array is also shuffled to take the load off any single community instance.
+	// let goodTube_downloadServers_community = [
+	// 	'https://sea-downloadapi.stuff.solutions',
+	// 	'https://ca.haloz.at',
+	// 	'https://cobalt.wither.ing',
+	// 	'https://capi.tieren.men',
+	// 	'https://co.tskau.team',
+	// 	'https://apicb.tigaultraman.com',
+	// 	'https://api-cobalt.boykisser.systems',
+	// 	'https://cobalt.decrystalfan.app',
+	// 	'https://wukko.wolfdo.gg',
+	// 	'https://capi.oak.li',
+	// 	'https://cb.nyoom.fun',
+	// 	'https://dl.khyernet.xyz',
+	// 	'https://cobalt-api.alexagirl.studio',
+	// 	'https://nyc1.coapi.ggtyler.dev',
+	// 	'https://api.dl.ixhby.dev',
+	// 	'https://co.eepy.today',
+	// 	'https://downloadapi.stuff.solutions',
+	// 	'https://cobalt-api.ayo.tf',
+	// 	'https://api.sacreations.me',
+	// 	'https://apicloud2.filsfkwtlfjas.xyz',
+	// 	'https://dl01.yt-dl.click'
+	// ];
 
-	// Shuffle community instances
-	let currentIndex = goodTube_downloadServers_community.length;
-	while (currentIndex != 0) {
-		let randomIndex = Math.floor(Math.random() * currentIndex);
-		currentIndex--;
+	// // Shuffle community instances
+	// let currentIndex = goodTube_downloadServers_community.length;
+	// while (currentIndex != 0) {
+	// 	let randomIndex = Math.floor(Math.random() * currentIndex);
+	// 	currentIndex--;
 
-		[goodTube_downloadServers_community[currentIndex], goodTube_downloadServers_community[randomIndex]] = [goodTube_downloadServers_community[randomIndex], goodTube_downloadServers_community[currentIndex]];
-	}
+	// 	[goodTube_downloadServers_community[currentIndex], goodTube_downloadServers_community[randomIndex]] = [goodTube_downloadServers_community[randomIndex], goodTube_downloadServers_community[currentIndex]];
+	// }
 
-	// Combine the default download servers with the shuffled community instances
-	let goodTube_downloadServers = goodTube_downloadServers_default.concat(goodTube_downloadServers_community);
+	// // Combine the default download servers with the shuffled community instances
+	// let goodTube_downloadServers = goodTube_downloadServers_default.concat(goodTube_downloadServers_community);
+
+	// Other servers are not working / returning downloads with 0 bytes.
+	// So we're back to the main instance until they're back up.
+	let goodTube_downloadServers = ['https://api.cobalt.tools'];
 
 
 	/* Helper functions
