@@ -2750,7 +2750,6 @@
 			});
 
 			// Call the API (die after 10s)
-			console.log('trying ', fileName, goodTube_downloadServers[serverIndex]);
 			fetch(goodTube_downloadServers[serverIndex]+'/api/json', {
 				signal: AbortSignal.timeout(10000),
 				method: 'POST',
