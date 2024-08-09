@@ -3,7 +3,7 @@
 
 Hello and welcome! I'm glad you're here.
 
-What is GoodTube you ask? It's a little plugin for Youtube (just works) and;
+What is GoodTube you ask? It's a little plugin for Youtube (that just works) and;
 
 - REMOVES 100% OF PAGE AND VIDEO ADS.
 - Allows background play (so you can turn your phone screen off and keep listening).
