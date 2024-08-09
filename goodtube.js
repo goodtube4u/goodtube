@@ -4779,7 +4779,7 @@
 	// Position and size the player
 	function goodTube_player_positionAndSize(playerWrapper) {
 		// If we're viewing a video
-		if (typeof goodTube_getParams['v'] !== 'undefined') {
+		if (typeof goodTube_getParams['v'] !== 'undefined' || typeof goodTube_getParams['list'] !== 'undefined') {
 			// Show the GoodTube player
 			goodTube_helper_showElement(playerWrapper);
 
