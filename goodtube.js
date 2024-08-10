@@ -43,17 +43,17 @@
 		// --------------------------------------------------------------------------------
 		// FAST
 		{
-			'name': 'Acid (US)',
-			'type': 2,
-			'proxy': true,
-			'url': 'https://invidious.incogniweb.net'
-		},
-		// FAST
-		{
 			'name': 'Anubis (DE)',
 			'type': 3,
 			'proxy': true,
 			'url': 'https://pipedapi.r4fo.com'
+		},
+		// FAST
+		{
+			'name': 'Acid (US)',
+			'type': 2,
+			'proxy': true,
+			'url': 'https://invidious.incogniweb.net'
 		},
 		// FAST
 		{
@@ -96,13 +96,6 @@
 			'type': 2,
 			'proxy': true,
 			'url': 'https://invidious.darkness.services'
-		},
-		// FAST
-		{
-			'name': 'Sphere (US)',
-			'type': 3,
-			'proxy': true,
-			'url': 'https://pipedapi.darkness.services'
 		},
 		// // FAST
 		// {
@@ -301,15 +294,21 @@
 	let goodTube_storyboardSubtitleServers_subtitleIndex = 0;
 	let goodTube_storyboardSubtitleServers_storyboardIndex = 0;
 	let goodTube_storyboardSubtitleServers = [
+		'https://invidious.private.coffee',
+		'https://invidious.jing.rocks',
 		'https://invidious.incogniweb.net',
-		'https://invidious.private.coffee,',
-		'https://invidious.darkness.services,',
-		'https://invidious.jing.rocks,',
-		'https://invidious.privacyredirect.com,',
-		'https://invidious.fdn.fr,',
-		'https://yt.artemislena.eu,',
-		'https://invidious.perennialte.ch,',
-		'https://invidious.drgns.space'
+		'https://invidious.fdn.fr',
+		'https://yt.artemislena.eu',
+		'https://invidious.perennialte.ch',
+		'https://invidious.drgns.space',
+		'https://iv.datura.network',
+		'https://invidious.protokolla.fi',
+		'https://iv.melmac.space',
+		'https://invidious.perennialte.ch',
+		'https://vid.lilay.dev',
+		'https://invidious.drgns.space',
+		'https://inv.nadeko.net',
+		'https://invidious.projectsegfau.lt',
 	];
 
 
@@ -5950,6 +5949,9 @@
 			})
 			// If the fetch failed, try the next fallback server
 			.catch((error) => {
+
+				console.log('subtitle failed for '+subtitleApi);
+
 				goodTube_subtitles_checkServer(player, subtitleData, subtitleApi);
 			});
 
@@ -6060,6 +6062,7 @@
 				// Otherwise get the storyboard data and check the server works
 				else {
 					storyboardData = videoData['storyboards'];
+					goodTube_storyboardSubtitleServers_storyboardIndex = 1;
 					goodTube_storyboard_checkServer(player, storyboardData, goodTube_storyboardSubtitleServers[fallbackServerIndex]);
 				}
 			})
