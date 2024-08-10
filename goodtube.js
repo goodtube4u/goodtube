@@ -301,21 +301,15 @@
 	let goodTube_storyboardSubtitleServers_subtitleIndex = 0;
 	let goodTube_storyboardSubtitleServers_storyboardIndex = 0;
 	let goodTube_storyboardSubtitleServers = [
-		'https://invidious.perennialte.ch',
-		'https://yt.artemislena.eu',
-		'https://invidious.private.coffee',
-		'https://invidious.drgns.space',
-		'https://inv.nadeko.net',
-		'https://invidious.projectsegfau.lt',
-		'https://invidious.jing.rocks',
 		'https://invidious.incogniweb.net',
-		'https://invidious.privacyredirect.com',
-		'https://invidious.fdn.fr',
-		'https://iv.datura.network',
-		'https://pipedapi-libre.kavin.rocks',
-		'https://pipedapi.syncpundit.io',
-		'https://invidious.protokolla.fi',
-		'https://iv.melmac.space'
+		'https://invidious.private.coffee,',
+		'https://invidious.darkness.services,',
+		'https://invidious.jing.rocks,',
+		'https://invidious.privacyredirect.com,',
+		'https://invidious.fdn.fr,',
+		'https://yt.artemislena.eu,',
+		'https://invidious.perennialte.ch,',
+		'https://invidious.drgns.space'
 	];
 
 
