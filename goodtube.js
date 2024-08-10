@@ -5949,9 +5949,6 @@
 			})
 			// If the fetch failed, try the next fallback server
 			.catch((error) => {
-
-				console.log('subtitle failed for '+subtitleApi);
-
 				goodTube_subtitles_checkServer(player, subtitleData, subtitleApi);
 			});
 
