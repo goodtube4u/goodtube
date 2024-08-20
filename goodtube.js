@@ -41,20 +41,55 @@
 
 		// HD SERVERS
 		// --------------------------------------------------------------------------------
-		// FAST
+		// MEDIUM
 		{
-			'name': 'Anubis (DE)',
+			'name': 'Sapphire (IN)',
 			'type': 3,
 			'proxy': true,
-			'url': 'https://pipedapi.r4fo.com'
+			'url': 'https://pipedapi.in.projectsegfau.lt'
+		},
+		// MEDIUM
+		{
+			'name': '420 (FI)',
+			'type': 2,
+			'proxy': true,
+			'url': 'https://invidious.privacyredirect.com'
 		},
 		// FAST
 		{
-			'name': 'Acid (US)',
+			'name': 'Serpent (US)',
 			'type': 2,
 			'proxy': true,
-			'url': 'https://invidious.incogniweb.net'
+			'url': 'https://invidious.darkness.services'
 		},
+		// FAST
+		{
+			'name': 'Sphynx (JP)',
+			'type': 2,
+			'proxy': true,
+			'url': 'https://invidious.jing.rocks'
+		},
+		// FAST
+		{
+			'name': 'Anubis (INT)',
+			'type': 3,
+			'proxy': true,
+			'url': 'https://pipedapi.kavin.rocks'
+		},
+		// // FAST
+		// {
+		// 	'name': 'Anubis (DE)',
+		// 	'type': 3,
+		// 	'proxy': true,
+		// 	'url': 'https://pipedapi.r4fo.com'
+		// },
+		// // FAST
+		// {
+		// 	'name': 'Acid (US)',
+		// 	'type': 2,
+		// 	'proxy': true,
+		// 	'url': 'https://invidious.incogniweb.net'
+		// },
 		// FAST
 		{
 			'name': 'Phoenix (US)',
@@ -90,13 +125,6 @@
 			'proxy': true,
 			'url': 'https://invidious.private.coffee'
 		},
-		// FAST
-		{
-			'name': 'Serpent (US)',
-			'type': 2,
-			'proxy': true,
-			'url': 'https://invidious.darkness.services'
-		},
 		// // FAST
 		// {
 		// 	'name': 'Obsidian (AT)',
@@ -111,20 +139,7 @@
 		// 	'proxy': true,
 		// 	'url': 'https://pipedapi.ducks.party'
 		// },
-		// MEDIUM
-		{
-			'name': 'Sapphire (IN)',
-			'type': 3,
-			'proxy': true,
-			'url': 'https://pipedapi.in.projectsegfau.lt'
-		},
-		// FAST
-		{
-			'name': 'Sphynx (JP)',
-			'type': 2,
-			'proxy': true,
-			'url': 'https://invidious.jing.rocks'
-		},
+
 		// // MEDIUM
 		// {
 		// 	'name': 'Space (DE)',
@@ -145,13 +160,6 @@
 			'type': 3,
 			'proxy': true,
 			'url': 'https://pipedapi.phoenixthrush.com'
-		},
-		// MEDIUM
-		{
-			'name': '420 (FI)',
-			'type': 2,
-			'proxy': true,
-			'url': 'https://invidious.privacyredirect.com'
 		},
 		// MEDIUM
 		{
@@ -5251,6 +5259,7 @@
 		})
 		// If there's any issues loading the video data, try again (after configured delay time)
 		.catch((error) => {
+			console.log('error loading video data', error);
 			if (typeof goodTube_pendingRetry['loadVideoData'] !== 'undefined') {
 				clearTimeout(goodTube_pendingRetry['loadVideoData']);
 			}
