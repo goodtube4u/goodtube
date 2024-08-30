@@ -43,17 +43,17 @@
 		// --------------------------------------------------------------------------------
 		// MEDIUM
 		{
-			'name': 'Sapphire (IN)',
-			'type': 3,
-			'proxy': true,
-			'url': 'https://pipedapi.in.projectsegfau.lt'
-		},
-		// MEDIUM
-		{
 			'name': '420 (FI)',
 			'type': 2,
 			'proxy': true,
 			'url': 'https://invidious.privacyredirect.com'
+		},
+		// MEDIUM
+		{
+			'name': 'Sapphire (IN)',
+			'type': 3,
+			'proxy': true,
+			'url': 'https://pipedapi.in.projectsegfau.lt'
 		},
 		// FAST
 		{
@@ -5259,7 +5259,6 @@
 		})
 		// If there's any issues loading the video data, try again (after configured delay time)
 		.catch((error) => {
-			console.log('error loading video data', error);
 			if (typeof goodTube_pendingRetry['loadVideoData'] !== 'undefined') {
 				clearTimeout(goodTube_pendingRetry['loadVideoData']);
 			}
