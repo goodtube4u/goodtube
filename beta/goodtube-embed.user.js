@@ -325,10 +325,10 @@
 	}
 
 	// Turn off autoplay
-	let goodTube_turnedOffAutoplay = false;
+	let goodTube_youtube_turnedOffAutoplay = false;
 	function goodTube_youtube_turnOffAutoplay() {
 		// If we've already turned off autoplay, just return
-		if (goodTube_turnedOffAutoplay) {
+		if (goodTube_youtube_turnedOffAutoplay) {
 			return;
 		}
 
@@ -343,7 +343,7 @@
 			if (autoplayButton) {
 				// Set a variable if autoplay has been turned off
 				if (autoplayButton.getAttribute('aria-checked') === 'false') {
-					goodTube_turnedOffAutoplay = true;
+					goodTube_youtube_turnedOffAutoplay = true;
 					return;
 				}
 				// Otherwise click the button
@@ -363,7 +363,7 @@
 			// if (autoplayButton) {
 			// 	// Set a variable if autoplay has been turned off
 			// 	if (autoplayButton.getAttribute('aria-pressed') === 'false') {
-			// 		goodTube_turnedOffAutoplay = true;
+			// 		goodTube_youtube_turnedOffAutoplay = true;
 			// 		return;
 			// 	}
 			// 	// Otherwise click the button
