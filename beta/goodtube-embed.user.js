@@ -1262,10 +1262,12 @@
 
 	// Count unique users
 	function goodTube_stats_user() {
+		// If there's no cookie
 		if (!goodTube_helper_getCookie('goodTube_embedUserUnique')) {
+			// Count a unique user
 			fetch('https://api.counterapi.dev/v1/goodtube/users/up/');
 
-			// Set a cookie to only count users once
+			// Set a cookie to only count unique users once
 			goodTube_helper_setCookie('goodTube_embedUserUnique', 'true');
 		}
 	}
