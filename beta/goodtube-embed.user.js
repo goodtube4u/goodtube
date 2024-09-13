@@ -79,8 +79,8 @@
 		return null;
 	}
 
-	// Hide or show an element / youtube player
-	function goodTube_helper_hideElement_init() {
+	// Add CSS classes to show or hide elements / the Youtube player
+	function goodTube_helper_showHide_init() {
 		let style = document.createElement('style');
 		style.textContent = `
 			.goodTube_hidden {
@@ -115,18 +115,21 @@
 		document.head.appendChild(style);
 	}
 
+	// Hide an element
 	function goodTube_helper_hideElement(element) {
 		if (element && !element.classList.contains('goodTube_hidden')) {
 			element.classList.add('goodTube_hidden');
 		}
 	}
 
+	// Show an element
 	function goodTube_helper_showElement(element) {
 		if (element && element.classList.contains('goodTube_hidden')) {
 			element.classList.remove('goodTube_hidden');
 		}
 	}
 
+	// Hide the Youtube player
 	function goodTube_helper_hideYoutubePlayer(element) {
 		// Add a wrapping div to help avoid detection
 		if (!element.closest('.goodTube_hiddenPlayer')) {
@@ -1284,7 +1287,7 @@
 		setInterval(goodTube_youtube_mutePauseSkipAds, 1);
 
 		// Add CSS classes to hide elements (without Youtube knowing)
-		goodTube_helper_hideElement_init();
+		goodTube_helper_showHide_init();
 
 		// Hide the youtube players
 		goodTube_youtube_hidePlayers();
