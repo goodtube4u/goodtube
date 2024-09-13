@@ -557,7 +557,6 @@
 	// Load a video
 	let goodTube_player_firstLoad = true;
 	function goodTube_player_load() {
-
 		// Pause the video first (this helps to prevent audio flashes)
 		goodTube_player_pause();
 
