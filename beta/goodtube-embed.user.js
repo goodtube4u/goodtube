@@ -564,13 +564,21 @@
 		if (goodTube_player_firstLoad || !goodTube_pip) {
 			// On iframe load
 			goodTube_player.addEventListener('load', function() {
-				// If a restore time exists, skip to it
-				if (typeof goodTube_getParams['t'] !== 'undefined') {
-					goodTube_player_skipTo(goodTube_getParams['t'].replace('s', ''));
-				}
+				// Ensure we're still viewing a video (sometimes you can browse to another page before the iframe loads)
+				if (window.location.href.indexOf('.com/watch') !== -1) {
+					// If a restore time exists, skip to it
+					if (typeof goodTube_getParams['t'] !== 'undefined') {
+						goodTube_player_skipTo(goodTube_getParams['t'].replace('s', ''));
+					}
 
-				// Set autoplay initial state
-				goodTube_player.contentWindow.postMessage('goodTube_autoplay_'+goodTube_autoplay, '*');
+					// Set autoplay initial state
+					goodTube_player.contentWindow.postMessage('goodTube_autoplay_'+goodTube_autoplay, '*');
+				}
+				// If we're not still viewing a video
+				else {
+					// Clear and hide the player
+					goodTube_player_clear();
+				}
 			});
 
 			// Set the video source (we need to use this weird method so it doesn't mess with browser history)
@@ -1701,6 +1709,11 @@
 		if (event.data.indexOf('goodTube_load_') !== -1) {
 			let videoId = event.data.replace('goodTube_load_', '');
 
+			// Pause and mute the video first (this helps to prevent audio flashes)
+			goodTube_iframe_mute();
+			goodTube_iframe_pause();
+
+			// Then load the new video
 			goodTube_iframe_api.loadVideoById(videoId);
 		}
 
@@ -1824,13 +1837,43 @@
 		// Target the video
 		let videoElement = document.querySelector('video');
 
-		// If the video exists, restore the time
+		// If the video exists, pause it
 		if (videoElement) {
 			videoElement.pause();
 		}
 		// Otherwise retry until the video exists
 		else {
 			setTimeout(goodTube_iframe_pause, 100);
+		}
+	}
+
+	// Mute
+	function goodTube_iframe_mute() {
+		// Target the video
+		let videoElement = document.querySelector('video');
+
+		// If the video exists, mute it
+		if (videoElement) {
+			videoElement.muted = true;
+		}
+		// Otherwise retry until the video exists
+		else {
+			setTimeout(goodTube_iframe_mute, 100);
+		}
+	}
+
+	// Unmute
+	function goodTube_iframe_unmute() {
+		// Target the video
+		let videoElement = document.querySelector('video');
+
+		// If the video exists, unmute it
+		if (videoElement) {
+			videoElement.muted = false;
+		}
+		// Otherwise retry until the video exists
+		else {
+			setTimeout(goodTube_iframe_unmute, 100);
 		}
 	}
 
