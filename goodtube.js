@@ -5449,10 +5449,10 @@
 				// Get the default quality cookie
 				let defaultQuality = goodTube_helper_getCookie('goodTube_selectDefaultNew');
 
-				// If it's not set, use 1080p by default
+				// If it's not set, use 720p by default
 				if (!defaultQuality) {
-					goodTube_helper_setCookie('goodTube_selectDefaultNew', '1080');
-					defaultQuality = '1080';
+					goodTube_helper_setCookie('goodTube_selectDefaultNew', '720');
+					defaultQuality = '720';
 				}
 
 				// Select the default quality
