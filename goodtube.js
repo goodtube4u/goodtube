@@ -43,17 +43,17 @@
 		// --------------------------------------------------------------------------------
 		// MEDIUM
 		{
-			'name': 'Ra (DE)',
-			'type': 3,
-			'proxy': true,
-			'url': 'https://pipedapi.reallyaweso.me'
-		},
-		// MEDIUM
-		{
 			'name': '420 (FI)',
 			'type': 2,
 			'proxy': true,
 			'url': 'https://invidious.privacyredirect.com'
+		},
+		// MEDIUM
+		{
+			'name': 'Ra (DE)',
+			'type': 3,
+			'proxy': true,
+			'url': 'https://pipedapi.reallyaweso.me'
 		},
 		// MEDIUM
 		{
@@ -2754,7 +2754,8 @@
 				'vCodec': vCodec,
 				'vQuality': 'max',
 				'filenamePattern': 'basic',
-				'isAudioOnly': isAudioOnly
+				'isAudioOnly': isAudioOnly,
+				'audioBitrate': '320'
 			});
 
 			// Call the API (die after 10s)
