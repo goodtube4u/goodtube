@@ -43,6 +43,13 @@
 		// --------------------------------------------------------------------------------
 		// MEDIUM
 		{
+			'name': 'Ra (DE)',
+			'type': 3,
+			'proxy': true,
+			'url': 'https://pipedapi.reallyaweso.me'
+		},
+		// MEDIUM
+		{
 			'name': '420 (FI)',
 			'type': 2,
 			'proxy': true,
