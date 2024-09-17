@@ -592,7 +592,7 @@
 			// Turn first load off
 			goodTube_player_firstLoad = false;
 		}
-		// On other loads
+		// On other loads (picture in picture only currently)
 		else {
 			// Load the video via the iframe api
 			goodTube_player.contentWindow.postMessage('goodTube_load_'+goodTube_getParams['v'], '*');
