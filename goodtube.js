@@ -41,6 +41,14 @@
 
 		// HD SERVERS
 		// --------------------------------------------------------------------------------
+
+		// MEDIUM
+		{
+			'name': 'Rain (DE)',
+			'type': 2,
+			'proxy': true,
+			'url': 'https://youchu.be'
+		},
 		// MEDIUM
 		{
 			'name': '420 (FI)',
