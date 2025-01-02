@@ -11,7 +11,7 @@
 // @run-at       document-start
 // ==/UserScript==
 
-(function() {
+(function () {
 	'use strict';
 
 
@@ -31,7 +31,7 @@
 	function goodTube_helper_setupGetParams() {
 		let getParams = {};
 
-		document.location.search.replace(/\??(?:([^=]+)=([^&]*)&?)/g, function() {
+		document.location.search.replace(/\??(?:([^=]+)=([^&]*)&?)/g, function () {
 			function decode(s) {
 				return decodeURIComponent(s.split("+").join(" "));
 			}
@@ -56,7 +56,7 @@
 	// Set a cookie
 	function goodTube_helper_setCookie(name, value) {
 		// 399 days
-		document.cookie = name+"="+encodeURIComponent(value)+";max-age="+(399*24*60*60);
+		document.cookie = name + "=" + encodeURIComponent(value) + ";max-age=" + (399 * 24 * 60 * 60);
 	}
 
 	// Get a cookie
@@ -289,7 +289,7 @@
 				element.classList.add('goodTube_timestampLink');
 
 				// Add the event listener to send our player to the correct time
-				element.addEventListener('click', function() {
+				element.addEventListener('click', function () {
 					let bits = element.getAttribute('href').split('t=');
 					if (typeof bits[1] !== 'undefined') {
 						let time = bits[1].replace('s', '');
@@ -521,12 +521,12 @@
 				if (positionElement && positionElement.offsetHeight > 0) {
 					// Our wrapper has "position: absolute" so take into account the window scroll
 					let rect = positionElement.getBoundingClientRect();
-					goodTube_playerWrapper.style.top = (rect.top + window.scrollY)+'px';
-					goodTube_playerWrapper.style.left = (rect.left + window.scrollX)+'px';
+					goodTube_playerWrapper.style.top = (rect.top + window.scrollY) + 'px';
+					goodTube_playerWrapper.style.left = (rect.left + window.scrollX) + 'px';
 
 					// Match the size of the position element
-					goodTube_playerWrapper.style.width = positionElement.offsetWidth+'px';
-					goodTube_playerWrapper.style.height = positionElement.offsetHeight+'px';
+					goodTube_playerWrapper.style.width = positionElement.offsetWidth + 'px';
+					goodTube_playerWrapper.style.height = positionElement.offsetHeight + 'px';
 				}
 			}
 
@@ -538,18 +538,18 @@
 				if (positionElement && positionElement.offsetHeight > 0) {
 					// Our wrapper has "position: absolute" so don't take into account the window scroll
 					let rect = positionElement.getBoundingClientRect();
-					goodTube_playerWrapper.style.top = rect.top+'px';
-					goodTube_playerWrapper.style.left = rect.left+'px';
+					goodTube_playerWrapper.style.top = rect.top + 'px';
+					goodTube_playerWrapper.style.left = rect.left + 'px';
 
 					// Match the size of the position element
-					goodTube_playerWrapper.style.width = positionElement.offsetWidth+'px';
-					goodTube_playerWrapper.style.height = positionElement.offsetHeight+'px';
+					goodTube_playerWrapper.style.width = positionElement.offsetWidth + 'px';
+					goodTube_playerWrapper.style.height = positionElement.offsetHeight + 'px';
 				}
 			}
 		}
 
 		// Call this function again on next draw frame
-		window.requestAnimationFrame(function() {
+		window.requestAnimationFrame(function () {
 			goodTube_player_positionAndSize();
 		});
 	}
@@ -561,9 +561,10 @@
 		goodTube_player_pause();
 
 		// On first load, or we're not in picture in picture (we fully refresh the iframe normally as this helps to stop audio flashes, temp fix as this is kinda sucky)
-		if (goodTube_player_firstLoad || !goodTube_pip) {
+		// if (goodTube_player_firstLoad || !goodTube_pip) {
+		if (goodTube_player_firstLoad) {
 			// On iframe load
-			goodTube_player.addEventListener('load', function() {
+			goodTube_player.addEventListener('load', function () {
 				// Ensure we're still viewing a video (sometimes you can browse to another page before the iframe loads)
 				if (window.location.href.indexOf('.com/watch') !== -1) {
 					// If a restore time exists, skip to it
@@ -572,7 +573,7 @@
 					}
 
 					// Set autoplay initial state
-					goodTube_player.contentWindow.postMessage('goodTube_autoplay_'+goodTube_autoplay, '*');
+					goodTube_player.contentWindow.postMessage('goodTube_autoplay_' + goodTube_autoplay, '*');
 				}
 				// If we're not still viewing a video
 				else {
@@ -587,7 +588,7 @@
 			if (goodTube_mobile) {
 				mobileText = 'true';
 			}
-			goodTube_player.contentWindow.location.replace('https://www.youtube.com/embed/'+goodTube_getParams['v']+'?autoplay=1&mobile='+mobileText);
+			goodTube_player.contentWindow.location.replace('https://www.youtube.com/embed/' + goodTube_getParams['v'] + '?autoplay=1&mobile=' + mobileText);
 
 			// Turn first load off
 			goodTube_player_firstLoad = false;
@@ -595,7 +596,7 @@
 		// On other loads (picture in picture only currently)
 		else {
 			// Load the video via the iframe api
-			goodTube_player.contentWindow.postMessage('goodTube_load_'+goodTube_getParams['v'], '*');
+			goodTube_player.contentWindow.postMessage('goodTube_load_' + goodTube_getParams['v'], '*');
 		}
 
 		// Show the player
@@ -615,7 +616,7 @@
 
 	// Skip to time
 	function goodTube_player_skipTo(time) {
-		goodTube_player.contentWindow.postMessage('goodTube_skipTo_'+time, '*');
+		goodTube_player.contentWindow.postMessage('goodTube_skipTo_' + time, '*');
 	}
 
 	// Pause
@@ -633,7 +634,7 @@
 	------------------------------------------------------------------------------------------ */
 	// Add keyboard shortcuts
 	function goodTube_shortcuts_init() {
-		document.addEventListener('keydown', function(event) {
+		document.addEventListener('keydown', function (event) {
 			// Don't do anything if we're holding control
 			if (event.ctrlKey) {
 				return;
@@ -1040,7 +1041,7 @@
 				playlistItemElement.innerHTML = playlistTitles[i].innerHTML.trim();
 
 				// If we're currently on this item, set the selected class
-				if (playlistItem.href.indexOf('v='+goodTube_getParams['v']) !== -1) {
+				if (playlistItem.href.indexOf('v=' + goodTube_getParams['v']) !== -1) {
 					playlistItemElement.classList.add('goodTube_selected');
 				}
 
@@ -1072,17 +1073,17 @@
 				if (clickNext) {
 					// Find the matching playlist item on the page and click it
 					let bits = playlistItem.href.split('/watch');
-					let findUrl = '/watch'+bits[1];
+					let findUrl = '/watch' + bits[1];
 
 					// Desktop
 					if (!goodTube_mobile) {
 						clickedPlaylistItem = true;
-						document.querySelector('#playlist-items > a[href="'+findUrl+'"]')?.click();
+						document.querySelector('#playlist-items > a[href="' + findUrl + '"]')?.click();
 					}
 					// Mobile
 					else {
 						clickedPlaylistItem = true;
-						document.querySelector('ytm-playlist-panel-renderer a.compact-media-item-image[href="'+findUrl+'"]')?.click();
+						document.querySelector('ytm-playlist-panel-renderer a.compact-media-item-image[href="' + findUrl + '"]')?.click();
 					}
 
 					if (clickedPlaylistItem) {
@@ -1105,7 +1106,7 @@
 						goodTube_nav_clickedPlaylistOpen = false;
 
 						// Click the matching playlist item
-						document.querySelector('ytm-playlist-panel-renderer a.compact-media-item-image[href="'+findUrl+'"]')?.click();
+						document.querySelector('ytm-playlist-panel-renderer a.compact-media-item-image[href="' + findUrl + '"]')?.click();
 					}
 				}
 
@@ -1146,12 +1147,12 @@
 				if (clickNext) {
 					// Find the matching playlist item on the page and click it
 					let bits = playlistItem.href.split('/watch');
-					let findUrl = '/watch'+bits[1];
+					let findUrl = '/watch' + bits[1];
 
 					// Desktop
 					if (!goodTube_mobile) {
 						clickedPlaylistItem = true;
-						document.querySelector('#playlist-items > a[href="'+findUrl+'"]')?.click();
+						document.querySelector('#playlist-items > a[href="' + findUrl + '"]')?.click();
 					}
 					// Mobile
 					else {
@@ -1174,7 +1175,7 @@
 						goodTube_nav_clickedPlaylistOpen = false;
 
 						// Click the matching playlist item
-						document.querySelector('ytm-playlist-panel-renderer a.compact-media-item-image[href="'+findUrl+'"]')?.click();
+						document.querySelector('ytm-playlist-panel-renderer a.compact-media-item-image[href="' + findUrl + '"]')?.click();
 					}
 
 					if (clickedPlaylistItem) {
@@ -1528,7 +1529,8 @@
 			.ytp-endscreen-content,
 			.ytp-ad-progress-list,
 			.ytp-endscreen-next,
-			.ytp-endscreen-previous {
+			.ytp-endscreen-previous,
+			.ytp-info-panel-preview {
 				display: none !important;
 			}
 
@@ -1578,7 +1580,7 @@
 		let prevButton = document.querySelector('.ytp-prev-button');
 		if (prevButton) {
 			// Add actions
-			prevButton.addEventListener('click', function() {
+			prevButton.addEventListener('click', function () {
 				// Tell the parent frame to go to the previous video
 				window.parent.postMessage('goodTube_prevVideo', '*');
 			});
@@ -1589,7 +1591,7 @@
 		let nextButton = document.querySelector('.ytp-next-button');
 		if (nextButton) {
 			// Add actions
-			nextButton.addEventListener('click', function() {
+			nextButton.addEventListener('click', function () {
 				// Tell the parent frame to go to the next video
 				window.parent.postMessage('goodTube_nextVideo', '*');
 			});
@@ -1607,7 +1609,7 @@
 			theaterButton.innerHTML = '<svg height="100%" version="1.1" viewBox="0 0 36 36" width="100%"><use class="ytp-svg-shadow" xlink:href="#ytp-id-30"></use><path d="m 28,11 0,14 -20,0 0,-14 z m -18,2 16,0 0,10 -16,0 0,-10 z" fill="#fff" fill-rule="evenodd" id="ytp-id-30"></path></svg>';
 
 			// Add actions
-			theaterButton.addEventListener('click', function() {
+			theaterButton.addEventListener('click', function () {
 				// Tell the parent window to toggle theater mode
 				window.parent.postMessage('goodTube_theater', '*');
 			});
@@ -1624,7 +1626,7 @@
 				// Add actions
 				let autoplayButton = document.querySelector('#goodTube_autoplayButton');
 				if (autoplayButton) {
-					autoplayButton.addEventListener('click', function() {
+					autoplayButton.addEventListener('click', function () {
 						// Toggle the style of the autoplay button
 						let innerButton = autoplayButton.querySelector('.ytp-autonav-toggle-button');
 						let innerButtonState = innerButton.getAttribute('aria-checked');
@@ -1656,7 +1658,7 @@
 		}
 
 		// When the video ends
-		videoElement.addEventListener('ended', function() {
+		videoElement.addEventListener('ended', function () {
 			// Tell the parent frame to go to the next video
 			window.parent.postMessage('goodTube_nextVideo', '*');
 		});
@@ -1664,7 +1666,7 @@
 
 	// Add keyboard shortcuts
 	function goodTube_iframe_addKeyboardShortcuts() {
-		document.addEventListener('keydown', function(event) {
+		document.addEventListener('keydown', function (event) {
 			// Don't do anything if we're holding control
 			if (event.ctrlKey) {
 				return;
