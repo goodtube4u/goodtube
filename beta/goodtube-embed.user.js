@@ -39,7 +39,7 @@
 			getParams[decode(arguments[1])] = decode(arguments[2]);
 		});
 
-		// If we're on a playlist, but we don't have a video id in the URL - then get it from the frame API
+		// If we're on a playlist, but we don't have a video id in the URL - then get it from the page api
 		if (typeof getParams['list'] !== 'undefined' && typeof getParams['v'] === 'undefined') {
 			if (goodTube_page_api && typeof goodTube_page_api.getVideoData === 'function') {
 				let videoData = goodTube_page_api.getVideoData();
