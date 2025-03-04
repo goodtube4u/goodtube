@@ -42,7 +42,7 @@
 		// If we're on a playlist, but we don't have a video id in the URL - then get it from the frame API
 		if (typeof getParams['list'] !== 'undefined' && typeof getParams['v'] === 'undefined') {
 			if (goodTube_page_api && typeof goodTube_page_api.getVideoData === 'function') {
-				let videoData = youtubeFrameAPI.getVideoData();
+				let videoData = goodTube_page_api.getVideoData();
 
 				if (typeof videoData['video_id'] !== 'undefined' && videoData['video_id']) {
 					getParams['v'] = videoData['video_id'];
@@ -1195,8 +1195,7 @@
 
 		// If we didn't click a playlist item, autoplay next video (only if they pressed the next button or autoplay is on)
 		if (!clickedPlaylistItem && (goodTube_autoplay === 'true' || pressedButton)) {
-			let youtubeFrameAPI = document.getElementById('movie_player');
-			youtubeFrameAPI.nextVideo();
+			goodTube_page_api.nextVideo();
 
 			// Debug message
 			console.log('[GoodTube] Autoplaying next video...');
@@ -1464,11 +1463,11 @@
 	------------------------------------------------------------------------------------------ */
 	// Init
 	function goodTube_iframe_init() {
-		// Add the styles
-		goodTube_iframe_style();
-
 		// Get the iframe API
 		goodTube_iframe_api = document.getElementById('movie_player');
+
+		// Add the styles
+		goodTube_iframe_style();
 
 		// Get the video data to check loading state
 		let videoData = false;
