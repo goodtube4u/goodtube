@@ -357,29 +357,27 @@
 		}
 		// Mobile
 		else {
-			// Autoplay is always on for mobile now, we can't control it sadly...
+			// Target the autoplay button
+			autoplayButton = document.querySelector('.ytm-autonav-toggle-button-container');
 
-			// // Target the autoplay button
-			// autoplayButton = document.querySelector('.ytm-autonav-toggle-button-container');
-
-			// // If we found it
-			// if (autoplayButton) {
-			// 	// Set a variable if autoplay has been turned off
-			// 	if (autoplayButton.getAttribute('aria-pressed') === 'false') {
-			// 		goodTube_youtube_turnedOffAutoplay = true;
-			// 		return;
-			// 	}
-			// 	// Otherwise click the button
-			// 	else {
-			// 		autoplayButton.click();
-			// 	}
-			// }
-			// // If we didn't find it - click the player a bit, this helps to actually make the autoplay button show (after ads)
-			// else {
-			// 	document.querySelector('#player .html5-video-player')?.click();
-			// 	document.querySelector('#player').click();
-			// 	document.querySelector('.ytp-unmute')?.click();
-			// }
+			// If we found it
+			if (autoplayButton) {
+				// Set a variable if autoplay has been turned off
+				if (autoplayButton.getAttribute('aria-pressed') === 'false') {
+					goodTube_youtube_turnedOffAutoplay = true;
+					return;
+				}
+				// Otherwise click the button
+				else {
+					autoplayButton.click();
+				}
+			}
+			// If we didn't find it - click the player a bit, this helps to actually make the autoplay button show (after ads)
+			else {
+				document.querySelector('#player .html5-video-player')?.click();
+				document.querySelector('#player').click();
+				document.querySelector('.ytp-unmute')?.click();
+			}
 		}
 	}
 
@@ -1195,7 +1193,14 @@
 
 		// If we didn't click a playlist item, autoplay next video (only if they pressed the next button or autoplay is on)
 		if (!clickedPlaylistItem && (goodTube_autoplay === 'true' || pressedButton)) {
-			goodTube_page_api.nextVideo();
+			// Re fetch the page API (this fixes issues on mobile)
+			goodTube_page_api = document.getElementById('movie_player');
+
+			// Make sure it exists
+			if (goodTube_page_api && typeof goodTube_page_api.nextVideo === 'function') {
+				// Play the next video
+				goodTube_page_api.nextVideo();
+			}
 
 			// Debug message
 			console.log('[GoodTube] Autoplaying next video...');
@@ -1541,7 +1546,7 @@
 			}
 		`;
 
-		// // Add theater mode button (desktop only)
+		// Add theater mode button (desktop only)
 		if (!goodTube_mobile) {
 			cssOutput += `
 				.ytp-size-button {
@@ -1555,6 +1560,17 @@
 			cssOutput += `
 				.ytp-pip-button {
 					display: inline-block !important;
+				}
+			`;
+		}
+
+		// Position the autoplay button for mobile
+		if (goodTube_mobile) {
+			cssOutput += `
+				#goodTube_autoplayButton {
+					position: fixed;
+					top: 0;
+					right: 0;
 				}
 			`;
 		}
@@ -1615,32 +1631,30 @@
 		}
 
 
-		// Add autoplay button (before subtitles button, desktop only)
-		if (!goodTube_mobile) {
-			let subtitlesButton = document.querySelector('.ytp-subtitles-button');
-			if (subtitlesButton) {
-				// Add button
-				subtitlesButton.insertAdjacentHTML('beforebegin', '<button class="ytp-button" id="goodTube_autoplayButton" data-priority="2" data-tooltip-target-id="ytp-autonav-toggle-button"><div class="ytp-autonav-toggle-button-container"><div class="ytp-autonav-toggle-button" aria-checked="true"></div></div></button>');
+		// Add autoplay button (before subtitles button)
+		let subtitlesButton = document.querySelector('.ytp-subtitles-button');
+		if (subtitlesButton) {
+			// Add button
+			subtitlesButton.insertAdjacentHTML('beforebegin', '<button class="ytp-button" id="goodTube_autoplayButton" data-priority="2" data-tooltip-target-id="ytp-autonav-toggle-button"><div class="ytp-autonav-toggle-button-container"><div class="ytp-autonav-toggle-button" aria-checked="true"></div></div></button>');
 
-				// Add actions
-				let autoplayButton = document.querySelector('#goodTube_autoplayButton');
-				if (autoplayButton) {
-					autoplayButton.addEventListener('click', function () {
-						// Toggle the style of the autoplay button
-						let innerButton = autoplayButton.querySelector('.ytp-autonav-toggle-button');
-						let innerButtonState = innerButton.getAttribute('aria-checked');
+			// Add actions
+			let autoplayButton = document.querySelector('#goodTube_autoplayButton');
+			if (autoplayButton) {
+				autoplayButton.addEventListener('click', function () {
+					// Toggle the style of the autoplay button
+					let innerButton = autoplayButton.querySelector('.ytp-autonav-toggle-button');
+					let innerButtonState = innerButton.getAttribute('aria-checked');
 
-						if (innerButtonState === 'true') {
-							innerButton.setAttribute('aria-checked', 'false');
-						}
-						else {
-							innerButton.setAttribute('aria-checked', 'true');
-						}
+					if (innerButtonState === 'true') {
+						innerButton.setAttribute('aria-checked', 'false');
+					}
+					else {
+						innerButton.setAttribute('aria-checked', 'true');
+					}
 
-						// Tell the parent window to toggle autoplay
-						window.parent.postMessage('goodTube_autoplayToggle', '*');
-					});
-				}
+					// Tell the parent window to toggle autoplay
+					window.parent.postMessage('goodTube_autoplayToggle', '*');
+				});
 			}
 		}
 	}
@@ -1955,7 +1969,7 @@
 		goodTube_init();
 	}
 	// Iframe embed
-	else {
+	else if (window.top.location.href.indexOf('youtube.com') !== -1) {
 		goodTube_iframe_init();
 	}
 
