@@ -15,7 +15,8 @@
 	'use strict';
 
 
-	// Bypass CSP restrictions, introduced by the latest Chrome updates
+	/* Bypass CSP restrictions (introduced by the latest Chrome updates)
+	------------------------------------------------------------------------------------------ */
 	if (window.trustedTypes && window.trustedTypes.createPolicy && !window.trustedTypes.defaultPolicy) {
 		window.trustedTypes.createPolicy('default', {
 			createHTML: string => string,
@@ -1286,18 +1287,18 @@
 	// Count unique users
 	function goodTube_stats_user() {
 		// If there's no cookie
-		if (!goodTube_helper_getCookie('goodTube_embedUserUnique')) {
+		if (!goodTube_helper_getCookie('goodTube_uniqueUserStat')) {
 			// Count a unique user
-			fetch('https://api.counterapi.dev/v1/goodtube/users/up/');
+			fetch('https://jamenlyndon.com/_other/stats/user.php');
 
 			// Set a cookie to only count unique users once
-			goodTube_helper_setCookie('goodTube_embedUserUnique', 'true');
+			goodTube_helper_setCookie('goodTube_uniqueUserStat', 'true');
 		}
 	}
 
 	// Count videos
 	function goodTube_stats_video() {
-		fetch('https://api.counterapi.dev/v1/goodtube/videos/up/');
+		fetch('https://jamenlyndon.com/_other/stats/video.php');
 	}
 
 
