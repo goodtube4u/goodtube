@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube Embed (Beta)
 // @namespace    http://tampermonkey.net/
-// @version      1.000
+// @version      1.001
 // @description  Removes 100% of Youtube ads. Also removes shorts and other annoying things.
 // @author       GoodTube - Embed
 // @match        *://m.youtube.com/*
