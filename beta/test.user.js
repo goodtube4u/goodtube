@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube Testing
 // @namespace    http://tampermonkey.net/
-// @version      1.005
+// @version      1.006
 // @description  A testing ground for GoodTube.
 // @author       GoodTube - Embed
 // @match        *://m.youtube.com/*
@@ -565,6 +565,7 @@
 	}
 
 	// Load a video
+	let goodTube_player_firstLoad = true;
 	function goodTube_player_load() {
 		// Pause the video first (this helps to prevent audio flashes)
 		goodTube_player_pause();
@@ -576,87 +577,46 @@
 			return;
 		}
 
-		// Ensure we're still viewing a video (sometimes you can browse to another page before the iframe loads)
-		if (window.location.href.indexOf('.com/watch') !== -1) {
-			// If a restore time exists, skip to it
-			if (typeof goodTube_getParams['t'] !== 'undefined') {
-				goodTube_player_skipTo(goodTube_getParams['t'].replace('s', ''));
+		// If we're not in picture in picture mode
+		if (!goodTube_pip) {
+			// Ensure we're still viewing a video (sometimes you can browse to another page before the iframe loads)
+			if (window.location.href.indexOf('.com/watch') !== -1) {
+				// If a restore time exists, skip to it
+				if (typeof goodTube_getParams['t'] !== 'undefined') {
+					goodTube_player_skipTo(goodTube_getParams['t'].replace('s', ''));
+				}
+
+				// Set autoplay initial state
+				goodTube_player.contentWindow.postMessage('goodTube_autoplay_' + goodTube_autoplay, '*');
+			}
+			// If we're not still viewing a video
+			else {
+				// Clear and hide the player
+				goodTube_player_clear();
 			}
 
-			// Set autoplay initial state
-			goodTube_player.contentWindow.postMessage('goodTube_autoplay_' + goodTube_autoplay, '*');
-		}
-		// If we're not still viewing a video
-		else {
-			// Clear and hide the player
-			goodTube_player_clear();
-		}
 
-		// Set the video source (we need to use this weird method so it doesn't mess with browser history)
-		// This also tells the embed if it's mobile or not
-		let mobileText = 'false';
-		if (goodTube_mobile) {
-			mobileText = 'true';
+			// Set the video source (we need to use this weird method so it doesn't mess with browser history)
+			// This also tells the embed if it's mobile or not
+			let mobileText = 'false';
+			if (goodTube_mobile) {
+				mobileText = 'true';
+			}
+			goodTube_player.contentWindow.postMessage('goodTube_src_https://www.youtube.com/embed/' + goodTube_getParams['v'] + '?autoplay=1&mobile=' + mobileText, '*');
+
+			// Turn first load off
+			goodTube_player_firstLoad = true;
 		}
-		goodTube_player.contentWindow.postMessage('goodTube_src_https://www.youtube.com/embed/' + goodTube_getParams['v'] + '?autoplay=1&mobile=' + mobileText, '*');
+		// If we are in picture in picture mode
+		else {
+			// Load the video via the iframe api
+			goodTube_player.contentWindow.postMessage('goodTube_load_' + goodTube_getParams['v'], '*');
+		}
 
 
 		// Show the player
 		goodTube_helper_showElement(goodTube_playerWrapper);
 	}
-
-	// // Load a video
-	// let goodTube_player_firstLoad = true;
-	// function goodTube_player_load() {
-	// 	// Debug message
-	// 	console.log('[GoodTube] Loading video ' + goodTube_getParams['v'] + '...');
-
-	// 	// Pause the video first (this helps to prevent audio flashes)
-	// 	goodTube_player_pause();
-
-	// 	// On first load, or we're not in picture in picture (we fully refresh the iframe normally as this helps to stop audio flashes, temp fix as this is kinda sucky)
-	// 	// if (goodTube_player_firstLoad || !goodTube_pip) {
-	// 	if (goodTube_player_firstLoad) {
-	// 		// On iframe load
-	// 		goodTube_player.addEventListener('load', function () {
-	// 			// Set the video source (we need to use this weird method so it doesn't mess with browser history)
-	// 			// This also tells the embed if it's mobile or not
-	// 			let mobileText = 'false';
-	// 			if (goodTube_mobile) {
-	// 				mobileText = 'true';
-	// 			}
-
-	// 			goodTube_player.contentWindow.postMessage('goodTube_src_https://www.youtube.com/embed/' + goodTube_getParams['v'] + '?autoplay=1&mobile=' + mobileText, '*');
-
-	// 			// Ensure we're still viewing a video (sometimes you can browse to another page before the iframe loads)
-	// 			if (window.location.href.indexOf('.com/watch') !== -1) {
-	// 				// If a restore time exists, skip to it
-	// 				if (typeof goodTube_getParams['t'] !== 'undefined') {
-	// 					goodTube_player_skipTo(goodTube_getParams['t'].replace('s', ''));
-	// 				}
-
-	// 				// Set autoplay initial state
-	// 				goodTube_player.contentWindow.postMessage('goodTube_autoplay_' + goodTube_autoplay, '*');
-	// 			}
-	// 			// If we're not still viewing a video
-	// 			else {
-	// 				// Clear and hide the player
-	// 				goodTube_player_clear();
-	// 			}
-	// 		});
-
-	// 		// Turn first load off
-	// 		goodTube_player_firstLoad = false;
-	// 	}
-	// 	// On other loads (picture in picture only currently)
-	// 	else {
-	// 		// Load the video via the iframe api
-	// 		goodTube_player.contentWindow.postMessage('goodTube_load_' + goodTube_getParams['v'], '*');
-	// 	}
-
-	// 	// Show the player
-	// 	goodTube_helper_showElement(goodTube_playerWrapper);
-	// }
 
 	// Clear and hide the player
 	function goodTube_player_clear() {
