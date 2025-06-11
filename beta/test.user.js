@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube Testing
 // @namespace    http://tampermonkey.net/
-// @version      1.003
+// @version      1.005
 // @description  A testing ground for GoodTube.
 // @author       GoodTube - Embed
 // @match        *://m.youtube.com/*
@@ -476,6 +476,7 @@
 				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
 				referrerpolicy="strict-origin-when-cross-origin"
 				allowfullscreen
+				style="display: none;"
 			></iframe>
 		`;
 
@@ -486,6 +487,7 @@
 		// Expose when the proxy iframe has loaded
 		goodTube_player.addEventListener('load', function () {
 			goodTube_proxyIframeLoaded = true;
+			goodTube_player.style.display = 'block';
 		});
 
 		// Setup player dynamic positioning and sizing
@@ -571,6 +573,7 @@
 		if (!goodTube_proxyIframeLoaded) {
 			clearTimeout(goodTube_loadTimeout);
 			goodTube_loadTimeout = setTimeout(goodTube_player_load, 100);
+			return;
 		}
 
 		// Ensure we're still viewing a video (sometimes you can browse to another page before the iframe loads)
@@ -2003,24 +2006,13 @@
 	------------------------------------------------------------------------------------------ */
 	// Init
 	function goodTube_proxyIframe_init() {
-		// Hide the body content with an overlay
-		let overlay = document.createElement('div');
-		document.body.appendChild(overlay);
-		overlay.style.position = 'fixed';
-		overlay.style.top = '0';
-		overlay.style.bottom = '0';
-		overlay.style.right = '0';
-		overlay.style.left = '0';
-		overlay.style.background = '#000000';
-		overlay.style.zIndex = '99998';
-
 		// Remove scrolling
 		document.body.style.overflow = 'hidden';
 
 		// Wait for the DOM to load
 		document.addEventListener("DOMContentLoaded", () => {
 			// Hide the DOM elements from the proxy page
-			let elements = document.querySelectorAll('body > *:not(.goodTube_overlay)');
+			let elements = document.querySelectorAll('body > *');
 			elements.forEach(element => {
 				element.style.display = 'none';
 				element.style.opacity = '0';
