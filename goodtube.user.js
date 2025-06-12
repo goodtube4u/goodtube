@@ -4,8 +4,8 @@
 // @version      2.000
 // @description  Removes 100% of Youtube ads.
 // @author       GoodTube
-// @updateURL    https://github.com/goodtube4u/goodtube/raw/refs/heads/main/beta/goodtube-embed.user.js
-// @downloadURL  https://github.com/goodtube4u/goodtube/raw/refs/heads/main/beta/goodtube-embed.user.js
+// @updateURL    https://github.com/goodtube4u/goodtube/raw/refs/heads/main/goodtube.user.js
+// @downloadURL  https://github.com/goodtube4u/goodtube/raw/refs/heads/main/goodtube.user.js
 // @match        *://m.youtube.com/*
 // @match        *://www.youtube.com/*
 // @match        *://youtube.com/*
