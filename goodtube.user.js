@@ -1,21 +1,23 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      5.010
-// @description  Loads Youtube videos from different sources. Also removes ads, shorts, etc.
+// @version      2.000
+// @description  Removes 100% of Youtube ads.
 // @author       GoodTube
-// @match        https://*.youtube.com/*
+// @updateURL    https://github.com/goodtube4u/goodtube/raw/refs/heads/main/beta/goodtube-embed.user.js
+// @downloadURL  https://github.com/goodtube4u/goodtube/raw/refs/heads/main/beta/goodtube-embed.user.js
+// @match        *://m.youtube.com/*
+// @match        *://www.youtube.com/*
+// @match        *://youtube.com/*
+// @match        *://*.wikipedia.org/*
 // @icon         https://cdn-icons-png.flaticon.com/256/1384/1384060.png
 // @run-at       document-start
-// @updateURL    https://github.com/goodtube4u/goodtube/raw/main/goodtube.user.js
-// @downloadURL  https://github.com/goodtube4u/goodtube/raw/main/goodtube.user.js
-// @noframes
 // ==/UserScript==
 
 // This now automatically loads the latest version. This means that you will never need to update manually again :)
 // To view the full source code go here: https://github.com/goodtube4u/goodtube/blob/main/goodtube.js
 
-(function() {
+(function () {
 	'use strict';
 
 	// Bypass CSP restrictions, introduced by the latest Chrome updates
@@ -51,22 +53,22 @@
 		loadAttempts++;
 
 		// Load GoodTube
-		fetch('https://raw.githubusercontent.com/goodtube4u/GoodTube/main/goodtube.min.js?i='+Date.now())
-		// Success
-		.then(response => response.text())
-		.then(data => {
-			// Put GoodTube code into a <script> tag
-			let element = document.createElement('script');
-			element.innerHTML = data;
-			document.head.appendChild(element);
-		})
-		// Error
-		.catch((error) => {
-			// Try again after 500ms
-			setTimeout(function() {
-				goodTube_load(loadAttempts);
-			}, 500);
-		});
+		fetch('https://raw.githubusercontent.com/goodtube4u/GoodTube/main/goodtube.js?i=' + Date.now())
+			// Success
+			.then(response => response.text())
+			.then(data => {
+				// Put GoodTube code into a <script> tag
+				let element = document.createElement('script');
+				element.innerHTML = data;
+				document.head.appendChild(element);
+			})
+			// Error
+			.catch((error) => {
+				// Try again after 500ms
+				setTimeout(function () {
+					goodTube_load(loadAttempts);
+				}, 500);
+			});
 	}
 
 	// Load GoodTube
