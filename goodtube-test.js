@@ -2465,6 +2465,17 @@
 			// Change the background colour
 			document.body.style.background = '#000000';
 
+			// Add an overlay just in case
+			let overlay = document.createElement('div');
+			document.body.appendChild(overlay);
+			overlay.style.position = 'fixed';
+			youtubeIframe.style.top = '0';
+			youtubeIframe.style.bottom = '0';
+			youtubeIframe.style.right = '0';
+			youtubeIframe.style.left = '0';
+			youtubeIframe.style.zIndex = '99998';
+
+
 			// Create a youtube iframe
 			let youtubeIframe = document.createElement('div');
 
