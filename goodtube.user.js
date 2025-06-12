@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.002
+// @version      2.003
 // @description  Removes 100% of Youtube ads.
 // @author       GoodTube
 // @updateURL    https://github.com/goodtube4u/goodtube/raw/refs/heads/main/goodtube.user.js
@@ -31,9 +31,10 @@
 
 	/* Welcome console message
 	------------------------------------------------------------------------------------------ */
-	// Debug message
-	console.log('\n==================================================\n    ______                ________      __\n   / ____/___  ____  ____/ /_  __/_  __/ /_  ___\n  / / __/ __ \\/ __ \\/ __  / / / / / / / __ \\/ _ \\\n / /_/ / /_/ / /_/ / /_/ / / / / /_/ / /_/ /  __/\n \\____/\\____/\\____/\\____/ /_/  \\____/_____/\\___/\n\n==================================================');
-	console.log('[GoodTube] Initiating...');
+	if (window.top === window.self) {
+		console.log('\n==================================================\n    ______                ________      __\n   / ____/___  ____  ____/ /_  __/_  __/ /_  ___\n  / / __/ __ \\/ __ \\/ __  / / / / / / / __ \\/ _ \\\n / /_/ / /_/ / /_/ / /_/ / / / / /_/ / /_/ /  __/\n \\____/\\____/\\____/\\____/ /_/  \\____/_____/\\___/\n\n==================================================');
+		console.log('[GoodTube] Initiating...');
+	}
 
 
 	/* Helper functions
