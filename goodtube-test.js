@@ -2475,6 +2475,8 @@
 			youtubeIframe.style.left = '0';
 			youtubeIframe.style.zIndex = '99998';
 
+			console.log('OVERLAY ADDED');
+
 
 			// Create a youtube iframe
 			let youtubeIframe = document.createElement('div');
