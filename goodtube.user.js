@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.004
+// @version      2.005
 // @description  Removes 100% of Youtube ads.
 // @author       GoodTube
 // @updateURL    https://github.com/goodtube4u/goodtube/raw/refs/heads/main/goodtube.user.js
@@ -1519,10 +1519,16 @@
 				pointer-events: none;
 				backface-visibility: hidden;
 			}
+			.goodTube_modal:not(.visible) .goodTube_button {
+				pointer-events: none;
+			}
 
 			.goodTube_modal.visible {
 				pointer-events: all;
 				opacity: 1;
+			}
+			.goodTube_modal.visible .goodTube_button {
+				pointer-events: all;
 			}
 
 			.goodTube_modal * {
@@ -1933,7 +1939,7 @@
 			.ytp-endscreen-next,
 			.ytp-endscreen-previous,
 			.ytp-info-panel-preview,
-			.ytp-popup {
+			.ytp-generic-popup {
 				display: none !important;
 			}
 
