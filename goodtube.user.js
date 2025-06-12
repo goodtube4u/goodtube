@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.003
+// @version      2.004
 // @description  Removes 100% of Youtube ads.
 // @author       GoodTube
 // @updateURL    https://github.com/goodtube4u/goodtube/raw/refs/heads/main/goodtube.user.js
@@ -1447,7 +1447,7 @@
 				position: absolute;
 				left: 50%;
 				top: -27px;
-				transform: translate(round(-50%, 1px), round(-50%, 1px));
+				transform: translate(round(-50%, 1px), 4px);
 				letter-spacing: 0.04em;
 				opacity: 0;
 				transition: opacity .2s ease-in-out, transform .2s ease-in-out;
