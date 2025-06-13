@@ -421,7 +421,7 @@
 			/* Desktop */
 			#goodTube_playerWrapper {
 				border-radius: 12px;
-				background: #000000;
+				background: transparent;
 				position: absolute;
 				top: 0;
 				left: 0;
