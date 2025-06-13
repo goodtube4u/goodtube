@@ -481,11 +481,6 @@
 		goodTube_playerWrapper = document.querySelector('#goodTube_playerWrapper');
 		goodTube_player = goodTube_playerWrapper.querySelector('iframe');
 
-		// Expose when the proxy iframe has loaded
-		goodTube_player.addEventListener('load', function () {
-			goodTube_proxyIframeLoaded = true;
-		});
-
 		// Setup player dynamic positioning and sizing
 		goodTube_player_positionAndSize();
 
@@ -594,6 +589,7 @@
 			if (goodTube_mobile) {
 				mobileText = 'true';
 			}
+			console.log('sending load message');
 			goodTube_player.contentWindow.postMessage('goodTube_src_https://www.youtube.com/embed/' + goodTube_getParams['v'] + '?autoplay=1&mobile=' + mobileText + '&goodTube_autoplay=' + goodTube_autoplay, '*');
 		}
 		// If we are in picture in picture mode
@@ -1215,6 +1211,11 @@
 
 		// Init the menu
 		document.addEventListener("DOMContentLoaded", goodTube_menu);
+
+		// Also check if the DOM is already loaded, as if it is, the above event listener will not trigger.
+		if (document.readyState === "interactive" || document.readyState === "complete") {
+			goodTube_menu();
+		}
 	}
 
 	// Listen for messages from the iframe
@@ -1224,8 +1225,15 @@
 			return;
 		}
 
-		// Goodtube player has loaded
-		else if (event.data === 'goodTube_loaded') {
+		// Proxy iframe has loaded
+		else if (event.data === 'goodTube_proxyIframe_loaded') {
+			console.log('proxy iframe loaded');
+			goodTube_proxyIframeLoaded = true;
+		}
+
+		// Player iframe has loaded
+		else if (event.data === 'goodTube_playerIframe_loaded') {
+			console.log('palyer iframe loaded - showing it');
 			goodTube_player.style.display = 'block';
 		}
 
@@ -1911,6 +1919,16 @@
 
 		// Listen for messages from the parent window
 		window.addEventListener('message', goodTube_iframe_receiveMessage);
+
+		// Let the parent frame know it's loaded
+		document.addEventListener('DOMContentLoaded', () => {
+			window.top.postMessage('goodTube_playerIframe_loaded', '*');
+		});
+
+		// DOMContentLoaded is unreliable
+		if (document.readyState === "interactive" || document.readyState === "complete") {
+			window.top.postMessage('goodTube_playerIframe_loaded', '*');
+		}
 	}
 
 	// Actions
@@ -2483,54 +2501,64 @@
 	------------------------------------------------------------------------------------------ */
 	// Init
 	function goodTube_proxyIframe_init() {
+		// Wait for the DOM to load
+		document.addEventListener("DOMContentLoaded", goodTube_proxyIframe_initLoaded);
+
+		// DOMContentLoaded is unreliable
+		if (document.readyState === "interactive" || document.readyState === "complete") {
+			goodTube_proxyIframe_initLoaded();
+		}
+	}
+
+	function goodTube_proxyIframe_initLoaded() {
+		// Hide the DOM elements from the proxy page
+		let elements = document.querySelectorAll('body > *');
+		elements.forEach(element => {
+			element.style.display = 'none';
+			element.style.opacity = '0';
+			element.style.visibility = 'hidden';
+		});
+
 		// Remove scrolling
 		document.body.style.overflow = 'hidden';
 
-		// Wait for the DOM to load
-		document.addEventListener("DOMContentLoaded", () => {
-			// Hide the DOM elements from the proxy page
-			let elements = document.querySelectorAll('body > *');
-			elements.forEach(element => {
-				element.style.display = 'none';
-				element.style.opacity = '0';
-				element.style.visibility = 'hidden';
-			});
+		// Change the background colour
+		document.body.style.background = '#000000';
 
-			// Change the background colour
-			document.body.style.background = '#000000';
+		// Create a youtube iframe
+		let youtubeIframe = document.createElement('div');
 
-			// Create a youtube iframe
-			let youtubeIframe = document.createElement('div');
+		// Add the youtube iframe to the page
+		document.body.appendChild(youtubeIframe);
 
-			// Add the youtube iframe to the page
-			document.body.appendChild(youtubeIframe);
+		// Update the content of the youtube iframe
+		youtubeIframe.innerHTML = `
+			<iframe
+				width="100%"
+				height="100%"
+				src=""
+				frameborder="0"
+				scrolling="yes"
+				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+				referrerpolicy="strict-origin-when-cross-origin"
+				allowfullscreen
+				id="goodTube_youtube_iframe"
+			></iframe>
+		`;
 
-			// Update the content of the youtube iframe
-			youtubeIframe.innerHTML = `
-				<iframe
-					width="100%"
-					height="100%"
-					src=""
-					frameborder="0"
-					scrolling="yes"
-					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-					referrerpolicy="strict-origin-when-cross-origin"
-					allowfullscreen
-					id="goodTube_youtube_iframe"
-				></iframe>
-			`;
+		// Style the youtube iframe
+		youtubeIframe.style.position = 'fixed';
+		youtubeIframe.style.top = '0';
+		youtubeIframe.style.bottom = '0';
+		youtubeIframe.style.right = '0';
+		youtubeIframe.style.left = '0';
+		youtubeIframe.style.zIndex = '99999';
 
-			// Style the youtube iframe
-			youtubeIframe.style.position = 'fixed';
-			youtubeIframe.style.top = '0';
-			youtubeIframe.style.bottom = '0';
-			youtubeIframe.style.right = '0';
-			youtubeIframe.style.left = '0';
-			youtubeIframe.style.zIndex = '99999';
+		// Listen for messages from the parent window
+		window.addEventListener('message', goodTube_proxyIframe_receiveMessage);
 
-			// Listen for messages from the parent window
-			window.addEventListener('message', goodTube_proxyIframe_receiveMessage);
-		});
+		// Let the parent frame know it's loaded
+		window.top.postMessage('goodTube_proxyIframe_loaded', '*');
 	}
 
 	// Receive a message from the parent window
@@ -2547,10 +2575,6 @@
 		if (youtubeIframe) {
 			// Change the source of the youtube iframe
 			if (event.data.indexOf('goodTube_src_') !== -1) {
-				youtubeIframe.addEventListener('load', () => {
-					window.top.postMessage('goodTube_loaded', '*');
-				});
-
 				youtubeIframe.src = event.data.replace('goodTube_src_', '');
 			}
 			// Pass all other messages down to the youtube iframe
