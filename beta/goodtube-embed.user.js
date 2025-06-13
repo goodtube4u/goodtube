@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.011
+// @version      2.012
 // @description  Removes 100% of Youtube ads.
 // @author       GoodTube
 // @updateURL    https://github.com/goodtube4u/goodtube/raw/refs/heads/main/goodtube.user.js
@@ -211,7 +211,7 @@
 			ytd-merch-shelf-renderer,
 			ytd-action-companion-ad-renderer,
 			ytd-display-ad-renderer,
-			ytd-rich-section-renderer,
+
 			ytd-video-masthead-ad-advertiser-info-renderer,
 			ytd-video-masthead-ad-primary-video-renderer,
 			ytd-in-feed-ad-layout-renderer,
@@ -279,7 +279,8 @@
 		if (goodTube_shorts === 'false') {
 			let shortsStyle = document.createElement('style');
 			shortsStyle.textContent = `
-				ytm-pivot-bar-item-renderer:has(> .pivot-shorts) {
+				ytm-pivot-bar-item-renderer:has(> .pivot-shorts),
+				ytd-rich-section-renderer {
 					display: none !important;
 				}
 			`;
@@ -583,7 +584,7 @@
 			}
 
 
-			// Set the video source (we need to use this weird method so it doesn't mess with browser history)
+			// Set the video source
 			// This also tells the embed if it's mobile or not
 			let mobileText = 'false';
 			if (goodTube_mobile) {
@@ -1373,7 +1374,7 @@
 					<div class='goodTube_title'>Settings</div>
 					<div class='goodTube_content'>
 						<div class='goodTube_setting'>
-							<input type='checkbox' class='goodTube_option_shorts' name='goodTube_option_shorts'`+ shortsEnabled + `>
+							<input type='checkbox' class='goodTube_option_shorts' name='goodTube_option_shorts' id='goodTube_option_shorts'`+ shortsEnabled + `>
 							<label for='goodTube_option_shorts'>Remove all Shorts from Youtube</label>
 						</div> <!-- .goodTube_setting -->
 						<button class='goodTube_button' id='goodTube_button_saveSettings'>Save and refresh</button>
@@ -1391,8 +1392,8 @@
 								<br>
 								Any donation, no matter how small, helps to keep this project going and supports the community who use it. If you would like to say "thank you" and can spare even a single dollar, I would really appreciate it :)
 							</div>
-							<!--<a href='https://tiptopjar.com/goodtube' target='_blank' class='goodTube_button'>Donate now</a>-->
-							<a href='https://www.paypal.com/donate/?hosted_button_id=37GNXSV27RZBS' target='_blank' class='goodTube_button'>Donate now</a>
+							<!--<a href='https://tiptopjar.com/goodtube' target='_blank' rel='nofollow' class='goodTube_button'>Donate now</a>-->
+							<a href='https://www.paypal.com/donate/?hosted_button_id=37GNXSV27RZBS' target='_blank' rel='nofollow' class='goodTube_button'>Donate now</a>
 						</div> <!-- .goodTube_donation -->
 					</div> <!-- .goodTube_content -->
 
@@ -2573,7 +2574,14 @@
 		if (youtubeIframe) {
 			// Change the source of the youtube iframe
 			if (event.data.indexOf('goodTube_src_') !== -1) {
-				youtubeIframe.src = event.data.replace('goodTube_src_', '');
+				// First time just change the src
+				if (youtubeIframe.src === '' || youtubeIframe.src.indexOf('?goodTube=1') !== -1) {
+					youtubeIframe.src = event.data.replace('goodTube_src_', '');
+				}
+				// All other times, we need to use this weird method so it doesn't mess with our browser history
+				else {
+					youtubeIframe.contentWindow.location.replace(event.data.replace('goodTube_src_', ''));
+				}
 			}
 			// Pass all other messages down to the youtube iframe
 			else {
