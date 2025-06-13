@@ -421,7 +421,7 @@
 			/* Desktop */
 			#goodTube_playerWrapper {
 				border-radius: 12px;
-				background: #ffffff;
+				background: #000000;
 				position: absolute;
 				top: 0;
 				left: 0;
@@ -1191,10 +1191,10 @@
 		/* Load GoodTube
 		-------------------------------------------------- */
 		// Init our player (after DOM is loaded)
-		document.addEventListener("DOMContentLoaded", goodTube_player_init);
+		document.addEventListener('DOMContentLoaded', goodTube_player_init);
 
-		// Also check if the DOM is already loaded, as if it is, the above event listener will not trigger.
-		if (document.readyState === "interactive" || document.readyState === "complete") {
+		// Also check if the DOM is already loaded, as if it is, the above event listener will not trigger
+		if (document.readyState === 'interactive' || document.readyState === 'complete') {
 			goodTube_player_init();
 		}
 
@@ -1210,10 +1210,10 @@
 		window.addEventListener('message', goodTube_receiveMessage);
 
 		// Init the menu
-		document.addEventListener("DOMContentLoaded", goodTube_menu);
+		document.addEventListener('DOMContentLoaded', goodTube_menu);
 
-		// Also check if the DOM is already loaded, as if it is, the above event listener will not trigger.
-		if (document.readyState === "interactive" || document.readyState === "complete") {
+		// Also check if the DOM is already loaded, as if it is, the above event listener will not trigger
+		if (document.readyState === 'interactive' || document.readyState === 'complete') {
 			goodTube_menu();
 		}
 	}
@@ -1925,8 +1925,8 @@
 			window.top.postMessage('goodTube_playerIframe_loaded', '*');
 		});
 
-		// DOMContentLoaded is unreliable
-		if (document.readyState === "interactive" || document.readyState === "complete") {
+		// Also check if the DOM is already loaded, as if it is, the above event listener will not trigger
+		if (document.readyState === 'interactive' || document.readyState === 'complete') {
 			window.top.postMessage('goodTube_playerIframe_loaded', '*');
 		}
 	}
@@ -2504,7 +2504,7 @@
 		// Wait for the DOM to load
 		document.addEventListener("DOMContentLoaded", goodTube_proxyIframe_initLoaded);
 
-		// DOMContentLoaded is unreliable
+		// Also check if the DOM is already loaded, as if it is, the above event listener will not trigger
 		if (document.readyState === "interactive" || document.readyState === "complete") {
 			goodTube_proxyIframe_initLoaded();
 		}
