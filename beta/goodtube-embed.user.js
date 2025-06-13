@@ -484,7 +484,6 @@
 		// Expose when the proxy iframe has loaded
 		goodTube_player.addEventListener('load', function () {
 			goodTube_proxyIframeLoaded = true;
-			goodTube_player.style.display = 'block';
 		});
 
 		// Setup player dynamic positioning and sizing
@@ -1223,6 +1222,11 @@
 		// Make sure some data exists
 		if (typeof event.data !== 'string') {
 			return;
+		}
+
+		// Goodtube player has loaded
+		else if (event.data === 'goodTube_loaded') {
+			goodTube_player.style.display = 'block';
 		}
 
 		// Picture in picture
@@ -2543,6 +2547,10 @@
 		if (youtubeIframe) {
 			// Change the source of the youtube iframe
 			if (event.data.indexOf('goodTube_src_') !== -1) {
+				youtubeIframe.addEventListener('load', () => {
+					window.top.postMessage('goodTube_loaded', '*');
+				});
+
 				youtubeIframe.src = event.data.replace('goodTube_src_', '');
 			}
 			// Pass all other messages down to the youtube iframe
