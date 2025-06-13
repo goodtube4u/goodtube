@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.005
+// @version      2.009
 // @description  Removes 100% of Youtube ads.
 // @author       GoodTube
 // @updateURL    https://github.com/goodtube4u/goodtube/raw/refs/heads/main/goodtube.user.js
@@ -589,7 +589,6 @@
 			if (goodTube_mobile) {
 				mobileText = 'true';
 			}
-			console.log('sending load message');
 			goodTube_player.contentWindow.postMessage('goodTube_src_https://www.youtube.com/embed/' + goodTube_getParams['v'] + '?autoplay=1&mobile=' + mobileText + '&goodTube_autoplay=' + goodTube_autoplay, '*');
 		}
 		// If we are in picture in picture mode
@@ -1227,13 +1226,11 @@
 
 		// Proxy iframe has loaded
 		else if (event.data === 'goodTube_proxyIframe_loaded') {
-			console.log('proxy iframe loaded');
 			goodTube_proxyIframeLoaded = true;
 		}
 
 		// Player iframe has loaded
 		else if (event.data === 'goodTube_playerIframe_loaded') {
-			console.log('palyer iframe loaded - showing it');
 			goodTube_player.style.display = 'block';
 		}
 
