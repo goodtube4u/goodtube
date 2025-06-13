@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GoodTube
 // @namespace    http://tampermonkey.net/
-// @version      2.012
+// @version      2.013
 // @description  Removes 100% of Youtube ads.
 // @author       GoodTube
 // @updateURL    https://github.com/goodtube4u/goodtube/raw/refs/heads/main/goodtube.user.js
@@ -1938,8 +1938,46 @@
 		// Fix fullscreen button issues
 		goodTube_iframe_fixFullScreenButton();
 
+		// Fix end screen links
+		goodTube_iframe_fixEndScreenLinks();
+
 		// Run actions again in 100ms to loop this function
 		setTimeout(goodTube_iframe_actions, 100);
+	}
+
+	// Fix end screen links (so they open in the same window)
+	function goodTube_iframe_fixEndScreenLinks() {
+		let endScreenLinks = document.querySelectorAll('.ytp-videowall-still');
+		endScreenLinks.forEach(link => {
+			// Remove any event listeners that Youtube adds
+			link.addEventListener('click', (event) => {
+				event.preventDefault();
+				event.stopImmediatePropagation();
+
+				// On click, redirect the top window to the correct location
+				window.top.location.href = link.href;
+			}, true);
+
+			link.addEventListener('mousedown', (event) => {
+				event.preventDefault();
+				event.stopImmediatePropagation();
+			}, true);
+
+			link.addEventListener('mouseup', (event) => {
+				event.preventDefault();
+				event.stopImmediatePropagation();
+			}, true);
+
+			link.addEventListener('touchstart', (event) => {
+				event.preventDefault();
+				event.stopImmediatePropagation();
+			}, true);
+
+			link.addEventListener('touchend', (event) => {
+				event.preventDefault();
+				event.stopImmediatePropagation();
+			}, true);
+		});
 	}
 
 	// Style the iframe
@@ -1955,13 +1993,16 @@
 			.ytp-cued-thumbnail-overlay,
 			.ytp-paid-content-overlay,
 			.ytp-impression-link,
-			.ytp-endscreen-content,
 			.ytp-ad-progress-list,
 			.ytp-endscreen-next,
 			.ytp-endscreen-previous,
 			.ytp-info-panel-preview,
 			.ytp-generic-popup {
 				display: none !important;
+			}
+
+			.html5-endscreen {
+				top: 0 !important;
 			}
 
 			/* Make next and prev buttons not disabled */
