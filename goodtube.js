@@ -546,19 +546,11 @@
 
 		// If we're not in picture in picture mode
 		if (!goodTube_pip) {
-			// Ensure we're still viewing a video (sometimes you can browse to another page before the iframe loads)
-			if (window.location.href.indexOf('.com/watch') !== -1) {
-				// If a restore time exists, skip to it
-				if (typeof goodTube_getParams['t'] !== 'undefined') {
-					goodTube_player_skipTo(goodTube_getParams['t'].replace('s', ''));
-				}
-			}
-			// If we're not still viewing a video
-			else {
+			// If we're not viewing a video
+			if (window.location.href.indexOf('.com/watch') === -1) {
 				// Clear and hide the player
 				goodTube_player_clear();
 			}
-
 
 			// Set the video source
 			// This also tells the embed if it's mobile or not
@@ -566,7 +558,14 @@
 			if (goodTube_mobile) {
 				mobileText = 'true';
 			}
-			goodTube_player.contentWindow.postMessage('goodTube_src_https://www.youtube.com/embed/' + goodTube_getParams['v'] + '?autoplay=1&mobile=' + mobileText + '&goodTube_autoplay=' + goodTube_autoplay, '*');
+
+			// Include the skip to time if it exists
+			let skipToGetVar = '';
+			if (typeof goodTube_getParams['t'] !== 'undefined') {
+				skipToGetVar = '&start=' + goodTube_getParams['t'].replace('s', '');
+			}
+
+			goodTube_player.contentWindow.postMessage('goodTube_src_https://www.youtube.com/embed/' + goodTube_getParams['v'] + '?autoplay=1&mobile=' + mobileText + '&goodTube_autoplay=' + goodTube_autoplay + skipToGetVar, '*');
 		}
 		// If we are in picture in picture mode
 		else {
