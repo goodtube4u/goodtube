@@ -1303,45 +1303,45 @@
 			goodTube_autoplay = 'true';
 		}
 
-		// Sync main player (disabled for a while as we need to properly test this)
+		// Sync main player
 		else if (event.data.indexOf('goodTube_syncMainPlayer_') !== -1) {
-			// // Target the youtube video element
-			// let youtubeVideoElement = document.querySelector('#movie_player video');
+			// Target the youtube video element
+			let youtubeVideoElement = document.querySelector('#movie_player video');
 
-			// // If we found the video element
-			// if (youtubeVideoElement) {
-			// 	// Sync the current time
-			// 	youtubeVideoElement.currentTime = parseFloat(event.data.replace('goodTube_syncMainPlayer_', ''));
+			// If we found the video element
+			if (youtubeVideoElement) {
+				// Sync the current time
+				youtubeVideoElement.currentTime = parseFloat(event.data.replace('goodTube_syncMainPlayer_', ''));
 
-			// 	// Set a variable to indicate we're syncing the player (this stops the automatic pausing of all videos)
-			// 	goodTube_syncingPlayer = true;
+				// Set a variable to indicate we're syncing the player (this stops the automatic pausing of all videos)
+				goodTube_syncingPlayer = true;
 
-			// 	// Play for 10ms to make history work via JS
-			// 	youtubeVideoElement.play();
-			// 	youtubeVideoElement.muted = true;
-			// 	youtubeVideoElement.volume = 0;
+				// Play for 10ms to make history work via JS
+				youtubeVideoElement.play();
+				youtubeVideoElement.muted = true;
+				youtubeVideoElement.volume = 0;
 
-			// 	// Play for 10ms to make history work via the frame API
-			// 	let youtubeFrameApi = document.querySelector('#movie_player');
-			// 	if (youtubeFrameApi) {
-			// 		if (typeof youtubeFrameApi.playVideo === 'function') {
-			// 			youtubeFrameApi.playVideo();
-			// 		}
+				// Play for 10ms to make history work via the frame API
+				let youtubeFrameApi = document.querySelector('#movie_player');
+				if (youtubeFrameApi) {
+					if (typeof youtubeFrameApi.playVideo === 'function') {
+						youtubeFrameApi.playVideo();
+					}
 
-			// 		if (typeof youtubeFrameApi.mute === 'function') {
-			// 			youtubeFrameApi.mute();
-			// 		}
+					if (typeof youtubeFrameApi.mute === 'function') {
+						youtubeFrameApi.mute();
+					}
 
-			// 		if (typeof youtubeFrameApi.setVolume === 'function') {
-			// 			youtubeFrameApi.setVolume(0);
-			// 		}
-			// 	}
+					if (typeof youtubeFrameApi.setVolume === 'function') {
+						youtubeFrameApi.setVolume(0);
+					}
+				}
 
-			// 	// After 10ms stop syncing (and let the pause actions handle the pausing)
-			// 	setTimeout(() => {
-			// 		goodTube_syncingPlayer = false;
-			// 	}, 10);
-			// }
+				// After 10ms stop syncing (and let the pause actions handle the pausing)
+				setTimeout(() => {
+					goodTube_syncingPlayer = false;
+				}, 10);
+			}
 		}
 	}
 
