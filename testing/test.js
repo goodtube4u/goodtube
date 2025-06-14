@@ -1135,8 +1135,13 @@
 		// Show the end screen
 		let hideEndScreen = false;
 
-		// If we're viewing a playlist
-		if (typeof goodTube_getParams['i'] !== 'undefined' || typeof goodTube_getParams['index'] !== 'undefined' || typeof goodTube_getParams['list'] !== 'undefined') {
+		// If autoplay is on, hide the end screen
+		if (goodTube_autoplay === 'true') {
+			hideEndScreen = true;
+		}
+
+		// Otherwise, if we're viewing a playlist
+		else if (typeof goodTube_getParams['i'] !== 'undefined' || typeof goodTube_getParams['index'] !== 'undefined' || typeof goodTube_getParams['list'] !== 'undefined') {
 			// Hide the end screen
 			hideEndScreen = true;
 
