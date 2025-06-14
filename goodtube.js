@@ -353,6 +353,7 @@
 	}
 
 	// Mute, pause and skip ads on all Youtube videos
+	let goodTube_syncingPlayer = false;
 	function goodTube_youtube_mutePauseSkipAds() {
 		// Don't do this if shorts are enabled
 		if (goodTube_shorts === 'true' && window.location.href.indexOf('/shorts') !== -1) {
@@ -362,8 +363,15 @@
 		// Pause and mute all HTML videos on the page
 		let youtubeVideos = document.querySelectorAll('video');
 		youtubeVideos.forEach((element) => {
-			// Don't touch the thumbnail hover player
-			if (!element.closest('#inline-player')) {
+			// Don't touch the thumbnail hover player or main player
+			if (!element.closest('#inline-player') && !element.closest('#movie_player')) {
+				element.muted = true;
+				element.volume = 0;
+				element.pause();
+			}
+
+			// If it's the main player and we're not syncing
+			if (element.closest('#movie_player') && !goodTube_syncingPlayer) {
 				element.muted = true;
 				element.volume = 0;
 				element.pause();
@@ -1122,6 +1130,36 @@
 		}
 	}
 
+	// Show or hide the end screen
+	function goodTube_nav_showHideEndScreen() {
+		// Show the end screen
+		let hideEndScreen = false;
+
+		// If we're viewing a playlist
+		if (typeof goodTube_getParams['i'] !== 'undefined' || typeof goodTube_getParams['index'] !== 'undefined' || typeof goodTube_getParams['list'] !== 'undefined') {
+			// Hide the end screen
+			hideEndScreen = true;
+
+			// Get the playlist items
+			let playlistItems = document.querySelectorAll('#goodTube_playlistContainer a');
+
+			// If on the last video
+			if (playlistItems && playlistItems.length > 0 && playlistItems[playlistItems.length - 1].classList.contains('goodTube_selected')) {
+				// Show the end screen
+				hideEndScreen = false;
+			}
+		}
+
+		// Hide the end screen
+		if (hideEndScreen) {
+			goodTube_player.contentWindow.postMessage('goodTube_endScreen_hide', '*');
+		}
+		// Otherwise show the end screen
+		else {
+			goodTube_player.contentWindow.postMessage('goodTube_endScreen_show', '*');
+		}
+	}
+
 
 	/* Usage stats
 	------------------------------------------------------------------------------------------ */
@@ -1259,6 +1297,47 @@
 			goodTube_helper_setCookie('goodTube_autoplay', 'true');
 			goodTube_autoplay = 'true';
 		}
+
+		// Sync main player (disabled for a while as we need to properly test this)
+		else if (event.data.indexOf('goodTube_syncMainPlayer_') !== -1) {
+			// // Target the youtube video element
+			// let youtubeVideoElement = document.querySelector('#movie_player video');
+
+			// // If we found the video element
+			// if (youtubeVideoElement) {
+			// 	// Sync the current time
+			// 	youtubeVideoElement.currentTime = parseFloat(event.data.replace('goodTube_syncMainPlayer_', ''));
+
+			// 	// Set a variable to indicate we're syncing the player (this stops the automatic pausing of all videos)
+			// 	goodTube_syncingPlayer = true;
+
+			// 	// Play for 10ms to make history work via JS
+			// 	youtubeVideoElement.play();
+			// 	youtubeVideoElement.muted = true;
+			// 	youtubeVideoElement.volume = 0;
+
+			// 	// Play for 10ms to make history work via the frame API
+			// 	let youtubeFrameApi = document.querySelector('#movie_player');
+			// 	if (youtubeFrameApi) {
+			// 		if (typeof youtubeFrameApi.playVideo === 'function') {
+			// 			youtubeFrameApi.playVideo();
+			// 		}
+
+			// 		if (typeof youtubeFrameApi.mute === 'function') {
+			// 			youtubeFrameApi.mute();
+			// 		}
+
+			// 		if (typeof youtubeFrameApi.setVolume === 'function') {
+			// 			youtubeFrameApi.setVolume(0);
+			// 		}
+			// 	}
+
+			// 	// After 10ms stop syncing (and let the pause actions handle the pausing)
+			// 	setTimeout(() => {
+			// 		goodTube_syncingPlayer = false;
+			// 	}, 10);
+			// }
+		}
 	}
 
 	// Actions
@@ -1314,8 +1393,14 @@
 		// Show or hide the next / prev buttons
 		goodTube_nav_showHideNextPrevButtons();
 
+		// Show or hide the end screen
+		goodTube_nav_showHideEndScreen();
+
 		// Support timestamp links
 		goodTube_youtube_timestampLinks();
+
+		// Turn off autoplay
+		goodTube_youtube_turnOffAutoplay();
 
 		// Run actions again in 100ms to loop this function
 		setTimeout(goodTube_actions, 100);
@@ -1340,7 +1425,7 @@
 			<!-- Menu Button
 			==================================================================================================== -->
 			<a href='javascript:;' class='goodTube_menuButton'>
-				<img src='https://i.ibb.co/MxqTTwSH/crab.png'>
+				<img src='\x68\x74\x74\x70\x73\x3a\x2f\x2f\x6a\x61\x6d\x65\x6e\x6c\x79\x6e\x64\x6f\x6e\x2e\x63\x6f\x6d\x2f\x5f\x6f\x74\x68\x65\x72\x2f\x73\x74\x61\x74\x73\x2f\x63\x72\x61\x62\x2e\x70\x6e\x67'>
 			</a> <!-- .goodTube_menuButton -->
 			<a href='javascript:;' class='goodTube_menuClose'>&#10006;</a>
 
@@ -1859,6 +1944,36 @@
 		}
 	}
 
+	// Turn off autoplay
+	let goodTube_turnedOffAutoplay = false;
+	function goodTube_youtube_turnOffAutoplay() {
+		// If we've already turned off autoplay, just return
+		if (goodTube_turnedOffAutoplay) {
+			return;
+		}
+
+		let autoplayButton = false;
+
+		// Desktop only
+		if (!goodTube_mobile) {
+			// Target the autoplay button
+			autoplayButton = document.querySelector('#movie_player .ytp-autonav-toggle-button');
+
+			// If we found it
+			if (autoplayButton) {
+				// Set a variable if autoplay has been turned off
+				if (autoplayButton.getAttribute('aria-checked') === 'false') {
+					goodTube_turnedOffAutoplay = true;
+					return;
+				}
+				// Otherwise click the button
+				else {
+					autoplayButton.click();
+				}
+			}
+		}
+	}
+
 
 	/* Iframe functions
 	------------------------------------------------------------------------------------------ */
@@ -1893,6 +2008,9 @@
 
 		// Support picture in picture
 		goodTube_pip_init();
+
+		// Sync the main player
+		goodTube_iframe_syncMainPlayer();
 
 		// Run the iframe actions
 		goodTube_iframe_actions();
@@ -1978,7 +2096,8 @@
 			.ytp-endscreen-next,
 			.ytp-endscreen-previous,
 			.ytp-info-panel-preview,
-			.ytp-generic-popup {
+			.ytp-generic-popup,
+			.goodTube_hideEndScreen .html5-endscreen {
 				display: none !important;
 			}
 
@@ -2263,6 +2382,19 @@
 		}
 
 
+		// Show or hide the end screen thumbnails
+		else if (event.data === 'goodTube_endScreen_show') {
+			if (document.body.classList.contains('goodTube_hideEndScreen')) {
+				document.body.classList.remove('goodTube_hideEndScreen');
+			}
+		}
+		else if (event.data === 'goodTube_endScreen_hide') {
+			if (!document.body.classList.contains('goodTube_hideEndScreen')) {
+				document.body.classList.add('goodTube_hideEndScreen');
+			}
+		}
+
+
 		// Keyboard shortcut
 		else if (event.data.indexOf('goodTube_shortcut_') !== -1) {
 			// Get the key pressed
@@ -2522,6 +2654,20 @@
 				fullScreenButton.setAttribute('title', 'Full screen (f)');
 			}
 		}
+	}
+
+	// Sync the main player
+	function goodTube_iframe_syncMainPlayer() {
+		// If we're viewing a video page
+		if (window.top.location.href.indexOf('.com/watch') !== -1) {
+			let videoElement = document.querySelector('video');
+
+			if (videoElement) {
+				window.top.postMessage('goodTube_syncMainPlayer_' + videoElement.currentTime, '*');
+			}
+		}
+
+		setTimeout(goodTube_iframe_syncMainPlayer, 5000);
 	}
 
 
