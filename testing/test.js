@@ -1464,7 +1464,7 @@
 								<br>
 								Any donation, no matter how small, helps to keep this project going and supports the community who use it. If you would like to say "thank you" and can spare even a single dollar, I would really appreciate it :)
 							</div>
-							<a href='https://tiptopjar.com/goodtube' target='_blank' rel='nofollow' class='goodTube_button'>Donate now</a>
+							<a href='https://www.paypal.com/donate/?hosted_button_id=37GNXSV27RZBS' target='_blank' rel='nofollow' class='goodTube_button'>Donate now</a>
 						</div> <!-- .goodTube_donation -->
 					</div> <!-- .goodTube_content -->
 
