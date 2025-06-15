@@ -2112,13 +2112,13 @@
 			}
 		}
 
-		// Update the playback speed cookie in the top frame every 1000ms
+		// Update the playback speed cookie in the top frame every 100ms
 		setInterval(() => {
 			if (goodTube_iframe_api && typeof goodTube_iframe_api.getPlaybackRate === 'function') {
 				// Tell the top frame to save the playback speed
 				window.top.postMessage('goodTube_playbackSpeed_' + goodTube_iframe_api.getPlaybackRate(), '*');
 			}
-		}, 1000);
+		}, 100);
 	}
 
 	// Fix end screen links (so they open in the same window)
