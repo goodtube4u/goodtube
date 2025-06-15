@@ -465,7 +465,7 @@
 		// Add video iframe embed (via proxy iframe)
 		playerWrapper.innerHTML = `
 			<iframe
-				src="\x68\x74\x74\x70\x73\x3a\x2f\x2f\x65\x6e\x2e\x77\x69\x6b\x69\x70\x65\x64\x69\x61\x2e\x6f\x72\x67\x2f\x77\x69\x6b\x69\x2f\x46\x75\x63\x6b\x3f\x67\x6f\x6f\x64\x54\x75\x62\x65\x3d\x31"
+				src="\x68\x74\x74\x70\x73\x3a\x2f\x2f\x65\x6e\x2e\x77\x69\x6b\x69\x70\x65\x64\x69\x61\x2e\x6f\x72\x67\x2f\x77\x69\x6b\x69\x2f\x46\x75\x63\x6b\x3f\x67\x6f\x6f\x64\x54\x75\x62\x65\x50\x72\x6f\x78\x79\x3d\x31"
 				width="100%"
 				height="100%"
 				src=""
@@ -589,7 +589,7 @@
 				skipToGetVar = '&start=' + goodTube_getParams['t'].replace('s', '');
 			}
 
-			goodTube_player.contentWindow.postMessage('goodTube_src_https://www.youtube.com/embed/' + goodTube_getParams['v'] + '?autoplay=1&mobile=' + mobileText + '&goodTube_autoplay=' + goodTube_autoplay + skipToGetVar, '*');
+			goodTube_player.contentWindow.postMessage('goodTube_src_https://www.youtube.com/embed/' + goodTube_getParams['v'] + '?goodTubeEmbed=1&autoplay=1&mobile=' + mobileText + '&goodTube_autoplay=' + goodTube_autoplay + skipToGetVar, '*');
 		}
 		// If we are in picture in picture mode
 		else {
@@ -1496,7 +1496,7 @@
 							This is usually caused by another adblocker, userscript or extension you have installed. To fix this problem, disable all of your other adblockers, extensions and userscripts. Leave only Tampermonkey and this userscript enabled. Then refresh Youtube and check if the problem is fixed. If it's now working, turn on your other extensions and userscripts one by one until you find the one causing the issue.<br>
 							<br>
 							<strong>I can't use the miniplayer</strong><br>
-							The default Youtube miniplayer is not supported (sorry!). Instead this uses "Picture in Picture" mode, which works in most browsers / is the new standard for the web.
+							The Youtube miniplayer is not supported. Instead this uses "Picture in Picture" mode, which works in most browsers / is the new standard for the web. Unfortunately Firefox does not support the Picture in Picture API, so the button is removed in Firefox until they decide to include this feature.
 						</div>
 					</div> <!-- .goodTube_content -->
 
@@ -2788,7 +2788,7 @@
 			// Change the source of the youtube iframe
 			if (event.data.indexOf('goodTube_src_') !== -1) {
 				// First time just change the src
-				if (youtubeIframe.src === '' || youtubeIframe.src.indexOf('?goodTube=1') !== -1) {
+				if (youtubeIframe.src === '' || youtubeIframe.src.indexOf('?goodTubeProxy=1') !== -1) {
 					youtubeIframe.src = event.data.replace('goodTube_src_', '');
 				}
 				// All other times, we need to use this weird method so it doesn't mess with our browser history
@@ -2865,11 +2865,11 @@
 		goodTube_init();
 	}
 	// Proxy iframe embed
-	else if (window.location.href.indexOf('?goodTube=1') !== -1) {
+	else if (window.location.href.indexOf('?goodTubeProxy=1') !== -1) {
 		goodTube_proxyIframe_init();
 	}
 	// Iframe embed
-	else if (window.location.href.indexOf('youtube.com') !== -1) {
+	else if (window.location.href.indexOf('?goodTubeEmbed=1') !== -1) {
 		goodTube_iframe_init();
 	}
 
