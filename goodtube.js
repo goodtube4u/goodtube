@@ -563,6 +563,7 @@
 	}
 
 	// Load a video
+	let goodTube_firstLoad = false;
 	function goodTube_player_load() {
 		// Pause the video first (this helps to prevent audio flashes)
 		goodTube_player_pause();
@@ -574,8 +575,8 @@
 			return;
 		}
 
-		// If we're not in picture in picture mode
-		if (!goodTube_pip) {
+		// If we're not loading for the first time
+		if (!goodTube_firstLoad) {
 			// If we're not viewing a video
 			if (window.location.href.indexOf('.com/watch') === -1) {
 				// Clear and hide the player
@@ -596,8 +597,11 @@
 			}
 
 			goodTube_player.contentWindow.postMessage('goodTube_src_https://www.youtube.com/embed/' + goodTube_getParams['v'] + '?goodTubeEmbed=1&autoplay=1&mobile=' + mobileText + '&goodTube_autoplay=' + goodTube_autoplay + '&goodTube_playbackSpeed=' + goodTube_playbackSpeed + skipToGetVar, '*');
+
+			// We've completed the first load
+			goodTube_firstLoad = true;
 		}
-		// If we are in picture in picture mode
+		// Otherwise, for all other loads
 		else {
 			// Load the video via the iframe api
 			goodTube_player.contentWindow.postMessage('goodTube_load_' + goodTube_getParams['v'], '*');
