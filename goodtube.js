@@ -291,6 +291,15 @@
 		});
 	}
 
+	// Hide ads (realtime)
+	function goodTube_youtube_hideAdsRealtime() {
+		let adSlots = document.querySelectorAll('ytd-rich-item-renderer:has(> #content > ytd-ad-slot-renderer)');
+
+		adSlots.forEach(adSlot => {
+			adSlot.remove();
+		});
+	}
+
 	// Support timestamp links in comments
 	function goodTube_youtube_timestampLinks() {
 		// Links in video description and comments
@@ -1198,6 +1207,9 @@
 		// Mute, pause and skip ads
 		goodTube_youtube_mutePauseSkipAds();
 		setInterval(goodTube_youtube_mutePauseSkipAds, 1);
+
+		// Hide ads (realtime)
+		setInterval(goodTube_youtube_hideAdsRealtime, 100);
 
 		// Add CSS classes to hide elements (without Youtube knowing)
 		goodTube_helper_showHide_init();
