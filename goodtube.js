@@ -639,6 +639,11 @@
 				return;
 			}
 
+			// Make sure we're watching a video
+			if (window.location.href.indexOf('.com/watch') === -1) {
+				return;
+			}
+
 			// Get the key pressed in lower case
 			let keyPressed = event.key.toLowerCase();
 
