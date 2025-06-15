@@ -1507,7 +1507,7 @@
 							<strong>Do I need to manually update this?</strong><br>
 							Nope, updates are pushed to you automatically so you don't have to do anything to use the latest version.<br>
 							<br>
-							<strong>Playlists skip to the next song every few seconds</strong><br>
+							<strong>Playlists skip to the next video every few seconds</strong><br>
 							This is usually caused by another adblocker, userscript or extension you have installed. To fix this problem, disable all of your other adblockers, extensions and userscripts. Leave only Tampermonkey and this userscript enabled. Then refresh Youtube and check if the problem is fixed. If it's now working, turn on your other extensions and userscripts one by one until you find the one causing the issue.<br>
 							<br>
 							<strong>I can't use the miniplayer</strong><br>
