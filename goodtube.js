@@ -1491,9 +1491,7 @@
 								<br>
 								Countless hours and late nights have gone into making this and I continue to work on updating and maintaing the project every day. I am dedicated to ensuring this solution continues to work for everyone (despite Youtube's best efforts to stop adblockers).<br>
 								<br>
-								Any donation, no matter how small, helps to keep this project going and supports the community who use it.<br>
-								<br>
-								I'm a professional web developer, but lately have been unable to find work. So donations honestly make such a huge difference to my life at the moment. If you would like to say "thank you" and can spare even a single dollar, I would really appreciate it.<br>
+								Any donation, no matter how small, helps to keep this project going and supports the community who use it. If you would like to say "thank you" and give something back, I would really appreciate it.<br>
 								<br>
 								<i>Please note: All donations are processed through Paypal to provide you with the highest level of security.<br>
 								You don't need a Paypal account to make a donation, it's just processed through their platform.</i>
