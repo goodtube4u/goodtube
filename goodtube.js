@@ -1479,15 +1479,30 @@
 								I'm a professional web developer, but lately have been unable to find work. So this would honestly make such a huge difference to my life. If you would like to say "thank you" and can spare even a single dollar, I would really appreciate it.<br>
 								<br>
 								<i>Please note: All donations are processed through Paypal to provide you with the highest level of security.<br>
-								You don't need a Paypal account to make a donation.
+								You don't need a Paypal account to make a donation.</i>
 							</div>
 							<a href='https://www.paypal.com/donate/?hosted_button_id=37GNXSV27RZBS' target='_blank' rel='nofollow' class='goodTube_button'>Donate now</a>
 						</div> <!-- .goodTube_donation -->
 					</div> <!-- .goodTube_content -->
 
 
+					<div class='goodTube_title'>FAQs</div>
+					<div class='goodTube_content'>
+						<div class='goodTube_text'>
+							<strong>Do I need to manually update this?</strong><br>
+							Nope, updates are pushed to you automatically so you don't have to do anything to use the latest version.<br>
+							<br>
+							<strong>Playlists skip to the next song every few seconds</strong><br>
+							This is usually caused by another adblocker, userscript or extension you have installed. To fix this problem, disable all of your other adblockers, extensions and userscripts. Leave only Tampermonkey and this userscript enabled. Then refresh Youtube and check if the problem is fixed. If it's now working, turn on your other extensions and userscripts one by one until you find the one causing the issue.<br>
+							<br>
+							<strong>I can't use the miniplayer</strong><br>
+							The default Youtube miniplayer is not supported (sorry!). Instead this uses "Picture in Picture" mode, which works in most browsers / is the new standard for the web.
+						</div>
+					</div> <!-- .goodTube_content -->
+
+
 					<div class='goodTube_title'>Report an issue</div>
-					<div class='goodTube_content' style='padding-bottom: 0;'>
+					<div class='goodTube_content'>
 						<div class='goodTube_text goodTube_successText'>Your message has been sent successfully.</div>
 						<form class='goodTube_report' onSubmit='javascript:;'>
 							<div class='goodTube_text'>I am dedicated to helping every single person get this working. Everyone is important and if you have any problems at all, please let me know. I will respond and do my best to help!</div>
@@ -1702,6 +1717,7 @@
 			.goodTube_modal .goodTube_content:last-child {
 				border-bottom: 0;
 				margin-bottom: 0;
+				padding-bottom: 0;
 			}
 
 			.goodTube_modal .goodTube_content .goodTube_setting {
