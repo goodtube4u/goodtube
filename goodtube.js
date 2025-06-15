@@ -688,8 +688,6 @@
 				)
 			) {
 				if (
-					// Fullscreen
-					keyPressed === 'f' ||
 					// Speed up playback
 					keyPressed === '>' ||
 					// Slow down playback
@@ -752,6 +750,10 @@
 
 						// Pass the keyboard shortcut to the iframe
 						goodTube_player.contentWindow.postMessage('goodTube_shortcut_' + keyPressed, '*');
+
+						// Force mouse move to make sure fullscreen hides
+						var event = new Event('mousemove');
+						document.dispatchEvent(event);
 					}
 
 					// Toggle picture in picture
@@ -2488,11 +2490,6 @@
 				return;
 			}
 
-			// Fullscreen
-			if (keyPressed === 'f') {
-				document.querySelector('.ytp-fullscreen-button')?.click();
-			}
-
 			// Speed up playback
 			else if (keyPressed === '>') {
 				if (goodTube_iframe_api && typeof goodTube_iframe_api.getPlaybackRate === 'function' && typeof goodTube_iframe_api.setPlaybackRate === 'function') {
@@ -2599,6 +2596,10 @@
 					if (fullScreenButton) {
 						fullScreenButton.click();
 					}
+
+					// Force mouse move to make sure fullscreen hides
+					var event = new Event('mousemove');
+					document.dispatchEvent(event);
 				}
 
 				// Prev 10 seconds
