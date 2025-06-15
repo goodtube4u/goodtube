@@ -504,7 +504,7 @@
 			if (!goodTube_mobile) {
 				// Theater mode
 				if (document.querySelector('ytd-watch-flexy[theater]')) {
-					positionElement = document.getElementById('full-bleed-container');
+					positionElement = document.getElementById('player-full-bleed-container');
 
 					if (!goodTube_playerWrapper.classList.contains('goodTube_theater')) {
 						goodTube_playerWrapper.classList.add('goodTube_theater');
