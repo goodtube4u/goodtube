@@ -1474,7 +1474,12 @@
 								<br>
 								Countless hours and late nights have gone into making this and I continue to work on updating and maintaing the project every day. I am dedicated to ensuring this solution continues to work for everyone (despite Youtube's best efforts to stop adblockers).<br>
 								<br>
-								Any donation, no matter how small, helps to keep this project going and supports the community who use it. If you would like to say "thank you" and can spare even a single dollar, I would really appreciate it :)
+								Any donation, no matter how small, helps to keep this project going and supports the community who use it.<br>
+								<br>
+								I'm a professional web developer, but lately have been unable to find work. So this would honestly make such a huge difference to my life. If you would like to say "thank you" and can spare even a single dollar, I would really appreciate it.<br>
+								<br>
+								<i>Please note: All donations are processed through Paypal to provide you with the highest level of security.<br>
+								You don't need a Paypal account to make a donation.
 							</div>
 							<a href='https://www.paypal.com/donate/?hosted_button_id=37GNXSV27RZBS' target='_blank' rel='nofollow' class='goodTube_button'>Donate now</a>
 						</div> <!-- .goodTube_donation -->
@@ -1646,7 +1651,7 @@
 				top: 50%;
 				left: 50%;
 				transform: translate(round(-50%, 1px), round(-50%, 1px));
-				width: 768px;
+				width: 780px;
 				max-width: calc(100% - 32px);
 				max-height: calc(100% - 32px);
 				z-index: 2;
