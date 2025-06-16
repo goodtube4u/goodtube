@@ -2762,6 +2762,7 @@
 			let videoElement = document.querySelector('video');
 
 			if (videoElement) {
+				// Tell the parent frame to sync the video (pass in the time we want to sync to and the total video duration - we use the duration to detect if an ad is playing)
 				window.top.postMessage('goodTube_syncMainPlayer_' + videoElement.currentTime + '_' + videoElement.duration, '*');
 			}
 		}
