@@ -575,8 +575,8 @@
 			return;
 		}
 
-		// If we're not loading for the first time
-		if (!goodTube_firstLoad) {
+		// If we're loading for the first time OR we're not in PiP
+		if (!goodTube_firstLoad || !goodTube_pip) {
 			// If we're not viewing a video
 			if (window.location.href.indexOf('.com/watch') === -1) {
 				// Clear and hide the player
