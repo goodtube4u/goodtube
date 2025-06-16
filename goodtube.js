@@ -343,7 +343,7 @@
 		}
 
 		// Hide the normal Youtube player
-		let regularPlayers = document.querySelectorAll('#player');
+		let regularPlayers = document.querySelectorAll('#player:not(.ytd-channel-video-player-renderer)');
 		regularPlayers.forEach((element) => {
 			goodTube_helper_hideYoutubePlayer(element);
 		});
@@ -378,8 +378,8 @@
 		// Pause and mute all HTML videos on the page
 		let youtubeVideos = document.querySelectorAll('video');
 		youtubeVideos.forEach((element) => {
-			// Don't touch the thumbnail hover player or main player
-			if (!element.closest('#inline-player') && !element.closest('#movie_player')) {
+			// Don't touch the thumbnail hover player, main player or channel player
+			if (!element.closest('#inline-player') && !element.closest('#movie_player') && !element.closest('.ytd-channel-video-player-renderer')) {
 				element.muted = true;
 				element.volume = 0;
 				element.pause();
