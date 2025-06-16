@@ -604,7 +604,11 @@
 		// Otherwise, for all other loads
 		else {
 			// Load the video via the iframe api
-			goodTube_player.contentWindow.postMessage('goodTube_load_' + goodTube_getParams['v'], '*');
+			let startTime = 0;
+			if (typeof goodTube_getParams['t'] !== 'undefined') {
+				startTime = goodTube_getParams['t'].replace('s', '');
+			}
+			goodTube_player.contentWindow.postMessage('goodTube_load_' + goodTube_getParams['v'] + '_' + startTime, '*');
 		}
 
 
@@ -2400,14 +2404,21 @@
 
 		// Load video
 		if (event.data.indexOf('goodTube_load_') !== -1) {
-			let videoId = event.data.replace('goodTube_load_', '');
+			let bits = event.data.replace('goodTube_load_', '').split('_');
+			let videoId = bits[0];
+			let startTime = parseFloat(bits[1]);
 
 			// Pause and mute the video first (this helps to prevent audio flashes)
 			goodTube_iframe_mute();
 			goodTube_iframe_pause();
 
 			// Then load the new video
-			goodTube_iframe_api.loadVideoById(videoId);
+			goodTube_iframe_api.loadVideoById(
+				{
+					'videoId': videoId,
+					'startSeconds': startTime
+				}
+			);
 		}
 
 		// Stop video
