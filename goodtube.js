@@ -2933,6 +2933,29 @@
 		}
 	}
 
+	/* Fix fullscreen controls not hiding
+	------------------------------------------------------------------------------------------ */
+	function goodTube_fullscreen_fixPlayerControls() {
+		document.addEventListener('fullscreenchange', () => {
+			if (document.fullscreenElement) {
+				setTimeout(() => {
+					const fakeMove = new MouseEvent('mousemove', {
+						bubbles: true,
+						clientX: 1,
+						clientY: 1,
+					});
+					document.dispatchEvent(fakeMove);
+				}, 3000);
+
+				setTimeout(() => {
+					const el = document.elementFromPoint(1, 1);
+					if (el) {
+						el.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+					}
+				}, 3100);
+			}
+		});
+	}
 
 	/* Start GoodTube
 	------------------------------------------------------------------------------------------ */
@@ -2948,6 +2971,8 @@
 	else if (window.location.href.indexOf('?goodTubeEmbed=1') !== -1) {
 		goodTube_iframe_init();
 	}
+	// Activate fullscreen controls fix
+	goodTube_fullscreen_fixPlayerControls();
 
 
 })();
