@@ -491,6 +491,9 @@
 		// Setup player dynamic positioning and sizing
 		goodTube_player_positionAndSize();
 
+		// Fix fullscreen controls not hiding
+		goodTube_player_hideControlsFullscreen();
+
 		// Run the actions
 		goodTube_actions();
 	}
@@ -642,6 +645,31 @@
 		goodTube_player.contentWindow.postMessage('goodTube_play', '*');
 	}
 
+	// Fix fullscreen controls not hiding
+	function goodTube_player_hideControlsFullscreen() {
+		document.addEventListener('fullscreenchange', () => {
+			if (document.fullscreenElement) {
+				setTimeout(() => {
+					console.log('mouse move event');
+					const fakeMove = new MouseEvent('mousemove', {
+						bubbles: true,
+						clientX: 1,
+						clientY: 1,
+					});
+					document.dispatchEvent(fakeMove);
+				}, 3000);
+
+				setTimeout(() => {
+					console.log('click event');
+					const el = document.elementFromPoint(1, 1);
+					if (el) {
+						el.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+					}
+				}, 3100);
+			}
+		});
+	}
+
 
 	/* Keyboard shortcuts
 	------------------------------------------------------------------------------------------ */
@@ -754,10 +782,6 @@
 
 						// Pass the keyboard shortcut to the iframe
 						goodTube_player.contentWindow.postMessage('goodTube_shortcut_' + keyPressed, '*');
-
-						// Force mouse move to make sure fullscreen hides
-						var event = new Event('mousemove');
-						document.dispatchEvent(event);
 					}
 
 					// Toggle picture in picture
@@ -2618,10 +2642,6 @@
 					if (fullScreenButton) {
 						fullScreenButton.click();
 					}
-
-					// Force mouse move to make sure fullscreen hides
-					var event = new Event('mousemove');
-					document.dispatchEvent(event);
 				}
 
 				// Prev 10 seconds
