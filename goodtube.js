@@ -650,7 +650,6 @@
 		document.addEventListener('fullscreenchange', () => {
 			if (document.fullscreenElement) {
 				setTimeout(() => {
-					console.log('mouse move event');
 					const fakeMove = new MouseEvent('mousemove', {
 						bubbles: true,
 						clientX: 1,
@@ -660,7 +659,6 @@
 				}, 3000);
 
 				setTimeout(() => {
-					console.log('click event');
 					const el = document.elementFromPoint(1, 1);
 					if (el) {
 						el.dispatchEvent(new MouseEvent('click', { bubbles: true }));
