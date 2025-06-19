@@ -2933,6 +2933,20 @@
 		}
 	}
 
+	/* Fix fullscreen controls not hiding by dispatching a synthetic click 2 seconds after entering fullscreen */
+	function goodTube_fullscreen_fixPlayerControls() {
+		document.addEventListener('fullscreenchange', () => {
+			if (document.fullscreenElement) {
+				setTimeout(() => {
+					if (!document.fullscreenElement) return;
+					document.body.dispatchEvent(new MouseEvent('click', {
+						bubbles: true,
+						cancelable: true
+					}));
+				}, 2000);
+			}
+		});
+	}
 
 	/* Start GoodTube
 	------------------------------------------------------------------------------------------ */
@@ -2948,6 +2962,7 @@
 	else if (window.location.href.indexOf('?goodTubeEmbed=1') !== -1) {
 		goodTube_iframe_init();
 	}
-
+	// Activate fullscreen controls fix
+	goodTube_fullscreen_fixPlayerControls();
 
 })();
