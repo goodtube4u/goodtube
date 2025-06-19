@@ -1754,12 +1754,6 @@
 		// Restore playback speed, and update it if it changes
 		goodTube_iframe_playbackSpeed();
 
-		// If we're in a playlist
-		if (goodTube_getParams['goodTube_playlist'] === 'true') {
-			// Enable the previous button
-			goodTube_iframe_enablePrevButton();
-		}
-
 		// Run the iframe actions
 		goodTube_iframe_actions();
 
@@ -1879,6 +1873,13 @@
 				display: block !important;
 			}
 
+			/* Show the prev button if it has the right class */
+			.ytp-prev-button.goodTube_visible {
+				opacity: 1 !important;
+				cursor: pointer !important;
+				display: block !important;
+			}
+
 			/* Show video title in fullscreen */
 			body .ytp-fullscreen .ytp-gradient-top,
 			body .ytp-fullscreen .ytp-show-cards-title {
@@ -1920,23 +1921,17 @@
 
 	// Enable the previous button
 	function goodTube_iframe_enablePrevButton() {
-		let style = document.createElement('style');
-		style.id = 'goodTube_prevButtonStyle';
-		style.textContent = `
-			.ytp-prev-button {
-				opacity: 1 !important;
-				cursor: pointer !important;
-				display: block !important;
-			}
-		`;
-		document.head.appendChild(style);
+		let prevButton = document.querySelector('.ytp-prev-button');
+		if (prevButton && !prevButton.classList.contains('goodTube_visible')) {
+			prevButton.classList.add('goodTube_visible');
+		}
 	}
 
 	// Disable the previous button
 	function goodTube_iframe_disablePrevButton() {
-		let style = document.getElementById('goodTube_prevButtonStyle');
-		if (style) {
-			style.remove();
+		let prevButton = document.querySelector('.ytp-prev-button');
+		if (prevButton && prevButton.classList.contains('goodTube_visible')) {
+			prevButton.classList.remove('goodTube_visible');
 		}
 	}
 
@@ -2569,6 +2564,11 @@
 				// All other times, we need to use this weird method so it doesn't mess with our browser history
 				else {
 					youtubeIframe.contentWindow.location.replace(event.data.replace('goodTube_src_', ''));
+				}
+
+				// Enable the previous button if a playlist get variable was passed in
+				if (youtubeIframe.src.indexOf('?goodTube_playlist=true') !== -1) {
+					goodTube_iframe_enablePrevButton();
 				}
 			}
 			// Pass all other messages down to the youtube iframe
