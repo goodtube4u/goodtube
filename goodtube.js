@@ -403,13 +403,6 @@
 				background: #000000;
 				border-radius: 0;
 			}
-
-			/* Stop text selection on video elements */
-			.goodTube_playerWrapper video {
-				-webkit-user-select: none !important;
-				-ms-user-select: none !important;
-				user-select: none !important;
-			}
 		`;
 		document.head.appendChild(style);
 
@@ -1891,13 +1884,6 @@
 			}
 			body .ytp-fullscreen .ytp-show-cards-title .ytp-title-text {
 				padding-left: 36px !important;
-			}
-
-			/* Stop text selection on video elements */
-			body video {
-				-webkit-user-select: none !important;
-				-ms-user-select: none !important;
-				user-select: none !important;
 			}
 
 			/* Add theater mode button */
