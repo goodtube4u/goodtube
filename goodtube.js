@@ -2568,7 +2568,7 @@
 	/* Start GoodTube
 	------------------------------------------------------------------------------------------ */
 	// Youtube page
-	if (window.top === window.self) {
+	if (window.top === window.self && window.location.href.indexOf('youtube') !== -1) {
 		goodTube_init();
 	}
 	// Proxy iframe embed
@@ -2579,6 +2579,5 @@
 	else if (window.location.href.indexOf('?goodTubeEmbed=1') !== -1) {
 		goodTube_iframe_init();
 	}
-
 
 })();
