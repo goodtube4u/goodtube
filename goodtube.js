@@ -657,6 +657,8 @@
 						keyPressed === 'm' ||
 						// Toggle fullscreen
 						keyPressed === 'f' ||
+						// Toggle captions
+						keyPressed === 'c' ||
 						// Prev 10 seconds
 						keyPressed === 'j' ||
 						// Next 10 seconds
@@ -719,6 +721,8 @@
 		else {
 			return;
 		}
+
+		console.log('trigger ' + shortcut);
 
 		// Trigger the keyboard shortcut
 		let e = false;
@@ -2266,6 +2270,15 @@
 					// Force mouse move to make sure fullscreen hides
 					var event = new Event('mousemove');
 					document.dispatchEvent(event);
+				}
+
+				// Toggle captions
+				if (keyPressed === 'c') {
+					let captionsButton = document.querySelector('.ytp-subtitles-button');
+
+					if (captionsButton) {
+						captionsButton.click();
+					}
 				}
 
 				// Prev 10 seconds
