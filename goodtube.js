@@ -481,10 +481,10 @@
 			}
 		}
 
-		// Call this function again on next draw frame
-		window.requestAnimationFrame(function () {
+		// Call this function again on next draw frame (must use setTimeout to be reliable, this fixes a known issue)
+		setTimeout(() => {
 			goodTube_player_positionAndSize();
-		});
+		}, 0);
 	}
 
 	// Load a video
