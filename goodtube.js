@@ -481,10 +481,8 @@
 			}
 		}
 
-		// Call this function again on next draw frame
-		window.requestAnimationFrame(function () {
-			goodTube_player_positionAndSize();
-		});
+		// Call this function again on next draw frame (this must be done with setTimeout - it fixes a known major issue many users have where the function won't fire with window.requestAnimationFrame)
+		setTimeout(goodTube_player_positionAndSize, 0);
 	}
 
 	// Load a video
@@ -1207,6 +1205,9 @@
 					<div class='goodTube_title'>FAQs</div>
 					<div class='goodTube_content'>
 						<div class='goodTube_text'>
+							<strong>How can I share this with friends?</strong><br>
+							You can send them <a href='https://github.com/goodtube4u/goodtube' target='_blank'>this link</a>. It has all of the install instructions.<br>
+							<br>
 							<strong>Do I need to manually update this?</strong><br>
 							Nope, updates are pushed to you automatically so you don't have to do anything to use the latest version.<br>
 							<br>
@@ -1228,7 +1229,7 @@
 						<form class='goodTube_report' onSubmit='javascript:;'>
 							<div class='goodTube_text'>I am dedicated to helping every single person get this working. Everyone is important and if you have any problems at all, please let me know. I will respond and do my best to help!</div>
 							<input class='goodTube_reportEmail' type='email' placeholder='Email address' required>
-							<textarea class='goodTube_reportText' placeholder='Enter your message here' required></textarea>
+							<textarea class='goodTube_reportText' placeholder='Enter your message here...\r\rPlease note - most reported issues are caused by a conflicting extension. Please first try turning off all of your other extensions. Refresh Youtube, check if the problem is fixed. If it is, then you know something is conflicting. Turn your other extensions back on one at a time until you find the cause. Please try this first before reporting an issue!' required></textarea>
 							<input type='submit' class='goodTube_button' id='goodTube_button_submitReport' value='Submit'>
 						</form> <!-- .goodTube_report -->
 					</div> <!-- .goodTube_content -->
@@ -1504,6 +1505,11 @@
 				line-height: 130%;
 			}
 
+			.goodTube_modal .goodTube_text a {
+				color: #e84a82;
+				text-decoration: underline;
+			}
+
 			.goodTube_modal .goodTube_report {
 			}
 
@@ -1545,7 +1551,7 @@
 
 			.goodTube_modal .goodTube_report textarea {
 				margin-bottom: 16px;
-				height: 94px;
+				height: 128px;
 			}
 		`;
 		document.head.appendChild(style);
