@@ -136,7 +136,28 @@
 	// Are we in picture in picture?
 	let goodTube_pip = false;
 
-	// Are shorts enabled
+	// Are we syncing the main Youtube player?
+	let goodTube_syncingPlayer = false;
+
+	// A reference to the previous URL (used to detect when the page changes)
+	let goodTube_previousUrl = false;
+
+	// Have we already turned off Youtube's default autoplay?
+	let goodTube_turnedOffAutoplay = false;
+
+	// Have we already redirected away from a short?
+	let goodTube_redirectHappened = false;
+
+	// Is this the first video we're loading?
+	let goodTube_firstLoad = false;
+
+	// A reference to a global timeout to check if our player has loaded
+	let goodTube_loadTimeout = setTimeout(() => {}, 0);
+
+	// Has the prox iframe loaded?
+	let goodTube_proxyIframeLoaded = false;
+
+	// Are shorts enabled?
 	let goodTube_shorts = 'false';
 	if (window.top === window.self) {
 		goodTube_shorts = goodTube_helper_getCookie('goodTube_shorts');
@@ -161,7 +182,7 @@
 		goodTube_playbackSpeed = '1';
 	}
 
-	// Stores the GET params
+	// Fetch the GET params
 	let goodTube_getParams = goodTube_helper_setupGetParams();
 
 
@@ -320,13 +341,13 @@
 	}
 
 	// Hide all Youtube players
-	let goodTube_redirectHappened = false;
 	function goodTube_youtube_hidePlayers() {
-		// Don't do this if shorts are enabled
+		// Don't do this if shorts are enabled and we're viewing a short
 		if (goodTube_shorts === 'true' && window.location.href.indexOf('/shorts') !== -1) {
 			return;
 		}
 
+		// Redirect from any short to the homepage
 		if (window.location.href.indexOf('/shorts') !== -1 && !goodTube_redirectHappened) {
 			window.location.href = 'https://youtube.com';
 			goodTube_redirectHappened = true;
@@ -351,10 +372,9 @@
 		});
 	}
 
-	// Mute, pause and skip ads on all Youtube videos
-	let goodTube_syncingPlayer = false;
+	// Mute and pause all Youtube videos
 	function goodTube_youtube_mutePauseSkipAds() {
-		// Don't do this if shorts are enabled
+		// Don't do this if shorts are enabled and we're viewing a short
 		if (goodTube_shorts === 'true' && window.location.href.indexOf('/shorts') !== -1) {
 			return;
 		}
@@ -382,7 +402,6 @@
 	/* Player functions
 	------------------------------------------------------------------------------------------ */
 	// Init player
-	let goodTube_proxyIframeLoaded = false;
 	function goodTube_player_init() {
 		// Get the page API
 		goodTube_page_api = document.getElementById('movie_player');
@@ -456,7 +475,6 @@
 	}
 
 	// Position and size the player
-	let goodTube_loadTimeout = setTimeout(() => {}, 0);
 	function goodTube_player_positionAndSize() {
 		// If we're viewing a video
 		if (window.location.href.indexOf('.com/watch') !== -1) {
@@ -501,7 +519,6 @@
 	}
 
 	// Load a video
-	let goodTube_firstLoad = false;
 	function goodTube_player_load() {
 		// Pause the video first (this helps to prevent audio flashes)
 		goodTube_player_pause();
@@ -1097,7 +1114,6 @@
 	}
 
 	// Actions
-	let goodTube_previousUrl = false;
 	function goodTube_actions() {
 		// Get the previous and current URL
 
@@ -1707,7 +1723,6 @@
 	}
 
 	// Turn off autoplay
-	let goodTube_turnedOffAutoplay = false;
 	function goodTube_youtube_turnOffAutoplay() {
 		// If we've already turned off autoplay, just return
 		if (goodTube_turnedOffAutoplay) {
