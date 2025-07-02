@@ -167,8 +167,9 @@
 
 	/* Youtube functions
 	------------------------------------------------------------------------------------------ */
-	// Hide ads, shorts, etc using CSS
+	// Hide ads and shorts
 	function goodTube_youtube_hideAdsShortsEtc() {
+		// Hide ads
 		let style = document.createElement('style');
 		style.textContent = `
 			.ytd-search ytd-shelf-renderer,
@@ -241,36 +242,36 @@
 		`;
 		document.head.appendChild(style);
 
+		// Debug message
+		console.log('[GoodTube] Ads removed');
+
+
 		// Hide shorts if they're not enabled
 		if (goodTube_shorts === 'false') {
 			let shortsStyle = document.createElement('style');
 			shortsStyle.textContent = `
 				ytm-pivot-bar-item-renderer:has(> .pivot-shorts),
-				ytd-rich-section-renderer {
+				ytd-rich-section-renderer,
+				grid-shelf-view-model {
 					display: none !important;
 				}
 			`;
 			document.head.appendChild(shortsStyle);
-		}
 
-		// Debug message
-		console.log('[GoodTube] Ads removed');
+			// Debug message
+			console.log('[GoodTube] Shorts removed');
+		}
 	}
 
-	// Hide shorts (realtime)
+	// Hide shorts (real time)
 	function goodTube_youtube_hideShorts() {
 		// Don't do this if shorts are enabled
 		if (goodTube_shorts === 'true') {
 			return;
 		}
 
-		// If we're on a channel page, don't hide shorts
-		if (window.location.href.indexOf('@') !== -1) {
-			return;
-		}
-
 		// Hide shorts links
-		let shortsLinks = document.querySelectorAll('a:not(.goodTube_hidden)');
+		let shortsLinks = document.querySelectorAll('a:not(.goodTube_hidden):not(.goodTube_checked)');
 		shortsLinks.forEach((element) => {
 			if (element.href.indexOf('shorts/') !== -1) {
 				goodTube_helper_hideElement(element);
@@ -278,6 +279,20 @@
 				goodTube_helper_hideElement(element.closest('ytd-compact-video-renderer'));
 				goodTube_helper_hideElement(element.closest('ytd-rich-grid-media'));
 			}
+
+			// Mark this element as checked to save on resources
+			element.classList.add('goodTube_checked');
+		});
+
+		// Hide shorts buttons
+		let shortsButtons = document.querySelectorAll('yt-chip-cloud-chip-renderer:not(.goodTube_hidden):not(.goodTube_checked), yt-tab-shape:not(.goodTube_hidden):not(.goodTube_checked)');
+		shortsButtons.forEach((element) => {
+			if (element.innerHTML.toLowerCase().indexOf('shorts') !== -1) {
+				goodTube_helper_hideElement(element);
+			}
+
+			// Mark this element as checked to save on resources
+			element.classList.add('goodTube_checked');
 		});
 	}
 
