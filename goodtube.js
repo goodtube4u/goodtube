@@ -368,6 +368,7 @@
 	------------------------------------------------------------------------------------------ */
 	// Init player
 	let goodTube_proxyIframeLoaded = false;
+	let goodTube_player_init_timeout = setTimeout(() => {}, 0);
 	function goodTube_player_init() {
 		// Get the page API
 		goodTube_page_api = document.getElementById('movie_player');
@@ -380,7 +381,12 @@
 
 		// Keep trying to get the frame API until it exists
 		if (!videoData) {
-			setTimeout(goodTube_player_init, 100);
+			// Clear timeout first to solve memory issues
+			clearTimeout(goodTube_player_init_timeout);
+
+			// Create a new timeout
+			goodTube_player_init_timeout = setTimeout(goodTube_player_init, 100);
+
 			return;
 		}
 
@@ -441,7 +447,7 @@
 	}
 
 	// Position and size the player
-	let goodTube_loadTimeout = setTimeout(() => {}, 0);
+	let goodTube_player_positionAndSize_timeout = setTimeout(() => {}, 0);
 	function goodTube_player_positionAndSize() {
 		// If we're viewing a video
 		if (window.location.href.indexOf('.com/watch') !== -1) {
@@ -481,20 +487,27 @@
 			}
 		}
 
-		// Call this function again on next draw frame (this must be done with setTimeout - it fixes a known major issue many users have where the function won't fire with window.requestAnimationFrame)
-		setTimeout(goodTube_player_positionAndSize, 0);
+		// Clear timeout first to solve memory issues
+		clearTimeout(goodTube_player_positionAndSize_timeout);
+
+		// Create a new timeout (this must be done with setTimeout - it fixes a known major issue many users have where the function won't fire with window.requestAnimationFrame)
+		goodTube_player_positionAndSize_timeout = setTimeout(goodTube_player_positionAndSize, 0);
 	}
 
 	// Load a video
 	let goodTube_firstLoad = false;
+	let goodTube_player_load_timeout = setTimeout(() => {}, 0);
 	function goodTube_player_load() {
 		// Pause the video first (this helps to prevent audio flashes)
 		goodTube_player_pause();
 
 		// Make sure the proxy iframe has loaded
 		if (!goodTube_proxyIframeLoaded) {
-			clearTimeout(goodTube_loadTimeout);
-			goodTube_loadTimeout = setTimeout(goodTube_player_load, 100);
+			// Clear timeout first to solve memory issues
+			clearTimeout(goodTube_player_load_timeout);
+
+			// Create a new timeout
+			goodTube_player_load_timeout = setTimeout(goodTube_player_load, 100);
 			return;
 		}
 
@@ -961,6 +974,7 @@
 	}
 
 	// Listen for messages from the iframe
+	let goodTube_receiveMessage_timeout = setTimeout(() => {}, 0);
 	function goodTube_receiveMessage(event) {
 		// Make sure some data exists
 		if (typeof event.data !== 'string') {
@@ -1072,8 +1086,11 @@
 					// Sync the current time
 					youtubeVideoElement.currentTime = syncTime;
 
+					// Clear timeout first to solve memory issues
+					clearTimeout(goodTube_receiveMessage_timeout);
+
 					// After 10ms stop syncing (and let the pause actions handle the pausing)
-					setTimeout(() => {
+					goodTube_receiveMessage_timeout = setTimeout(() => {
 						goodTube_syncingPlayer = false;
 					}, 10);
 				}
@@ -1083,6 +1100,7 @@
 
 	// Actions
 	let goodTube_previousUrl = false;
+	let goodTube_actions_timeout = setTimeout(() => {}, 0);
 	function goodTube_actions() {
 		// Get the previous and current URL
 
@@ -1134,8 +1152,11 @@
 		// Turn off autoplay
 		goodTube_youtube_turnOffAutoplay();
 
+		// Clear timeout first to solve memory issues
+		clearTimeout(goodTube_actions_timeout);
+
 		// Run actions again in 100ms to loop this function
-		setTimeout(goodTube_actions, 100);
+		goodTube_actions_timeout = setTimeout(goodTube_actions, 100);
 	}
 
 	// Init menu
@@ -1720,6 +1741,7 @@
 	/* Iframe functions
 	------------------------------------------------------------------------------------------ */
 	// Init
+	let goodTube_iframe_init_timeout = false;
 	function goodTube_iframe_init() {
 		// Get the iframe API
 		goodTube_iframe_api = document.getElementById('movie_player');
@@ -1735,7 +1757,12 @@
 
 		// Keep trying to get the frame API until it exists
 		if (!videoData) {
-			setTimeout(goodTube_iframe_init, 100);
+			// Clear timeout first to solve memory issues
+			clearTimeout(goodTube_iframe_init_timeout);
+
+			// Create a new timeout
+			goodTube_iframe_init_timeout = setTimeout(goodTube_iframe_init, 100);
+
 			return;
 		}
 
@@ -1775,6 +1802,7 @@
 	}
 
 	// Actions
+	let goodTube_iframe_actions_timeout = false;
 	function goodTube_iframe_actions() {
 		// Fix fullscreen button issues
 		goodTube_iframe_fixFullScreenButton();
@@ -1785,8 +1813,16 @@
 		// Enable picture in picture next and prev buttons
 		goodTube_iframe_enablePipButtons();
 
-		// Run actions again in 100ms to loop this function
-		setTimeout(goodTube_iframe_actions, 100);
+		// Clear timeout first to solve memory issues
+		clearTimeout(goodTube_iframe_actions_timeout);
+
+		// Enable the prev button if required
+		if (goodTube_getParams['goodTube_playlist'] !== 'undefined' && goodTube_getParams['goodTube_playlist'] === 'true') {
+			goodTube_iframe_enablePrevButton();
+		}
+
+		// Create a new timeout
+		goodTube_iframe_actions_timeout = setTimeout(goodTube_iframe_actions, 100);
 	}
 
 	// Restore playback speed, and update it if it changes
@@ -1932,13 +1968,19 @@
 	}
 
 	// Add custom buttons
+	let goodTube_iframe_addCustomButtons_timeout = false;
 	function goodTube_iframe_addCustomButtons() {
 		// Target the play button
 		let playButton = document.querySelector('.ytp-play-button');
 
 		// Make sure it exists before continuing
 		if (!playButton) {
-			setTimeout(goodTube_iframe_addCustomButtons, 100);
+			// Clear timeout first to solve memory issues
+			clearTimeout(goodTube_iframe_addCustomButtons_timeout);
+
+			// Create a new timeout
+			goodTube_iframe_addCustomButtons_timeout = setTimeout(goodTube_iframe_addCustomButtons, 100);
+
 			return;
 		}
 
@@ -2011,13 +2053,19 @@
 	}
 
 	// Add custom events
+	let goodTube_iframe_addCustomEvents_timeout = setTimeout(() => {}, 0);
 	function goodTube_iframe_addCustomEvents() {
 		// Target the video element
 		let videoElement = document.querySelector('#player video');
 
 		// Make sure it exists before continuing
 		if (!videoElement) {
-			setTimeout(goodTube_iframe_addCustomEvents, 100);
+			// Clear timeout first to solve memory issues
+			clearTimeout(goodTube_iframe_addCustomEvents_timeout);
+
+			// Create a new timeout
+			goodTube_iframe_addCustomEvents_timeout = setTimeout(goodTube_iframe_addCustomEvents, 100);
+
 			return;
 		}
 
@@ -2141,7 +2189,6 @@
 			}
 		}
 
-
 		// Show or hide the end screen thumbnails
 		else if (event.data === 'goodTube_endScreen_show') {
 			if (document.body.classList.contains('goodTube_hideEndScreen')) {
@@ -2153,7 +2200,6 @@
 				document.body.classList.add('goodTube_hideEndScreen');
 			}
 		}
-
 
 		// Keyboard shortcut
 		else if (event.data.indexOf('goodTube_shortcut_') !== -1) {
@@ -2343,6 +2389,7 @@
 	}
 
 	// Skip to time
+	let goodTube_iframe_skipTo_timeout = setTimeout(() => {}, 0);
 	function goodTube_iframe_skipTo(time) {
 		// Target the video
 		let videoElement = document.querySelector('video');
@@ -2353,11 +2400,18 @@
 		}
 		// Otherwise retry until the video exists
 		else {
-			setTimeout(goodTube_iframe_skipTo, 100);
+			// Clear timeout first to solve memory issues
+			clearTimeout(goodTube_iframe_skipTo_timeout);
+
+			// Create a new timeout
+			goodTube_iframe_skipTo_timeout = setTimeout(() => {
+				goodTube_iframe_skipTo(time);
+			}, 100);
 		}
 	}
 
 	// Pause
+	let goodTube_iframe_pause_timeout = setTimeout(() => {}, 0);
 	function goodTube_iframe_pause() {
 		// Target the video
 		let videoElement = document.querySelector('video');
@@ -2368,11 +2422,16 @@
 		}
 		// Otherwise retry until the video exists
 		else {
-			setTimeout(goodTube_iframe_pause, 100);
+			// Clear timeout first to solve memory issues
+			clearTimeout(goodTube_iframe_pause_timeout);
+
+			// Create a new timeout
+			goodTube_iframe_pause_timeout = setTimeout(goodTube_iframe_pause, 100);
 		}
 	}
 
 	// Mute
+	let goodTube_iframe_mute_timeout = setTimeout(() => {}, 0);
 	function goodTube_iframe_mute() {
 		// Target the video
 		let videoElement = document.querySelector('video');
@@ -2383,11 +2442,16 @@
 		}
 		// Otherwise retry until the video exists
 		else {
-			setTimeout(goodTube_iframe_mute, 100);
+			// Clear timeout first to solve memory issues
+			clearTimeout(goodTube_iframe_mute_timeout);
+
+			// Create a new timeout
+			goodTube_iframe_mute_timeout = setTimeout(goodTube_iframe_mute, 100);
 		}
 	}
 
 	// Unmute
+	let goodTube_iframe_unmute_timeout = setTimeout(() => {}, 0);
 	function goodTube_iframe_unmute() {
 		// Target the video
 		let videoElement = document.querySelector('video');
@@ -2398,11 +2462,16 @@
 		}
 		// Otherwise retry until the video exists
 		else {
-			setTimeout(goodTube_iframe_unmute, 100);
+			// Clear timeout first to solve memory issues
+			clearTimeout(goodTube_iframe_unmute_timeout);
+
+			// Create a new timeout
+			goodTube_iframe_unmute_timeout = setTimeout(goodTube_iframe_unmute, 100);
 		}
 	}
 
 	// Play
+	let goodTube_iframe_play_timeout = setTimeout(() => {}, 0);
 	function goodTube_iframe_play() {
 		// Target the video
 		let videoElement = document.querySelector('video');
@@ -2413,7 +2482,11 @@
 		}
 		// Otherwise retry until the video exists
 		else {
-			setTimeout(goodTube_iframe_pause, 100);
+			// Clear timeout first to solve memory issues
+			clearTimeout(goodTube_iframe_play_timeout);
+
+			// Create a new timeout
+			goodTube_iframe_play_timeout = setTimeout(goodTube_iframe_play, 100);
 		}
 	}
 
@@ -2433,6 +2506,7 @@
 	}
 
 	// Sync the main player
+	let goodTube_iframe_syncMainPlayer_timeout = setTimeout(() => {}, 0);
 	function goodTube_iframe_syncMainPlayer() {
 		// If we're viewing a video page
 		if (window.top.location.href.indexOf('.com/watch') !== -1) {
@@ -2444,7 +2518,11 @@
 			}
 		}
 
-		setTimeout(goodTube_iframe_syncMainPlayer, 5000);
+		// Clear timeout first to solve memory issues
+		clearTimeout(goodTube_iframe_syncMainPlayer_timeout);
+
+		// Create a new timeout
+		goodTube_iframe_syncMainPlayer_timeout = setTimeout(goodTube_iframe_syncMainPlayer, 5000);
 	}
 
 	// Support picture in picture
@@ -2569,11 +2647,6 @@
 				// All other times, we need to use this weird method so it doesn't mess with our browser history
 				else {
 					youtubeIframe.contentWindow.location.replace(event.data.replace('goodTube_src_', ''));
-				}
-
-				// Enable the previous button if a playlist get variable was passed in
-				if (youtubeIframe.src.indexOf('?goodTube_playlist=true') !== -1) {
-					goodTube_iframe_enablePrevButton();
 				}
 			}
 			// Pass all other messages down to the youtube iframe
