@@ -620,8 +620,8 @@
 	// Add keyboard shortcuts
 	function goodTube_shortcuts_init() {
 		document.addEventListener('keydown', function (event) {
-			// Don't do anything if we're holding control
-			if (event.ctrlKey) {
+			// Don't do anything if we're holding control OR the command key on mac
+			if (event.ctrlKey || event.metaKey) {
 				return;
 			}
 
@@ -765,8 +765,6 @@
 		else {
 			return;
 		}
-
-		console.log('trigger ' + shortcut);
 
 		// Trigger the keyboard shortcut
 		let e = false;
@@ -2110,8 +2108,8 @@
 	// Add keyboard shortcuts
 	function goodTube_iframe_addKeyboardShortcuts() {
 		document.addEventListener('keydown', function (event) {
-			// Don't do anything if we're holding control
-			if (event.ctrlKey) {
+			// Don't do anything if we're holding control OR the command key on mac
+			if (event.ctrlKey || event.metaKey) {
 				return;
 			}
 
