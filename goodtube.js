@@ -151,9 +151,6 @@
 	// Is this the first video we're loading?
 	let goodTube_firstLoad = false;
 
-	// A reference to a global timeout to check if our player has loaded
-	let goodTube_loadTimeout = setTimeout(() => {}, 0);
-
 	// Has the prox iframe loaded?
 	let goodTube_proxyIframeLoaded = false;
 
