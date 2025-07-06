@@ -529,7 +529,6 @@
 	}
 
 	// Load a video
-	let goodTube_firstLoad = false;
 	let goodTube_player_load_timeout = setTimeout(() => {}, 0);
 	function goodTube_player_load() {
 		// Pause the video first (this helps to prevent audio flashes)
