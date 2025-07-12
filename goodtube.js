@@ -837,8 +837,28 @@
 		// Re fetch the page API
 		goodTube_page_api = document.getElementById('movie_player');
 
-		// Make sure it exists
-		if (goodTube_page_api && typeof goodTube_page_api.nextVideo === 'function') {
+		// If we're viewing a playlist
+		if (typeof goodTube_page_api.getPlaylist === 'function' && typeof goodTube_page_api.getPlaylistIndex === 'function' && goodTube_page_api.getPlaylist()) {
+			// Get the playlist
+			let playlist = goodTube_page_api.getPlaylist();
+			let playlistIndex = goodTube_page_api.getPlaylistIndex();
+
+			// If we're on the last video
+			if (playlistIndex === (playlist.length - 1)) {
+				// Skip to the end of the video (this plays the next video AND ensures the shuffle and repeat options work - which the API "nextVideo" function does not, stupid Youtube...)
+				let youtubeVideoElement = document.querySelector('#movie_player video');
+				if (youtubeVideoElement) {
+					youtubeVideoElement.currentTime = youtubeVideoElement.duration;
+				}
+			}
+			// Otherwise, make sure the API is all good
+			else if (goodTube_page_api && typeof goodTube_page_api.nextVideo === 'function') {
+				// Play the next video
+				goodTube_page_api.nextVideo();
+			}
+		}
+		// Otherwise, we're not on a playlist, make sure the API is all good
+		else if (goodTube_page_api && typeof goodTube_page_api.nextVideo === 'function') {
 			// Play the next video
 			goodTube_page_api.nextVideo();
 		}
@@ -882,6 +902,17 @@
 			if (playlistIndex !== (playlist.length - 1)) {
 				// Play the next video
 				goodTube_nav_next();
+			}
+			// Otherwise, we're on the last video
+			else {
+				let loopTurnedOff = document.querySelector('#playlist-action-menu button[aria-label="Loop playlist"]');
+				let shuffleTurnedOff = document.querySelector('#playlist-action-menu button[aria-label="Shuffle playlist"]');
+
+				// If shuffle or loop are turned on
+				if (!loopTurnedOff && !shuffleTurnedOff) {
+					// Play the next video
+					goodTube_nav_next();
+				}
 			}
 		}
 	}
