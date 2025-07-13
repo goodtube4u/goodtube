@@ -571,6 +571,11 @@
 			// Populate the playlist info
 			goodTube_player_populatePlaylistInfo();
 		}
+		// Otherwise, remove playlist info
+		else {
+			goodTube_playlist = false;
+			goodTube_playlistIndex = 0;
+		}
 
 		// If we're loading for the first time
 		if (!goodTube_firstLoad) {
