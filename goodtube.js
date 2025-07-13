@@ -154,6 +154,10 @@
 	// Has the prox iframe loaded?
 	let goodTube_proxyIframeLoaded = false;
 
+	// Hold the playlist information
+	let goodTube_playlist = false;
+	let goodTube_playlistIndex = 0;
+
 	// Are shorts enabled?
 	let goodTube_shorts = 'false';
 	if (window.top === window.self) {
@@ -525,6 +529,20 @@
 		goodTube_player_positionAndSize_timeout = setTimeout(goodTube_player_positionAndSize, 0);
 	}
 
+	// Populate the playlist info
+	function goodTube_player_populatePlaylistInfo() {
+		// Make sure we have access to the frame API
+		if (typeof goodTube_page_api.getPlaylist === 'function' && typeof goodTube_page_api.getPlaylistIndex === 'function') {
+			goodTube_playlist = goodTube_page_api.getPlaylist();
+			goodTube_playlistIndex = goodTube_page_api.getPlaylistIndex();
+
+			// If the playlist info isn't ready yet, try again
+			if (!goodTube_playlist) {
+				setTimeout(goodTube_player_populatePlaylistInfo, 100);
+			}
+		}
+	}
+
 	// Load a video
 	let goodTube_player_load_timeout = setTimeout(() => {}, 0);
 	function goodTube_player_load() {
@@ -544,10 +562,14 @@
 		// Re fetch the page API
 		goodTube_page_api = document.getElementById('movie_player');
 
-		// Check if we're viewing a playlist (used for goodTube_src_xxx and goodTube_load_xxx below)
+		// If we're viewing a playlist
 		let playlist = 'false';
 		if (typeof goodTube_getParams['i'] !== 'undefined' || typeof goodTube_getParams['index'] !== 'undefined' || typeof goodTube_getParams['list'] !== 'undefined') {
+			// Populate the GET params below to let the iframe know we're viewing a playlist
 			playlist = 'true';
+
+			// Populate the playlist info
+			goodTube_player_populatePlaylistInfo();
 		}
 
 		// If we're loading for the first time
@@ -876,13 +898,9 @@
 		goodTube_page_api = document.getElementById('movie_player');
 
 		// If we're viewing a playlist
-		if (typeof goodTube_page_api.getPlaylist === 'function' && typeof goodTube_page_api.getPlaylistIndex === 'function' && goodTube_page_api.getPlaylist()) {
-			// Get the playlist
-			let playlist = goodTube_page_api.getPlaylist();
-			let playlistIndex = goodTube_page_api.getPlaylistIndex();
-
+		if (goodTube_playlist) {
 			// If we're NOT on the last video
-			if (playlistIndex !== (playlist.length - 1)) {
+			if (goodTube_playlistIndex !== (goodTube_playlist.length - 1)) {
 				// Play the next video
 				goodTube_nav_next();
 
@@ -926,16 +944,12 @@
 		}
 
 		// Otherwise, if we're viewing a playlist
-		else if (typeof goodTube_page_api.getPlaylist === 'function' && typeof goodTube_page_api.getPlaylistIndex === 'function' && goodTube_page_api.getPlaylist()) {
+		else if (goodTube_playlist) {
 			// Hide the end screen
 			hideEndScreen = true;
 
-			// Get the playlist
-			let playlist = goodTube_page_api.getPlaylist();
-			let playlistIndex = goodTube_page_api.getPlaylistIndex();
-
 			// If we're on the last video
-			if (playlistIndex === (playlist.length - 1)) {
+			if (goodTube_playlistIndex === (goodTube_playlist.length - 1)) {
 				// Show the end screen
 				hideEndScreen = false;
 			}
