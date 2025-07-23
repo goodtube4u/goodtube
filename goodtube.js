@@ -489,27 +489,21 @@
 			// Show the GoodTube player
 			goodTube_helper_showElement(goodTube_playerWrapper);
 
-			// This is used to position and size the player
-			let positionElement = false;
-
 			// Theater mode
 			if (document.querySelector('ytd-watch-flexy[theater]')) {
-				positionElement = document.getElementById('player-full-bleed-container');
-
 				if (!goodTube_playerWrapper.classList.contains('goodTube_theater')) {
 					goodTube_playerWrapper.classList.add('goodTube_theater');
 				}
 			}
 			// Regular mode
 			else {
-				positionElement = document.getElementById('player');
-
 				if (goodTube_playerWrapper.classList.contains('goodTube_theater')) {
 					goodTube_playerWrapper.classList.remove('goodTube_theater');
 				}
 			}
 
 			// Position the player
+			let positionElement = document.getElementById('ytd-player');
 			if (positionElement && positionElement.offsetHeight > 0) {
 				// Our wrapper has "position: absolute" so take into account the window scroll
 				let rect = positionElement.getBoundingClientRect();
