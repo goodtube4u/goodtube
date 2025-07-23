@@ -49,5 +49,8 @@ Countless hours and late nights have gone into making this and I continue to wor
 
 Any donation, no matter how small, helps to keep this project going and supports the community who use it. If you would like to say "thank you" and give something back, I would really appreciate it.
 
+*Please note: All donations are processed through Paypal to provide you with the highest level of security.<br>
+You don't need a Paypal account to make a donation, it's just processed through their platform.*
+
 You can make a donation here:<br>
-https://tiptopjar.com/goodtube
+https://www.paypal.com/donate/?hosted_button_id=37GNXSV27RZBS
