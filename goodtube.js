@@ -1275,7 +1275,7 @@
 								<strong>This adblocker is 100% free to use and always will be.<br>
 								It has helped thousands of people like you remove the unbearable ads from Youtube.</strong><br>
 								<br>
-								Countless hours and late nights have gone into making this and I continue to work on updating and maintaing the project every day. I am dedicated to ensuring this solution continues to work for everyone (despite Youtube's best efforts to stop adblockers).<br>
+								Countless hours and late nights have gone into making this and I continue to work on updating and maintaing the project, helping people with issues, etc. I am dedicated to ensuring this solution continues to work for everyone (despite Youtube's best efforts to stop adblockers).<br>
 								<br>
 								Any donation, no matter how small, helps to keep this project going and supports the community who use it. If you would like to say "thank you" and give something back, I would really appreciate it.
 								<br>
