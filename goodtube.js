@@ -489,21 +489,35 @@
 			// Show the GoodTube player
 			goodTube_helper_showElement(goodTube_playerWrapper);
 
+
+			// This is used to position and size the player
+			let positionElement = false;
+
 			// Theater mode
 			if (document.querySelector('ytd-watch-flexy[theater]')) {
+				positionElement = document.getElementById('player-full-bleed-container');
+
 				if (!goodTube_playerWrapper.classList.contains('goodTube_theater')) {
 					goodTube_playerWrapper.classList.add('goodTube_theater');
 				}
 			}
 			// Regular mode
 			else {
+				positionElement = document.getElementById('player');
+
 				if (goodTube_playerWrapper.classList.contains('goodTube_theater')) {
 					goodTube_playerWrapper.classList.remove('goodTube_theater');
 				}
 			}
 
+			// Use an alternative fallback position element if we can't find it
+			if (!positionElement || positionElement.offsetHeight <= 0) {
+				positionElement = document.getElementById('ytd-player');
+			}
+
+			// console.log(positionElement);
+
 			// Position the player
-			let positionElement = document.getElementById('ytd-player');
 			if (positionElement && positionElement.offsetHeight > 0) {
 				// Our wrapper has "position: absolute" so take into account the window scroll
 				let rect = positionElement.getBoundingClientRect();
@@ -858,18 +872,10 @@
 		// Re fetch the page API
 		goodTube_page_api = document.getElementById('movie_player');
 
-		// If we're not using the special shuffle / loop method
-		if (!shuffleLoopMethod) {
-			// Play the next video
+		// Make sure it exists
+		if (goodTube_page_api && typeof goodTube_page_api.nextVideo === 'function') {
+			// Play the previous video
 			goodTube_page_api.nextVideo();
-		}
-		// Otherwise we are using the special shuffle / loop method
-		else {
-			// Skip to the end of the video (this plays the next video AND ensures the shuffle and repeat options work - which the API "nextVideo" function does not, stupid Youtube...)
-			let youtubeVideoElement = document.querySelector('#movie_player video');
-			if (youtubeVideoElement) {
-				youtubeVideoElement.currentTime = youtubeVideoElement.duration;
-			}
 		}
 
 		// Debug message
@@ -882,7 +888,7 @@
 		goodTube_page_api = document.getElementById('movie_player');
 
 		// Make sure it exists
-		if (goodTube_page_api && typeof goodTube_page_api.nextVideo === 'function') {
+		if (goodTube_page_api && typeof goodTube_page_api.previousVideo === 'function') {
 			// Play the previous video
 			goodTube_page_api.previousVideo();
 		}
@@ -893,37 +899,12 @@
 
 	// Video has ended
 	function goodTube_nav_videoEnded() {
-		// Re fetch the page API
-		goodTube_page_api = document.getElementById('movie_player');
-
-		// If we're viewing a playlist
-		if (goodTube_playlist) {
-			// If we're NOT on the last video
-			if (goodTube_playlistIndex !== (goodTube_playlist.length - 1)) {
-				// Play the next video
-				goodTube_nav_next();
-
-				// Stop the function
-				return;
-			}
-			// Otherwise, we're on the last video
-			else {
-				let loopTurnedOff = document.querySelector('#playlist-action-menu button[aria-label="Loop playlist"]');
-				let shuffleTurnedOff = document.querySelector('#playlist-action-menu button[aria-pressed="false"]');
-
-				// If shuffle OR loop are turned on
-				if (!loopTurnedOff || !shuffleTurnedOff) {
-					// Play the next video in the special shuffle / loop way
-					goodTube_nav_next(true);
-
-					// Stop the function
-					return;
-				}
-			}
-		}
-
-		// If autoplay is enabled (and no other "goodTube_nav_next" call has fired / returned)
-		if (goodTube_autoplay === 'true') {
+		// If (autoplay is enabled) OR (we're viewing a playlist AND we're not on the last video)
+		if (
+			goodTube_autoplay === 'true'
+			||
+			(goodTube_playlist && (goodTube_playlistIndex === (goodTube_playlist.length - 1)))
+		) {
 			// Play the next video
 			goodTube_nav_next();
 		}
@@ -1278,10 +1259,6 @@
 								Countless hours and late nights have gone into making this and I am always working on updating and maintaining the project, helping people with issues, etc. I am dedicated to ensuring this solution continues to work for everyone (despite Youtube's best efforts to stop adblockers).<br>
 								<br>
 								Any donation, no matter how small, helps to keep this project going and supports the community who use it. If you would like to say "thank you" and give something back, I would really appreciate it.
-								<br>
-								<br>
-								<i>Please note: All donations are processed through Paypal to provide you with the highest level of security.<br>
-								You don't need a Paypal account to make a donation, it's just processed through their platform.</i>
 							</div>
 							<a href='https://www.paypal.com/donate/?hosted_button_id=37GNXSV27RZBS' target='_blank' rel='nofollow' class='goodTube_button'>Donate now</a>
 						</div> <!-- .goodTube_donation -->
