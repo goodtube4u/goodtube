@@ -41,7 +41,7 @@ If you're having a different issue, most of the time you will find it's caused b
 
 ## Make a Donation
 **This adblocker is 100% free to use and always will be.<br>
-It has helped thousands of people like you remove the unbearable ads from Youtube.**
+It has helped thousands of people remove the unbearable ads from Youtube.**
 
 Countless hours and late nights have gone into making this and I am always working on updating and maintaining the project, helping people with issues, etc. I am dedicated to ensuring this solution continues to work for everyone (despite Youtube's best efforts to stop adblockers).
 
