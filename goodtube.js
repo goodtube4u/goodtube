@@ -380,14 +380,20 @@
 			return;
 		}
 
-		// Pause and mute all HTML videos on the page
-		let youtubeVideos = document.querySelectorAll('video');
-		youtubeVideos.forEach((element) => {
-			// Don't touch the thumbnail hover player, main player or channel player
-			if (!element.closest('#inline-player') && !element.closest('#movie_player') && !element.closest('.ytd-channel-video-player-renderer')) {
+		// Cache DOM queries to avoid repeated lookups
+		const videos = document.querySelectorAll('video');
+		
+		videos.forEach((element) => {
+			// Skip if already processed
+			if (element.dataset.goodTubeProcessed) return;
+			
+			if (!element.closest('#inline-player') && 
+				!element.closest('#movie_player') && 
+				!element.closest('.ytd-channel-video-player-renderer')) {
 				element.muted = true;
 				element.volume = 0;
 				element.pause();
+				element.dataset.goodTubeProcessed = 'true';
 			}
 
 			// If it's the main player and we're not syncing
@@ -395,6 +401,7 @@
 				element.muted = true;
 				element.volume = 0;
 				element.pause();
+				element.dataset.goodTubeProcessed = 'true';
 			}
 		});
 	}
