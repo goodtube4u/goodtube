@@ -39,7 +39,7 @@ The Youtube miniplayer is not supported. Instead this uses "Picture in Picture" 
 If you're having a different issue, most of the time you will find it's caused by a conflicting extension you have installed. The first thing to do is turn off literally every single other extension and userscript you have installed. Refresh Youtube, check if the problem is fixed. If it is, then you know something is conflicting. Turn your other extensions and userscripts back on one at a time until you find the cause. Please be sure to follow these steps before reporting an issue! As mentioned, it's almost always the root cause.
 
 
-##Why is removing these ads so important?
+## Why is removing these ads so important?
 Youtube remains the _largest online archive of music and art in the world_ and without it a huge amount of timeless human content and history would be lost forever. It contains extremely important digitised versions of rare physical media such as records, films, etc - which can be accessed nowhere else.<br>
 
 Youtube is also how most people on earth access free music, art, educational videos, entertainment, etc. The importance of allowing people to access these things cannot be overstated.<br>
