@@ -39,6 +39,22 @@ The Youtube miniplayer is not supported. Instead this uses "Picture in Picture" 
 If you're having a different issue, most of the time you will find it's caused by a conflicting extension you have installed. The first thing to do is turn off literally every single other extension and userscript you have installed. Refresh Youtube, check if the problem is fixed. If it is, then you know something is conflicting. Turn your other extensions and userscripts back on one at a time until you find the cause. Please be sure to follow these steps before reporting an issue! As mentioned, it's almost always the root cause.
 
 
+##Why is removing these ads so important?
+Youtube remains the _largest online archive of music and art in the world_ and without it a huge amount of timeless human content and history would be lost forever. It contains extremely important digitised versions of rare physical media such as records, films, etc - which can be accessed nowhere else.<br>
+
+Youtube is also how most people on earth access free music, art, educational videos, entertainment, etc. The importance of allowing people to access these things cannot be overstated.<br>
+
+This content is for _everyone_ and is not Youtube's to sell back to us. We must keep this content preserved for future generations and what's been happening lately is disgraceful.<br>
+
+I see Youtube in the same capacity as a library or museam and as such hold them to the same standards. They have a social repsonsibility which is not being taken seriously. Many disadvantaged people cannot "just buy premium". A large portion of the world lives in extreme poverty (just as one example). Many people have mental health conditions which are simply not conducive to "buying premium". These are just a few examples.<br>
+
+This timeless human content belongs to everyone, not just the wealthy and privileged. It should not be disrespected with more and more commercial ads in this way.<br>
+
+As a human being on this earth, with a heart, soul, mind and spirit - _you matter and are important_, despite these crazy times in which we live. _You are NOT simply a product to be bought and sold_ by capitalist companies such as Youtube.<br>
+
+So in short - let's keep this important resource, everything on it and ourselves free.
+
+
 ## Make a Donation
 **This adblocker is 100% free to use and always will be.<br>
 It has helped over 80 thousand people remove the unbearable ads from Youtube.**
