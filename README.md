@@ -52,7 +52,7 @@ This timeless human content belongs to everyone, not just the wealthy and privil
 
 As a human being on this earth, with a heart, soul, mind and spirit - _you matter and are important_, despite these crazy times in which we live. _You are NOT simply a product to be bought and sold_ by capitalist companies such as Youtube.<br>
 
-So in short - let's keep this important resource, everything on it and ourselves free.
+Let's keep this important resource, everything on it and ourselves free.
 
 
 ## Make a Donation
