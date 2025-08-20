@@ -46,7 +46,7 @@ Youtube is also how most people on earth access free music, art, educational vid
 
 This content is for _everyone_ and is not Youtube's to sell back to us. We must keep this content preserved for future generations and what's been happening lately is disgraceful.<br>
 
-I see Youtube in the same capacity as a library or museam and as such hold them to the same standards. They have a social repsonsibility which is not being taken seriously. Many disadvantaged people cannot "just buy premium". A large portion of the world lives in extreme poverty (just as one example). Many people have mental health conditions which are simply not conducive to "buying premium". These are just a few examples.<br>
+I see Youtube in the same capacity as a library or museam and as such hold them to the same standards. They have a social repsonsibility which is not being taken seriously. Many disadvantaged people cannot "just buy premium". A large portion of the world lives in extreme poverty. Many people have mental health conditions which are simply not conducive to "buying premium". These are just a few examples.<br>
 
 This timeless human content belongs to everyone, not just the wealthy and privileged. It should not be disrespected with more and more commercial ads in this way.<br>
 
