@@ -286,9 +286,13 @@
 	}
 
 	// Hide shorts (real time)
-	function goodTube_youtube_hideShorts() {
-		// Don't do this if shorts are enabled
+	function goodTube_youtube_hideShortsRealtime() {
+		// If shorts are enabled
 		if (goodTube_shorts === 'true') {
+			// Loop this function
+			setInterval(goodTube_youtube_hideShortsRealtime, 100);
+
+			// Don't hide shorts
 			return;
 		}
 
@@ -316,6 +320,9 @@
 			// Mark this element as checked to save on resources
 			element.classList.add('goodTube_checked');
 		});
+
+		// Loop this function
+		setInterval(goodTube_youtube_hideShortsRealtime, 100);
 	}
 
 	// Support timestamp links in comments
@@ -345,6 +352,10 @@
 	function goodTube_youtube_hidePlayers() {
 		// Don't do this if shorts are enabled and we're viewing a short
 		if (goodTube_shorts === 'true' && window.location.href.indexOf('/shorts') !== -1) {
+			// Loop this function
+			setInterval(goodTube_youtube_hidePlayers, 100);
+
+			// Don't hide the players
 			return;
 		}
 
@@ -355,22 +366,25 @@
 		}
 
 		// Hide the normal Youtube player
-		let regularPlayers = document.querySelectorAll('#player:not(.ytd-channel-video-player-renderer)');
+		let regularPlayers = document.querySelectorAll('#player:not(.ytd-channel-video-player-renderer):not(.goodTube_hidden)');
 		regularPlayers.forEach((element) => {
 			goodTube_helper_hideYoutubePlayer(element);
 		});
 
 		// Remove the full screen and theater Youtube player
-		let fullscreenPlayers = document.querySelectorAll('#full-bleed-container');
+		let fullscreenPlayers = document.querySelectorAll('#full-bleed-container:not(.goodTube_hidden)');
 		fullscreenPlayers.forEach((element) => {
 			goodTube_helper_hideYoutubePlayer(element);
 		});
 
 		// Hide the Youtube miniplayer
-		let miniPlayers = document.querySelectorAll('ytd-miniplayer');
+		let miniPlayers = document.querySelectorAll('ytd-miniplayer:not(.goodTube_hidden)');
 		miniPlayers.forEach((element) => {
 			goodTube_helper_hideElement(element);
 		});
+
+		// Loop this function
+		setInterval(goodTube_youtube_hidePlayers, 100);
 	}
 
 	// Mute and pause all Youtube videos
@@ -382,6 +396,9 @@
 			||
 			window.location.href.indexOf('/watch?') === -1
 		) {
+			// Loop this function
+			setInterval(goodTube_youtube_pauseMuteVideos, 1);
+
 			// Don't pause or mute videos
 			return;
 		}
@@ -398,6 +415,9 @@
 				video.pause();
 			}
 		});
+
+		// Loop this function
+		setInterval(goodTube_youtube_pauseMuteVideos, 1);
 	}
 
 
@@ -978,20 +998,18 @@
 		-------------------------------------------------- */
 		// Mute and pause all Youtube videos
 		goodTube_youtube_pauseMuteVideos();
-		setInterval(goodTube_youtube_pauseMuteVideos, 1);
 
 		// Add CSS classes to hide elements (without Youtube knowing)
 		goodTube_helper_showHide_init();
 
 		// Hide the youtube players
 		goodTube_youtube_hidePlayers();
-		setInterval(goodTube_youtube_hidePlayers, 100);
 
 		// Add CSS to hide ads, shorts, etc
 		goodTube_youtube_hideAdsShortsEtc();
 
-		// Hide shorts that popup as you use the site (like video results)
-		setInterval(goodTube_youtube_hideShorts, 100);
+		// Hide shorts (real time)
+		goodTube_youtube_hideShortsRealtime();
 
 
 		/* Load GoodTube
