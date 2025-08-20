@@ -41,11 +41,11 @@ If you're having a different issue, most of the time you will find it's caused b
 
 ## Make a Donation
 **This adblocker is 100% free to use and always will be.<br>
-It has helped thousands of people remove the unbearable ads from Youtube.**
+It has helped over 80 thousand people remove the unbearable ads from Youtube.**
 
-Countless hours and late nights have gone into making this and I am always working on updating and maintaining the project, helping people with issues, etc. I am dedicated to ensuring this solution continues to work for everyone (despite Youtube's best efforts to stop adblockers).
+Countless hours and late night have gone into making this and I continue to work on updating and maintaining the project regularly. I remain dedicated to ensuring this solution continues to work for everyone (despite Youtube's best efforts to stop adblockers). If you have any issues at all, please let me know and I will do my best to help!<br>
 
-Any donation, no matter how small, helps to keep this project going and supports the community who use it. If you would like to say "thank you" and give something back, I would really appreciate it.
+Any donation (even a single dollar) helps to keep this project going and supports the wider community who use it. If you would like to say "thank you" and give something back, it would be greatly appreciated.
 
 You can make a donation here:<br>
-https://www.paypal.com/donate/?hosted_button_id=37GNXSV27RZBS
+https://tiptopjar.com/goodtube

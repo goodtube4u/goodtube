@@ -1302,13 +1302,13 @@
 						<div class='goodTube_donation'>
 							<div class='goodTube_text'>
 								<strong>This adblocker is 100% free to use and always will be.<br>
-								It has helped thousands of people like you remove the unbearable ads from Youtube.</strong><br>
+								It has helped over 80 thousand people remove the unbearable ads from Youtube.</strong><br>
 								<br>
-								Countless hours and late nights have gone into making this and I am always working on updating and maintaining the project, helping people with issues, etc. I am dedicated to ensuring this solution continues to work for everyone (despite Youtube's best efforts to stop adblockers).<br>
+								Countless hours and late night have gone into making this and I continue to work on updating and maintaining the project regularly. I remain dedicated to ensuring this solution continues to work for everyone (despite Youtube's best efforts to stop adblockers). If you have any issues at all, please let me know and I will do my best to help!<br>
 								<br>
-								Any donation, no matter how small, helps to keep this project going and supports the community who use it. If you would like to say "thank you" and give something back, I would really appreciate it.
+								Any donation (even a single dollar) helps to keep this project going and supports the wider community who use it. If you would like to say "thank you" and give something back, it would be greatly appreciated.
 							</div>
-							<a href='https://www.paypal.com/donate/?hosted_button_id=37GNXSV27RZBS' target='_blank' rel='nofollow' class='goodTube_button'>Donate now</a>
+							<a href='https://tiptopjar.com/goodtube' target='_blank' rel='nofollow' class='goodTube_button'>Donate now</a>
 						</div> <!-- .goodTube_donation -->
 					</div> <!-- .goodTube_content -->
 
@@ -2028,6 +2028,48 @@
 			.ytp-size-button {
 				display: inline-block !important;
 			}
+
+			/* Style autoplay button */
+			#goodTube_autoplayButton {
+				overflow: visible;
+				position: relative;
+			}
+
+			#goodTube_autoplayButton .ytp-autonav-toggle-button::before {
+				pointer-events: none;
+				opacity: 0;
+				transition: opacity .1s linear;
+				position: absolute;
+				top: -49px;
+				left: 50%;
+				transform: translateX(-50%);
+				background: rgba(28, 28, 28, 0.9);
+				color: #ffffff;
+				border-radius: 4px;
+				font-weight: 500;
+				font-size: 12.98px;
+				padding-left: 9px;
+				padding-right: 9px;
+				padding-top: 0;
+				padding-bottom: 0;
+				height: 25px;
+				box-sizing: border-box;
+				line-height: 24px;
+				font-family: "YouTube Noto", Roboto, Arial, Helvetica, sans-serif;
+				white-space: nowrap;
+			}
+
+			#goodTube_autoplayButton .ytp-autonav-toggle-button[aria-checked='true']::before {
+				content: 'Autoplay is on';
+			}
+
+			#goodTube_autoplayButton .ytp-autonav-toggle-button[aria-checked='false']::before {
+				content: 'Autoplay is off';
+			}
+
+			#goodTube_autoplayButton:hover .ytp-autonav-toggle-button::before {
+				opacity: 1;
+			}
 		`;
 
 		// Enable the picture in picture button (unless you're on firefox)
@@ -2107,6 +2149,7 @@
 			theaterButton.setAttribute('data-title-no-tooltip', 'Theater mode (t)');
 			theaterButton.setAttribute('aria-label', 'Theater mode (t)');
 			theaterButton.setAttribute('title', 'Theater mode (t)');
+			theaterButton.setAttribute('data-tooltip-title', 'Theater mode (t)');
 			theaterButton.innerHTML = '<svg height="100%" version="1.1" viewBox="0 0 36 36" width="100%"><use class="ytp-svg-shadow" xlink:href="#ytp-id-30"></use><path d="m 28,11 0,14 -20,0 0,-14 z m -18,2 16,0 0,10 -16,0 0,-10 z" fill="#fff" fill-rule="evenodd" id="ytp-id-30"></path></svg>';
 
 			// Add actions
@@ -2121,7 +2164,7 @@
 		let subtitlesButton = document.querySelector('.ytp-subtitles-button');
 		if (subtitlesButton) {
 			// Add button
-			subtitlesButton.insertAdjacentHTML('beforebegin', '<button class="ytp-button" id="goodTube_autoplayButton" data-priority="2" data-tooltip-target-id="ytp-autonav-toggle-button"><div class="ytp-autonav-toggle-button-container"><div class="ytp-autonav-toggle-button" aria-checked="' + goodTube_getParams['goodTube_autoplay'] + '"></div></div></button>');
+			subtitlesButton.insertAdjacentHTML('beforebegin', '<button class="ytp-button ytp-autonav-toggle" id="goodTube_autoplayButton"><div class="ytp-autonav-toggle-button-container"><div class="ytp-autonav-toggle-button" aria-checked="' + goodTube_getParams['goodTube_autoplay'] + '"></div></div></button>');
 
 			// Add actions
 			let autoplayButton = document.querySelector('#goodTube_autoplayButton');
