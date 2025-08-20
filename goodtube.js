@@ -380,7 +380,7 @@
 		if (
 			(goodTube_shorts === 'true' && window.location.href.indexOf('/shorts') !== -1)
 			||
-			window.location.href.indexOf('.com/watch') === -1
+			window.location.href.indexOf('/watch?') === -1
 		) {
 			// Don't pause or mute videos
 			return;
@@ -388,14 +388,14 @@
 
 		// Pause and mute all HTML videos on the page
 		let youtubeVideos = document.querySelectorAll('video');
-		youtubeVideos.forEach((element) => {
+		youtubeVideos.forEach((video) => {
 			// IF (the video is playing)
 			// AND (we're not syncing the main player OR it's not the main player)
-			if (!video.paused && (!goodTube_syncingPlayer || !element.closest('#movie_player'))) {
+			if (!video.paused && (!goodTube_syncingPlayer || !video.closest('#movie_player'))) {
 				// Pause and mute the video
-				element.muted = true;
-				element.volume = 0;
-				element.pause();
+				video.muted = true;
+				video.volume = 0;
+				video.pause();
 			}
 		});
 	}
@@ -486,7 +486,7 @@
 	let goodTube_player_positionAndSize_timeout = setTimeout(() => {}, 0);
 	function goodTube_player_positionAndSize() {
 		// If we're viewing a video
-		if (window.location.href.indexOf('.com/watch') !== -1) {
+		if (window.location.href.indexOf('/watch?') !== -1) {
 			// Show the GoodTube player
 			goodTube_helper_showElement(goodTube_playerWrapper);
 
@@ -589,7 +589,7 @@
 		// If we're loading for the first time
 		if (!goodTube_firstLoad) {
 			// If we're not viewing a video
-			if (window.location.href.indexOf('.com/watch') === -1) {
+			if (window.location.href.indexOf('/watch?') === -1) {
 				// Clear and hide the player
 				goodTube_player_clear();
 			}
@@ -659,7 +659,7 @@
 			}
 
 			// Make sure we're watching a video
-			if (window.location.href.indexOf('.com/watch') === -1) {
+			if (window.location.href.indexOf('/watch?') === -1) {
 				return;
 			}
 
@@ -1175,7 +1175,7 @@
 			goodTube_getParams = goodTube_helper_setupGetParams();
 
 			// If we're viewing a video
-			if (window.location.href.indexOf('.com/watch') !== -1) {
+			if (window.location.href.indexOf('/watch?') !== -1) {
 				// Load the video
 				goodTube_player_load();
 
@@ -2551,7 +2551,7 @@
 	let goodTube_iframe_syncMainPlayer_timeout = setTimeout(() => {}, 0);
 	function goodTube_iframe_syncMainPlayer() {
 		// If we're viewing a video page
-		if (window.top.location.href.indexOf('.com/watch') !== -1) {
+		if (window.top.location.href.indexOf('/watch?') !== -1) {
 			let videoElement = document.querySelector('video');
 
 			if (videoElement) {
