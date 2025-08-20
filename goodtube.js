@@ -2185,6 +2185,15 @@
 				});
 			}
 		}
+
+		// Picture In Picture button (update tooltip text) 
+		let pipButton = document.querySelector('.ytp-pip-button');
+
+		if (pipButton) {
+			pipButton.setAttribute('aria-label', 'Picture-in-picture (i)');
+			pipButton.setAttribute('data-title-no-tooltip', 'Picture-in-picture (i)');
+			pipButton.setAttribute('data-tooltip-title', 'Picture-in-picture (i)');
+		}
 	}
 
 	// Add custom events
