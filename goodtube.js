@@ -374,24 +374,25 @@
 	}
 
 	// Mute and pause all Youtube videos
-	function goodTube_youtube_mutePauseSkipAds() {
-		// Don't do this if shorts are enabled and we're viewing a short
-		if (goodTube_shorts === 'true' && window.location.href.indexOf('/shorts') !== -1) {
+	function goodTube_youtube_pauseMuteVideos() {
+		// IF if shorts are enabled and we're viewing a short
+		// OR we're not viewing a video
+		if (
+			(goodTube_shorts === 'true' && window.location.href.indexOf('/shorts') !== -1)
+			||
+			window.location.href.indexOf('.com/watch') === -1
+		) {
+			// Don't pause or mute videos
 			return;
 		}
 
 		// Pause and mute all HTML videos on the page
 		let youtubeVideos = document.querySelectorAll('video');
 		youtubeVideos.forEach((element) => {
-			// Don't touch the thumbnail hover player, main player or channel player
-			if (!element.closest('#inline-player') && !element.closest('#movie_player') && !element.closest('.ytd-channel-video-player-renderer')) {
-				element.muted = true;
-				element.volume = 0;
-				element.pause();
-			}
-
-			// If it's the main player and we're not syncing
-			if (element.closest('#movie_player') && !goodTube_syncingPlayer) {
+			// IF (the video is playing)
+			// AND (we're not syncing the main player OR it's not the main player)
+			if (!video.paused && (!goodTube_syncingPlayer || !element.closest('#movie_player'))) {
+				// Pause and mute the video
 				element.muted = true;
 				element.volume = 0;
 				element.pause();
@@ -975,9 +976,9 @@
 	function goodTube_init() {
 		/* Disable Youtube
 		-------------------------------------------------- */
-		// Mute, pause and skip ads
-		goodTube_youtube_mutePauseSkipAds();
-		setInterval(goodTube_youtube_mutePauseSkipAds, 1);
+		// Mute and pause all Youtube videos
+		goodTube_youtube_pauseMuteVideos();
+		setInterval(goodTube_youtube_pauseMuteVideos, 1);
 
 		// Add CSS classes to hide elements (without Youtube knowing)
 		goodTube_helper_showHide_init();
