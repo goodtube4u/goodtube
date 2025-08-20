@@ -300,6 +300,12 @@
 			return;
 		}
 
+		// Redirect from any short to the homepage
+		if (window.location.href.indexOf('/shorts') !== -1 && !goodTube_redirectHappened) {
+			window.location.href = 'https://youtube.com';
+			goodTube_redirectHappened = true;
+		}
+
 		// Hide shorts links
 		let shortsLinks = document.querySelectorAll('a:not(.goodTube_hidden):not(.goodTube_checked)');
 		shortsLinks.forEach((element) => {
@@ -368,12 +374,6 @@
 
 			// Don't hide the players
 			return;
-		}
-
-		// Redirect from any short to the homepage
-		if (window.location.href.indexOf('/shorts') !== -1 && !goodTube_redirectHappened) {
-			window.location.href = 'https://youtube.com';
-			goodTube_redirectHappened = true;
 		}
 
 		// Hide the normal Youtube player
@@ -1236,14 +1236,17 @@
 			goodTube_previousUrl = window.location.href;
 		}
 
-		// Show or hide the end screen
-		goodTube_nav_showHideEndScreen();
+		// If we're viewing a video
+		if (window.location.href.indexOf('/watch?') !== -1) {
+			// Show or hide the end screen
+			goodTube_nav_showHideEndScreen();
 
-		// Support timestamp links
-		goodTube_youtube_timestampLinks();
+			// Support timestamp links
+			goodTube_youtube_timestampLinks();
 
-		// Turn off autoplay
-		goodTube_youtube_turnOffAutoplay();
+			// Turn off autoplay
+			goodTube_youtube_turnOffAutoplay();
+		}
 
 		// Clear timeout first to solve memory leak issues
 		clearTimeout(goodTube_actions_timeout);
@@ -1893,8 +1896,8 @@
 		// Fix fullscreen button issues
 		goodTube_iframe_fixFullScreenButton();
 
-		// Fix end screen links
-		goodTube_iframe_fixEndScreenLinks();
+		// Fix links (so they open in the same window)
+		goodTube_iframe_fixLinks();
 
 		// Enable picture in picture next and prev buttons
 		goodTube_iframe_enablePipButtons();
@@ -1930,9 +1933,9 @@
 		}, 100);
 	}
 
-	// Fix end screen links (so they open in the same window)
-	function goodTube_iframe_fixEndScreenLinks() {
-		let endScreenLinks = document.querySelectorAll('.ytp-videowall-still');
+	// Fix links (so they open in the same window)
+	function goodTube_iframe_fixLinks() {
+		let endScreenLinks = document.querySelectorAll('.ytp-videowall-still:not(.goodTube_fixed), .ytp-ce-covering-overlay:not(.goodTube_fixed)');
 		endScreenLinks.forEach(link => {
 			// Remove any event listeners that Youtube adds
 			link.addEventListener('click', (event) => {
@@ -1962,6 +1965,9 @@
 				event.preventDefault();
 				event.stopImmediatePropagation();
 			}, true);
+
+			// Mark this link as fixed to save on resources
+			link.classList.add('goodTube_fixed');
 		});
 	}
 
