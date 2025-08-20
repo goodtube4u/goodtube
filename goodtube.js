@@ -286,11 +286,15 @@
 	}
 
 	// Hide shorts (real time)
+	let goodTube_youtube_hideShortsRealtime_timeout = setTimeout(() => {}, 0);
 	function goodTube_youtube_hideShortsRealtime() {
 		// If shorts are enabled
 		if (goodTube_shorts === 'true') {
+			// Clear timeout first to solve memory leak issues
+			clearTimeout(goodTube_youtube_hideShortsRealtime_timeout);
+
 			// Loop this function
-			setTimeout(goodTube_youtube_hideShortsRealtime, 100);
+			goodTube_youtube_hideShortsRealtime_timeout = setTimeout(goodTube_youtube_hideShortsRealtime, 100);
 
 			// Don't hide shorts
 			return;
@@ -321,8 +325,11 @@
 			element.classList.add('goodTube_checked');
 		});
 
+		// Clear timeout first to solve memory leak issues
+		clearTimeout(goodTube_youtube_hideShortsRealtime_timeout);
+
 		// Loop this function
-		setTimeout(goodTube_youtube_hideShortsRealtime, 100);
+		goodTube_youtube_hideShortsRealtime_timeout = setTimeout(goodTube_youtube_hideShortsRealtime, 100);
 	}
 
 	// Support timestamp links in comments
@@ -349,11 +356,15 @@
 	}
 
 	// Hide all Youtube players
+	let goodTube_youtube_hidePlayers_timeout = setTimeout(() => {}, 0);
 	function goodTube_youtube_hidePlayers() {
 		// Don't do this if shorts are enabled and we're viewing a short
 		if (goodTube_shorts === 'true' && window.location.href.indexOf('/shorts') !== -1) {
+			// Clear timeout first to solve memory leak issues
+			clearTimeout(goodTube_youtube_hidePlayers_timeout);
+
 			// Loop this function
-			setTimeout(goodTube_youtube_hidePlayers, 100);
+			goodTube_youtube_hidePlayers_timeout = setTimeout(goodTube_youtube_hidePlayers, 100);
 
 			// Don't hide the players
 			return;
@@ -383,11 +394,15 @@
 			goodTube_helper_hideElement(element);
 		});
 
+		// Clear timeout first to solve memory leak issues
+		clearTimeout(goodTube_youtube_hidePlayers_timeout);
+
 		// Loop this function
-		setTimeout(goodTube_youtube_hidePlayers, 100);
+		goodTube_youtube_hidePlayers_timeout = setTimeout(goodTube_youtube_hidePlayers, 1);
 	}
 
 	// Mute and pause all Youtube videos
+	let goodTube_youtube_pauseMuteVideos_timeout = setTimeout(() => {}, 0);
 	function goodTube_youtube_pauseMuteVideos() {
 		// IF if shorts are enabled and we're viewing a short
 		// OR we're not viewing a video
@@ -396,8 +411,11 @@
 			||
 			window.location.href.indexOf('/watch?') === -1
 		) {
+			// Clear timeout first to solve memory leak issues
+			clearTimeout(goodTube_youtube_pauseMuteVideos_timeout);
+
 			// Loop this function
-			setTimeout(goodTube_youtube_pauseMuteVideos, 1);
+			goodTube_youtube_pauseMuteVideos_timeout = setTimeout(goodTube_youtube_pauseMuteVideos, 1);
 
 			// Don't pause or mute videos
 			return;
@@ -416,8 +434,11 @@
 			}
 		});
 
+		// Clear timeout first to solve memory leak issues
+		clearTimeout(goodTube_youtube_pauseMuteVideos_timeout);
+
 		// Loop this function
-		setTimeout(goodTube_youtube_pauseMuteVideos, 1);
+		goodTube_youtube_pauseMuteVideos_timeout = setTimeout(goodTube_youtube_pauseMuteVideos, 1);
 	}
 
 
@@ -437,7 +458,7 @@
 
 		// Keep trying to get the frame API until it exists
 		if (!videoData) {
-			// Clear timeout first to solve memory issues
+			// Clear timeout first to solve memory leak issues
 			clearTimeout(goodTube_player_init_timeout);
 
 			// Create a new timeout
@@ -551,7 +572,7 @@
 			}
 		}
 
-		// Clear timeout first to solve memory issues
+		// Clear timeout first to solve memory leak issues
 		clearTimeout(goodTube_player_positionAndSize_timeout);
 
 		// Create a new timeout (this must be done with setTimeout - it fixes a known major issue many users have where the function won't fire with window.requestAnimationFrame)
@@ -559,15 +580,20 @@
 	}
 
 	// Populate the playlist info
+	let goodTube_player_populatePlaylistInfo_timeout = setTimeout(() => {}, 0);
 	function goodTube_player_populatePlaylistInfo() {
 		// Make sure we have access to the frame API
 		if (typeof goodTube_page_api.getPlaylist === 'function' && typeof goodTube_page_api.getPlaylistIndex === 'function') {
 			goodTube_playlist = goodTube_page_api.getPlaylist();
 			goodTube_playlistIndex = goodTube_page_api.getPlaylistIndex();
 
-			// If the playlist info isn't ready yet, try again
+			// If the playlist info isn't ready yet
 			if (!goodTube_playlist) {
-				setTimeout(goodTube_player_populatePlaylistInfo, 100);
+				// Clear timeout first to solve memory leak issues
+				clearTimeout(goodTube_player_populatePlaylistInfo_timeout);
+
+				// Try again
+				goodTube_player_populatePlaylistInfo_timeout = setTimeout(goodTube_player_populatePlaylistInfo, 100);
 			}
 		}
 	}
@@ -580,7 +606,7 @@
 
 		// Make sure the proxy iframe has loaded
 		if (!goodTube_proxyIframeLoaded) {
-			// Clear timeout first to solve memory issues
+			// Clear timeout first to solve memory leak issues
 			clearTimeout(goodTube_player_load_timeout);
 
 			// Create a new timeout
@@ -1154,7 +1180,7 @@
 					// Sync the current time
 					youtubeVideoElement.currentTime = syncTime;
 
-					// Clear timeout first to solve memory issues
+					// Clear timeout first to solve memory leak issues
 					clearTimeout(goodTube_receiveMessage_timeout);
 
 					// After 10ms stop syncing (and let the pause actions handle the pausing)
@@ -1219,7 +1245,7 @@
 		// Turn off autoplay
 		goodTube_youtube_turnOffAutoplay();
 
-		// Clear timeout first to solve memory issues
+		// Clear timeout first to solve memory leak issues
 		clearTimeout(goodTube_actions_timeout);
 
 		// Run actions again in 100ms to loop this function
@@ -1817,7 +1843,7 @@
 
 		// Keep trying to get the frame API until it exists
 		if (!videoData) {
-			// Clear timeout first to solve memory issues
+			// Clear timeout first to solve memory leak issues
 			clearTimeout(goodTube_iframe_init_timeout);
 
 			// Create a new timeout
@@ -1873,7 +1899,7 @@
 		// Enable picture in picture next and prev buttons
 		goodTube_iframe_enablePipButtons();
 
-		// Clear timeout first to solve memory issues
+		// Clear timeout first to solve memory leak issues
 		clearTimeout(goodTube_iframe_actions_timeout);
 
 		// Enable the prev button if required
@@ -2035,7 +2061,7 @@
 
 		// Make sure it exists before continuing
 		if (!playButton) {
-			// Clear timeout first to solve memory issues
+			// Clear timeout first to solve memory leak issues
 			clearTimeout(goodTube_iframe_addCustomButtons_timeout);
 
 			// Create a new timeout
@@ -2120,7 +2146,7 @@
 
 		// Make sure it exists before continuing
 		if (!videoElement) {
-			// Clear timeout first to solve memory issues
+			// Clear timeout first to solve memory leak issues
 			clearTimeout(goodTube_iframe_addCustomEvents_timeout);
 
 			// Create a new timeout
@@ -2460,7 +2486,7 @@
 		}
 		// Otherwise retry until the video exists
 		else {
-			// Clear timeout first to solve memory issues
+			// Clear timeout first to solve memory leak issues
 			clearTimeout(goodTube_iframe_skipTo_timeout);
 
 			// Create a new timeout
@@ -2482,7 +2508,7 @@
 		}
 		// Otherwise retry until the video exists
 		else {
-			// Clear timeout first to solve memory issues
+			// Clear timeout first to solve memory leak issues
 			clearTimeout(goodTube_iframe_pause_timeout);
 
 			// Create a new timeout
@@ -2502,7 +2528,7 @@
 		}
 		// Otherwise retry until the video exists
 		else {
-			// Clear timeout first to solve memory issues
+			// Clear timeout first to solve memory leak issues
 			clearTimeout(goodTube_iframe_mute_timeout);
 
 			// Create a new timeout
@@ -2522,7 +2548,7 @@
 		}
 		// Otherwise retry until the video exists
 		else {
-			// Clear timeout first to solve memory issues
+			// Clear timeout first to solve memory leak issues
 			clearTimeout(goodTube_iframe_unmute_timeout);
 
 			// Create a new timeout
@@ -2542,7 +2568,7 @@
 		}
 		// Otherwise retry until the video exists
 		else {
-			// Clear timeout first to solve memory issues
+			// Clear timeout first to solve memory leak issues
 			clearTimeout(goodTube_iframe_play_timeout);
 
 			// Create a new timeout
@@ -2578,7 +2604,7 @@
 			}
 		}
 
-		// Clear timeout first to solve memory issues
+		// Clear timeout first to solve memory leak issues
 		clearTimeout(goodTube_iframe_syncMainPlayer_timeout);
 
 		// Create a new timeout
