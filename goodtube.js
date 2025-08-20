@@ -290,7 +290,7 @@
 		// If shorts are enabled
 		if (goodTube_shorts === 'true') {
 			// Loop this function
-			setInterval(goodTube_youtube_hideShortsRealtime, 100);
+			setTimeout(goodTube_youtube_hideShortsRealtime, 100);
 
 			// Don't hide shorts
 			return;
@@ -322,7 +322,7 @@
 		});
 
 		// Loop this function
-		setInterval(goodTube_youtube_hideShortsRealtime, 100);
+		setTimeout(goodTube_youtube_hideShortsRealtime, 100);
 	}
 
 	// Support timestamp links in comments
@@ -353,7 +353,7 @@
 		// Don't do this if shorts are enabled and we're viewing a short
 		if (goodTube_shorts === 'true' && window.location.href.indexOf('/shorts') !== -1) {
 			// Loop this function
-			setInterval(goodTube_youtube_hidePlayers, 100);
+			setTimeout(goodTube_youtube_hidePlayers, 100);
 
 			// Don't hide the players
 			return;
@@ -384,7 +384,7 @@
 		});
 
 		// Loop this function
-		setInterval(goodTube_youtube_hidePlayers, 100);
+		setTimeout(goodTube_youtube_hidePlayers, 100);
 	}
 
 	// Mute and pause all Youtube videos
@@ -397,7 +397,7 @@
 			window.location.href.indexOf('/watch?') === -1
 		) {
 			// Loop this function
-			setInterval(goodTube_youtube_pauseMuteVideos, 1);
+			setTimeout(goodTube_youtube_pauseMuteVideos, 1);
 
 			// Don't pause or mute videos
 			return;
@@ -417,7 +417,7 @@
 		});
 
 		// Loop this function
-		setInterval(goodTube_youtube_pauseMuteVideos, 1);
+		setTimeout(goodTube_youtube_pauseMuteVideos, 1);
 	}
 
 
