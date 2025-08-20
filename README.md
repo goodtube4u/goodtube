@@ -45,7 +45,7 @@ It has helped over 80 thousand people remove the unbearable ads from Youtube.**
 
 Countless hours and late night have gone into making this and I continue to work on updating and maintaining the project regularly. I remain dedicated to ensuring this solution continues to work for everyone (despite Youtube's best efforts to stop adblockers). If you have any issues at all, please let me know and I will do my best to help!<br>
 
-Any donation (even a single dollar) helps to keep this project going and supports the wider community who use it. If you would like to say "thank you" and give something back, it would be greatly appreciated.
+Any donation, no matter how small, helps to keep this project going and supports the wider community who use it. If you would like to say "thank you" and give something back, it would be greatly appreciated.
 
 You can make a donation here:<br>
 https://tiptopjar.com/goodtube
