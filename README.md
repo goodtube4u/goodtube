@@ -27,7 +27,7 @@ This sounds more confusing than it is. If you're not technical YOU CAN DO IT. Ju
 Nope, updates are pushed to you automatically so you don't have to do anything to use the latest version.
 
 **Playlists skip to the next video every few seconds**<br>
-This is usually caused by another adblocker, userscript or extension you have installed. To fix this problem, disable all of your other adblockers, extensions and userscripts. Leave only Tampermonkey and this userscript enabled. Then refresh Youtube and check if the problem is fixed. If it's now working, turn on your other extensions and userscripts one by one until you find the one causing the issue.
+This is usually caused by another adblocker which Youtube is detecting. To fix this problem, disable all of your other adblockers (for Youtube only, you can leave them on for other websites). Then clear your cookies and cache (this is important). Once that's done, refresh Youtube and the problem should be fixed.
 
 **I can't watch a specific video**<br>
 This will work for 99% of videos. However it won't work for videos which are age restricted or have embedding disabled. You'll see a message come up if this happens. If you want to watch one of these, you'll have to disable this for a second. Sorry all, but there's no way around it currently with this alternative method of adblocking.
@@ -59,7 +59,7 @@ Let's keep this important resource, everything on it and ourselves free.
 **This adblocker is 100% free to use and always will be.<br>
 It has helped over 80 thousand people remove the unbearable ads from Youtube.**
 
-Countless hours and late night have gone into making this and I continue to work on updating and maintaining the project regularly. I remain dedicated to ensuring this solution continues to work for everyone (despite Youtube's best efforts to stop adblockers). If you have any issues at all, please let me know and I will do my best to help!<br>
+Countless hours and late nights have gone into making this and I continue to work on updating and maintaining the project regularly. I remain dedicated to ensuring this solution continues to work for everyone (despite Youtube's best efforts to stop adblockers). If you have any issues at all, please let me know and I will do my best to help!<br>
 
 Any donation, no matter how small, helps to keep this project going and supports the wider community who use it. If you would like to say "thank you" and give something back, it would be greatly appreciated.
 
