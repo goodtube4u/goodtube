@@ -2045,109 +2045,144 @@
 	}
 
 	// Style the iframe
-	function goodTube_iframe_style() {
-		let style = document.createElement('style');
+function goodTube_iframe_style() {
+  let style = document.createElement('style');
 
-		let cssOutput = `
-			/* Hide unwanted stuff */
-			.ytp-gradient-top,
-			.ytp-show-cards-title,
-			.ytp-pause-overlay,
-			.ytp-youtube-button,
-			.ytp-cued-thumbnail-overlay,
-			.ytp-paid-content-overlay,
-			.ytp-impression-link,
-			.ytp-ad-progress-list,
-			.ytp-endscreen-next,
-			.ytp-endscreen-previous,
-			.ytp-info-panel-preview,
-			.ytp-generic-popup,
-			.goodTube_hideEndScreen .html5-endscreen {
-				display: none !important;
-			}
+  let cssOutput = `
+    /* Hide unwanted stuff */
+    .ytp-gradient-top,
+    .ytp-show-cards-title,
+    .ytp-pause-overlay,
+    .ytp-youtube-button,
+    .ytp-cued-thumbnail-overlay,
+    .ytp-paid-content-overlay,
+    .ytp-impression-link,
+    .ytp-ad-progress-list,
+    .ytp-endscreen-next,
+    .ytp-endscreen-previous,
+    .ytp-info-panel-preview,
+    .ytp-generic-popup,
+    .goodTube_hideEndScreen .html5-endscreen {
+      display: none !important;
+    }
 
-			.html5-endscreen {
-				top: 0 !important;
-			}
+    .html5-endscreen {
+      top: 0 !important;
+    }
 
-			/* Always show the next button */
-			.ytp-next-button {
-				opacity: 1 !important;
-				cursor: pointer !important;
-				display: block !important;
-			}
+    /* Always show the next button */
+    .ytp-next-button {
+      opacity: 1 !important;
+      cursor: pointer !important;
+      display: block !important;
+    }
 
-			/* Show the prev button if it has the right class */
-			.ytp-prev-button.goodTube_visible {
-				opacity: 1 !important;
-				cursor: pointer !important;
-				display: block !important;
-			}
+    /* Show the prev button if it has the right class */
+    .ytp-prev-button.goodTube_visible {
+      opacity: 1 !important;
+      cursor: pointer !important;
+      display: block !important;
+    }
 
-			/* Show video title in fullscreen */
-			body .ytp-fullscreen .ytp-gradient-top,
-			body .ytp-fullscreen .ytp-show-cards-title {
-				display: block !important;
-			}
-			body .ytp-fullscreen .ytp-show-cards-title .ytp-button,
-			body .ytp-fullscreen .ytp-show-cards-title .ytp-title-channel {
-				display: none !important;
-			}
-			body .ytp-fullscreen .ytp-show-cards-title .ytp-title-text {
-				padding-left: 36px !important;
-			}
+    /* Show video title in fullscreen */
+    body .ytp-fullscreen .ytp-gradient-top,
+    body .ytp-fullscreen .ytp-show-cards-title {
+      display: block !important;
+    }
+    body .ytp-fullscreen .ytp-show-cards-title .ytp-button,
+    body .ytp-fullscreen .ytp-show-cards-title .ytp-title-channel {
+      display: none !important;
+    }
+    body .ytp-fullscreen .ytp-show-cards-title .ytp-title-text {
+      padding-left: 36px !important;
+    }
 
-			/* Add theater mode button */
-			.ytp-size-button {
-				display: inline-block !important;
-			}
+    /* Add theater mode button */
+    .ytp-size-button {
+      display: inline-block !important;
+    }
 
-			/* Hide theater button in fullscreen */
-			body .ytp-fullscreen .ytp-size-button {
-				display: none !important;
-			}
+    /* Hide theater button in fullscreen */
+    body .ytp-fullscreen .ytp-size-button {
+      display: none !important;
+    }
 
-			/* Style autoplay button */
-			#goodTube_autoplayButton {
-				overflow: visible;
-				position: relative;
-			}
+    #goodTube_autoplayButton {
+      overflow: visible;
+      position: relative;
+    }
 
-			#goodTube_autoplayButton .ytp-autonav-toggle-button::before {
-				pointer-events: none;
-				opacity: 0;
-				position: absolute;
-				top: -49px;
-				left: 50%;
-				transform: translateX(-50%);
-				background: rgba(28, 28, 28, 0.9);
-				color: #ffffff;
-				border-radius: 4px;
-				font-weight: 500;
-				font-size: 12.98px;
-				padding-left: 9px;
-				padding-right: 9px;
-				padding-top: 0;
-				padding-bottom: 0;
-				height: 25px;
-				box-sizing: border-box;
-				line-height: 24px;
-				font-family: "YouTube Noto", Roboto, Arial, Helvetica, sans-serif;
-				white-space: nowrap;
-			}
+    #goodTube_autoplayButton .ytp-autonav-toggle-button::before {
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity .1s linear;
+      position: absolute;
+      top: -49px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(28, 28, 28, 0.9);
+      color: #ffffff;
+      border-radius: 4px;
+      font-weight: 500;
+      font-size: 12.98px;
+      padding-left: 9px;
+      padding-right: 9px;
+      padding-top: 0;
+      padding-bottom: 0;
+      height: 25px;
+      box-sizing: border-box;
+      line-height: 24px;
+      font-family: "YouTube Noto", Roboto, Arial, Helvetica, sans-serif;
+      white-space: nowrap;
+    }
 
-			#goodTube_autoplayButton .ytp-autonav-toggle-button[aria-checked='true']::before {
-				content: 'Autoplay is on';
-			}
+    #goodTube_autoplayButton,
+    #goodTube_autoplayButton * {
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+    }
 
-			#goodTube_autoplayButton .ytp-autonav-toggle-button[aria-checked='false']::before {
-				content: 'Autoplay is off';
-			}
+    :root {
+      --golden-autoplay-icon-scale: 1.4;
+      --golden-autoplay-tooltip-font: 14px;
+      --golden-autoplay-tooltip-top: -50px; 
+    }
 
-			#goodTube_autoplayButton:hover .ytp-autonav-toggle-button::before {
-				opacity: 1;
-			}
-		`;
+    #goodTube_autoplayButton .ytp-autonav-toggle-button {
+      transition: none !important;
+    }
+
+    .ytp-fullscreen #goodTube_autoplayButton .ytp-autonav-toggle-button,
+    :fullscreen #goodTube_autoplayButton .ytp-autonav-toggle-button,
+    :-webkit-full-screen #goodTube_autoplayButton .ytp-autonav-toggle-button {
+      transform: scale(var(--golden-autoplay-icon-scale));
+      transform-origin: center center;
+      top: 20px;
+      transition: none !important;
+    }
+
+    .ytp-fullscreen #goodTube_autoplayButton .ytp-autonav-toggle-button::before,
+    :fullscreen #goodTube_autoplayButton .ytp-autonav-toggle-button::before,
+    :-webkit-full-screen #goodTube_autoplayButton .ytp-autonav-toggle-button::before {
+      font-size: var(--golden-autoplay-tooltip-font) !important;
+      top: var(--golden-autoplay-tooltip-top);
+      transition: none !important;
+    }
+
+    #goodTube_autoplayButton .ytp-autonav-toggle-button[aria-checked='true']::before {
+      content: 'Autoplay is on';
+    }
+
+    #goodTube_autoplayButton .ytp-autonav-toggle-button[aria-checked='false']::before {
+      content: 'Autoplay is off';
+    }
+
+    #goodTube_autoplayButton:hover .ytp-autonav-toggle-button::before {
+      opacity: 1;
+    }
+  `;
 
 		// Enable the picture in picture button (unless you're on firefox)
 		if (navigator.userAgent.toLowerCase().indexOf('firefox') === -1) {
@@ -2257,31 +2292,26 @@
 		}
 
 
-		// Add autoplay button (before subtitles button)
-		let subtitlesButton = document.querySelector('.ytp-subtitles-button');
-		if (subtitlesButton) {
-			// Add button
-			subtitlesButton.insertAdjacentHTML('beforebegin', '<button class="ytp-button ytp-autonav-toggle" id="goodTube_autoplayButton"><div class="ytp-autonav-toggle-button-container"><div class="ytp-autonav-toggle-button" aria-checked="' + goodTube_getParams['goodTube_autoplay'] + '"></div></div></button>');
+        let subtitlesButton = document.querySelector('.ytp-subtitles-button');
+        if (subtitlesButton) {
+            subtitlesButton.insertAdjacentHTML('beforebegin', `<button class="ytp-button ytp-autonav-toggle" id="goodTube_autoplayButton"><div class="ytp-autonav-toggle-button-container"><div class="ytp-autonav-toggle-button" aria-checked="${goodTube_getParams['goodTube_autoplay']}"><div class="ytp-autonav-icon"></div></div></div></button>`);
 
-			// Add actions
-			let autoplayButton = document.querySelector('#goodTube_autoplayButton');
-			if (autoplayButton) {
-				autoplayButton.addEventListener('click', function () {
-					// Toggle the style of the autoplay button
-					let innerButton = autoplayButton.querySelector('.ytp-autonav-toggle-button');
-					let innerButtonState = innerButton.getAttribute('aria-checked');
+        let autoplayButton = document.querySelector('#goodTube_autoplayButton');
+        if (autoplayButton) {
+        autoplayButton.addEventListener('click', function () {
+            let innerButton = autoplayButton.querySelector('.ytp-autonav-toggle-button');
+            let innerButtonState = innerButton.getAttribute('aria-checked');
 
-					if (innerButtonState === 'true') {
-						innerButton.setAttribute('aria-checked', 'false');
-						window.top.postMessage('goodTube_autoplay_false', '*');
-					}
-					else {
-						innerButton.setAttribute('aria-checked', 'true');
-						window.top.postMessage('goodTube_autoplay_true', '*');
-					}
-				});
-			}
-		}
+            if (innerButtonState === 'true') {
+                innerButton.setAttribute('aria-checked', 'false');
+                window.top.postMessage('goodTube_autoplay_false', '*');
+            } else {
+                innerButton.setAttribute('aria-checked', 'true');
+                window.top.postMessage('goodTube_autoplay_true', '*');
+            }
+        });
+    }
+}
 
 		// Picture In Picture button (update tooltip text) 
 		let pipButton = document.querySelector('.ytp-pip-button');
