@@ -841,95 +841,106 @@
 						// Tell the iframe to toggle pip
 						goodTube_player.contentWindow.postMessage('goodTube_pip', '*');
 					}
+
+					// Toggle theater
+					if (keyPressed === 't') {
+						event.preventDefault();
+						event.stopImmediatePropagation();
+
+						// Disable when in fullscreen
+						if (!document.fullscreenElement) {
+							document.querySelector('.ytp-size-button')?.click();
+						}
+					}
 				}
 			}
 		}, true);
 	}
 
-	// Trigger a keyboard shortcut
-	function goodTube_shortcuts_trigger(shortcut) {
-		// Focus the body first
-		document.querySelector('body').focus();
+	// Trigger a keyboard shortcut (currently unused)
+	// function goodTube_shortcuts_trigger(shortcut) {
+	// 	// Focus the body first
+	// 	document.querySelector('body').focus();
 
-		// Setup the keyboard shortcut
-		let theKey = false;
-		let keyCode = false;
-		let shiftKey = false;
+	// 	// Setup the keyboard shortcut
+	// 	let theKey = false;
+	// 	let keyCode = false;
+	// 	let shiftKey = false;
 
-		if (shortcut === 'theater') {
-			theKey = 't';
-			keyCode = 84;
-			shiftKey = false;
-		}
-		else {
-			return;
-		}
+	// 	if (shortcut === 'theater') {
+	// 		theKey = 't';
+	// 		keyCode = 84;
+	// 		shiftKey = false;
+	// 	}
+	// 	else {
+	// 		return;
+	// 	}
 
-		// Trigger the keyboard shortcut
-		let e = false;
-		e = new window.KeyboardEvent('focus', {
-			bubbles: true,
-			key: theKey,
-			keyCode: keyCode,
-			shiftKey: shiftKey,
-			charCode: 0,
-		});
-		document.dispatchEvent(e);
+	// 	// Trigger the keyboard shortcut
+	// 	let e = false;
+	// 	e = new window.KeyboardEvent('focus', {
+	// 		bubbles: true,
+	// 		key: theKey,
+	// 		keyCode: keyCode,
+	// 		shiftKey: shiftKey,
+	// 		charCode: 0,
+	// 	});
+	// 	document.dispatchEvent(e);
 
-		e = new window.KeyboardEvent('keydown', {
-			bubbles: true,
-			key: theKey,
-			keyCode: keyCode,
-			shiftKey: shiftKey,
-			charCode: 0,
-		});
-		document.dispatchEvent(e);
+	// 	e = new window.KeyboardEvent('keydown', {
+	// 		bubbles: true,
+	// 		key: theKey,
+	// 		keyCode: keyCode,
+	// 		shiftKey: shiftKey,
+	// 		charCode: 0,
+	// 	});
+	// 	document.dispatchEvent(e);
 
-		e = new window.KeyboardEvent('beforeinput', {
-			bubbles: true,
-			key: theKey,
-			keyCode: keyCode,
-			shiftKey: shiftKey,
-			charCode: 0,
-		});
-		document.dispatchEvent(e);
+	// 	e = new window.KeyboardEvent('beforeinput', {
+	// 		bubbles: true,
+	// 		key: theKey,
+	// 		keyCode: keyCode,
+	// 		shiftKey: shiftKey,
+	// 		charCode: 0,
+	// 	});
+	// 	document.dispatchEvent(e);
 
-		e = new window.KeyboardEvent('keypress', {
-			bubbles: true,
-			key: theKey,
-			keyCode: keyCode,
-			shiftKey: shiftKey,
-			charCode: 0,
-		});
-		document.dispatchEvent(e);
+	// 	e = new window.KeyboardEvent('keypress', {
+	// 		bubbles: true,
+	// 		key: theKey,
+	// 		keyCode: keyCode,
+	// 		shiftKey: shiftKey,
+	// 		charCode: 0,
+	// 	});
+	// 	document.dispatchEvent(e);
 
-		e = new window.KeyboardEvent('input', {
-			bubbles: true,
-			key: theKey,
-			keyCode: keyCode,
-			shiftKey: shiftKey,
-			charCode: 0,
-		});
-		document.dispatchEvent(e);
+	// 	e = new window.KeyboardEvent('input', {
+	// 		bubbles: true,
+	// 		key: theKey,
+	// 		keyCode: keyCode,
+	// 		shiftKey: shiftKey,
+	// 		charCode: 0,
+	// 	});
+	// 	document.dispatchEvent(e);
 
-		e = new window.KeyboardEvent('change', {
-			bubbles: true,
-			key: theKey,
-			keyCode: keyCode,
-			shiftKey: shiftKey,
-			charCode: 0,
-		});
-		document.dispatchEvent(e);
+	// 	e = new window.KeyboardEvent('change', {
+	// 		bubbles: true,
+	// 		key: theKey,
+	// 		keyCode: keyCode,
+	// 		shiftKey: shiftKey,
+	// 		charCode: 0,
+	// 	});
+	// 	document.dispatchEvent(e);
 
-		e = new window.KeyboardEvent('keyup', {
-			bubbles: true,
-			key: theKey,
-			keyCode: keyCode,
-			shiftKey: shiftKey,
-			charCode: 0,
-		});
-		document.dispatchEvent(e);
-	}
+	// 	e = new window.KeyboardEvent('keyup', {
+	// 		bubbles: true,
+	// 		key: theKey,
+	// 		keyCode: keyCode,
+	// 		shiftKey: shiftKey,
+	// 		charCode: 0,
+	// 	});
+	// 	document.dispatchEvent(e);
+	// }
 
 
 	/* Navigation
@@ -1144,9 +1155,9 @@
 			goodTube_nav_videoEnded();
 		}
 
-		// Theater mode (toggle)
-		else if (event.data === 'goodTube_theater') {
-			goodTube_shortcuts_trigger('theater');
+		// Theater mode (toggle) - this should only work when not in fullscreen
+		else if (event.data === 'goodTube_theater' && !document.fullscreenElement) {
+			document.querySelector('.ytp-size-button')?.click();
 		}
 
 		// Autoplay
@@ -2091,6 +2102,11 @@
 				display: inline-block !important;
 			}
 
+			/* Hide theater button in fullscreen */
+			body .ytp-fullscreen .ytp-size-button {
+				display: none !important;
+			}
+
 			/* Style autoplay button */
 			#goodTube_autoplayButton {
 				overflow: visible;
@@ -2100,7 +2116,6 @@
 			#goodTube_autoplayButton .ytp-autonav-toggle-button::before {
 				pointer-events: none;
 				opacity: 0;
-				transition: opacity .1s linear;
 				position: absolute;
 				top: -49px;
 				left: 50%;
