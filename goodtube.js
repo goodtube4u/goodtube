@@ -2238,100 +2238,25 @@
 		}
 
 
-// Theater mode button
-let theaterButton = document.querySelector('.ytp-size-button');
-if (theaterButton) {
-    theaterButton.setAttribute('data-tooltip-target-id', 'ytp-size-button');
-    theaterButton.setAttribute('data-title-no-tooltip', 'Theater mode (t)');
-    theaterButton.setAttribute('aria-label', 'Theater mode (t)');
-    theaterButton.setAttribute('title', 'Theater mode (t)');
-    theaterButton.setAttribute('data-tooltip-title', 'Theater mode (t)');
+		// Theater mode button
+		let theaterButton = document.querySelector('.ytp-size-button');
+		if (theaterButton) {
+			// Style button
+			theaterButton.setAttribute('data-tooltip-target-id', 'ytp-size-button');
+			theaterButton.setAttribute('data-title-no-tooltip', 'Theater mode (t)');
+			theaterButton.setAttribute('aria-label', 'Theater mode (t)');
+			theaterButton.setAttribute('title', 'Theater mode (t)');
+			theaterButton.setAttribute('data-tooltip-title', 'Theater mode (t)');
+			theaterButton.innerHTML = '<svg height="100%" version="1.1" viewBox="0 0 36 36" width="100%"><use class="ytp-svg-shadow" xlink:href="#ytp-id-30"></use><path d="m 28,11 0,14 -20,0 0,-14 z m -18,2 16,0 0,10 -16,0 0,-10 z" fill="#fff" fill-rule="evenodd" id="ytp-id-30"></path></svg>';
 
-    // default/original SVG
-    const defaultTheaterSVG = '<svg height="100%" version="1.1" viewBox="0 0 36 36" width="100%"><use class="ytp-svg-shadow" xlink:href="#ytp-id-30"></use><path d="m 28,11 0,14 -20,0 0,-14 z m -18,2 16,0 0,10 -16,0 0,-10 z" fill="#fff" fill-rule="evenodd" id="ytp-id-30"></path></svg>';
+			// Add actions
+			theaterButton.addEventListener('click', function () {
+				// Tell the top window to toggle theater mode
+				window.top.postMessage('goodTube_theater', '*');
+			});
+		}
 
-    // new SVG for theater mode
-    const theaterModeSVG = '<svg height="100%" version="1.1" viewBox="0 0 36 36" width="100%"><use class="ytp-svg-shadow" xlink:href="#ytp-id-41"></use><path d="m 26,13 0,10 -16,0 0,-10 z m -14,2 12,0 0,6 -12,0 0,-6 z" fill="#fff" fill-rule="evenodd" id="ytp-id-41"></path></svg>';
 
-    // apply initial icon (default)
-    theaterButton.innerHTML = defaultTheaterSVG;
-
-    // update function that swaps the icon when in/out of theater mode
-    function updateTheaterIcon(isTheater) {
-        try {
-            if (isTheater) {
-                theaterButton.innerHTML = theaterModeSVG;
-            } else {
-                theaterButton.innerHTML = defaultTheaterSVG;
-            }
-        } catch (e) {
-            // failed
-        }
-    }
-
-    //check top-level page for theater
-    try {
-        let initialIsTheater = false;
-        if (window.top && window.top.document && typeof window.top.document.querySelector === 'function') {
-            initialIsTheater = !!window.top.document.querySelector('ytd-watch-flexy[theater]');
-        }
-        updateTheaterIcon(initialIsTheater);
-    } catch (e) {
-        // ignore cross-origin / unexpected errors
-    }
-
-    // Observe the top-level ytd-watch-flexy element for attribute changes (theater toggles)
-    try {
-        if (window.top && window.top.document && typeof window.top.document.querySelector === 'function') {
-            const topDoc = window.top.document;
-            const flexy = topDoc.querySelector('ytd-watch-flexy');
-
-            if (flexy) {
-                const flexyObserver = new MutationObserver(() => {
-                    updateTheaterIcon(flexy.hasAttribute('theater'));
-                });
-                flexyObserver.observe(flexy, { attributes: true, attributeFilter: ['theater'] });
-            } else {
-                // fallback: wait for ytd-watch-flexy to appear then attach observer
-                const docObserver = new MutationObserver((mutations, obs) => {
-                    const f = topDoc.querySelector('ytd-watch-flexy');
-                    if (f) {
-                        updateTheaterIcon(f.hasAttribute('theater'));
-                        const flexyObserver2 = new MutationObserver(() => {
-                            updateTheaterIcon(f.hasAttribute('theater'));
-                        });
-                        flexyObserver2.observe(f, { attributes: true, attributeFilter: ['theater'] });
-                        obs.disconnect();
-                    }
-                });
-                docObserver.observe(topDoc.body || topDoc, { childList: true, subtree: true });
-            }
-        }
-    } catch (e) {
-        // ignore if top.document is not available
-    }
-
-    // clicking still triggers the normal theater action via top window message
-theaterButton.addEventListener('click', function () {
-    try {
-        if (window.top && window.top.document) {
-            const flexy = window.top.document.querySelector('ytd-watch-flexy');
-            if (flexy) {
-                // Toggle directly by clicking YouTube’s native button
-                const nativeTheaterButton = window.top.document.querySelector('.ytp-size-button');
-                if (nativeTheaterButton) {
-                    nativeTheaterButton.click();
-                }
-                updateTheaterIcon(flexy.hasAttribute('theater'));
-                return;
-            }
-        }
-    } catch (e) {}
-
-    // fallback: still send message if above fails
-    window.top.postMessage('Goodtube_theater', '*');
-});
-}
 		// Add autoplay button (before subtitles button)
 		let subtitlesButton = document.querySelector('.ytp-subtitles-button');
 		if (subtitlesButton) {
@@ -2400,20 +2325,11 @@ theaterButton.addEventListener('click', function () {
 				return;
 			}
 
-    // Theater mode (t)
+			// Theater mode (t)
 			if (event.key === 't') {
-    try {
-        if (window.top && window.top.document) {
-            const nativeTheaterButton = window.top.document.querySelector('.ytp-size-button');
-            if (nativeTheaterButton) {
-                nativeTheaterButton.click();
-                return;
-            }
-        }
-    } catch (e) {}
-    // fallback
-    window.top.postMessage('Goodtube_theater', '*');
-}
+				// Tell the top window to toggle theater mode
+				window.top.postMessage('goodTube_theater', '*');
+			}
 
 			// Picture in picture (i)
 			if (event.key === 'i') {
