@@ -1351,7 +1351,7 @@
 						<div class='goodTube_donation'>
 							<div class='goodTube_text'>
 								<strong>This adblocker is 100% free to use and always will be.<br>
-								It has helped over 80 thousand people remove the unbearable ads from Youtube.</strong><br>
+								It has helped over 90 thousand people remove the unbearable ads from Youtube.</strong><br>
 								<br>
 								Countless hours and late nights have gone into making this and I continue to work on updating and maintaining the project regularly. I remain dedicated to ensuring this solution continues to work for everyone (despite Youtube's best efforts to stop adblockers). If you have any issues at all, please let me know and I will do my best to help!<br>
 								<br>
