@@ -326,8 +326,8 @@
 			goodTube_redirectHappened = true;
 		}
 
-		// Hide shorts links
-		let shortsLinks = document.querySelectorAll('a:not(.goodTube_hidden):not(.goodTube_checked)');
+		// Hide shorts links (we can't mark these as "checked" to save on resources, as the URLs seem to change over time)
+		let shortsLinks = document.querySelectorAll('a:not(.goodTube_hidden)');
 		shortsLinks.forEach((element) => {
 			if (element.href.indexOf('shorts/') !== -1) {
 				goodTube_helper_hideElement(element);
@@ -335,9 +335,6 @@
 				goodTube_helper_hideElement(element.closest('ytd-compact-video-renderer'));
 				goodTube_helper_hideElement(element.closest('ytd-rich-grid-media'));
 			}
-
-			// Mark this element as checked to save on resources
-			element.classList.add('goodTube_checked');
 		});
 
 		// Hide shorts buttons
