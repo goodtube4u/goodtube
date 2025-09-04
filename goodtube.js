@@ -2114,7 +2114,7 @@
 				pointer-events: none;
 				opacity: 0;
 				position: absolute;
-				top: -49px;
+				top: -49.2px;
 				left: 50%;
 				transform: translateX(-50%);
 				background: rgba(28, 28, 28, 0.9);
@@ -2124,11 +2124,11 @@
 				font-size: 12.98px;
 				padding-left: 9px;
 				padding-right: 9px;
-				padding-top: 0;
+				padding-top: 0.2px;
 				padding-bottom: 0;
 				height: 25px;
 				box-sizing: border-box;
-				line-height: 24px;
+				line-height: 25px;
 				font-family: "YouTube Noto", Roboto, Arial, Helvetica, sans-serif;
 				white-space: nowrap;
 			}
@@ -2143,6 +2143,16 @@
 
 			#goodTube_autoplayButton:hover .ytp-autonav-toggle-button::before {
 				opacity: 1;
+			}
+
+			:fullscreen #goodTube_autoplayButton .ytp-autonav-toggle-button {
+				transform: scale(1.4);
+				top: 22px;
+			}
+
+			:fullscreen #goodTube_autoplayButton .ytp-autonav-toggle-button::before {
+				font-size: 14px;
+				top: -50px;
 			}
 		`;
 
