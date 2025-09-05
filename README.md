@@ -29,9 +29,6 @@ Nope, updates are pushed to you automatically so you don't have to do anything t
 **Playlists skip to the next video every few seconds**<br>
 This is usually caused by another adblocker which Youtube is detecting. To fix this problem, disable all of your other adblockers (for Youtube only, you can leave them on for other websites). Then clear your cookies and cache (this is important). Once that's done, refresh Youtube and the problem should be fixed.
 
-**I can't watch a specific video**<br>
-This will work for 99% of videos. However it won't work for videos which are age restricted or have embedding disabled. You'll see a message come up if this happens. If you want to watch one of these, you'll have to disable this for a second. Sorry all, but there's no way around it currently with this alternative method of adblocking.
-
 **I can't use the miniplayer**<br>
 The Youtube miniplayer is not supported. Instead this uses "Picture in Picture" mode, which works in most browsers / is the new standard for the web. Unfortunately Firefox does not support the Picture in Picture API, so the button is removed in Firefox until they decide to include this feature.
 
