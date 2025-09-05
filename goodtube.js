@@ -2462,8 +2462,9 @@
 		if (autoplayButton) {
 			// This timeout fixes some weird edge cases (Youtube hasn't updated or...?)
 			setTimeout(() => {
-				// Update the checked attribute
-				autoplayButton.setAttribute('aria-checked', goodTube_autoplay);
+				if (autoplayButton.getAttribute('aria-checked') !== goodTube_autoplay) {
+					autoplayButton.click();
+				}
 			}, 1000);
 		}
 		// Otherwise, keep trying until we find the autoplay button
