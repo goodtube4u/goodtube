@@ -2338,7 +2338,6 @@
 		if (autoplayButton) {
 			// This timeout fixes some weird edge cases (Youtube hasn't updated or...?)
 			setTimeout(() => {
-				console.log('sync autoplay to', goodTube_autoplay);
 				// Update the checked attribute
 				autoplayButton.setAttribute('aria-checked', goodTube_autoplay);
 			}, 1000);
