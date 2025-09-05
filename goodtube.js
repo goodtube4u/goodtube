@@ -452,13 +452,10 @@
 	function goodTube_youtube_pauseMuteVideos() {
 		// IF if shorts are enabled and we're viewing a short
 		// OR we're not viewing a video
-		// OR the "hide and mute ads" fallback is active
 		if (
 			(goodTube_shorts === 'true' && window.location.href.indexOf('/shorts') !== -1)
 			||
 			window.location.href.indexOf('/watch?') === -1
-			||
-			goodTube_fallback
 		) {
 			// Clear timeout first to solve memory leak issues
 			clearTimeout(goodTube_youtube_pauseMuteVideos_timeout);
@@ -473,13 +470,26 @@
 		// Pause and mute all HTML videos on the page
 		let youtubeVideos = document.querySelectorAll('video');
 		youtubeVideos.forEach((video) => {
-			// IF (the video is playing)
-			// AND (we're not syncing the main player OR it's not the main player)
-			if (!video.paused && (!goodTube_syncingPlayer || !video.closest('#movie_player'))) {
-				// Pause and mute the video
-				video.muted = true;
-				video.volume = 0;
-				video.pause();
+			// If the "hide the mute" ads fallback is active
+			if (goodTube_fallback) {
+				// If the video is playing and it's NOT the main player
+				if (!video.paused && !video.closest('#movie_player')) {
+					// Pause and mute the video
+					video.muted = true;
+					video.volume = 0;
+					video.pause();
+				}
+			}
+			// Otherwise, the "hide and mute" ads fallback is inactive
+			else {
+				// IF (the video is playing)
+				// AND (we're not syncing the main player OR it's not the main player)
+				if (!video.paused && (!goodTube_syncingPlayer || !video.closest('#movie_player'))) {
+					// Pause and mute the video
+					video.muted = true;
+					video.volume = 0;
+					video.pause();
+				}
 			}
 		});
 
