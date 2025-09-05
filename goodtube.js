@@ -781,11 +781,6 @@
 			// Remove the miniplayer button
 			miniplayerButton.remove();
 
-			// Show the pip button (not for firefox)
-			if (navigator.userAgent.toLowerCase().indexOf('firefox') === -1) {
-				pipButton.style.display = 'inline-flex';
-			}
-
 			// Fix the a keyboard shortcut
 			document.addEventListener('keydown', function (event) {
 				// Make sure we're watching a video
@@ -2049,6 +2044,7 @@
 	}
 
 	// Turn off autoplay
+	let goodTube_youtube_turnOffAutoplay_timeout = setTimeout(() => {}, 0);
 	function goodTube_youtube_turnOffAutoplay() {
 		// If we've already turned off autoplay, just return
 		if (goodTube_turnedOffAutoplay) {
@@ -2061,11 +2057,21 @@
 		// If we found it
 		if (autoplayButton) {
 			// Turn off autoplay
-			autoplayButton.setAttribute('aria-checked', 'false');
+			if (autoplayButton.getAttribute('aria-checked') === 'true') {
+				autoplayButton.click();
+			}
 
 			// Set a variable if autoplay has been turned off
 			goodTube_turnedOffAutoplay = true;
 		}
+
+		// Keep doing this, Youtube is causing autoplay issues lately...it doesn't want to stay off?
+
+		// Clear timeout first to solve memory leak issues
+		clearTimeout(goodTube_youtube_turnOffAutoplay_timeout);
+
+		// Run actions again in 100ms to loop this function
+		goodTube_youtube_turnOffAutoplay_timeout = setTimeout(goodTube_youtube_turnOffAutoplay, 100);
 	}
 
 
@@ -2150,6 +2156,34 @@
 				}
 			}
 		`;
+
+		// Enable the picture in picture button (unless you're on firefox)
+		if (navigator.userAgent.toLowerCase().indexOf('firefox') === -1) {
+			cssOutput += `
+				.ytp-pip-button {
+					display: inline-block !important;
+				}
+			`;
+		}
+
+		// Hide info cards
+		if (goodTube_hideInfoCards === 'true') {
+			cssOutput += `
+				.ytp-ce-covering-overlay,
+				.ytp-ce-element {
+					display: none !important;
+				}
+			`;
+		}
+
+		// Hide end screen videos
+		if (goodTube_hideEndScreen === 'true') {
+			cssOutput += `
+				.ytp-videowall-still {
+					display: none !important;
+				}
+			`;
+		}
 
 		// Add the CSS to the page
 		style.textContent = cssOutput;
