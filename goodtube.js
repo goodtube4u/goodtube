@@ -788,11 +788,52 @@
 
 			// Fix the a keyboard shortcut
 			document.addEventListener('keydown', function (event) {
-				if (event.key.toLowerCase() === 'i') {
-					event.preventDefault();
-					event.stopImmediatePropagation();
+				// Make sure we're watching a video
+				if (window.location.href.indexOf('/watch?') === -1) {
+					return;
+				}
 
-					pipButton.click();
+				// Get the key pressed in lower case
+				let keyPressed = event.key.toLowerCase();
+
+				// If we're not focused on a HTML form element
+				let focusedElement = event.srcElement;
+				let focusedElement_tag = false;
+				let focusedElement_id = false;
+				if (focusedElement) {
+					if (typeof focusedElement.nodeName !== 'undefined') {
+						focusedElement_tag = focusedElement.nodeName.toLowerCase();
+					}
+
+					if (typeof focusedElement.getAttribute !== 'undefined') {
+						focusedElement_id = focusedElement.getAttribute('id');
+					}
+				}
+
+				if (
+					!focusedElement ||
+					(
+						focusedElement_tag.indexOf('input') === -1 &&
+						focusedElement_tag.indexOf('label') === -1 &&
+						focusedElement_tag.indexOf('select') === -1 &&
+						focusedElement_tag.indexOf('textarea') === -1 &&
+						focusedElement_tag.indexOf('fieldset') === -1 &&
+						focusedElement_tag.indexOf('legend') === -1 &&
+						focusedElement_tag.indexOf('datalist') === -1 &&
+						focusedElement_tag.indexOf('output') === -1 &&
+						focusedElement_tag.indexOf('option') === -1 &&
+						focusedElement_tag.indexOf('optgroup') === -1 &&
+						focusedElement_id !== 'contenteditable-root'
+					)
+				) {
+					if (keyPressed === 'i') {
+						// Stop the default stuff
+						event.preventDefault();
+						event.stopImmediatePropagation();
+
+						// Click the pip button
+						pipButton.click();
+					}
 				}
 			}, true);
 		}
@@ -2117,16 +2158,55 @@
 		// Check to enable or disable the overlay
 		goodTube_hideAndMuteAdsFallback_check();
 
-		// Disable pause and mute shortcuts while the overlay is enabled
-		function disablePlayMuteShortcut(event) {
-			if (goodTube_hideAndMuteAds_state === 'enabled' && (event.keyCode === 32 || event.keyCode === 77)) {
-				event.preventDefault();
-				event.stopImmediatePropagation();
+		// Disable some shortcuts while the overlay is enabled
+		function disableShortcuts(event) {
+			// Make sure we're watching a video and the overlay state is enabled
+			if (window.location.href.indexOf('/watch?') === -1 || goodTube_hideAndMuteAds_state !== 'enabled') {
+				return;
+			}
+
+			// Get the key pressed in lower case
+			let keyPressed = event.key.toLowerCase();
+
+			// If we're not focused on a HTML form element
+			let focusedElement = event.srcElement;
+			let focusedElement_tag = false;
+			let focusedElement_id = false;
+			if (focusedElement) {
+				if (typeof focusedElement.nodeName !== 'undefined') {
+					focusedElement_tag = focusedElement.nodeName.toLowerCase();
+				}
+
+				if (typeof focusedElement.getAttribute !== 'undefined') {
+					focusedElement_id = focusedElement.getAttribute('id');
+				}
+			}
+
+			if (
+				!focusedElement ||
+				(
+					focusedElement_tag.indexOf('input') === -1 &&
+					focusedElement_tag.indexOf('label') === -1 &&
+					focusedElement_tag.indexOf('select') === -1 &&
+					focusedElement_tag.indexOf('textarea') === -1 &&
+					focusedElement_tag.indexOf('fieldset') === -1 &&
+					focusedElement_tag.indexOf('legend') === -1 &&
+					focusedElement_tag.indexOf('datalist') === -1 &&
+					focusedElement_tag.indexOf('output') === -1 &&
+					focusedElement_tag.indexOf('option') === -1 &&
+					focusedElement_tag.indexOf('optgroup') === -1 &&
+					focusedElement_id !== 'contenteditable-root'
+				)
+			) {
+				if (keyPressed === ' ' || keyPressed === 'm' || keyPressed === 'i') {
+					event.preventDefault();
+					event.stopImmediatePropagation();
+				}
 			}
 		}
-		document.addEventListener('keydown', disablePlayMuteShortcut, true);
-		document.addEventListener('keypress', disablePlayMuteShortcut, true);
-		document.addEventListener('keyup', disablePlayMuteShortcut, true);
+		document.addEventListener('keydown', disableShortcuts, true);
+		document.addEventListener('keypress', disableShortcuts, true);
+		document.addEventListener('keyup', disableShortcuts, true);
 
 		// Init the autoplay actions to sync the embedded player and cookie with the normal button
 		goodTube_hideAndMuteAdsFallback_autoPlay_init();
