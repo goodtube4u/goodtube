@@ -1189,6 +1189,7 @@
 
 			// Set a cookie (exp midday tomorrow)
 			goodTube_helper_setCookieDaily('goodTube_dailyUniqueUserStatNEW', 'true');
+			console.log('NEW DAILY COOKIE');
 		}
 
 
