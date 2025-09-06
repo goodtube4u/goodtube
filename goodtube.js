@@ -2732,7 +2732,7 @@
 				pointer-events: none;
 				opacity: 0;
 				position: absolute;
-				top: -49.2px;
+				top: -48px;
 				left: 50%;
 				transform: translateX(-50%);
 				background: rgba(28, 28, 28, 0.9);
@@ -2744,9 +2744,9 @@
 				padding-right: 9px;
 				padding-top: 0.2px;
 				padding-bottom: 0;
-				height: 25px;
+				height: 24px;
 				box-sizing: border-box;
-				line-height: 25px;
+				line-height: 24px;
 				font-family: "YouTube Noto", Roboto, Arial, Helvetica, sans-serif;
 				white-space: nowrap;
 			}
@@ -2771,6 +2771,8 @@
 			:fullscreen #goodTube_autoplayButton .ytp-autonav-toggle-button::before {
 				font-size: 14px;
 				top: -50px;
+				height: 23px;
+				line-height: 23px;
 			}
 		`;
 
