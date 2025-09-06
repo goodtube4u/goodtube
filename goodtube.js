@@ -655,6 +655,9 @@
 	// Populate the playlist info
 	let goodTube_player_populatePlaylistInfo_timeout = setTimeout(() => {}, 0);
 	function goodTube_player_populatePlaylistInfo() {
+		// Re fetch the page API
+		goodTube_page_api = document.getElementById('movie_player');
+
 		// Make sure we have access to the frame API
 		if (typeof goodTube_page_api.getPlaylist === 'function' && typeof goodTube_page_api.getPlaylistIndex === 'function') {
 			goodTube_playlist = goodTube_page_api.getPlaylist();
@@ -1105,11 +1108,14 @@
 
 	// Video has ended
 	function goodTube_nav_videoEnded() {
+		// Populate the playlist info
+		goodTube_player_populatePlaylistInfo();
+
 		// If (autoplay is enabled) OR (we're viewing a playlist AND we're not on the last video)
 		if (
 			goodTube_autoplay === 'true'
 			||
-			(goodTube_playlist && (goodTube_playlistIndex === (goodTube_playlist.length - 1)))
+			(goodTube_playlist && (goodTube_playlistIndex < (goodTube_playlist.length - 1)))
 		) {
 			// Play the next video
 			goodTube_nav_next();
@@ -1277,8 +1283,7 @@
 
 		// Next video
 		else if (event.data === 'goodTube_nextVideo') {
-			// Call the video ended function here, this helps support the shuffle and repeat playlist functionality
-			goodTube_nav_videoEnded();
+			goodTube_nav_next();
 		}
 
 		// Video has ended
@@ -2328,7 +2333,7 @@
 					<img src='\x68\x74\x74\x70\x73\x3a\x2f\x2f\x6a\x61\x6d\x65\x6e\x6c\x79\x6e\x64\x6f\x6e\x2e\x63\x6f\x6d\x2f\x5f\x6f\x74\x68\x65\x72\x2f\x73\x74\x61\x74\x73\x2f\x63\x72\x61\x62\x2d\x6c\x61\x72\x67\x65\x2e\x70\x6e\x67'>
 					<div class='goodTube_overlay_textContainer'>
 						<div class='goodTube_overlay_textContainer_title'>Sorry, we can't remove the ads from this video but we can hide and mute them!</div>
-						<div class='goodTube_overlay_textContainer_text'>Hang tight! Click the skip button if it appears to speed things up.</div>
+						<div class='goodTube_overlay_textContainer_text'>Hang tight. Click the skip button if it appears to speed things up.</div>
 					</div>
 				</div>
 			`;
