@@ -2463,14 +2463,11 @@
 		// Target the autoplay button
 		let autoplayButton = document.querySelector('#movie_player .ytp-autonav-toggle-button');
 
-		// If we found it
-		if (autoplayButton) {
-			// This timeout fixes some weird edge cases (Youtube hasn't updated or...?)
-			setTimeout(() => {
-				if (autoplayButton.getAttribute('aria-checked') !== goodTube_autoplay) {
-					autoplayButton.click();
-				}
-			}, 1000);
+		// If we found it and it's visible (this means we can now interact with it)
+		if (autoplayButton && autoplayButton.checkVisibility()) {
+			if (autoplayButton.getAttribute('aria-checked') !== goodTube_autoplay) {
+				autoplayButton.click();
+			}
 		}
 		// Otherwise, keep trying until we find the autoplay button
 		else {
@@ -3254,12 +3251,15 @@
 
 		// Enable autoplay
 		else if (event.data === 'goodTube_autoplay_true') {
+			goodTube_helper_setCookie('goodTube_autoplay', 'true');
+			goodTube_autoplay = 'true';
 			goodTube_iframe_setAutoplay('true');
 		}
 
-
-		// Enable autoplay
+		// Disable autoplay
 		else if (event.data === 'goodTube_autoplay_false') {
+			goodTube_helper_setCookie('goodTube_autoplay', 'false');
+			goodTube_autoplay = 'false';
 			goodTube_iframe_setAutoplay('false');
 		}
 	}
@@ -3294,10 +3294,9 @@
 		// If we found it
 		if (autoplayButton) {
 			let innerButton = autoplayButton.querySelector('.ytp-autonav-toggle-button');
-			let innerButtonState = innerButton.getAttribute('aria-checked');
 
 			// If the button is in the wrong state
-			if (innerButtonState !== enabled) {
+			if (innerButton.getAttribute('aria-checked') !== enabled) {
 				// Click it
 				autoplayButton.click();
 			}
