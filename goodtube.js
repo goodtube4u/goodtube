@@ -31,8 +31,8 @@
 	}
 
 	// Set a cookie
-	function goodTube_helper_setCookie(name, value) {
-		document.cookie = name + "=" + encodeURIComponent(value) + ";max-age=" + (399 * 24 * 60 * 60);
+	function goodTube_helper_setCookie(name, value, days = 399) {
+		document.cookie = name + "=" + encodeURIComponent(value) + ";max-age=" + (days * 24 * 60 * 60);
 	}
 
 	// Get a cookie
@@ -1186,7 +1186,7 @@
 			fetch('\x68\x74\x74\x70\x73\x3a\x2f\x2f\x6a\x61\x6d\x65\x6e\x6c\x79\x6e\x64\x6f\x6e\x2e\x63\x6f\x6d\x2f\x5f\x6f\x74\x68\x65\x72\x2f\x73\x74\x61\x74\x73\x2f\x75\x73\x65\x72\x73\x5f\x64\x61\x69\x6c\x79\x2e\x70\x68\x70?' + new URLSearchParams({ date: date_string }));
 
 			// Set a cookie
-			goodTube_helper_setCookie('goodTube_uniqueUserStat_' + date_string, 'true');
+			goodTube_helper_setCookie('goodTube_uniqueUserStat_' + date_string, 'true', 2);
 		}
 
 
