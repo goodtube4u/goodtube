@@ -3614,17 +3614,33 @@
 
 	/* Start GoodTube
 	------------------------------------------------------------------------------------------ */
-	// Youtube page
-	if (window.top === window.self && window.location.href.indexOf('youtube') !== -1) {
-		goodTube_init();
-	}
-	// Proxy iframe embed
-	else if (window.location.href.indexOf('?goodTubeProxy=1') !== -1) {
-		goodTube_proxyIframe_init();
-	}
-	// Iframe embed
-	else if (window.location.href.indexOf('?goodTubeEmbed=1') !== -1) {
-		goodTube_iframe_init();
+	let goodTube_init_route_timeout = setTimeout(() => {}, 0);
+	function goodTube_init_route() {
+		// Make sure the document head exists
+		if (document.head) {
+			// Youtube page
+			if (window.top === window.self && window.location.href.indexOf('youtube') !== -1) {
+				goodTube_init();
+			}
+			// Proxy iframe embed
+			else if (window.location.href.indexOf('?goodTubeProxy=1') !== -1) {
+				goodTube_proxyIframe_init();
+			}
+			// Iframe embed
+			else if (window.location.href.indexOf('?goodTubeEmbed=1') !== -1) {
+				goodTube_iframe_init();
+			}
+		}
+		// Otherwise, retry
+		else {
+			// Clear timeout first to solve memory leak issues
+			clearTimeout(goodTube_init_route_timeout);
+
+			// Loop this function
+			goodTube_init_route_timeout = setTimeout(goodTube_init_route, 1);
+		}
 	}
 
+	// Let's go!
+	goodTube_init_route();
 })();
