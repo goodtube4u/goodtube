@@ -67,7 +67,7 @@ This timeless human content belongs to everyone, not just the wealthy and privil
 
 As a human being on this earth, with a heart, soul, mind and spirit - you matter and are important. You are not simply a product to be bought and sold by capitalist companies such as Youtube.<br>
 
-This plugins helps to keep this important resource and everything on it free and available to everyone.
+This plugins helps to keep this important resource free and available to everyone.
 
 
 ## Make a Donation
