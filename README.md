@@ -23,7 +23,7 @@ At the very top of the page, there's an option called `Developer mode`. You need
 Now scroll down and click `Details` next to the Tampermonkey extension. Scroll down until you find the `Allow user scripts` option. You need to turn this on.
 <br><br>
 **3. Install GoodTube**<br>
-Visit this link and press "Install" on the page that opens up:<br>
+Visit this link and press `Install` on the page that opens up:<br>
 https://github.com/goodtube4u/goodtube/raw/refs/heads/main/goodtube.user.js
 <br><br>
 **4. Restart your browser**
@@ -31,7 +31,7 @@ https://github.com/goodtube4u/goodtube/raw/refs/heads/main/goodtube.user.js
 **5. Turn off any other adblockers you're using on Youtube**<br>
 You can leave your adlockers on for other websites, they just need to be turned off for Youtube. This is because they often trigger Youtube's adblock detection and this can cause issues.
 <br><br>
-*This install process sounds more confusing than it is. If you're not technical you can do it!! Simply follow the steps as they're written and in a few minutes, you'll have it working <3*
+*This install process sounds more difficult than it is. If you're not technical you can do it!! Simply follow the steps as they're written and in a few minutes, you'll have it working <3*
 
 
 ## FAQs
@@ -57,26 +57,26 @@ Youtube also contains rare and extremely important digitised versions of physica
 
 This content is for _everyone_ and is not Youtube's to sell back to us. They did not create it, nor do they own it.<br>
 
-Initially Youtube was completely free, which is why so much content was uploaded there in the first place. But in recent years, more and more commercial ads are being pushed on users. It's disgraceful honestly.<br>
+Initially Youtube was completely free, which is why so much content was uploaded there in the first place. But in recent years, more and more commercial ads are being pushed on users. This is disgraceful.<br>
 
 I see Youtube in the same capacity as a library or museam and as such hold them to the same standards. They have a social repsonsibility which is not being taken seriously. I do not care what their terms of service say at all.<br>
 
-Many disadvantaged people cannot buy premium. A large portion of the world lives in extreme poverty, even in first world countries. Many people have mental health conditions which are simply not conducive to "buying premium". These are just a few examples.<br>
+Many people cannot afford to buy premium. A large portion of the world lives in extreme poverty, even in first world countries. Many people have mental health conditions which are simply not conducive to buying premium. These are just a few examples.<br>
 
 This timeless human content belongs to everyone, not just the wealthy and privileged. It should not be disrespected with more and more commercial ads in this way.<br>
 
 As a human being on this earth, with a heart, soul, mind and spirit - you matter and are important. You are not simply a product to be bought and sold by capitalist companies such as Youtube.<br>
 
-This plugins helps to keep this important resource and everything on it 100% free for everyone.
+This plugins helps to keep this important resource and everything on it free and available to everyone.
 
 
 ## Make a Donation
 **This adblocker is 100% free to use and always will be.<br>
-It has helped over 95,000 people remove the unbearable ads from Youtube.**<br>
+It has helped over 95,000 people remove the unbearable ads from Youtube.**<br>bi
 
-This project has been made entirely by myself, as just one developer. Countless hours and late nights have gone into making this and I continue to work on updating and maintaining the project regularly. I remain dedicated to ensuring this solution continues to work for everyone (despite Youtube's best efforts to stop adblockers).<br>
+This project is been made entirely by myself, as just one developer. Countless hours and late nights have gone into making this and I continue to work on updating and maintaining the project regularly. I remain dedicated to ensuring this solution continues to work for everyone (despite Youtube's best efforts to stop adblockers).<br>
 
-Donations help to keep this project going and supports the wider community who use it. If you would like to say thank you and can give something back, it would be greatly appreciated.<br>
+Donations help to keep this project going and support the wider community who use it. If you would like to say thank you and can give something back, it would be greatly appreciated.<br>
 
 You can make a donation here:<br>
 https://tiptopjar.com/goodtube
