@@ -20,7 +20,7 @@ https://addons.mozilla.org/en-US/firefox/addon/tampermonkey/
 **2. Change browser settings (you can skip this if you're using Firefox)**<br>
 Click the extensions icon up the top of your browser (the little puzzle piece icon), then click `Manage extensions`.<br><br>
 At the very top of the page, there's an option called `Developer mode`. You need to turn this on.<br><br>
-Now scroll down and click `Details` next to the Tampermonkey extension. Scroll down until you find the `Allow user scripts` option. You need to turn this on.
+Now scroll down and click `Details` next to the Tampermonkey extension. Then scroll down until you find the `Allow user scripts` option. You need to turn this on.
 <br><br>
 **3. Install GoodTube**<br>
 Visit this link and press `Install` on the page that opens up:<br>
