@@ -31,6 +31,8 @@ https://github.com/goodtube4u/goodtube/raw/refs/heads/main/goodtube.user.js
 **5. Turn off any other adblockers you're using on Youtube**<br>
 You can leave your adlockers on for other websites, they just need to be turned off for Youtube. This is because they often trigger Youtube's adblock detection and this can cause issues.
 <br><br>
+**6. That's it, you're good to go! Enjoy :)**<br>
+<br><br>
 *This install process sounds more difficult than it is. If you're not technical you can do it!! Simply follow the steps as they're written and in a few minutes, you'll have it working <3*
 
 
