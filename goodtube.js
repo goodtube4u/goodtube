@@ -2942,7 +2942,125 @@
 				});
 			}
 		}
-	}
+	} 
+                // prevent the youtube default pause feature
+				function PreventPause() {
+				    const videos = document.querySelectorAll("video");
+				    const now = Date.now();
+				
+				    videos.forEach(video => {
+				function blockPause(e) {
+				            const elapsed = Date.now() - now;
+				            if (elapsed < 300) { // for 0.3s
+				                e.preventDefault?.();
+				                e.stopImmediatePropagation?.();
+				                video.play();
+				            } else {
+				                video.removeEventListener("pause", blockPause, true);
+				            }
+				        }
+				
+				        video.addEventListener("pause", blockPause, true);
+				    });
+				}
+				// hides controls
+				function hideControls() {
+				    let controls = document.querySelector('.ytp-chrome-bottom');
+				    if (controls) {
+				        controls.style.display = 'none';
+				    }
+				}
+				// shows controls
+				function showControls() {
+				    let controls = document.querySelector('.ytp-chrome-bottom');
+				    if (controls) {
+				        controls.style.display = 'block';
+				    }
+				}
+				// hides title in full screen
+				function hideTitle() {
+				    let title = document.querySelector('.ytp-title-link');
+				    if (title) {
+				        title.style.display = 'none';
+				    }
+				}
+				// shows title in full screen
+				function showTitle() {
+				    let title = document.querySelector('.ytp-title-link');
+				    if (title) {
+				        title.style.display = 'block';
+				    }
+				}
+				// creates speed overlay
+				function createSpeedOverlay() {
+					// Check if overlay already exists, otherwise create it
+				    let overlay = document.getElementById("customSpeedOverlay");
+				    if (!overlay) {
+				        overlay = document.createElement("div");
+				        overlay.id = "customSpeedOverlay";
+				        overlay.className = "speed-overlay";
+				        overlay.style.display = "none";
+				   // Find a container to attach the overlay (YouTube player, Goodtube wrapper, or fallback to body to prevent a crash)
+				        const container =
+				            document.getElementById("movie_player") ||
+				            document.querySelector("#Goodtube_playerWrapper") ||
+				            document.body;
+				
+				        if (container && window.getComputedStyle(container).position === "static") {
+				            container.style.position = "relative";
+				        }
+				        container.appendChild(overlay);
+				        // Inject CSS styles for the overlay
+				        const style = document.createElement("style");
+				        style.textContent = `
+				.speed-overlay {
+				    position: absolute;
+				    top: 50%;
+				    left: 50%;
+				    transform: translate(-50%, -50%);
+				    background: rgba(0, 0, 0, 0.65);
+				    color: #fff;
+				    font-size: 20px;
+				    font-weight: bold;
+				    border-radius: 50px;
+				    padding: 8px 20px;
+				    display: none;
+				    align-items: center;
+				    gap: 8px;
+				    z-index: 50;
+				    pointer-events: none;
+				    font-family: Roboto, Arial, sans-serif;
+				}
+				        `;
+				        document.head.appendChild(style);
+				    }
+				    return overlay;
+				}
+				
+				function showSpeedOverlay(speed = 1, position = {}, arrowSize = "12px") {
+				    const overlay = createSpeedOverlay();
+					 // Update overlay content with speed and arrows
+				    overlay.innerHTML = `<span>${speed}x</span><span class="arrows">▶▶</span>`;
+				    // Allow custom positioning (defaults center-top)
+				    overlay.style.top = position.top || "6%";
+				    overlay.style.left = position.left || "50%";
+				    overlay.style.right = position.right || "auto";
+				    overlay.style.bottom = position.bottom || "auto";
+				    overlay.style.transform = position.transform || "translate(-50%, -50%)";
+				    // Style arrow indicator
+				    const arrows = overlay.querySelector(".arrows");
+				    arrows.style.fontSize = arrowSize;
+				    overlay.style.display = "flex";
+				    overlay.style.opacity = "1";
+				}
+				// hides the overlay if it exists
+				function hideSpeedOverlay() {
+				    const overlay = document.getElementById("customSpeedOverlay");
+				    if (overlay) {
+				        overlay.style.display = "none";
+				        overlay.style.opacity = "0";
+				    }
+				}
 
 	// Add custom events
 	let goodTube_iframe_addCustomEvents_timeout = setTimeout(() => {}, 0);
@@ -2966,7 +3084,67 @@
 			// Tell the top frame the video ended
 			window.top.postMessage('goodTube_videoEnded', '*');
 		});
-	}
+
+			let holdTimeout;
+			let isSpeeding = false;
+			
+			    videoElement.addEventListener('mousedown', (e) => {
+			        if (e.button === 0) { 
+			            holdTimeout = setTimeout(() => {
+			                if (videoElement && !videoElement.paused) {
+			                    videoElement.playbackRate = 2.0;
+			                    isSpeeding = true;
+								showSpeedOverlay(2);
+								hideControls();
+								hideTitle();
+			                }
+			            }, 500);
+			        }
+			    });
+			
+			videoElement.addEventListener('mouseup', () => {
+			    clearTimeout(holdTimeout);
+			    if (isSpeeding) {
+			        videoElement.playbackRate = 1.0;
+			        PreventPause();
+			        isSpeeding = false;
+			        showSpeedOverlay(1);
+			        setTimeout(() => {
+			            hideSpeedOverlay();
+			        }, 600);
+					showControls();
+					showTitle();
+			    }
+			});
+			
+			window.addEventListener('blur', () => {
+			    clearTimeout(holdTimeout);
+			    if (isSpeeding && videoElement) {
+			        videoElement.playbackRate = 1.0;
+			        isSpeeding = false;
+			        showSpeedOverlay(1);
+			        setTimeout(() => {
+			            hideSpeedOverlay();
+			        }, 600);
+			        showControls();
+			        showTitle();
+			    }
+			});
+			
+			videoElement.addEventListener('mouseleave', () => {
+			    clearTimeout(holdTimeout);
+			    if (isSpeeding && videoElement) {
+			        videoElement.playbackRate = 1.0;
+			        isSpeeding = false;
+			        showSpeedOverlay(1);
+			        setTimeout(() => {
+			            hideSpeedOverlay();
+			        }, 600);
+					showControls();
+					showTitle();
+			    }
+			});
+		}
 
 	// Add keyboard shortcuts
 	function goodTube_iframe_addKeyboardShortcuts() {
