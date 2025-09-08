@@ -33,7 +33,7 @@ You can leave your adlockers on for other websites, they just need to be turned 
 <br><br>
 **6. That's it, you're good to go! Enjoy :)**
 <br><br>
-*This install process sounds more difficult than it is. If you're not technical you can do it!! Simply follow the steps as they're written and in a few minutes, you'll have it working <3*
+*This install process sounds more difficult than it is. If you're not technical you can do it!! Simply follow the steps as they're written and in a few minutes you'll have it working <3*
 
 
 ## FAQs
