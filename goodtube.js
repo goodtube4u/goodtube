@@ -718,10 +718,19 @@
 				goodTube_player_clear();
 			}
 
-			// Include the skip to time if it exists
+			// Include the skip to time if it exists in query params
 			let skipToGetVar = '';
 			if (typeof goodTube_getParams['t'] !== 'undefined') {
 				skipToGetVar = '&start=' + goodTube_getParams['t'].replace('s', '');
+			}
+			// Otherwise, also check if the regular Youtube player has skipped to a start time
+			else if (goodTube_page_api && typeof goodTube_page_api.getCurrentTime === 'function') {
+				let savedTime = Math.floor(goodTube_page_api.getCurrentTime());
+
+				// Make sure it's over 10seconds just for sanity's sake (we don't wanna skip because of delayed loading time on our end)
+				if (savedTime > 10) {
+					skipToGetVar = '&start=' + savedTime;
+				}
 			}
 
 			// Set the video source
@@ -732,11 +741,24 @@
 		}
 		// Otherwise, for all other loads
 		else {
-			// Load the video via the iframe api
+			// Setup the start time
 			let startTime = 0;
+
+			// Use the skip to time if it exists in query params
 			if (typeof goodTube_getParams['t'] !== 'undefined') {
 				startTime = goodTube_getParams['t'].replace('s', '');
 			}
+			// Otherwise, use the regular Youtube player's start time
+			else if (goodTube_page_api && typeof goodTube_page_api.getCurrentTime === 'function') {
+				let savedTime = Math.floor(goodTube_page_api.getCurrentTime());
+
+				// Make sure it's over 10s for sanity's sake (we don't wanna skip because of delayed loading time on our end)
+				if (savedTime > 10) {
+					startTime = savedTime;
+				}
+			}
+
+			// Load the video via the iframe api
 			goodTube_player.contentWindow.postMessage('goodTube_load_' + goodTube_getParams['v'] + '|||' + startTime + '|||' + playlist, '*');
 		}
 
