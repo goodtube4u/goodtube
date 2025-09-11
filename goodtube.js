@@ -2771,15 +2771,15 @@
 			}
 
 			/* Show video title in fullscreen */
-			body .ytp-fullscreen .ytp-gradient-top,
-			body .ytp-fullscreen .ytp-show-cards-title {
+			:fullscreen .ytp-gradient-top,
+			:fullscreen .ytp-show-cards-title {
 				display: block !important;
 			}
-			body .ytp-fullscreen .ytp-show-cards-title .ytp-button,
-			body .ytp-fullscreen .ytp-show-cards-title .ytp-title-channel {
+			:fullscreen .ytp-show-cards-title .ytp-button,
+			:fullscreen .ytp-show-cards-title .ytp-title-channel {
 				display: none !important;
 			}
-			body .ytp-fullscreen .ytp-show-cards-title .ytp-title-text {
+			:fullscreen .ytp-show-cards-title .ytp-title-text {
 				padding-left: 36px !important;
 			}
 
@@ -2788,9 +2788,15 @@
 				display: inline-block !important;
 			}
 
-			/* Hide theater button in fullscreen */
+			/* Hide theater button in fullscreen (don't use display none, it causes issues with keyboard shortcuts if this was the last focused element) */
 			body .ytp-fullscreen .ytp-size-button {
-				display: none !important;
+				position: fixed !important;
+				top: -9999px !important;
+				left: -9999px !important;
+				bottom: auto !important;
+				right: auto !important;
+				opacity: 0 !important;
+				pointer-events: none !important;
 			}
 
 			/* Style autoplay button */
