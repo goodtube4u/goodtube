@@ -2833,18 +2833,6 @@
 			#goodTube_autoplayButton:hover .ytp-autonav-toggle-button::before {
 				opacity: 1;
 			}
-
-			:fullscreen #goodTube_autoplayButton .ytp-autonav-toggle-button {
-				transform: scale(1.4);
-				top: 22px;
-			}
-
-			:fullscreen #goodTube_autoplayButton .ytp-autonav-toggle-button::before {
-				font-size: 14px;
-				top: -50px;
-				height: 23px;
-				line-height: 23px;
-			}
 		`;
 
 		// Enable the picture in picture button (unless you're on firefox)
