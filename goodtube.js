@@ -2589,7 +2589,7 @@
 			clearTimeout(goodTube_iframe_init_domReady_timeout);
 
 			// Create a new timeout
-			goodTube_iframe_init_domReady_timeout = setTimeout(goodTube_iframe_init_domReady_timeout, 100);
+			goodTube_iframe_init_domReady_timeout = setTimeout(goodTube_iframe_init_domReady, 100);
 
 			return;
 		}
