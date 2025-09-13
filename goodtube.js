@@ -2832,18 +2832,40 @@
 				font-family: "YouTube Noto", Roboto, Arial, Helvetica, sans-serif;
 				white-space: nowrap;
 			}
-
+			#goodTube_autoplayButton,
+			#goodTube_autoplayButton * {
+			  user-select: none;
+			}
+			
+			#goodTube_autoplayButton .ytp-autonav-toggle-button {
+			  transition: none !important;
+			}
+			
+			/* scale the auto play button only if in full screen, and not zooming */
+			@media (resolution: 1dppx) {
+			  body .ytp-fullscreen #goodTube_autoplayButton .ytp-autonav-toggle-button {
+			    transform: scale(1.4); /* scale the icon by 1.4 */
+			    top: 20px;             /* position */
+			  }
+			
+			  body .ytp-fullscreen #goodTube_autoplayButton .ytp-autonav-toggle-button::before {
+			    font-size: 14px; /* set the font size */
+			    top: -50px;      /* position */
+			  }
+			}
+			
 			#goodTube_autoplayButton .ytp-autonav-toggle-button[aria-checked='true']::before {
-				content: 'Auto-play is on';
+			  content: 'Auto-play is on';
 			}
-
+			
 			#goodTube_autoplayButton .ytp-autonav-toggle-button[aria-checked='false']::before {
-				content: 'Auto-play is off';
+			  content: 'Auto-play is off';
+			}
+			
+			#goodTube_autoplayButton:hover .ytp-autonav-toggle-button::before {
+			  opacity: 1;
 			}
 
-			#goodTube_autoplayButton:hover .ytp-autonav-toggle-button::before {
-				opacity: 1;
-			}
 		`;
 
 		// Enable the picture in picture button (unless you're on firefox)
