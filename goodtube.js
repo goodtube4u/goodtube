@@ -1252,11 +1252,23 @@
 	------------------------------------------------------------------------------------------ */
 	// Init
 	function goodTube_init() {
-		/* Disable Youtube
-		-------------------------------------------------- */
+		// Listen for messages from the iframe
+		window.addEventListener('message', goodTube_receiveMessage);
+
 		// Mute and pause all Youtube videos
 		goodTube_youtube_pauseMuteVideos();
 
+		// Init the rest once the DOM is ready
+		document.addEventListener('DOMContentLoaded', goodTube_init_domReady);
+
+		// Also check if the DOM is already loaded, as if it is, the above event listener will not trigger
+		if (document.readyState === 'interactive' || document.readyState === 'complete') {
+			goodTube_init_domReady();
+		}
+	}
+
+	// Init when DOM is ready
+	function goodTube_init_domReady() {
 		// Add CSS classes to hide elements (without Youtube knowing)
 		goodTube_helper_showHide_init();
 
@@ -1269,19 +1281,11 @@
 		// Hide shorts (real time)
 		goodTube_youtube_hideShortsRealtime();
 
-		// Support the "hide and mute ads" fallback
+		// Init our player
+		goodTube_player_init();
+
+		// Init the "hide and mute ads" fallback
 		goodTube_hideAndMuteAdsFallback_init();
-
-
-		/* Load GoodTube
-		-------------------------------------------------- */
-		// Init our player (after DOM is loaded)
-		document.addEventListener('DOMContentLoaded', goodTube_player_init);
-
-		// Also check if the DOM is already loaded, as if it is, the above event listener will not trigger
-		if (document.readyState === 'interactive' || document.readyState === 'complete') {
-			goodTube_player_init();
-		}
 
 		// Usage stats
 		goodTube_stats_user();
@@ -1289,16 +1293,8 @@
 		// Keyboard shortcuts
 		goodTube_shortcuts_init();
 
-		// Listen for messages from the iframe
-		window.addEventListener('message', goodTube_receiveMessage);
-
 		// Init the menu
-		document.addEventListener('DOMContentLoaded', goodTube_menu);
-
-		// Also check if the DOM is already loaded, as if it is, the above event listener will not trigger
-		if (document.readyState === 'interactive' || document.readyState === 'complete') {
-			goodTube_menu();
-		}
+		goodTube_menu();
 	}
 
 	// Listen for messages from the iframe
@@ -2275,6 +2271,11 @@
 				return;
 			}
 
+			// Don't do anything if we're holding control OR alt OR the command key on mac
+			if (event.ctrlKey || event.altKey || event.metaKey) {
+				return;
+			}
+
 			// Get the key pressed in lower case
 			let keyPressed = event.key.toLowerCase();
 
@@ -2554,13 +2555,26 @@
 	/* Iframe functions
 	------------------------------------------------------------------------------------------ */
 	// Init
-	let goodTube_iframe_init_timeout = false;
 	function goodTube_iframe_init() {
+		// Listen for messages from the parent window
+		window.addEventListener('message', goodTube_iframe_receiveMessage);
+
+		// Init the rest once the DOM is ready
+		document.addEventListener('DOMContentLoaded', goodTube_iframe_init_domReady);
+
+		// Also check if the DOM is already loaded, as if it is, the above event listener will not trigger
+		if (document.readyState === 'interactive' || document.readyState === 'complete') {
+			goodTube_iframe_init_domReady();
+		}
+	}
+
+	// Init when DOM is ready
+	function goodTube_iframe_init_domReady() {
+		// Add the main styles
+		goodTube_iframe_style();
+
 		// Get the iframe API
 		goodTube_iframe_api = document.getElementById('movie_player');
-
-		// Add the styles
-		goodTube_iframe_style();
 
 		// Get the video data to check loading state
 		let videoData = false;
@@ -2600,22 +2614,12 @@
 		// Run the iframe actions
 		goodTube_iframe_actions();
 
-		// Listen for messages from the parent window
-		window.addEventListener('message', goodTube_iframe_receiveMessage);
-
 		// Let the parent frame know it's loaded
-		document.addEventListener('DOMContentLoaded', () => {
-			window.top.postMessage('goodTube_playerIframe_loaded', '*');
-		});
-
-		// Also check if the DOM is already loaded, as if it is, the above event listener will not trigger
-		if (document.readyState === 'interactive' || document.readyState === 'complete') {
-			window.top.postMessage('goodTube_playerIframe_loaded', '*');
-		}
+		window.top.postMessage('goodTube_playerIframe_loaded', '*');
 	}
 
 	// Actions
-	let goodTube_iframe_actions_timeout = false;
+	let goodTube_iframe_actions_timeout = setTimeout(() => {}, 0);
 	function goodTube_iframe_actions() {
 		// Check to see if the "hide and mute ads" fallback should be active
 		goodTube_iframe_hideMuteAdsFallback();
@@ -2891,7 +2895,7 @@
 	}
 
 	// Add custom buttons
-	let goodTube_iframe_addCustomButtons_timeout = false;
+	let goodTube_iframe_addCustomButtons_timeout = setTimeout(() => {}, 0);
 	function goodTube_iframe_addCustomButtons() {
 		// Target the play button
 		let playButton = document.querySelector('.ytp-play-button');
@@ -3556,16 +3560,32 @@
 	------------------------------------------------------------------------------------------ */
 	// Init
 	function goodTube_proxyIframe_init() {
-		// Wait for the DOM to load
-		document.addEventListener("DOMContentLoaded", goodTube_proxyIframe_initLoaded);
+		// Listen for messages from the parent window
+		window.addEventListener('message', goodTube_proxyIframe_receiveMessage);
+		
+		// Init the rest once the DOM is ready
+		document.addEventListener('DOMContentLoaded', goodTube_proxyIframe_init_domReady);
 
 		// Also check if the DOM is already loaded, as if it is, the above event listener will not trigger
-		if (document.readyState === "interactive" || document.readyState === "complete") {
-			goodTube_proxyIframe_initLoaded();
+		if (document.readyState === 'interactive' || document.readyState === 'complete') {
+			goodTube_proxyIframe_init_domReady();
 		}
 	}
 
-	function goodTube_proxyIframe_initLoaded() {
+	// Init when DOM is ready
+	function goodTube_proxyIframe_init_domReady() {
+		// Hide the proxy iframe page (safety measure to ensure users never see it)
+		goodTube_proxyIframe_hidePage();
+
+		// Add the Youtube iframe
+		goodTube_proxyIframe_addYoutubeIframe();
+
+		// Let the parent frame know it's loaded
+		window.top.postMessage('goodTube_proxyIframe_loaded', '*');
+	}
+
+	// Hide the proxy iframe page
+	function goodTube_proxyIframe_hidePage() {
 		// Hide the DOM elements from the proxy page
 		let elements = document.querySelectorAll('body > *');
 		elements.forEach(element => {
@@ -3579,7 +3599,10 @@
 
 		// Change the background colour
 		document.body.style.background = '#000000';
+	}
 
+	// Add the Youtube iframe
+	function goodTube_proxyIframe_addYoutubeIframe() {
 		// Create a youtube iframe
 		let youtubeIframe = document.createElement('div');
 
@@ -3608,12 +3631,6 @@
 		youtubeIframe.style.right = '0';
 		youtubeIframe.style.left = '0';
 		youtubeIframe.style.zIndex = '99999';
-
-		// Listen for messages from the parent window
-		window.addEventListener('message', goodTube_proxyIframe_receiveMessage);
-
-		// Let the parent frame know it's loaded
-		window.top.postMessage('goodTube_proxyIframe_loaded', '*');
 	}
 
 	// Receive a message from the parent window
@@ -3649,33 +3666,21 @@
 
 	/* Start GoodTube
 	------------------------------------------------------------------------------------------ */
-	let goodTube_init_route_timeout = setTimeout(() => {}, 0);
-	function goodTube_init_route() {
-		// Make sure the document head exists
-		if (document.head) {
-			// Youtube page
-			if (window.top === window.self && window.location.href.indexOf('youtube') !== -1) {
-				goodTube_init();
-			}
-			// Proxy iframe embed
-			else if (window.location.href.indexOf('?goodTubeProxy=1') !== -1) {
-				goodTube_proxyIframe_init();
-			}
-			// Iframe embed
-			else if (window.location.href.indexOf('?goodTubeEmbed=1') !== -1) {
-				goodTube_iframe_init();
-			}
+	function goodTube_start() {
+		// Youtube page
+		if (window.top === window.self && window.location.href.indexOf('youtube') !== -1) {
+			goodTube_init();
 		}
-		// Otherwise, retry
-		else {
-			// Clear timeout first to solve memory leak issues
-			clearTimeout(goodTube_init_route_timeout);
-
-			// Loop this function
-			goodTube_init_route_timeout = setTimeout(goodTube_init_route, 1);
+		// Proxy iframe embed
+		else if (window.location.href.indexOf('?goodTubeProxy=1') !== -1) {
+			goodTube_proxyIframe_init();
+		}
+		// Iframe embed
+		else if (window.location.href.indexOf('?goodTubeEmbed=1') !== -1) {
+			goodTube_iframe_init();
 		}
 	}
 
 	// Let's go!
-	goodTube_init_route();
+	goodTube_start();
 })();
