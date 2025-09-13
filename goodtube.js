@@ -871,8 +871,8 @@
 	// Add keyboard shortcuts
 	function goodTube_shortcuts_init() {
 		document.addEventListener('keydown', function (event) {
-			// Don't do anything if we're holding control OR the command key on mac OR the "hide and mute ads" fallback is active
-			if (event.ctrlKey || event.metaKey || goodTube_fallback) {
+			// Don't do anything if we're holding control OR alt OR the command key on mac OR the "hide and mute ads" fallback is active
+			if (event.ctrlKey || event.altKey || event.metaKey || goodTube_fallback) {
 				return;
 			}
 
@@ -3003,8 +3003,8 @@
 	// Add keyboard shortcuts
 	function goodTube_iframe_addKeyboardShortcuts() {
 		document.addEventListener('keydown', function (event) {
-			// Don't do anything if we're holding control OR the command key on mac OR the "hide and mute ads" fallback is active
-			if (event.ctrlKey || event.metaKey || goodTube_fallback) {
+			// Don't do anything if we're holding control OR alt OR the command key on mac OR the "hide and mute ads" fallback is active
+			if (event.ctrlKey || event.altKey || event.metaKey || goodTube_fallback) {
 				return;
 			}
 
