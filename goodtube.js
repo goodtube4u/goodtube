@@ -2569,6 +2569,7 @@
 	}
 
 	// Init when DOM is ready
+	let goodTube_iframe_init_domReady_timeout = setTimeout(() => {}, 0);
 	function goodTube_iframe_init_domReady() {
 		// Add the main styles
 		goodTube_iframe_style();
@@ -2585,10 +2586,10 @@
 		// Keep trying to get the frame API until it exists
 		if (!videoData) {
 			// Clear timeout first to solve memory leak issues
-			clearTimeout(goodTube_iframe_init_timeout);
+			clearTimeout(goodTube_iframe_init_domReady_timeout);
 
 			// Create a new timeout
-			goodTube_iframe_init_timeout = setTimeout(goodTube_iframe_init, 100);
+			goodTube_iframe_init_domReady_timeout = setTimeout(goodTube_iframe_init_domReady_timeout, 100);
 
 			return;
 		}
