@@ -3278,6 +3278,11 @@
 				event.preventDefault();
 				event.stopImmediatePropagation();
 
+				// Make sure 2x playback isn't already active
+				if (doublePlaybackRate) {
+					return;
+				}
+
 				// Only do this once
 				if (keyDownFired) {
 					return;
@@ -3380,6 +3385,11 @@
 			// Prevent default actions
 			event.preventDefault();
 			event.stopImmediatePropagation();
+
+			// Make sure 2x playback isn't already active
+			if (doublePlaybackRate) {
+				return;
+			}
 
 			// Save the current playback rate
 			currentPlaybackRate = goodTube_iframe_api.getPlaybackRate();
