@@ -4007,9 +4007,6 @@
 	------------------------------------------------------------------------------------------ */
 	// Init
 	function goodTube_proxyIframe_init() {
-		// Listen for messages from the parent window
-		window.addEventListener('message', goodTube_proxyIframe_receiveMessage);
-
 		// Init the rest once the DOM is ready
 		document.addEventListener('DOMContentLoaded', goodTube_proxyIframe_init_domReady);
 
@@ -4021,6 +4018,9 @@
 
 	// Init when DOM is ready
 	function goodTube_proxyIframe_init_domReady() {
+		// Listen for messages from the parent window
+		window.addEventListener('message', goodTube_proxyIframe_receiveMessage);
+
 		// Hide the proxy iframe page (safety measure to ensure users never see it)
 		goodTube_proxyIframe_hidePage();
 
