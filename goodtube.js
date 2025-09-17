@@ -2887,6 +2887,11 @@
 				top: 0 !important;
 			}
 
+			/* Disable click events on the top area */
+			.ytp-chrome-top {
+				pointer-events: none !important;
+			}
+
 			/* Always show the next button */
 			.ytp-next-button {
 				opacity: 1 !important;
@@ -3211,6 +3216,42 @@
 		}
 
 
+		/* Add the UI (2x speed)
+		-------------------------------------------------- */
+		// Create the element
+		let doubleSpeedElement = document.createElement('div');
+
+		// Add the classes
+		doubleSpeedElement.classList.add('goodTube_doubleSpeed');
+
+		// Style the element (this is required for fullscreen mode)
+		doubleSpeedElement.style.position = 'relative';
+		doubleSpeedElement.style.zIndex = '999';
+
+		// Hide the element
+		doubleSpeedElement.style.display = 'none';
+
+		// Populate the element
+		doubleSpeedElement.innerHTML = `
+			<div class="ytp-overlay ytp-speedmaster-overlay" data-layer="4">
+				<div class="ytp-speedmaster-user-edu ytp-speedmaster-has-icon">
+					<div class="ytp-speedmaster-label">2x</div>
+					<div class="ytp-speedmaster-icon">
+						<svg height="100%" version="1.1" viewBox="0 0 36 36" width="100%">
+							<use class="ytp-svg-shadow" xlink:href="#ytp-id-1"></use><path class="ytp-svg-fill" d="M 10,24 18.5,18 10,12 V 24 z M 19,12 V 24 L 27.5,18 19,12 z" id="ytp-id-1"></path>
+						</svg>
+					</div>
+				</div>
+			</div>
+		`;
+
+		// Add the element to the page
+		let targetElement = document.querySelector('.html5-video-player');
+		if (targetElement) {
+			targetElement.appendChild(doubleSpeedElement);
+		}
+
+
 		/* Key down
 		-------------------------------------------------- */
 		document.addEventListener('keydown', function (event) {
@@ -3249,6 +3290,9 @@
 
 					// Play the video
 					goodTube_iframe_api.playVideo();
+
+					// Show the UI element
+					doubleSpeedElement.style.display = 'block';
 
 					// Indicate that 2x playback rate happened
 					doublePlaybackRate = true;
@@ -3308,6 +3352,9 @@
 					// Restore the playback rate
 					goodTube_iframe_api.setPlaybackRate(currentPlaybackRate);
 
+					// Hide the UI element
+					doubleSpeedElement.style.display = 'none';
+
 					// Indicate that the double playback rate has not happened
 					doublePlaybackRate = false;
 				}
@@ -3338,6 +3385,9 @@
 
 				// Play the video
 				goodTube_iframe_api.playVideo();
+
+				// Show the UI element
+				doubleSpeedElement.style.display = 'block';
 
 				// Indicate that 2x playback rate happened
 				doublePlaybackRate = true;
@@ -3387,6 +3437,9 @@
 			else {
 				// Restore the playback rate
 				goodTube_iframe_api.setPlaybackRate(currentPlaybackRate);
+
+				// Hide the UI element
+				doubleSpeedElement.style.display = 'none';
 
 				// Indicate that the double playback rate has not happened
 				doublePlaybackRate = false;
