@@ -870,7 +870,16 @@
 	------------------------------------------------------------------------------------------ */
 	// Add keyboard shortcuts
 	function goodTube_shortcuts_init() {
+		let keyDownFired = false;
 		document.addEventListener('keydown', function (event) {
+			// Only do this once
+			if (keyDownFired) {
+				return;
+			}
+
+			// Indicate the keydown has fired
+			keyDownFired = true;
+
 			// Don't do anything if we're holding control OR alt OR the command key on mac OR the "hide and mute ads" fallback is active
 			if (event.ctrlKey || event.altKey || event.metaKey || goodTube_fallback) {
 				return;
@@ -924,7 +933,7 @@
 					event.stopImmediatePropagation();
 
 					// Pass the keyboard shortcut to the iframe
-					goodTube_player.contentWindow.postMessage('goodTube_shortcut_' + keyPressed, '*');
+					goodTube_player.contentWindow.postMessage('goodTube_shortcut_keydown_' + keyPressed, '*');
 				}
 
 				// If we're not holding down the shift key
@@ -978,7 +987,7 @@
 						event.stopImmediatePropagation();
 
 						// Pass the keyboard shortcut to the iframe
-						goodTube_player.contentWindow.postMessage('goodTube_shortcut_' + keyPressed, '*');
+						goodTube_player.contentWindow.postMessage('goodTube_shortcut_keydown_' + keyPressed, '*');
 
 						// Force mouse move to make sure fullscreen hides
 						var event = new Event('mousemove');
@@ -1003,6 +1012,120 @@
 						if (!document.fullscreenElement) {
 							document.querySelector('.ytp-size-button')?.click();
 						}
+					}
+				}
+			}
+		}, true);
+
+
+		document.addEventListener('keyup', function (event) {
+			// Indicate the keydown has not fired
+			keyDownFired = false;
+
+			// Don't do anything if we're holding control OR alt OR the command key on mac OR the "hide and mute ads" fallback is active
+			if (event.ctrlKey || event.altKey || event.metaKey || goodTube_fallback) {
+				return;
+			}
+
+			// Make sure we're watching a video
+			if (window.location.href.indexOf('/watch?') === -1) {
+				return;
+			}
+
+			// Get the key pressed in lower case
+			let keyPressed = event.key.toLowerCase();
+
+			// If we're not focused on a HTML form element
+			let focusedElement = event.srcElement;
+			let focusedElement_tag = false;
+			let focusedElement_id = false;
+			if (focusedElement) {
+				if (typeof focusedElement.nodeName !== 'undefined') {
+					focusedElement_tag = focusedElement.nodeName.toLowerCase();
+				}
+
+				if (typeof focusedElement.getAttribute !== 'undefined') {
+					focusedElement_id = focusedElement.getAttribute('id');
+				}
+			}
+
+			if (
+				!focusedElement ||
+				(
+					focusedElement_tag.indexOf('input') === -1 &&
+					focusedElement_tag.indexOf('label') === -1 &&
+					focusedElement_tag.indexOf('select') === -1 &&
+					focusedElement_tag.indexOf('textarea') === -1 &&
+					focusedElement_tag.indexOf('fieldset') === -1 &&
+					focusedElement_tag.indexOf('legend') === -1 &&
+					focusedElement_tag.indexOf('datalist') === -1 &&
+					focusedElement_tag.indexOf('output') === -1 &&
+					focusedElement_tag.indexOf('option') === -1 &&
+					focusedElement_tag.indexOf('optgroup') === -1 &&
+					focusedElement_id !== 'contenteditable-root'
+				)
+			) {
+				if (
+					// Speed up playback
+					keyPressed === '>' ||
+					// Slow down playback
+					keyPressed === '<'
+				) {
+					event.preventDefault();
+					event.stopImmediatePropagation();
+
+					// Pass the keyboard shortcut to the iframe
+					goodTube_player.contentWindow.postMessage('goodTube_shortcut_keyup_' + keyPressed, '*');
+				}
+
+				// If we're not holding down the shift key
+				if (!event.shiftKey) {
+					if (
+						// Prev frame (24fps calculation)
+						keyPressed === ',' ||
+						// Next frame (24fps calculation)
+						keyPressed === '.' ||
+						// Prev 5 seconds
+						keyPressed === 'arrowleft' ||
+						// Next 5 seconds
+						keyPressed === 'arrowright' ||
+						// Toggle play/pause
+						keyPressed === ' ' || keyPressed === 'k' ||
+						// Toggle mute
+						keyPressed === 'm' ||
+						// Toggle fullscreen
+						keyPressed === 'f' ||
+						// Toggle captions
+						keyPressed === 'c' ||
+						// Prev 10 seconds
+						keyPressed === 'j' ||
+						// Next 10 seconds
+						keyPressed === 'l' ||
+						// Start of video
+						keyPressed === 'home' ||
+						// End of video
+						keyPressed === 'end' ||
+						// Skip to percentage
+						keyPressed === '0' ||
+						keyPressed === '1' ||
+						keyPressed === '2' ||
+						keyPressed === '3' ||
+						keyPressed === '4' ||
+						keyPressed === '5' ||
+						keyPressed === '6' ||
+						keyPressed === '7' ||
+						keyPressed === '8' ||
+						keyPressed === '9'
+					) {
+						event.preventDefault();
+						event.stopImmediatePropagation();
+
+						// Pass the keyboard shortcut to the iframe
+						goodTube_player.contentWindow.postMessage('goodTube_shortcut_keyup_' + keyPressed, '*');
+
+						// Force mouse move to make sure fullscreen hides
+						var event = new Event('mousemove');
+						document.dispatchEvent(event);
 					}
 				}
 			}
@@ -1369,8 +1492,8 @@
 			goodTube_autoplay = 'true';
 		}
 
-		// Sync main player (only if the "hide and mute ads" fallback is inactive)
-		else if (event.data.indexOf('goodTube_syncMainPlayer_') !== -1 && !goodTube_fallback) {
+		// Sync main player (only if we're viewing a video page AND the "hide and mute ads" fallback is inactive)
+		else if (event.data.indexOf('goodTube_syncMainPlayer_') !== -1 && window.location.href.indexOf('/watch?') !== -1 && !goodTube_fallback) {
 			// Target the youtube video element
 			let youtubeVideoElement = document.querySelector('#movie_player video');
 
@@ -2309,7 +2432,7 @@
 					focusedElement_id !== 'contenteditable-root'
 				)
 			) {
-				if (keyPressed === ' ' || keyPressed === 'm' || keyPressed === 'i') {
+				if (keyPressed === ' ' || keyPressed === 'k' || keyPressed === 'm' || keyPressed === 'i') {
 					event.preventDefault();
 					event.stopImmediatePropagation();
 				}
@@ -2556,9 +2679,6 @@
 	------------------------------------------------------------------------------------------ */
 	// Init
 	function goodTube_iframe_init() {
-		// Listen for messages from the parent window
-		window.addEventListener('message', goodTube_iframe_receiveMessage);
-
 		// Init the rest once the DOM is ready
 		document.addEventListener('DOMContentLoaded', goodTube_iframe_init_domReady);
 
@@ -2571,9 +2691,6 @@
 	// Init when DOM is ready
 	let goodTube_iframe_init_domReady_timeout = setTimeout(() => {}, 0);
 	function goodTube_iframe_init_domReady() {
-		// Add the main styles
-		goodTube_iframe_style();
-
 		// Get the iframe API
 		goodTube_iframe_api = document.getElementById('movie_player');
 
@@ -2594,6 +2711,12 @@
 			return;
 		}
 
+		// Listen for messages from the parent window
+		window.addEventListener('message', goodTube_iframe_receiveMessage);
+
+		// Add the main styles
+		goodTube_iframe_style();
+
 		// Add custom buttons
 		goodTube_iframe_addCustomButtons();
 
@@ -2602,6 +2725,9 @@
 
 		// Add keyboard shortcuts
 		goodTube_iframe_addKeyboardShortcuts();
+
+		// Support double speed shortcuts
+		goodTube_iframe_supportDoubleSpeed();
 
 		// Support picture in picture
 		goodTube_iframe_pip();
@@ -3013,14 +3139,17 @@
 				return;
 			}
 
+			// Get the key pressed (in lowercase)
+			let keyPressed = event.key.toLowerCase();
+
 			// Theater mode (t)
-			if (event.key === 't') {
+			if (keyPressed === 't') {
 				// Tell the top window to toggle theater mode
 				window.top.postMessage('goodTube_theater', '*');
 			}
 
 			// Picture in picture (i)
-			if (event.key === 'i') {
+			if (keyPressed === 'i') {
 				let pipButton = document.querySelector('.ytp-pip-button');
 				if (pipButton) {
 					pipButton.click();
@@ -3028,17 +3157,268 @@
 			}
 
 			// Prev video (shift+p)
-			else if (event.key.toLowerCase() === 'p' && event.shiftKey) {
+			else if (keyPressed === 'p' && event.shiftKey) {
 				// Tell the top window to go to the previous video
 				window.top.postMessage('goodTube_prevVideo', '*');
 			}
 
 			// Next video (shift+n)
-			else if (event.key.toLowerCase() === 'n' && event.shiftKey) {
+			else if (keyPressed === 'n' && event.shiftKey) {
 				// Tell the top window to go to the next video
 				window.top.postMessage('goodTube_nextVideo', '*');
 			}
 		});
+	}
+
+	// Support double speed shortcuts
+	let goodTube_iframe_supportDoubleSpeed_timeout = setTimeout(() => {}, 0);
+	function goodTube_iframe_supportDoubleSpeed() {
+		/* Setup vars
+		-------------------------------------------------- */
+		let holdTimeout = setTimeout(() => {}, 0);
+		let doublePlaybackRate = false;
+		let currentPlaybackRate = 1;
+		let keyDownFired = false;
+		let videoElement = document.querySelector('video');
+
+
+		/* Make sure the video element exists
+		-------------------------------------------------- */
+		if (!videoElement) {
+			// Clear timeout first to solve memory leak issues
+			clearTimeout(goodTube_iframe_supportDoubleSpeed_timeout);
+
+			// Create a new timeout
+			goodTube_iframe_supportDoubleSpeed_timeout = setTimeout(goodTube_iframe_supportDoubleSpeed, 100);
+
+			return;
+		}
+
+
+		/* Make sure the API is all good
+		-------------------------------------------------- */
+		// Get the iframe API
+		goodTube_iframe_api = document.getElementById('movie_player');
+
+		if (!goodTube_iframe_api || typeof goodTube_iframe_api.getPlaybackRate !== 'function' || typeof goodTube_iframe_api.setPlaybackRate !== 'function' || typeof goodTube_iframe_api.playVideo !== 'function') {
+			// Clear timeout first to solve memory leak issues
+			clearTimeout(goodTube_iframe_supportDoubleSpeed_timeout);
+
+			// Create a new timeout
+			goodTube_iframe_supportDoubleSpeed_timeout = setTimeout(goodTube_iframe_supportDoubleSpeed, 100);
+
+			return;
+		}
+
+
+		/* Key down
+		-------------------------------------------------- */
+		document.addEventListener('keydown', function (event) {
+			// Don't do anything if we're holding control OR alt OR the command key on mac OR the "hide and mute ads" fallback is active
+			if (event.ctrlKey || event.altKey || event.metaKey || goodTube_fallback) {
+				return;
+			}
+
+			// Get the key pressed (in lowercase)
+			let keyPressed = event.key.toLowerCase();
+
+			// 2x playback rate
+			if (keyPressed === ' ' || keyPressed === 'k') {
+				// Prevent default actions
+				event.preventDefault();
+				event.stopImmediatePropagation();
+
+				// Only do this once
+				if (keyDownFired) {
+					return;
+				}
+
+				// Indicate that the keydown has fired
+				keyDownFired = true;
+
+				// Save the current playback rate
+				currentPlaybackRate = goodTube_iframe_api.getPlaybackRate();
+
+				// Clear the hold timeout
+				clearTimeout(holdTimeout);
+
+				// Create a timeout to move into 2x playback rate after 1s
+				holdTimeout = setTimeout(() => {
+					// Set to 2x playback rate
+					goodTube_iframe_api.setPlaybackRate(2);
+
+					// Play the video
+					goodTube_iframe_api.playVideo();
+
+					// Indicate that 2x playback rate happened
+					doublePlaybackRate = true;
+				}, 1000);
+			}
+		}, true);
+
+
+		/* Key press
+		-------------------------------------------------- */
+		document.addEventListener('keypress', function (event) {
+			// Don't do anything if we're holding control OR alt OR the command key on mac OR the "hide and mute ads" fallback is active
+			if (event.ctrlKey || event.altKey || event.metaKey || goodTube_fallback) {
+				return;
+			}
+
+			// Get the key pressed (in lowercase)
+			let keyPressed = event.key.toLowerCase();
+
+			// 2x playback rate
+			if (keyPressed === ' ' || keyPressed === 'k') {
+				// Prevent default actions
+				event.preventDefault();
+				event.stopImmediatePropagation();
+			}
+		}, true);
+
+
+		/* Key up
+		-------------------------------------------------- */
+		document.addEventListener('keyup', function (event) {
+			// Don't do anything if we're holding control OR alt OR the command key on mac OR the "hide and mute ads" fallback is active
+			if (event.ctrlKey || event.altKey || event.metaKey || goodTube_fallback) {
+				return;
+			}
+
+			// Get the key pressed (in lowercase)
+			let keyPressed = event.key.toLowerCase();
+
+			// 2x playback rate
+			if (keyPressed === ' ' || keyPressed === 'k') {
+				// Prevent default actions
+				event.preventDefault();
+				event.stopImmediatePropagation();
+
+				// Clear the hold timeout
+				clearTimeout(holdTimeout);
+
+				// If double playback rate did not happen
+				if (!doublePlaybackRate) {
+					// Click the video element
+					allowNextClick = true;
+					videoElement.click();
+				}
+				// Otherwise, double playback rate did happen
+				else {
+					// Restore the playback rate
+					goodTube_iframe_api.setPlaybackRate(currentPlaybackRate);
+
+					// Indicate that the double playback rate has not happened
+					doublePlaybackRate = false;
+				}
+
+				// Indicate that the keydown has not fired
+				keyDownFired = false;
+			}
+		}, true);
+
+
+		/* Mouse down / touch start
+		-------------------------------------------------- */
+		function mouseDownTouchStart(event) {
+			// Prevent default actions
+			event.preventDefault();
+			event.stopImmediatePropagation();
+
+			// Save the current playback rate
+			currentPlaybackRate = goodTube_iframe_api.getPlaybackRate();
+
+			// Clear the hold timeout
+			clearTimeout(holdTimeout);
+
+			// Create a timeout to move into 2x playback rate after 1s
+			holdTimeout = setTimeout(() => {
+				// Set to 2x playback rate
+				goodTube_iframe_api.setPlaybackRate(2);
+
+				// Play the video
+				goodTube_iframe_api.playVideo();
+
+				// Indicate that 2x playback rate happened
+				doublePlaybackRate = true;
+			}, 1000);
+		}
+
+		videoElement.addEventListener('mousedown', mouseDownTouchStart, true);
+		videoElement.addEventListener('touchstart', mouseDownTouchStart, true);
+
+
+		/* Click
+		-------------------------------------------------- */
+		let allowNextClick = false;
+		videoElement.addEventListener('click', function (event) {
+			// This fixes a weird issue, not sure what the active element is here but it seems to mess with our event listeners unless we do this
+			videoElement.focus();
+
+			// If we're not allowing the next click
+			if (!allowNextClick) {
+				// Prevent default actions
+				event.preventDefault();
+				event.stopImmediatePropagation();
+			}
+
+			// Disallow further clicks
+			allowNextClick = false;
+		}, true);
+
+
+		/* Mouse up / touch end
+		-------------------------------------------------- */
+		function mouseUpTouchEnd(event) {
+			// Prevent default actions
+			event.preventDefault();
+			event.stopImmediatePropagation();
+
+			// Clear the hold timeout
+			clearTimeout(holdTimeout);
+
+			// If double playback rate did not happen
+			if (!doublePlaybackRate) {
+				// Click the video element
+				allowNextClick = true;
+				videoElement.click();
+			}
+			// Otherwise, double playback rate did happen
+			else {
+				// Restore the playback rate
+				goodTube_iframe_api.setPlaybackRate(currentPlaybackRate);
+
+				// Indicate that the double playback rate has not happened
+				doublePlaybackRate = false;
+			}
+		}
+
+		videoElement.addEventListener('mouseup', mouseUpTouchEnd, true);
+		videoElement.addEventListener('touchend', mouseUpTouchEnd, true);
+
+
+		/* Mouse out / touch cancel
+		-------------------------------------------------- */
+		function mouseOutTouchCancel(event) {
+			// Prevent default actions
+			event.preventDefault();
+			event.stopImmediatePropagation();
+
+			// Clear the hold timeout
+			clearTimeout(holdTimeout);
+
+			// If double playback rate happened
+			if (doublePlaybackRate) {
+				// Restore the playback rate
+				goodTube_iframe_api.setPlaybackRate(currentPlaybackRate);
+
+				// Indicate that the double playback rate has not happened
+				doublePlaybackRate = false;
+			}
+		}
+
+		videoElement.addEventListener('mouseout', mouseOutTouchCancel, true);
+		videoElement.addEventListener('touchcancel', mouseOutTouchCancel, true);
 	}
 
 	// Load a video
@@ -3130,10 +3510,10 @@
 			}
 		}
 
-		// Keyboard shortcut
-		else if (event.data.indexOf('goodTube_shortcut_') !== -1) {
+		// Keyboard shortcut (keydown)
+		else if (event.data.indexOf('goodTube_shortcut_keydown_') !== -1) {
 			// Get the key pressed
-			let keyPressed = event.data.replace('goodTube_shortcut_', '');
+			let keyPressed = event.data.replace('goodTube_shortcut_keydown_', '');
 
 			// Target the player
 			let player = document.querySelector('video');
@@ -3227,12 +3607,8 @@
 
 				// Toggle play/pause
 				if (keyPressed === ' ' || keyPressed === 'k') {
-					if (player.paused || player.ended) {
-						player.play();
-					}
-					else {
-						player.pause();
-					}
+					// Simulate a mousedown event on the <video> element
+					player.dispatchEvent(new MouseEvent('mousedown'));
 				}
 
 				// Toggle mute
@@ -3313,6 +3689,25 @@
 				else if (keyPressed === '9') {
 					player.currentTime = ((player.duration / 100) * 90);
 				}
+			}
+		}
+
+
+		// Keyboard shortcut (keyup)
+		else if (event.data.indexOf('goodTube_shortcut_keyup_') !== -1) {
+			// Get the key pressed
+			let keyPressed = event.data.replace('goodTube_shortcut_keyup_', '');
+
+			// Target the player
+			let player = document.querySelector('video');
+			if (!player) {
+				return;
+			}
+
+			// Toggle play/pause
+			if (keyPressed === ' ' || keyPressed === 'k') {
+				// Simulate a mouseup event on the <video> element
+				player.dispatchEvent(new MouseEvent('mouseup'));
 			}
 		}
 
@@ -3503,14 +3898,12 @@
 	// Sync the main player
 	let goodTube_iframe_syncMainPlayer_timeout = setTimeout(() => {}, 0);
 	function goodTube_iframe_syncMainPlayer() {
-		// If we're viewing a video page
-		if (window.top.location.href.indexOf('/watch?') !== -1) {
-			let videoElement = document.querySelector('video');
+		// Target the video element
+		let videoElement = document.querySelector('video');
 
-			if (videoElement) {
-				// Tell the parent frame to sync the video (pass in the time we want to sync to and the total video duration - we use the duration to detect if an ad is playing)
-				window.top.postMessage('goodTube_syncMainPlayer_' + videoElement.currentTime + '_' + videoElement.duration, '*');
-			}
+		if (videoElement) {
+			// Tell the parent frame to sync the video (pass in the time we want to sync to and the total video duration - we use the duration to detect if an ad is playing)
+			window.top.postMessage('goodTube_syncMainPlayer_' + videoElement.currentTime + '_' + videoElement.duration, '*');
 		}
 
 		// Clear timeout first to solve memory leak issues
@@ -3563,7 +3956,7 @@
 	function goodTube_proxyIframe_init() {
 		// Listen for messages from the parent window
 		window.addEventListener('message', goodTube_proxyIframe_receiveMessage);
-		
+
 		// Init the rest once the DOM is ready
 		document.addEventListener('DOMContentLoaded', goodTube_proxyIframe_init_domReady);
 
