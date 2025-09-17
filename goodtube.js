@@ -1375,7 +1375,7 @@
 	------------------------------------------------------------------------------------------ */
 	// Init
 	function goodTube_init() {
-		// Listen for messages from the iframe
+		// Listen for messages from the iframes
 		window.addEventListener('message', goodTube_receiveMessage);
 
 		// Mute and pause all Youtube videos
@@ -1426,6 +1426,15 @@
 		// Make sure some data exists
 		if (typeof event.data !== 'string') {
 			return;
+		}
+
+		// Make sure the DOM is ready, if not retry (this ensures that the message will fire eventually)
+		if ((document.readyState !== 'interactive' && document.readyState !== 'complete') || !document.body || !document.head) {
+			// Clear timeout first to solve memory leak issues
+			clearTimeout(goodTube_receiveMessage_timeout);
+
+			// Create a new timeout
+			goodTube_receiveMessage_timeout = setTimeout(() => { goodTube_receiveMessage(event); }, 1);
 		}
 
 		// Proxy iframe has loaded
@@ -2679,6 +2688,9 @@
 	------------------------------------------------------------------------------------------ */
 	// Init
 	function goodTube_iframe_init() {
+		// Listen for messages from the parent window
+		window.addEventListener('message', goodTube_iframe_receiveMessage);
+
 		// Init the rest once the DOM is ready
 		document.addEventListener('DOMContentLoaded', goodTube_iframe_init_domReady);
 
@@ -2710,9 +2722,6 @@
 
 			return;
 		}
-
-		// Listen for messages from the parent window
-		window.addEventListener('message', goodTube_iframe_receiveMessage);
 
 		// Add the main styles
 		goodTube_iframe_style();
@@ -3492,10 +3501,20 @@
 	}
 
 	// Receive a message from the parent window
+	let goodTube_iframe_receiveMessage_timeout = setTimeout(() => {}, 0);
 	function goodTube_iframe_receiveMessage(event) {
 		// Make sure some data exists
 		if (typeof event.data !== 'string') {
 			return;
+		}
+
+		// Make sure the DOM is ready, if not retry (this ensures that the message will fire eventually)
+		if ((document.readyState !== 'interactive' && document.readyState !== 'complete') || !document.body || !document.head) {
+			// Clear timeout first to solve memory leak issues
+			clearTimeout(goodTube_iframe_receiveMessage_timeout);
+
+			// Create a new timeout
+			goodTube_iframe_receiveMessage_timeout = setTimeout(() => { goodTube_iframe_receiveMessage(event); }, 1);
 		}
 
 		// Load video
@@ -4007,6 +4026,9 @@
 	------------------------------------------------------------------------------------------ */
 	// Init
 	function goodTube_proxyIframe_init() {
+		// Listen for messages from the parent window
+		window.addEventListener('message', goodTube_proxyIframe_receiveMessage);
+
 		// Init the rest once the DOM is ready
 		document.addEventListener('DOMContentLoaded', goodTube_proxyIframe_init_domReady);
 
@@ -4018,9 +4040,6 @@
 
 	// Init when DOM is ready
 	function goodTube_proxyIframe_init_domReady() {
-		// Listen for messages from the parent window
-		window.addEventListener('message', goodTube_proxyIframe_receiveMessage);
-
 		// Hide the proxy iframe page (safety measure to ensure users never see it)
 		goodTube_proxyIframe_hidePage();
 
@@ -4081,10 +4100,20 @@
 	}
 
 	// Receive a message from the parent window
+	let goodTube_proxyIframe_receiveMessage_timeout = setTimeout(() => {}, 0);
 	function goodTube_proxyIframe_receiveMessage(event) {
 		// Make sure some data exists
 		if (typeof event.data !== 'string') {
 			return;
+		}
+
+		// Make sure the DOM is ready, if not retry (this ensures that the message will fire eventually)
+		if (document.readyState !== 'interactive' && document.readyState !== 'complete') {
+			// Clear timeout first to solve memory leak issues
+			clearTimeout(goodTube_proxyIframe_receiveMessage_timeout);
+
+			// Create a new timeout
+			goodTube_proxyIframe_receiveMessage_timeout = setTimeout(() => { goodTube_proxyIframe_receiveMessage(event); }, 1);
 		}
 
 		// Target the youtube iframe
@@ -4107,6 +4136,14 @@
 			else {
 				youtubeIframe.contentWindow.postMessage(event.data, '*');
 			}
+		}
+		// Otherwise, try again
+		else {
+			// Clear timeout first to solve memory leak issues
+			clearTimeout(goodTube_proxyIframe_receiveMessage_timeout);
+
+			// Create a new timeout
+			goodTube_proxyIframe_receiveMessage_timeout = setTimeout(() => { goodTube_proxyIframe_receiveMessage(event); }, 1);
 		}
 	}
 
