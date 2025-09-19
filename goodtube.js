@@ -318,7 +318,13 @@
 		// Hide suggested videos if they're not enabled
 		if (goodTube_hideSuggestedVideos === 'true') {
 			cssOutput += `
-				ytd-watch-flexy #secondary {
+				/* Hide suggested videos */
+				ytd-watch-flexy #secondary #related {
+					display: none !important;
+				}
+
+				/* Hide full sidebar if not playlist */
+				ytd-watch-flexy #secondary:not(:has(ytd-playlist-panel-video-renderer)) {
 					display: none !important;
 				}
 			`;
