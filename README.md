@@ -12,7 +12,7 @@ It also provides a few additional options:
 - Hide sidebar suggested videos
 - Hide comments
 
-*These can be accessed via the custom settings menu. You will find this down the bottom right of Youtube when installed.*
+*\* These can be accessed via the custom settings menu. You will find this down the bottom right of Youtube when installed.*
 
 ## How to install
 **1. Install Tampermonkey**<br>
