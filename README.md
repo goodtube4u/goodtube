@@ -5,10 +5,12 @@
 
 It uses an alternative method to remove ads, which means it will continue to work even when other conventional adblockers such as uBlock Origin, AdGuard, Ghostery, Brave Browser, etc aren't working.
 
-It also provides a few additional features -
-- An option to completely remove all shorts (enabled by default).
-- An option to hide info cards from videos.
-- An option to hide end screen suggested videos.
+It also provides a few additional options (accessed via the custom settings menu button at the bottom right of Youtube) -
+- Remove all shorts from Youtube (enabled by default)
+- Hide info cards from videos
+- Hide end screen suggested videos
+- Hide sidebar suggested videos
+- Hide comments
 
 ## How to install
 **1. Install Tampermonkey**<br>
