@@ -170,42 +170,45 @@
 	let goodTube_fallback = false;
 
 	// Are shorts enabled?
-	let goodTube_shorts = 'false';
-	if (window.top === window.self) {
-		goodTube_shorts = goodTube_helper_getCookie('goodTube_shorts');
-
-		if (!goodTube_shorts) {
-			goodTube_helper_setCookie('goodTube_shorts', 'false');
-		}
+	let goodTube_shorts = goodTube_helper_getCookie('goodTube_shorts');
+	if (!goodTube_shorts) {
+		goodTube_helper_setCookie('goodTube_shorts', 'false');
+		goodTube_shorts = 'false';
 	}
 
 	// Are info cards enabled?
-	let goodTube_hideInfoCards = 'false';
-	if (window.top === window.self) {
-		goodTube_hideInfoCards = goodTube_helper_getCookie('goodTube_hideInfoCards');
-
-		if (!goodTube_hideInfoCards) {
-			goodTube_helper_setCookie('goodTube_hideInfoCards', 'true');
-		}
+	let goodTube_hideInfoCards = goodTube_helper_getCookie('goodTube_hideInfoCards');
+	if (!goodTube_hideInfoCards) {
+		goodTube_helper_setCookie('goodTube_hideInfoCards', 'false');
+		goodTube_hideInfoCards = 'false';
 	}
 
 	// Is the end screen enabled (suggested videos)?
-	let goodTube_hideEndScreen = 'false';
-	if (window.top === window.self) {
-		goodTube_hideEndScreen = goodTube_helper_getCookie('goodTube_hideEndScreen');
+	let goodTube_hideEndScreen = goodTube_helper_getCookie('goodTube_hideEndScreen');
+	if (!goodTube_hideEndScreen) {
+		goodTube_helper_setCookie('goodTube_hideEndScreen', 'false');
+		goodTube_hideEndScreen = 'false';
+	}
 
-		if (!goodTube_hideEndScreen) {
-			goodTube_helper_setCookie('goodTube_hideEndScreen', 'true');
-		}
+	// Are suggested videos enabled (sidebar)?
+	let goodTube_hideSuggestedVideos = goodTube_helper_getCookie('goodTube_hideSuggestedVideos');
+	if (!goodTube_hideSuggestedVideos) {
+		goodTube_helper_setCookie('goodTube_hideSuggestedVideos', 'false');
+		goodTube_hideSuggestedVideos = 'false';
+	}
+
+	// Are comments enabled?
+	let goodTube_hideComments = goodTube_helper_getCookie('goodTube_hideComments');
+	if (!goodTube_hideComments) {
+		goodTube_helper_setCookie('goodTube_hideComments', 'false');
+		goodTube_hideComments = 'false';
 	}
 
 	// Is autoplay turned on?
 	let goodTube_autoplay = goodTube_helper_getCookie('goodTube_autoplay');
-	if (window.top === window.self) {
-		if (!goodTube_autoplay) {
-			goodTube_helper_setCookie('goodTube_autoplay', 'true');
-			goodTube_autoplay = 'true';
-		}
+	if (!goodTube_autoplay) {
+		goodTube_helper_setCookie('goodTube_autoplay', 'true');
+		goodTube_autoplay = 'true';
 	}
 
 	// Get the playback speed to restore it
@@ -220,11 +223,10 @@
 
 	/* Youtube functions
 	------------------------------------------------------------------------------------------ */
-	// Hide ads and shorts
-	function goodTube_youtube_hideAdsShortsEtc() {
+	// Hide page elements
+	function goodTube_youtube_hidePageElements() {
 		// Hide ads
-		let style = document.createElement('style');
-		style.textContent = `
+		let cssOutput = `
 			.ytd-search ytd-shelf-renderer,
 			ytd-reel-shelf-renderer,
 			ytd-merch-shelf-renderer,
@@ -293,7 +295,6 @@
 				display: block !important;
 			}
 		`;
-		document.head.appendChild(style);
 
 		// Debug message
 		console.log('[GoodTube] Ads removed');
@@ -301,19 +302,50 @@
 
 		// Hide shorts if they're not enabled
 		if (goodTube_shorts === 'false') {
-			let shortsStyle = document.createElement('style');
-			shortsStyle.textContent = `
+			cssOutput += `
 				ytm-pivot-bar-item-renderer:has(> .pivot-shorts),
 				ytd-rich-section-renderer,
 				grid-shelf-view-model {
 					display: none !important;
 				}
 			`;
-			document.head.appendChild(shortsStyle);
 
 			// Debug message
 			console.log('[GoodTube] Shorts removed');
 		}
+
+
+		// Hide suggested videos if they're not enabled
+		if (goodTube_hideSuggestedVideos === 'true') {
+			cssOutput += `
+				ytd-watch-flexy #secondary {
+					display: none !important;
+				}
+			`;
+
+			// Debug message
+			console.log('[GoodTube] Suggested videos removed');
+		}
+
+
+		// Hide comments if they're not enabled
+		if (goodTube_hideComments === 'true') {
+			cssOutput += `
+				ytd-item-section-renderer.ytd-comments,
+				#comments-button,
+				#shorts-panel-container ytd-engagement-panel-section-list-renderer {
+					display: none !important;
+				}
+			`;
+
+			// Debug message
+			console.log('[GoodTube] Comments removed');
+		}
+
+		// Add the styles to the page
+		let style = document.createElement('style');
+		style.textContent = cssOutput;
+		document.head.appendChild(style);
 	}
 
 	// Hide shorts (real time)
@@ -1398,8 +1430,8 @@
 		// Hide the youtube players
 		goodTube_youtube_hidePlayers();
 
-		// Add CSS to hide ads, shorts, etc
-		goodTube_youtube_hideAdsShortsEtc();
+		// Hide page elements
+		goodTube_youtube_hidePageElements();
 
 		// Hide shorts (real time)
 		goodTube_youtube_hideShortsRealtime();
@@ -1682,6 +1714,16 @@
 			hideEndScreen = ' checked';
 		}
 
+		let hideSuggestedVideos = '';
+		if (goodTube_hideSuggestedVideos === 'true') {
+			hideSuggestedVideos = ' checked';
+		}
+
+		let hideComments = '';
+		if (goodTube_hideComments === 'true') {
+			hideComments = ' checked';
+		}
+
 		// Add content to the menu container
 		menuContainer.innerHTML = `
 			<!-- Menu Button
@@ -1702,18 +1744,32 @@
 
 					<div class='goodTube_title'>Settings</div>
 					<div class='goodTube_content'>
+
 						<div class='goodTube_setting'>
 							<input type='checkbox' class='goodTube_option_shorts' name='goodTube_option_shorts' id='goodTube_option_shorts'`+ shortsEnabled + `>
 							<label for='goodTube_option_shorts'>Remove all shorts from Youtube</label>
 						</div> <!-- .goodTube_setting -->
+
 							<div class='goodTube_setting'>
 							<input type='checkbox' class='goodTube_option_hideInfoCards' name='goodTube_option_hideInfoCards' id='goodTube_option_hideInfoCards'`+ hideInfoCards + `>
 							<label for='goodTube_option_hideInfoCards'>Hide info cards from videos</label>
 						</div> <!-- .goodTube_setting -->
-							<div class='goodTube_setting'>
+
+						<div class='goodTube_setting'>
 							<input type='checkbox' class='goodTube_option_hideEndScreen' name='goodTube_option_hideEndScren' id='goodTube_option_hideEndScreen'`+ hideEndScreen + `>
 							<label for='goodTube_option_hideEndScreen'>Hide end screen suggested videos</label>
 						</div> <!-- .goodTube_setting -->
+
+						<div class='goodTube_setting'>
+							<input type='checkbox' class='goodTube_option_hideSuggestedVideos' name='goodTube_option_hideSuggestedVideos' id='goodTube_option_hideSuggestedVideos'`+ hideSuggestedVideos + `>
+							<label for='goodTube_option_hideSuggestedVideos'>Hide sidebar suggested videos</label>
+						</div> <!-- .goodTube_setting -->
+
+						<div class='goodTube_setting'>
+							<input type='checkbox' class='goodTube_option_hideComments' name='goodTube_option_hideComments' id='goodTube_option_hideComments'`+ hideComments + `>
+							<label for='goodTube_option_hideComments'>Hide comments</label>
+						</div> <!-- .goodTube_setting -->
+
 						<button class='goodTube_button' id='goodTube_button_saveSettings'>Save and refresh</button>
 					</div> <!-- .goodTube_content -->
 
@@ -2204,6 +2260,28 @@
 					}
 					else {
 						goodTube_helper_setCookie('goodTube_hideEndScreen', 'false');
+					}
+				}
+
+				// Hide suggested videos
+				let goodTube_setting_hideSuggestedVideos = document.querySelector('.goodTube_option_hideSuggestedVideos');
+				if (goodTube_setting_hideSuggestedVideos) {
+					if (goodTube_setting_hideSuggestedVideos.checked) {
+						goodTube_helper_setCookie('goodTube_hideSuggestedVideos', 'true');
+					}
+					else {
+						goodTube_helper_setCookie('goodTube_hideSuggestedVideos', 'false');
+					}
+				}
+
+				// Hide comments
+				let goodTube_setting_hideComments = document.querySelector('.goodTube_option_hideComments');
+				if (goodTube_setting_hideComments) {
+					if (goodTube_setting_hideComments.checked) {
+						goodTube_helper_setCookie('goodTube_hideComments', 'true');
+					}
+					else {
+						goodTube_helper_setCookie('goodTube_hideComments', 'false');
 					}
 				}
 
