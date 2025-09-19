@@ -1412,6 +1412,7 @@
 	/* Core functions
 	------------------------------------------------------------------------------------------ */
 	// Init
+	let goodTube_initiated = false;
 	function goodTube_init() {
 		// Listen for messages from the iframes
 		window.addEventListener('message', goodTube_receiveMessage);
@@ -1430,6 +1431,12 @@
 
 	// Init when DOM is ready
 	function goodTube_init_domReady() {
+		// Sanity check - only do this once (this fixes known load issues in Firefox)
+		if (goodTube_initiated) {
+			return;
+		}
+		goodTube_initiated = true;
+
 		// Add CSS classes to hide elements (without Youtube knowing)
 		goodTube_helper_showHide_init();
 
@@ -2771,6 +2778,7 @@
 	/* Iframe functions
 	------------------------------------------------------------------------------------------ */
 	// Init
+	let goodTube_iframe_initiated = false;
 	function goodTube_iframe_init() {
 		// Listen for messages from the parent window
 		window.addEventListener('message', goodTube_iframe_receiveMessage);
@@ -2806,6 +2814,12 @@
 
 			return;
 		}
+
+		// Sanity check - only do this once (this fixes known load issues in Firefox)
+		if (goodTube_iframe_initiated) {
+			return;
+		}
+		goodTube_iframe_initiated = true;
 
 		// Add the main styles
 		goodTube_iframe_style();
@@ -4331,6 +4345,7 @@
 	/* Proxy iframe functions
 	------------------------------------------------------------------------------------------ */
 	// Init
+	let goodTube_proxyIframe_initiated = false;
 	function goodTube_proxyIframe_init() {
 		// Listen for messages from the parent window
 		window.addEventListener('message', goodTube_proxyIframe_receiveMessage);
@@ -4346,6 +4361,12 @@
 
 	// Init when DOM is ready
 	function goodTube_proxyIframe_init_domReady() {
+		// Sanity check - only do this once (this fixes known load issues in Firefox)
+		if (goodTube_proxyIframe_initiated) {
+			return;
+		}
+		goodTube_proxyIframe_initiated = true;
+
 		// Hide the proxy iframe page (safety measure to ensure users never see it)
 		goodTube_proxyIframe_hidePage();
 
