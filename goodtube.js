@@ -770,7 +770,7 @@
 			// Setup the start time
 			let startTime = 0;
 
-			// Use the skip to time if it exists in query params
+			// Include the skip to time if it exists in query params
 			if (typeof goodTube_getParams['t'] !== 'undefined') {
 				startTime = goodTube_getParams['t'].replace('s', '');
 			}
@@ -1287,16 +1287,16 @@
 
 				// Make sure the durations match (we do NOT want to touch this if an ad is playing)
 				if (videoDuration === youtubeVideoElement.duration) {
-					// Sync the current time
-					youtubeVideoElement.currentTime = syncTime;
+					// Sync the current time (minus 50ms)
+					youtubeVideoElement.currentTime = (syncTime - 0.05);
 
 					// Clear timeout first to solve memory leak issues
 					clearTimeout(goodTube_receiveMessage_timeout);
 
-					// After 10ms stop syncing (and let the pause actions handle the pausing)
+					// After 100ms stop syncing (and let the pause actions handle the pausing)
 					goodTube_receiveMessage_timeout = setTimeout(() => {
 						goodTube_syncingPlayer = false;
-					}, 10);
+					}, 100);
 				}
 			}
 		}
@@ -2542,8 +2542,8 @@
 		// Support picture in picture
 		goodTube_iframe_pip();
 
-		// Sync the main player
-		goodTube_iframe_syncMainPlayer();
+		// Sync the main player every 5s
+		setInterval(goodTube_iframe_syncMainPlayer, 5000);
 
 		// Restore playback speed, and update it if it changes
 		goodTube_iframe_playbackSpeed();
@@ -2967,6 +2967,9 @@
 
 		// When the video ends
 		videoElement.addEventListener('ended', function () {
+			// Sync the main player, this ensures videos register as finished with the little red play bars
+			goodTube_iframe_syncMainPlayer();
+
 			// Tell the top frame the video ended
 			window.top.postMessage('goodTube_videoEnded', '*');
 		});
@@ -3813,21 +3816,15 @@
 	}
 
 	// Sync the main player
-	let goodTube_iframe_syncMainPlayer_timeout = setTimeout(() => {}, 0);
-	function goodTube_iframe_syncMainPlayer() {
+	function goodTube_iframe_syncMainPlayer_sync() {
 		// Target the video element
 		let videoElement = document.querySelector('video');
 
+		// If we found the video element
 		if (videoElement) {
 			// Tell the parent frame to sync the video (pass in the time we want to sync to and the total video duration - we use the duration to detect if an ad is playing)
 			window.top.postMessage('goodTube_syncMainPlayer_' + videoElement.currentTime + '_' + videoElement.duration, '*');
 		}
-
-		// Clear timeout first to solve memory leak issues
-		clearTimeout(goodTube_iframe_syncMainPlayer_timeout);
-
-		// Create a new timeout
-		goodTube_iframe_syncMainPlayer_timeout = setTimeout(goodTube_iframe_syncMainPlayer, 5000);
 	}
 
 	// Support picture in picture
