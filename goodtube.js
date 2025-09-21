@@ -1005,7 +1005,7 @@
 				event.preventDefault();
 				event.stopImmediatePropagation();
 
-				// Pass the keyboard shortcut to the iframe (this could be "goodTube_shortcut_keydown_xxxx" or "goodTube_shortcut_keyup_xxxx")
+				// Pass the keyboard shortcut to the iframe
 				goodTube_player.contentWindow.postMessage('goodTube_shortcut_' + event.type + '_' + event.key + '_' + event.keyCode + '_' + event.shiftKey, '*');
 			}
 		}
@@ -3660,8 +3660,8 @@
 			}
 		}
 
-		// Keyboard shortcut (keydown)
-		else if (event.data.indexOf('goodTube_shortcut_keydown_') !== -1) {
+		// Keyboard shortcut
+		else if (event.data.indexOf('goodTube_shortcut_') !== -1) {
 			// Target the video element
 			let videoElement = document.querySelector('video');
 
@@ -3671,10 +3671,11 @@
 				videoElement.focus();
 
 				// Get the key event data
-				let keyData = event.data.replace('goodTube_shortcut_keydown_', '').split('_');
-				let keyPressed = keyData[0];
-				let keyCode = parseFloat(keyData[1]);
-				let shiftKey = keyData[2];
+				let keyData = event.data.replace('goodTube_shortcut_', '').split('_');
+				let eventType = keyData[0];
+				let keyPressed = keyData[1];
+				let keyCode = parseFloat(keyData[2]);
+				let shiftKey = keyData[3];
 				if (shiftKey === 'true') {
 					shiftKey = true;
 				}
@@ -3682,44 +3683,9 @@
 					shiftKey = false;
 				}
 
-				// Simulate a keydown
-				document.dispatchEvent(
-					new KeyboardEvent('keydown', {
-						bubbles: true,
-						key: keyPressed,
-						keyCode: keyCode,
-						shiftKey: shiftKey
-					})
-				);
-			}
-		}
-
-
-		// Keyboard shortcut (keyup)
-		else if (event.data.indexOf('goodTube_shortcut_keyup_') !== -1) {
-			// Target the video element
-			let videoElement = document.querySelector('video');
-
-			// If the video element exists
-			if (videoElement) {
-				// Focus the video element
-				videoElement.focus();
-
-				// Get the key event data
-				let keyData = event.data.replace('goodTube_shortcut_keyup_', '').split('_');
-				let keyPressed = keyData[0];
-				let keyCode = parseFloat(keyData[1]);
-				let shiftKey = keyData[2];
-				if (shiftKey === 'true') {
-					shiftKey = true;
-				}
-				else {
-					shiftKey = false;
-				}
-
-				// Simulate a keyup
-				document.dispatchEvent(
-					new KeyboardEvent('keyup', {
+				// Simulate the keyboard event on the video element
+				videoElement.dispatchEvent(
+					new KeyboardEvent(eventType, {
 						bubbles: true,
 						key: keyPressed,
 						keyCode: keyCode,
