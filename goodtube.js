@@ -157,7 +157,7 @@
 	let goodTube_redirectHappened = false;
 
 	// Is this the first video we're loading?
-	let goodTube_firstLoad = false;
+	let goodTube_firstLoad = true;
 
 	// Has the prox iframe loaded?
 	let goodTube_proxyIframeLoaded = false;
@@ -615,9 +615,6 @@
 		// Setup player dynamic positioning and sizing
 		goodTube_player_positionAndSize();
 
-		// Swap the miniplayer for the PiP button
-		goodTube_player_swapMiniplayerForPip();
-
 		// Run the actions
 		goodTube_actions();
 	}
@@ -749,7 +746,7 @@
 		}
 
 		// If we're loading for the first time
-		if (!goodTube_firstLoad) {
+		if (goodTube_firstLoad) {
 			// If we're not viewing a video
 			if (window.location.href.indexOf('/watch?') === -1) {
 				// Clear and hide the player
@@ -761,22 +758,12 @@
 			if (typeof goodTube_getParams['t'] !== 'undefined') {
 				skipToGetVar = '&start=' + goodTube_getParams['t'].replace('s', '');
 			}
-			// Otherwise, also check if the regular Youtube player has skipped to a start time
-			else if (goodTube_page_api && typeof goodTube_page_api.getCurrentTime === 'function') {
-				let savedTime = Math.floor(goodTube_page_api.getCurrentTime());
-
-				// Make sure it's over 10seconds just for sanity's sake (we don't wanna skip because of delayed loading time on our end)
-				// Also make sure we're not viewing a playlist
-				if (savedTime > 10 && !goodTube_playlist) {
-					skipToGetVar = '&start=' + savedTime;
-				}
-			}
 
 			// Set the video source
 			goodTube_player.contentWindow.postMessage('goodTube_src_https://www.youtube.com/embed/' + goodTube_getParams['v'] + '?goodTubeEmbed=1&autoplay=1&goodTube_playlist=' + playlist + '&goodTube_autoplay=' + goodTube_autoplay + '&goodTube_playbackSpeed=' + goodTube_playbackSpeed + '&goodTube_hideInfoCards=' + goodTube_hideInfoCards + '&goodTube_hideEndScreen=' + goodTube_hideEndScreen + skipToGetVar, '*');
 
 			// Indicate we've completed the first load
-			goodTube_firstLoad = true;
+			goodTube_firstLoad = false;
 		}
 		// Otherwise, for all other loads
 		else {
@@ -787,24 +774,56 @@
 			if (typeof goodTube_getParams['t'] !== 'undefined') {
 				startTime = goodTube_getParams['t'].replace('s', '');
 			}
-			// Otherwise, use the regular Youtube player's start time
-			else if (goodTube_page_api && typeof goodTube_page_api.getCurrentTime === 'function') {
-				let savedTime = Math.floor(goodTube_page_api.getCurrentTime());
-
-				// Make sure it's over 10s for sanity's sake (we don't wanna skip because of delayed loading time on our end)
-				// Also make sure we're not viewing a playlist
-				if (savedTime > 10 && !goodTube_playlist) {
-					startTime = savedTime;
-				}
-			}
 
 			// Load the video via the iframe api
 			goodTube_player.contentWindow.postMessage('goodTube_load_' + goodTube_getParams['v'] + '|||' + startTime + '|||' + playlist, '*');
 		}
 
+		// Sync the starting playback time (this makes our player match the iframe player)
+		goodTube_player_syncStartingPlaybackTime();
 
 		// Show the player
 		goodTube_helper_showElement(goodTube_playerWrapper);
+	}
+
+	// Sync the starting playback time (this makes our player match the iframe player)
+	let goodTube_player_syncStartingPlaybackTime_timeout = setTimeout(() => {}, 0);
+	function goodTube_player_syncStartingPlaybackTime() {
+		// If there's a skip to time in the query params, don't do anyhing
+		if (typeof goodTube_getParams['t'] !== 'undefined') {
+			return;
+		}
+
+		// Re fetch the page API
+		goodTube_page_api = document.getElementById('movie_player');
+
+		// Get the video data to check loading state and video id
+		let videoData = false;
+		let videoId = false;
+		if (goodTube_page_api && typeof goodTube_page_api.getVideoData === 'function' && typeof goodTube_page_api.getCurrentTime === 'function') {
+			videoData = goodTube_page_api.getVideoData();
+			videoId = videoData.video_id;
+		}
+
+		// If there's no video data, no video id, or the id doesn't match the one in the query params yet (it hasn't loaded)
+		if (!videoData || !videoId || videoId !== goodTube_getParams['v']) {
+			// Clear timeout first to solve memory leak issues
+			clearTimeout(goodTube_player_syncStartingPlaybackTime_timeout);
+
+			// Create a new timeout to try again
+			goodTube_player_syncStartingPlaybackTime_timeout = setTimeout(goodTube_player_syncStartingPlaybackTime, 100);
+
+			// Don't do anything else
+			return;
+		}
+
+		// Get the current time of Youtube's video
+		let restoreTime = Math.floor(goodTube_page_api.getCurrentTime());
+
+		// Skip to that time in our iframe player (if required)
+		if (restoreTime > 0) {
+			goodTube_player_skipTo(restoreTime);
+		}
 	}
 
 	// Clear and hide the player
@@ -831,78 +850,6 @@
 	// Play
 	function goodTube_player_pause() {
 		goodTube_player.contentWindow.postMessage('goodTube_play', '*');
-	}
-
-	// Swap the miniplayer for the PiP button
-	let goodTube_player_swapMiniplayerForPip_timeout = setTimeout(() => {}, 0);
-	function goodTube_player_swapMiniplayerForPip() {
-		// Target the miniplayer and pip buttons
-		let miniplayerButton = document.querySelector('.ytp-miniplayer-button');
-		let pipButton = document.querySelector('.ytp-pip-button');
-
-		// If we found them
-		if (miniplayerButton && pipButton) {
-			// Remove the miniplayer button
-			miniplayerButton.remove();
-
-			// Fix the a keyboard shortcut
-			document.addEventListener('keydown', function (event) {
-				// Make sure we're watching a video
-				if (window.location.href.indexOf('/watch?') === -1) {
-					return;
-				}
-
-				// Get the key pressed in lower case
-				let keyPressed = event.key.toLowerCase();
-
-				// If we're not focused on a HTML form element
-				let focusedElement = event.srcElement;
-				let focusedElement_tag = false;
-				let focusedElement_id = false;
-				if (focusedElement) {
-					if (typeof focusedElement.nodeName !== 'undefined') {
-						focusedElement_tag = focusedElement.nodeName.toLowerCase();
-					}
-
-					if (typeof focusedElement.getAttribute !== 'undefined') {
-						focusedElement_id = focusedElement.getAttribute('id');
-					}
-				}
-
-				if (
-					!focusedElement ||
-					(
-						focusedElement_tag.indexOf('input') === -1 &&
-						focusedElement_tag.indexOf('label') === -1 &&
-						focusedElement_tag.indexOf('select') === -1 &&
-						focusedElement_tag.indexOf('textarea') === -1 &&
-						focusedElement_tag.indexOf('fieldset') === -1 &&
-						focusedElement_tag.indexOf('legend') === -1 &&
-						focusedElement_tag.indexOf('datalist') === -1 &&
-						focusedElement_tag.indexOf('output') === -1 &&
-						focusedElement_tag.indexOf('option') === -1 &&
-						focusedElement_tag.indexOf('optgroup') === -1 &&
-						focusedElement_id !== 'contenteditable-root'
-					)
-				) {
-					if (keyPressed === 'i') {
-						// Stop the default stuff
-						event.preventDefault();
-						event.stopImmediatePropagation();
-
-						// Click the pip button
-						pipButton.click();
-					}
-				}
-			}, true);
-		}
-		else {
-			// Clear timeout first to solve memory leak issues
-			clearTimeout(goodTube_player_swapMiniplayerForPip_timeout);
-
-			// Create a new timeout
-			goodTube_player_swapMiniplayerForPip_timeout = setTimeout(goodTube_player_swapMiniplayerForPip, 100);
-		}
 	}
 
 
