@@ -32,7 +32,7 @@
 
 	// Set a cookie
 	function goodTube_helper_setCookie(name, value, days = 399) {
-		document.cookie = name + "=" + encodeURIComponent(value) + ";max-age=" + (days * 24 * 60 * 60);
+		document.cookie = name + "=" + encodeURIComponent(value) + ";SameSite=Lax;max-age=" + (days * 24 * 60 * 60);
 	}
 
 	// Get a cookie
