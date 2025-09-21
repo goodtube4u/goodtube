@@ -3027,16 +3027,7 @@
 
 	// Add keyboard shortcuts
 	function goodTube_iframe_addKeyboardShortcuts() {
-		let keyDownFired = false;
 		document.addEventListener('keydown', function (event) {
-			// Only do this once
-			if (keyDownFired) {
-				return;
-			}
-
-			// Indicate the keydown has fired
-			keyDownFired = true;
-
 			// Don't do anything if we're holding control OR alt OR the command key on mac OR the "hide and mute ads" fallback is active
 			if (event.ctrlKey || event.altKey || event.metaKey || goodTube_fallback) {
 				return;
@@ -3070,11 +3061,6 @@
 				// Tell the top window to go to the next video
 				window.top.postMessage('goodTube_nextVideo', '*');
 			}
-		});
-
-		document.addEventListener('keyup', function (event) {
-			// Indicate the keydown has not fired
-			keyDownFired = false;
 		});
 	}
 
