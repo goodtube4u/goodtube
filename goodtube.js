@@ -875,14 +875,22 @@
 			'>',
 			// Slow down playback
 			'<',
-			// Prev frame (24fps calculation)
+			// Prev frame
 			',',
-			// Next frame (24fps calculation)
+			// Next frame
 			'.',
+			// Volume up
+			'arrowup',
+			// Volume down
+			'arrowdown',
 			// Prev 5 seconds
 			'arrowleft',
 			// Next 5 seconds
 			'arrowright',
+			// Prev 10 seconds
+			'j',
+			// Next 10 seconds
+			'l',
 			// Toggle play/pause
 			' ',
 			'k',
@@ -892,10 +900,6 @@
 			'f',
 			// Toggle captions
 			'c',
-			// Prev 10 seconds
-			'j',
-			// Next 10 seconds
-			'l',
 			// Start of video
 			'home',
 			// End of video
