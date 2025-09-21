@@ -3816,7 +3816,7 @@
 	}
 
 	// Sync the main player
-	function goodTube_iframe_syncMainPlayer_sync() {
+	function goodTube_iframe_syncMainPlayer() {
 		// Target the video element
 		let videoElement = document.querySelector('video');
 
