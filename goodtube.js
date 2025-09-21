@@ -2952,11 +2952,21 @@
 			}, true);
 
 			link.addEventListener('mousedown', (event) => {
+				// Make sure this is the left mouse button
+				if (event.button !== 0) {
+					return;
+				}
+
 				event.preventDefault();
 				event.stopImmediatePropagation();
 			}, true);
 
 			link.addEventListener('mouseup', (event) => {
+				// Make sure this is the left mouse button
+				if (event.button !== 0) {
+					return;
+				}
+
 				event.preventDefault();
 				event.stopImmediatePropagation();
 			}, true);
@@ -3446,9 +3456,9 @@
 			if (!goodTube_iframe_supportDoubleSpeed_doublePlaybackRate) {
 				// Click the video element (we must do it this way, it's the only reliable method)
 				goodTube_iframe_supportDoubleSpeed_allowNextClick = true;
-				goodTube_iframe_supportDoubleSpeed_videoElement.dispatchEvent(new PointerEvent('mousedown', { bubbles: true, cancelable: true }));
-				goodTube_iframe_supportDoubleSpeed_videoElement.dispatchEvent(new PointerEvent('click', { bubbles: true, cancelable: true }));
-				goodTube_iframe_supportDoubleSpeed_videoElement.dispatchEvent(new PointerEvent('mouseup', { bubbles: true, cancelable: true }));
+				goodTube_iframe_supportDoubleSpeed_videoElement.dispatchEvent(new PointerEvent('mousedown', { bubbles: true, cancelable: true, button: 0 }));
+				goodTube_iframe_supportDoubleSpeed_videoElement.dispatchEvent(new PointerEvent('click', { bubbles: true, cancelable: true, button: 0 }));
+				goodTube_iframe_supportDoubleSpeed_videoElement.dispatchEvent(new PointerEvent('mouseup', { bubbles: true, cancelable: true, button: 0 }));
 				goodTube_iframe_supportDoubleSpeed_allowNextClick = false;
 			}
 			// Otherwise, double playback rate did happen
@@ -3473,6 +3483,11 @@
 	}
 
 	function goodTube_iframe_supportDoubleSpeed_mouseDownTouchStart(event) {
+		// Make sure this is the left mouse button
+		if (event.button !== 0) {
+			return;
+		}
+
 		// If we're allowing the next click, don't do anything
 		if (goodTube_iframe_supportDoubleSpeed_allowNextClick) {
 			return;
@@ -3536,6 +3551,11 @@
 	}
 
 	function goodTube_iframe_supportDoubleSpeed_mouseUpTouchEnd(event) {
+		// Make sure this is the left mouse button
+		if (event.button !== 0) {
+			return;
+		}
+
 		// If we're allowing the next click, don't do anything
 		if (goodTube_iframe_supportDoubleSpeed_allowNextClick) {
 			return;
@@ -3560,9 +3580,9 @@
 		if (!goodTube_iframe_supportDoubleSpeed_doublePlaybackRate) {
 			// Click the video element (we must do it this way, it's the only reliable method)
 			goodTube_iframe_supportDoubleSpeed_allowNextClick = true;
-			goodTube_iframe_supportDoubleSpeed_videoElement.dispatchEvent(new PointerEvent('mousedown', { bubbles: true, cancelable: true }));
-			goodTube_iframe_supportDoubleSpeed_videoElement.dispatchEvent(new PointerEvent('click', { bubbles: true, cancelable: true }));
-			goodTube_iframe_supportDoubleSpeed_videoElement.dispatchEvent(new PointerEvent('mouseup', { bubbles: true, cancelable: true }));
+			goodTube_iframe_supportDoubleSpeed_videoElement.dispatchEvent(new PointerEvent('mousedown', { bubbles: true, cancelable: true, button: 0 }));
+			goodTube_iframe_supportDoubleSpeed_videoElement.dispatchEvent(new PointerEvent('click', { bubbles: true, cancelable: true, button: 0 }));
+			goodTube_iframe_supportDoubleSpeed_videoElement.dispatchEvent(new PointerEvent('mouseup', { bubbles: true, cancelable: true, button: 0 }));
 			goodTube_iframe_supportDoubleSpeed_allowNextClick = false;
 		}
 		// Otherwise, double playback rate did happen
