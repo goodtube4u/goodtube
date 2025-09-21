@@ -968,8 +968,6 @@
 			'i'
 		];
 
-		console.log(event.key.toLowerCase());
-
 		// Ensure we've pressed an allowed shortcut
 		if (allowedShortcuts.includes(event.key.toLowerCase())) {
 			// Get the currently focused element
@@ -3404,9 +3402,7 @@
 		/* Setup vars
 		-------------------------------------------------- */
 		clearTimeout(goodTube_iframe_supportDoubleSpeed_holdTimeout);
-		goodTube_iframe_supportDoubleSpeed_holdTimeout = setTimeout(() => {}, 0);
 		goodTube_iframe_supportDoubleSpeed_doublePlaybackRate = false;
-		goodTube_iframe_supportDoubleSpeed_currentPlaybackRate = 1;
 		goodTube_iframe_supportDoubleSpeed_keyDownFired = false;
 		goodTube_iframe_supportDoubleSpeed_mouseDownFired = false;
 		goodTube_iframe_supportDoubleSpeed_videoElement = document.querySelector('video');
@@ -3445,7 +3441,7 @@
 			clearTimeout(goodTube_iframe_supportDoubleSpeed_init_timeout);
 
 			// Create a new timeout
-			goodTube_iframe_supportDoubleSpeed_init_timeout = setTimeout(goodTube_iframe_supportDoubleSpeed, 100);
+			goodTube_iframe_supportDoubleSpeed_init_timeout = setTimeout(goodTube_iframe_supportDoubleSpeed_init, 100);
 
 			return;
 		}
@@ -3456,12 +3452,13 @@
 		// Get the iframe API
 		goodTube_iframe_api = document.getElementById('movie_player');
 
+		// Check we have what we need from the API
 		if (!goodTube_iframe_api || typeof goodTube_iframe_api.getPlaybackRate !== 'function' || typeof goodTube_iframe_api.setPlaybackRate !== 'function' || typeof goodTube_iframe_api.playVideo !== 'function') {
 			// Clear timeout first to solve memory leak issues
 			clearTimeout(goodTube_iframe_supportDoubleSpeed_init_timeout);
 
 			// Create a new timeout
-			goodTube_iframe_supportDoubleSpeed_init_timeout = setTimeout(goodTube_iframe_supportDoubleSpeed, 100);
+			goodTube_iframe_supportDoubleSpeed_init_timeout = setTimeout(goodTube_iframe_supportDoubleSpeed_init, 100);
 
 			return;
 		}
@@ -3469,6 +3466,7 @@
 
 		/* Restore the playback speed to start with
 		-------------------------------------------------- */
+		goodTube_iframe_supportDoubleSpeed_currentPlaybackRate = goodTube_iframe_api.getPlaybackRate();
 		goodTube_iframe_api.setPlaybackRate(goodTube_iframe_supportDoubleSpeed_currentPlaybackRate);
 
 
