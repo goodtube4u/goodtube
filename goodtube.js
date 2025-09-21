@@ -829,7 +829,7 @@
 	}
 
 	// Play
-	function goodTube_player_play() {
+	function goodTube_player_pause() {
 		goodTube_player.contentWindow.postMessage('goodTube_play', '*');
 	}
 
@@ -910,352 +910,108 @@
 	------------------------------------------------------------------------------------------ */
 	// Add keyboard shortcuts
 	function goodTube_shortcuts_init() {
-		let keyDownFired = false;
-		document.addEventListener('keydown', function (event) {
-			// Only do this once
-			if (keyDownFired) {
-				return;
-			}
-
-			// Indicate the keydown has fired
-			keyDownFired = true;
-
-			// Don't do anything if we're holding control OR alt OR the command key on mac OR the "hide and mute ads" fallback is active
-			if (event.ctrlKey || event.altKey || event.metaKey || goodTube_fallback) {
-				return;
-			}
-
-			// Make sure we're watching a video
-			if (window.location.href.indexOf('/watch?') === -1) {
-				return;
-			}
-
-			// Get the key pressed in lower case
-			let keyPressed = event.key.toLowerCase();
-
-			// If we're not focused on a HTML form element
-			let focusedElement = event.srcElement;
-			let focusedElement_tag = false;
-			let focusedElement_id = false;
-			if (focusedElement) {
-				if (typeof focusedElement.nodeName !== 'undefined') {
-					focusedElement_tag = focusedElement.nodeName.toLowerCase();
-				}
-
-				if (typeof focusedElement.getAttribute !== 'undefined') {
-					focusedElement_id = focusedElement.getAttribute('id');
-				}
-			}
-
-			if (
-				!focusedElement ||
-				(
-					focusedElement_tag.indexOf('input') === -1 &&
-					focusedElement_tag.indexOf('label') === -1 &&
-					focusedElement_tag.indexOf('select') === -1 &&
-					focusedElement_tag.indexOf('textarea') === -1 &&
-					focusedElement_tag.indexOf('fieldset') === -1 &&
-					focusedElement_tag.indexOf('legend') === -1 &&
-					focusedElement_tag.indexOf('datalist') === -1 &&
-					focusedElement_tag.indexOf('output') === -1 &&
-					focusedElement_tag.indexOf('option') === -1 &&
-					focusedElement_tag.indexOf('optgroup') === -1 &&
-					focusedElement_id !== 'contenteditable-root'
-				)
-			) {
-				if (
-					// Speed up playback
-					keyPressed === '>' ||
-					// Slow down playback
-					keyPressed === '<'
-				) {
-					event.preventDefault();
-					event.stopImmediatePropagation();
-
-					// Pass the keyboard shortcut to the iframe
-					goodTube_player.contentWindow.postMessage('goodTube_shortcut_keydown_' + keyPressed, '*');
-				}
-
-				// If we're not holding down the shift key
-				if (!event.shiftKey) {
-					// If we're focused on the video element
-					if (focusedElement && typeof focusedElement.closest !== 'undefined' && focusedElement.closest('#goodTube_player')) {
-						// Theater mode (focus the body, this makes the default youtube shortcut work)
-						if (keyPressed === 't') {
-							document.querySelector('body').focus();
-						}
-					}
-
-					if (
-						// Prev frame (24fps calculation)
-						keyPressed === ',' ||
-						// Next frame (24fps calculation)
-						keyPressed === '.' ||
-						// Prev 5 seconds
-						keyPressed === 'arrowleft' ||
-						// Next 5 seconds
-						keyPressed === 'arrowright' ||
-						// Toggle play/pause
-						keyPressed === ' ' || keyPressed === 'k' ||
-						// Toggle mute
-						keyPressed === 'm' ||
-						// Toggle fullscreen
-						keyPressed === 'f' ||
-						// Toggle captions
-						keyPressed === 'c' ||
-						// Prev 10 seconds
-						keyPressed === 'j' ||
-						// Next 10 seconds
-						keyPressed === 'l' ||
-						// Start of video
-						keyPressed === 'home' ||
-						// End of video
-						keyPressed === 'end' ||
-						// Skip to percentage
-						keyPressed === '0' ||
-						keyPressed === '1' ||
-						keyPressed === '2' ||
-						keyPressed === '3' ||
-						keyPressed === '4' ||
-						keyPressed === '5' ||
-						keyPressed === '6' ||
-						keyPressed === '7' ||
-						keyPressed === '8' ||
-						keyPressed === '9'
-					) {
-						event.preventDefault();
-						event.stopImmediatePropagation();
-
-						// Pass the keyboard shortcut to the iframe
-						goodTube_player.contentWindow.postMessage('goodTube_shortcut_keydown_' + keyPressed, '*');
-
-						// Force mouse move to make sure fullscreen hides
-						var event = new Event('mousemove');
-						document.dispatchEvent(event);
-					}
-
-					// Toggle picture in picture
-					if (keyPressed === 'i') {
-						event.preventDefault();
-						event.stopImmediatePropagation();
-
-						// Tell the iframe to toggle pip
-						goodTube_player.contentWindow.postMessage('goodTube_pip', '*');
-					}
-
-					// Toggle theater
-					if (keyPressed === 't') {
-						event.preventDefault();
-						event.stopImmediatePropagation();
-
-						// Disable when in fullscreen
-						if (!document.fullscreenElement) {
-							document.querySelector('.ytp-size-button')?.click();
-						}
-					}
-				}
-			}
-		}, true);
-
-
-		document.addEventListener('keyup', function (event) {
-			// Indicate the keydown has not fired
-			keyDownFired = false;
-
-			// Don't do anything if we're holding control OR alt OR the command key on mac OR the "hide and mute ads" fallback is active
-			if (event.ctrlKey || event.altKey || event.metaKey || goodTube_fallback) {
-				return;
-			}
-
-			// Make sure we're watching a video
-			if (window.location.href.indexOf('/watch?') === -1) {
-				return;
-			}
-
-			// Get the key pressed in lower case
-			let keyPressed = event.key.toLowerCase();
-
-			// If we're not focused on a HTML form element
-			let focusedElement = event.srcElement;
-			let focusedElement_tag = false;
-			let focusedElement_id = false;
-			if (focusedElement) {
-				if (typeof focusedElement.nodeName !== 'undefined') {
-					focusedElement_tag = focusedElement.nodeName.toLowerCase();
-				}
-
-				if (typeof focusedElement.getAttribute !== 'undefined') {
-					focusedElement_id = focusedElement.getAttribute('id');
-				}
-			}
-
-			if (
-				!focusedElement ||
-				(
-					focusedElement_tag.indexOf('input') === -1 &&
-					focusedElement_tag.indexOf('label') === -1 &&
-					focusedElement_tag.indexOf('select') === -1 &&
-					focusedElement_tag.indexOf('textarea') === -1 &&
-					focusedElement_tag.indexOf('fieldset') === -1 &&
-					focusedElement_tag.indexOf('legend') === -1 &&
-					focusedElement_tag.indexOf('datalist') === -1 &&
-					focusedElement_tag.indexOf('output') === -1 &&
-					focusedElement_tag.indexOf('option') === -1 &&
-					focusedElement_tag.indexOf('optgroup') === -1 &&
-					focusedElement_id !== 'contenteditable-root'
-				)
-			) {
-				if (
-					// Speed up playback
-					keyPressed === '>' ||
-					// Slow down playback
-					keyPressed === '<'
-				) {
-					event.preventDefault();
-					event.stopImmediatePropagation();
-
-					// Pass the keyboard shortcut to the iframe
-					goodTube_player.contentWindow.postMessage('goodTube_shortcut_keyup_' + keyPressed, '*');
-				}
-
-				// If we're not holding down the shift key
-				if (!event.shiftKey) {
-					if (
-						// Prev frame (24fps calculation)
-						keyPressed === ',' ||
-						// Next frame (24fps calculation)
-						keyPressed === '.' ||
-						// Prev 5 seconds
-						keyPressed === 'arrowleft' ||
-						// Next 5 seconds
-						keyPressed === 'arrowright' ||
-						// Toggle play/pause
-						keyPressed === ' ' || keyPressed === 'k' ||
-						// Toggle mute
-						keyPressed === 'm' ||
-						// Toggle fullscreen
-						keyPressed === 'f' ||
-						// Toggle captions
-						keyPressed === 'c' ||
-						// Prev 10 seconds
-						keyPressed === 'j' ||
-						// Next 10 seconds
-						keyPressed === 'l' ||
-						// Start of video
-						keyPressed === 'home' ||
-						// End of video
-						keyPressed === 'end' ||
-						// Skip to percentage
-						keyPressed === '0' ||
-						keyPressed === '1' ||
-						keyPressed === '2' ||
-						keyPressed === '3' ||
-						keyPressed === '4' ||
-						keyPressed === '5' ||
-						keyPressed === '6' ||
-						keyPressed === '7' ||
-						keyPressed === '8' ||
-						keyPressed === '9'
-					) {
-						event.preventDefault();
-						event.stopImmediatePropagation();
-
-						// Pass the keyboard shortcut to the iframe
-						goodTube_player.contentWindow.postMessage('goodTube_shortcut_keyup_' + keyPressed, '*');
-
-						// Force mouse move to make sure fullscreen hides
-						var event = new Event('mousemove');
-						document.dispatchEvent(event);
-					}
-				}
-			}
-		}, true);
+		// Add event listeners
+		document.addEventListener('keydown', goodTube_shortcuts_keypress, true);
+		document.addEventListener('keyup', goodTube_shortcuts_keypress, true);
 	}
 
-	// Trigger a keyboard shortcut (currently unused)
-	// function goodTube_shortcuts_trigger(shortcut) {
-	// 	// Focus the body first
-	// 	document.querySelector('body').focus();
+	// Define the keypress function for the event listeners
+	function goodTube_shortcuts_keypress(event) {
+		// Don't do anything IF we're holding control OR alt OR the command key (mac) OR the "hide and mute ads" fallback is active OR we're not watching a video
+		if (event.ctrlKey || event.altKey || event.metaKey || goodTube_fallback || window.location.href.indexOf('/watch?') === -1) {
+			return;
+		}
 
-	// 	// Setup the keyboard shortcut
-	// 	let theKey = false;
-	// 	let keyCode = false;
-	// 	let shiftKey = false;
+		// Define the shortcuts we allow
+		let allowedShortcuts = [
+			// Speed up playback
+			'>',
+			// Slow down playback
+			'<',
+			// Prev frame (24fps calculation)
+			',',
+			// Next frame (24fps calculation)
+			'.',
+			// Prev 5 seconds
+			'arrowleft',
+			// Next 5 seconds
+			'arrowright',
+			// Toggle play/pause
+			' ',
+			'k',
+			// Toggle mute
+			'm',
+			// Toggle fullscreen
+			'f',
+			// Toggle captions
+			'c',
+			// Prev 10 seconds
+			'j',
+			// Next 10 seconds
+			'l',
+			// Start of video
+			'home',
+			// End of video
+			'end',
+			// Skip to percentage
+			'0',
+			'1',
+			'2',
+			'3',
+			'4',
+			'5',
+			'6',
+			'7',
+			'8',
+			'9',
+			// Picture in picture
+			'i'
+		];
 
-	// 	if (shortcut === 'theater') {
-	// 		theKey = 't';
-	// 		keyCode = 84;
-	// 		shiftKey = false;
-	// 	}
-	// 	else {
-	// 		return;
-	// 	}
+		console.log(event.key.toLowerCase());
 
-	// 	// Trigger the keyboard shortcut
-	// 	let e = false;
-	// 	e = new window.KeyboardEvent('focus', {
-	// 		bubbles: true,
-	// 		key: theKey,
-	// 		keyCode: keyCode,
-	// 		shiftKey: shiftKey,
-	// 		charCode: 0,
-	// 	});
-	// 	document.dispatchEvent(e);
+		// Ensure we've pressed an allowed shortcut
+		if (allowedShortcuts.includes(event.key.toLowerCase())) {
+			// Get the currently focused element
+			let focusedElement = event.srcElement;
+			let focusedElement_tag = false;
+			let focusedElement_id = false;
+			if (focusedElement) {
+				if (typeof focusedElement.nodeName !== 'undefined') {
+					focusedElement_tag = focusedElement.nodeName.toLowerCase();
+				}
 
-	// 	e = new window.KeyboardEvent('keydown', {
-	// 		bubbles: true,
-	// 		key: theKey,
-	// 		keyCode: keyCode,
-	// 		shiftKey: shiftKey,
-	// 		charCode: 0,
-	// 	});
-	// 	document.dispatchEvent(e);
+				if (typeof focusedElement.getAttribute !== 'undefined') {
+					focusedElement_id = focusedElement.getAttribute('id');
+				}
+			}
 
-	// 	e = new window.KeyboardEvent('beforeinput', {
-	// 		bubbles: true,
-	// 		key: theKey,
-	// 		keyCode: keyCode,
-	// 		shiftKey: shiftKey,
-	// 		charCode: 0,
-	// 	});
-	// 	document.dispatchEvent(e);
+			// If we're not focused on a HTML form element
+			if (
+				!focusedElement ||
+				(
+					focusedElement_tag.indexOf('input') === -1 &&
+					focusedElement_tag.indexOf('label') === -1 &&
+					focusedElement_tag.indexOf('select') === -1 &&
+					focusedElement_tag.indexOf('textarea') === -1 &&
+					focusedElement_tag.indexOf('fieldset') === -1 &&
+					focusedElement_tag.indexOf('legend') === -1 &&
+					focusedElement_tag.indexOf('datalist') === -1 &&
+					focusedElement_tag.indexOf('output') === -1 &&
+					focusedElement_tag.indexOf('option') === -1 &&
+					focusedElement_tag.indexOf('optgroup') === -1 &&
+					focusedElement_id !== 'contenteditable-root'
+				)
+			) {
+				// Prevent default actions
+				event.preventDefault();
+				event.stopImmediatePropagation();
 
-	// 	e = new window.KeyboardEvent('keypress', {
-	// 		bubbles: true,
-	// 		key: theKey,
-	// 		keyCode: keyCode,
-	// 		shiftKey: shiftKey,
-	// 		charCode: 0,
-	// 	});
-	// 	document.dispatchEvent(e);
-
-	// 	e = new window.KeyboardEvent('input', {
-	// 		bubbles: true,
-	// 		key: theKey,
-	// 		keyCode: keyCode,
-	// 		shiftKey: shiftKey,
-	// 		charCode: 0,
-	// 	});
-	// 	document.dispatchEvent(e);
-
-	// 	e = new window.KeyboardEvent('change', {
-	// 		bubbles: true,
-	// 		key: theKey,
-	// 		keyCode: keyCode,
-	// 		shiftKey: shiftKey,
-	// 		charCode: 0,
-	// 	});
-	// 	document.dispatchEvent(e);
-
-	// 	e = new window.KeyboardEvent('keyup', {
-	// 		bubbles: true,
-	// 		key: theKey,
-	// 		keyCode: keyCode,
-	// 		shiftKey: shiftKey,
-	// 		charCode: 0,
-	// 	});
-	// 	document.dispatchEvent(e);
-	// }
+				// Pass the keyboard shortcut to the iframe (this could be "goodTube_shortcut_keydown_xxxx" or "goodTube_shortcut_keyup_xxxx")
+				goodTube_player.contentWindow.postMessage('goodTube_shortcut_' + event.type + '_' + event.key + '_' + event.keyCode + '_' + event.shiftKey, '*');
+			}
+		}
+	}
 
 
 	/* Navigation
@@ -3335,28 +3091,28 @@
 	let goodTube_iframe_supportDoubleSpeed_doubleSpeedElement = document.querySelector('.goodTube_doubleSpeed');
 
 	function goodTube_iframe_supportDoubleSpeed_keydown(event) {
-		// If the "hide mute ads" fallback is active, don't do anything
-		if (goodTube_fallback) {
-			return;
-		}
-
-		// Make sure we're not holding down the mouse
-		if (goodTube_iframe_supportDoubleSpeed_mouseDownFired) {
-			event.preventDefault();
-			event.stopImmediatePropagation();
-			return;
-		}
-
-		// Don't do anything if we're holding control OR alt OR the command key on mac OR the "hide and mute ads" fallback is active
-		if (event.ctrlKey || event.altKey || event.metaKey || goodTube_fallback) {
-			return;
-		}
-
 		// Get the key pressed (in lowercase)
 		let keyPressed = event.key.toLowerCase();
 
 		// 2x playback rate
 		if (keyPressed === ' ' || keyPressed === 'k') {
+			// If the "hide mute ads" fallback is active, don't do anything
+			if (goodTube_fallback) {
+				return;
+			}
+
+			// Make sure we're not holding down the mouse
+			if (goodTube_iframe_supportDoubleSpeed_mouseDownFired) {
+				event.preventDefault();
+				event.stopImmediatePropagation();
+				return;
+			}
+
+			// Don't do anything if we're holding control OR alt OR the command key on mac OR the "hide and mute ads" fallback is active
+			if (event.ctrlKey || event.altKey || event.metaKey || goodTube_fallback) {
+				return;
+			}
+
 			// Prevent default actions
 			event.preventDefault();
 			event.stopImmediatePropagation();
@@ -3398,28 +3154,28 @@
 	}
 
 	function goodTube_iframe_supportDoubleSpeed_keypress(event) {
-		// If the "hide mute ads" fallback is active, don't do anything
-		if (goodTube_fallback) {
-			return;
-		}
-
-		// Make sure we're not holding down the mouse
-		if (goodTube_iframe_supportDoubleSpeed_mouseDownFired) {
-			event.preventDefault();
-			event.stopImmediatePropagation();
-			return;
-		}
-
-		// Don't do anything if we're holding control OR alt OR the command key on mac OR the "hide and mute ads" fallback is active
-		if (event.ctrlKey || event.altKey || event.metaKey || goodTube_fallback) {
-			return;
-		}
-
 		// Get the key pressed (in lowercase)
 		let keyPressed = event.key.toLowerCase();
 
 		// 2x playback rate
 		if (keyPressed === ' ' || keyPressed === 'k') {
+			// If the "hide mute ads" fallback is active, don't do anything
+			if (goodTube_fallback) {
+				return;
+			}
+
+			// Make sure we're not holding down the mouse
+			if (goodTube_iframe_supportDoubleSpeed_mouseDownFired) {
+				event.preventDefault();
+				event.stopImmediatePropagation();
+				return;
+			}
+
+			// Don't do anything if we're holding control OR alt OR the command key on mac OR the "hide and mute ads" fallback is active
+			if (event.ctrlKey || event.altKey || event.metaKey || goodTube_fallback) {
+				return;
+			}
+
 			// Prevent default actions
 			event.preventDefault();
 			event.stopImmediatePropagation();
@@ -3427,28 +3183,28 @@
 	}
 
 	function goodTube_iframe_supportDoubleSpeed_keyup(event) {
-		// If the "hide mute ads" fallback is active, don't do anything
-		if (goodTube_fallback) {
-			return;
-		}
-
-		// Make sure we're not holding down the mouse
-		if (goodTube_iframe_supportDoubleSpeed_mouseDownFired) {
-			event.preventDefault();
-			event.stopImmediatePropagation();
-			return;
-		}
-
-		// Don't do anything if we're holding control OR alt OR the command key on mac OR the "hide and mute ads" fallback is active
-		if (event.ctrlKey || event.altKey || event.metaKey || goodTube_fallback) {
-			return;
-		}
-
 		// Get the key pressed (in lowercase)
 		let keyPressed = event.key.toLowerCase();
 
 		// 2x playback rate
 		if (keyPressed === ' ' || keyPressed === 'k') {
+			// If the "hide mute ads" fallback is active, don't do anything
+			if (goodTube_fallback) {
+				return;
+			}
+
+			// Make sure we're not holding down the mouse
+			if (goodTube_iframe_supportDoubleSpeed_mouseDownFired) {
+				event.preventDefault();
+				event.stopImmediatePropagation();
+				return;
+			}
+
+			// Don't do anything if we're holding control OR alt OR the command key on mac OR the "hide and mute ads" fallback is active
+			if (event.ctrlKey || event.altKey || event.metaKey || goodTube_fallback) {
+				return;
+			}
+
 			// Clear the hold timeout
 			clearTimeout(goodTube_iframe_supportDoubleSpeed_holdTimeout);
 
@@ -3460,6 +3216,7 @@
 				goodTube_iframe_supportDoubleSpeed_videoElement.dispatchEvent(new PointerEvent('click', { bubbles: true, cancelable: true, button: 0 }));
 				goodTube_iframe_supportDoubleSpeed_videoElement.dispatchEvent(new PointerEvent('mouseup', { bubbles: true, cancelable: true, button: 0 }));
 				goodTube_iframe_supportDoubleSpeed_allowNextClick = false;
+				setTimeout(() => { goodTube_iframe_supportDoubleSpeed_videoElement.focus(); }, 0);
 			}
 			// Otherwise, double playback rate did happen
 			else {
@@ -3584,6 +3341,7 @@
 			goodTube_iframe_supportDoubleSpeed_videoElement.dispatchEvent(new PointerEvent('click', { bubbles: true, cancelable: true, button: 0 }));
 			goodTube_iframe_supportDoubleSpeed_videoElement.dispatchEvent(new PointerEvent('mouseup', { bubbles: true, cancelable: true, button: 0 }));
 			goodTube_iframe_supportDoubleSpeed_allowNextClick = false;
+			setTimeout(goodTube_iframe_supportDoubleSpeed_videoElement.focus());
 		}
 		// Otherwise, double playback rate did happen
 		else {
@@ -3890,20 +3648,14 @@
 			goodTube_iframe_play();
 		}
 
-		// Toggle picture in picture
-		else if (event.data === 'goodTube_pip') {
-			let pipButton = document.querySelector('.ytp-pip-button');
-			if (pipButton) {
-				pipButton.click();
-			}
-		}
-
-		// Show or hide the end screen thumbnails
+		// Show the end screen thumbnails
 		else if (event.data === 'goodTube_endScreen_show') {
 			if (document.body && document.body.classList.contains('goodTube_hideEndScreen')) {
 				document.body.classList.remove('goodTube_hideEndScreen');
 			}
 		}
+
+		// Hide the end screen thumbnails
 		else if (event.data === 'goodTube_endScreen_hide') {
 			if (document.body && !document.body.classList.contains('goodTube_hideEndScreen')) {
 				document.body.classList.add('goodTube_hideEndScreen');
@@ -3912,216 +3664,70 @@
 
 		// Keyboard shortcut (keydown)
 		else if (event.data.indexOf('goodTube_shortcut_keydown_') !== -1) {
-			// Get the key pressed
-			let keyPressed = event.data.replace('goodTube_shortcut_keydown_', '');
+			// Target the video element
+			let videoElement = document.querySelector('video');
 
-			// Target the player
-			let player = document.querySelector('video');
-			if (!player) {
-				return;
-			}
+			// If the video element exists
+			if (videoElement) {
+				// Focus the video element
+				videoElement.focus();
 
-			// Speed up playback
-			else if (keyPressed === '>') {
-				if (goodTube_iframe_api && typeof goodTube_iframe_api.getPlaybackRate === 'function' && typeof goodTube_iframe_api.setPlaybackRate === 'function') {
-					let playbackRate = goodTube_iframe_api.getPlaybackRate();
-
-					if (playbackRate == .25) {
-						goodTube_iframe_api.setPlaybackRate(.5);
-					}
-					else if (playbackRate == .5) {
-						goodTube_iframe_api.setPlaybackRate(.75);
-					}
-					else if (playbackRate == .75) {
-						goodTube_iframe_api.setPlaybackRate(1);
-					}
-					else if (playbackRate == 1) {
-						goodTube_iframe_api.setPlaybackRate(1.25);
-					}
-					else if (playbackRate == 1.25) {
-						goodTube_iframe_api.setPlaybackRate(1.5);
-					}
-					else if (playbackRate == 1.5) {
-						goodTube_iframe_api.setPlaybackRate(1.75);
-					}
-					else if (playbackRate == 1.75) {
-						goodTube_iframe_api.setPlaybackRate(2);
-					}
+				// Get the key event data
+				let keyData = event.data.replace('goodTube_shortcut_keydown_', '').split('_');
+				let keyPressed = keyData[0];
+				let keyCode = parseFloat(keyData[1]);
+				let shiftKey = keyData[2];
+				if (shiftKey === 'true') {
+					shiftKey = true;
 				}
-			}
-
-			// Slow down playback
-			else if (keyPressed === '<') {
-				if (goodTube_iframe_api && typeof goodTube_iframe_api.getPlaybackRate === 'function' && typeof goodTube_iframe_api.setPlaybackRate === 'function') {
-					let playbackRate = goodTube_iframe_api.getPlaybackRate();
-
-					if (playbackRate == .5) {
-						goodTube_iframe_api.setPlaybackRate(.25);
-					}
-					else if (playbackRate == .75) {
-						goodTube_iframe_api.setPlaybackRate(.5);
-					}
-					else if (playbackRate == 1) {
-						goodTube_iframe_api.setPlaybackRate(.75);
-					}
-					else if (playbackRate == 1.25) {
-						goodTube_iframe_api.setPlaybackRate(1);
-					}
-					else if (playbackRate == 1.5) {
-						goodTube_iframe_api.setPlaybackRate(1.25);
-					}
-					else if (playbackRate == 1.75) {
-						goodTube_iframe_api.setPlaybackRate(1.5);
-					}
-					else if (playbackRate == 2) {
-						goodTube_iframe_api.setPlaybackRate(1.75);
-					}
-				}
-			}
-
-			// If we're not holding down the shift key
-			if (!event.shiftKey) {
-				// Prev frame (24fps calculation)
-				if (keyPressed === ',') {
-					if (player.paused || player.ended) {
-						player.currentTime -= 0.04166666666666667;
-					}
+				else {
+					shiftKey = false;
 				}
 
-				// Next frame (24fps calculation)
-				if (keyPressed === '.') {
-					if (player.paused || player.ended) {
-						player.currentTime += 0.04166666666666667;
-					}
-				}
-
-				// Prev 5 seconds
-				if (keyPressed === 'arrowleft') {
-					player.currentTime -= 5;
-				}
-
-				// Next 5 seconds
-				if (keyPressed === 'arrowright') {
-					player.currentTime += 5;
-				}
-
-				// Toggle play/pause
-				if (keyPressed === ' ' || keyPressed === 'k') {
-					// Simulate a spacebar keydown event on the <video> element
-					let keyEvent = new window.KeyboardEvent('keydown', {
+				// Simulate a keydown
+				document.dispatchEvent(
+					new KeyboardEvent('keydown', {
 						bubbles: true,
-						key: ' ',
-						keyCode: 32,
-						shiftKey: false,
-						charCode: 0
-					});
-					document.dispatchEvent(keyEvent);
-				}
-
-				// Toggle mute
-				if (keyPressed === 'm') {
-					document.querySelector('.ytp-mute-button').click();
-				}
-
-				// Toggle fullscreen
-				if (keyPressed === 'f') {
-					let fullScreenButton = document.querySelector('.ytp-fullscreen-button');
-
-					if (fullScreenButton) {
-						fullScreenButton.click();
-					}
-
-					// Force mouse move to make sure fullscreen hides
-					var event = new Event('mousemove');
-					document.dispatchEvent(event);
-				}
-
-				// Toggle captions
-				if (keyPressed === 'c') {
-					let captionsButton = document.querySelector('.ytp-subtitles-button');
-
-					if (captionsButton) {
-						captionsButton.click();
-					}
-				}
-
-				// Prev 10 seconds
-				else if (keyPressed === 'j') {
-					player.currentTime -= 10;
-				}
-
-				// Next 10 seconds
-				else if (keyPressed === 'l') {
-					player.currentTime += 10;
-				}
-
-				// Start of video
-				else if (keyPressed === 'home') {
-					player.currentTime = 0;
-				}
-
-				// End of video
-				else if (keyPressed === 'end') {
-					player.currentTime += player.duration;
-				}
-
-				// Skip to percentage
-				if (keyPressed === '0') {
-					player.currentTime = 0;
-				}
-				else if (keyPressed === '1') {
-					player.currentTime = ((player.duration / 100) * 10);
-				}
-				else if (keyPressed === '2') {
-					player.currentTime = ((player.duration / 100) * 20);
-				}
-				else if (keyPressed === '3') {
-					player.currentTime = ((player.duration / 100) * 30);
-				}
-				else if (keyPressed === '4') {
-					player.currentTime = ((player.duration / 100) * 40);
-				}
-				else if (keyPressed === '5') {
-					player.currentTime = ((player.duration / 100) * 50);
-				}
-				else if (keyPressed === '6') {
-					player.currentTime = ((player.duration / 100) * 60);
-				}
-				else if (keyPressed === '7') {
-					player.currentTime = ((player.duration / 100) * 70);
-				}
-				else if (keyPressed === '8') {
-					player.currentTime = ((player.duration / 100) * 80);
-				}
-				else if (keyPressed === '9') {
-					player.currentTime = ((player.duration / 100) * 90);
-				}
+						key: keyPressed,
+						keyCode: keyCode,
+						shiftKey: shiftKey
+					})
+				);
 			}
 		}
 
 
 		// Keyboard shortcut (keyup)
 		else if (event.data.indexOf('goodTube_shortcut_keyup_') !== -1) {
-			// Get the key pressed
-			let keyPressed = event.data.replace('goodTube_shortcut_keyup_', '');
+			// Target the video element
+			let videoElement = document.querySelector('video');
 
-			// Target the player
-			let player = document.querySelector('video');
-			if (!player) {
-				return;
-			}
+			// If the video element exists
+			if (videoElement) {
+				// Focus the video element
+				videoElement.focus();
 
-			// Toggle play/pause
-			if (keyPressed === ' ' || keyPressed === 'k') {
-				// Simulate a spacebar keyup event on the <video> element
-				let keyEvent = new window.KeyboardEvent('keyup', {
-					bubbles: true,
-					key: ' ',
-					keyCode: 32,
-					shiftKey: false,
-					charCode: 0
-				});
-				document.dispatchEvent(keyEvent);
+				// Get the key event data
+				let keyData = event.data.replace('goodTube_shortcut_keyup_', '').split('_');
+				let keyPressed = keyData[0];
+				let keyCode = parseFloat(keyData[1]);
+				let shiftKey = keyData[2];
+				if (shiftKey === 'true') {
+					shiftKey = true;
+				}
+				else {
+					shiftKey = false;
+				}
+
+				// Simulate a keyup
+				document.dispatchEvent(
+					new KeyboardEvent('keyup', {
+						bubbles: true,
+						key: keyPressed,
+						keyCode: keyCode,
+						shiftKey: shiftKey
+					})
+				);
 			}
 		}
 
@@ -4220,7 +3826,7 @@
 		// Target the video
 		let videoElement = document.querySelector('video');
 
-		// If the video exists, pause it
+		// If the video element exists, pause it
 		if (videoElement) {
 			videoElement.pause();
 		}
@@ -4280,7 +3886,7 @@
 		// Target the video
 		let videoElement = document.querySelector('video');
 
-		// If the video exists, restore the time
+		// If the video exists, play the video
 		if (videoElement) {
 			videoElement.play();
 		}
