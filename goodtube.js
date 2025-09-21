@@ -766,7 +766,8 @@
 				let savedTime = Math.floor(goodTube_page_api.getCurrentTime());
 
 				// Make sure it's over 10seconds just for sanity's sake (we don't wanna skip because of delayed loading time on our end)
-				if (savedTime > 10) {
+				// Also make sure we're not viewing a playlist
+				if (savedTime > 10 && !goodTube_playlist) {
 					skipToGetVar = '&start=' + savedTime;
 				}
 			}
@@ -791,7 +792,8 @@
 				let savedTime = Math.floor(goodTube_page_api.getCurrentTime());
 
 				// Make sure it's over 10s for sanity's sake (we don't wanna skip because of delayed loading time on our end)
-				if (savedTime > 10) {
+				// Also make sure we're not viewing a playlist
+				if (savedTime > 10 && !goodTube_playlist) {
 					startTime = savedTime;
 				}
 			}
