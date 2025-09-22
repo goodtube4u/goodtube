@@ -300,6 +300,14 @@
 		console.log('[GoodTube] Ads removed');
 
 
+		// Hide the miniplayer
+		cssOutput += `
+			ytd-miniplayer {
+				display: none !important;
+			}
+		`;
+
+
 		// Hide shorts if they're not enabled
 		if (goodTube_shorts === 'false') {
 			cssOutput += `
@@ -357,15 +365,8 @@
 	// Hide shorts (real time)
 	let goodTube_youtube_hideShortsRealtime_timeout = setTimeout(() => {}, 0);
 	function goodTube_youtube_hideShortsRealtime() {
-		// If shorts are enabled
+		// If shorts are enabled, don't do anything
 		if (goodTube_shorts === 'true') {
-			// Clear timeout first to solve memory leak issues
-			clearTimeout(goodTube_youtube_hideShortsRealtime_timeout);
-
-			// Loop this function
-			goodTube_youtube_hideShortsRealtime_timeout = setTimeout(goodTube_youtube_hideShortsRealtime, 100);
-
-			// Don't hide shorts
 			return;
 		}
 
@@ -470,12 +471,6 @@
 				goodTube_helper_hideYoutubePlayer(element);
 			});
 		}
-
-		// Hide the Youtube miniplayer
-		let miniPlayers = document.querySelectorAll('ytd-miniplayer:not(.goodTube_hidden)');
-		miniPlayers.forEach((element) => {
-			goodTube_helper_hideElement(element);
-		});
 
 		// Clear timeout first to solve memory leak issues
 		clearTimeout(goodTube_youtube_hidePlayers_timeout);
