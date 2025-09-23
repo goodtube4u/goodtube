@@ -780,51 +780,8 @@
 			goodTube_player.contentWindow.postMessage('goodTube_load_' + goodTube_getParams['v'] + '|||' + startTime + '|||' + playlist, '*');
 		}
 
-		// Sync the starting playback time (this makes our player match the iframe player)
-		goodTube_player_syncStartingPlaybackTime();
-
 		// Show the player
 		goodTube_helper_showElement(goodTube_playerWrapper);
-	}
-
-	// Sync the starting playback time (this makes our player match the iframe player)
-	let goodTube_player_syncStartingPlaybackTime_timeout = setTimeout(() => {}, 0);
-	function goodTube_player_syncStartingPlaybackTime() {
-		// If there's a skip to time in the query params, don't do anyhing
-		if (typeof goodTube_getParams['t'] !== 'undefined') {
-			return;
-		}
-
-		// Re fetch the page API
-		goodTube_page_api = document.getElementById('movie_player');
-
-		// Get the video data to check loading state and video id
-		let videoData = false;
-		let videoId = false;
-		if (goodTube_page_api && typeof goodTube_page_api.getVideoData === 'function' && typeof goodTube_page_api.getCurrentTime === 'function') {
-			videoData = goodTube_page_api.getVideoData();
-			videoId = videoData.video_id;
-		}
-
-		// If there's no video data, no video id, or the id doesn't match the one in the query params yet (it hasn't loaded)
-		if (!videoData || !videoId || videoId !== goodTube_getParams['v']) {
-			// Clear timeout first to solve memory leak issues
-			clearTimeout(goodTube_player_syncStartingPlaybackTime_timeout);
-
-			// Create a new timeout to try again
-			goodTube_player_syncStartingPlaybackTime_timeout = setTimeout(goodTube_player_syncStartingPlaybackTime, 100);
-
-			// Don't do anything else
-			return;
-		}
-
-		// Get the current time of Youtube's video
-		let restoreTime = Math.floor(goodTube_page_api.getCurrentTime());
-
-		// Skip to that time in our iframe player (if required)
-		if (restoreTime > 0) {
-			goodTube_player_skipTo(restoreTime);
-		}
 	}
 
 	// Clear and hide the player
