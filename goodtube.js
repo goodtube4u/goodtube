@@ -159,8 +159,11 @@
 	// Is this the first video we're loading?
 	let goodTube_firstLoad = true;
 
-	// Has the prox iframe loaded?
+	// Has the proxy iframe loaded?
 	let goodTube_proxyIframeLoaded = false;
+
+	// Has the player iframe loaded?
+	let goodTube_playerIframeLoaded = false;
 
 	// Hold the playlist information
 	let goodTube_playlist = false;
@@ -732,43 +735,11 @@
 		}
 
 
-		// Re fetch the page API
-		goodTube_page_api = document.getElementById('movie_player');
-
-		// Get the video data to check loading state and video id
-		let videoData = false;
-		let videoId = false;
-		if (goodTube_page_api && typeof goodTube_page_api.getVideoData === 'function' && typeof goodTube_page_api.getCurrentTime === 'function') {
-			videoData = goodTube_page_api.getVideoData();
-			videoId = videoData.video_id;
-		}
-
-		// If there's no video data, no video id, or the id doesn't match the one in the query params yet (it hasn't loaded)
-		if (!videoData || !videoId || videoId !== goodTube_getParams['v']) {
-			// Clear timeout first to solve memory leak issues
-			clearTimeout(goodTube_player_load_timeout);
-
-			// Create a new timeout to try again
-			goodTube_player_load_timeout = setTimeout(goodTube_player_load, 100);
-
-			// Don't do anything else
-			return;
-		}
-
-
 		// Setup the starting time
 		let startTime = 0;
 
-		// Get the current time of Youtube's video
-		let youtubeVideoTime = Math.floor(goodTube_page_api.getCurrentTime());
-
-		// If that time is greater than or equal to 10s
-		if (youtubeVideoTime >= 10) {
-			// Set out start time to match
-			startTime = youtubeVideoTime;
-		}
-		// Otherwise, use the startime time from query params
-		else if (typeof goodTube_getParams['t'] !== 'undefined') {
+		// Include the startime time from query params
+		if (typeof goodTube_getParams['t'] !== 'undefined') {
 			startTime = parseFloat(goodTube_getParams['t'].replace('s', ''));
 		}
 
@@ -814,8 +785,61 @@
 			goodTube_player.contentWindow.postMessage('goodTube_load_' + goodTube_getParams['v'] + '|||' + startTime + '|||' + playlist, '*');
 		}
 
+		// Sync the starting time
+		goodTube_player_syncStartingTime();
+
 		// Show the player
 		goodTube_helper_showElement(goodTube_playerWrapper);
+	}
+
+	// Sync the starting time
+	let goodTube_player_syncStartingTime_timeout = setTimeout(() => {}, 0);
+	function goodTube_player_syncStartingTime() {
+		// Make sure the player iframe has loaded
+		if (!goodTube_playerIframeLoaded) {
+			// Clear timeout first to solve memory leak issues
+			clearTimeout(goodTube_player_syncStartingTime_timeout);
+
+			// Create a new timeout to try again
+			goodTube_player_syncStartingTime_timeout = setTimeout(goodTube_player_syncStartingTime, 100);
+
+			// Don't do anything else
+			return;
+		}
+
+
+		// Re fetch the page API
+		goodTube_page_api = document.getElementById('movie_player');
+
+		// Get the video data to check loading state and video id
+		let videoData = false;
+		let videoId = false;
+		if (goodTube_page_api && typeof goodTube_page_api.getVideoData === 'function' && typeof goodTube_page_api.getCurrentTime === 'function') {
+			videoData = goodTube_page_api.getVideoData();
+			videoId = videoData.video_id;
+		}
+
+		// If there's no video data, no video id, or the id doesn't match the one in the query params yet (it hasn't loaded)
+		if (!videoData || !videoId || videoId !== goodTube_getParams['v']) {
+			// Clear timeout first to solve memory leak issues
+			clearTimeout(goodTube_player_syncStartingTime_timeout);
+
+			// Create a new timeout to try again
+			goodTube_player_syncStartingTime_timeout = setTimeout(goodTube_player_syncStartingTime, 100);
+
+			// Don't do anything else
+			return;
+		}
+
+
+		// Setup the sync time
+		let syncTime = Math.floor(goodTube_page_api.getCurrentTime());
+
+		// If the sync time is greater than or equal to 10s (this accounts for some delayed loading time)
+		if (syncTime >= 10) {
+			// Sync our player
+			goodTube_player_skipTo(syncTime, videoId);
+		}
 	}
 
 	// Clear and hide the player
@@ -830,8 +854,8 @@
 	}
 
 	// Skip to time
-	function goodTube_player_skipTo(time) {
-		goodTube_player.contentWindow.postMessage('goodTube_skipTo_' + time, '*');
+	function goodTube_player_skipTo(time, videoId = '') {
+		goodTube_player.contentWindow.postMessage('goodTube_skipTo_' + time + '|||' + videoId, '*');
 	}
 
 	// Pause
@@ -1188,6 +1212,7 @@
 
 		// Player iframe has loaded
 		else if (event.data === 'goodTube_playerIframe_loaded') {
+			goodTube_playerIframeLoaded = true;
 			goodTube_player.style.display = 'block';
 		}
 
@@ -3531,7 +3556,33 @@
 
 			// Create a new timeout
 			goodTube_iframe_receiveMessage_timeout = setTimeout(() => { goodTube_iframe_receiveMessage(event); }, 1);
+
+			// Don't do anything else
+			return;
 		}
+
+
+		// Re fetch the iframe API
+		goodTube_iframe_api = document.getElementById('movie_player');
+
+		// Get the video data to check loading state
+		let videoData = false;
+		if (goodTube_iframe_api && typeof goodTube_iframe_api.getVideoData === 'function') {
+			videoData = goodTube_iframe_api.getVideoData();
+		}
+
+		// Keep trying to get the frame API until it exists
+		if (!videoData) {
+			// Clear timeout first to solve memory leak issues
+			clearTimeout(goodTube_iframe_receiveMessage_timeout);
+
+			// Create a new timeout
+			goodTube_iframe_receiveMessage_timeout = setTimeout(() => { goodTube_iframe_receiveMessage(event); }, 1);
+
+			// Don't do anything else
+			return;
+		}
+
 
 		// Load video
 		if (event.data.indexOf('goodTube_load_') !== -1) {
@@ -3564,7 +3615,24 @@
 
 		// Skip to time
 		else if (event.data.indexOf('goodTube_skipTo_') !== -1) {
-			let time = event.data.replace('goodTube_skipTo_', '');
+			// Get the data
+			let data = event.data.replace('goodTube_skipTo_', '').split('|||');
+			let time = parseFloat(data[0]);
+			let targetVideoId = data[1];
+
+			// If the target video id exists AND the current video id doesn't match the target video id (it hasn't loaded yet)
+			if (targetVideoId !== '' && videoData.video_id !== targetVideoId) {
+				// Clear timeout first to solve memory leak issues
+				clearTimeout(goodTube_iframe_receiveMessage_timeout);
+
+				// Create a new timeout
+				goodTube_iframe_receiveMessage_timeout = setTimeout(() => { goodTube_iframe_receiveMessage(event); }, 1);
+
+				// Don't do anything else
+				return;
+			}
+
+			// Skip to the time
 			goodTube_iframe_skipTo(time);
 		}
 
