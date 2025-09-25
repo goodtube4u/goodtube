@@ -305,7 +305,8 @@
 
 		// Hide the miniplayer
 		cssOutput += `
-			ytd-miniplayer {
+			ytd-miniplayer,
+			.ytp-miniplayer-button {
 				display: none !important;
 			}
 		`;
