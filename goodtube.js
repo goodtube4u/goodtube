@@ -2427,11 +2427,8 @@
 			}
 		}
 
-		// We must do this to ensure the video always plays (it solves an edge case)
-		goodTube_page_api = document.getElementById('movie_player');
-		if (goodTube_page_api && typeof goodTube_page_api.playVideo === 'function') {
-			goodTube_page_api.playVideo();
-		}
+		// Play the video (this solves an edge case)
+		goodTube_hideAndMuteAdsFallback_play();
 
 		// Make sure we only do this once
 		goodTube_hideAndMuteAds_state = 'enabled';
@@ -2496,11 +2493,8 @@
 			existingOverlay.remove();
 		}
 
-		// We must do this to ensure the video always plays (it solves an edge case)
-		goodTube_page_api = document.getElementById('movie_player');
-		if (goodTube_page_api && typeof goodTube_page_api.playVideo === 'function') {
-			goodTube_page_api.playVideo();
-		}
+		// Play the video (this solves an edge case)
+		goodTube_hideAndMuteAdsFallback_play();
 
 		// Make sure we only do this once
 		goodTube_hideAndMuteAds_state = 'disabled';
@@ -2558,6 +2552,40 @@
 
 			// Create a new timeout
 			goodTube_hideAndMuteAdsFallback_syncAutoplay_timeout = setTimeout(goodTube_hideAndMuteAdsFallback_syncAutoplay, 100);
+		}
+	}
+
+	// Play video
+	let goodTube_hideAndMuteAdsFallback_play_timeout = setTimeout(() => {}, 0);
+	function goodTube_hideAndMuteAdsFallback_play() {
+		// Re-fetch the page api
+		goodTube_page_api = document.getElementById('movie_player');
+
+		// Make sure we have what we need from the API
+		if (goodTube_page_api && typeof goodTube_page_api.playVideo === 'function') {
+			// Play the video
+			goodTube_page_api.playVideo();
+
+			// Get the video element
+			let videoElement = document.querySelector('#player video');
+
+			// If we found it
+			if (videoElement) {
+				// Save the starting video time
+				let startingVideoTime = videoElement.currentTime;
+
+				// Clear the timeout
+				clearTimeout(goodTube_hideAndMuteAdsFallback_play_timeout);
+
+				// Create a new timeout
+				goodTube_hideAndMuteAdsFallback_play_timeout = setTimeout(() => {
+					// If the time has not progressed
+					if (videoElement.currentTime === startingVideoTime) {
+						// Try again
+						goodTube_hideAndMuteAdsFallback_play();
+					}
+				}, 100);
+			}
 		}
 	}
 
