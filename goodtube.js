@@ -2298,6 +2298,12 @@
 			// Get the ads DOM element
 			let adsElement = document.querySelector('.video-ads');
 
+			// We must do this to ensure the video always plays (it solves an edge case)
+			goodTube_page_api = document.getElementById('movie_player');
+			if (goodTube_page_api && typeof goodTube_page_api.playVideo === 'function') {
+				goodTube_page_api.playVideo();
+			}
+
 			// If ads are showing
 			if (adsElement && adsElement.checkVisibility()) {
 				// Enable the "hide and mute ads" overlay
@@ -2451,12 +2457,6 @@
 		let existingOverlay = document.getElementById('goodTube_hideMuteAdsOverlay');
 		if (existingOverlay) {
 			existingOverlay.remove();
-		}
-
-		// We must do this to ensure the video always plays (it solves an edge case)
-		goodTube_page_api = document.getElementById('movie_player');
-		if (goodTube_page_api && typeof goodTube_page_api.playVideo === 'function') {
-			goodTube_page_api.playVideo();
 		}
 
 		// Make sure we only do this once
