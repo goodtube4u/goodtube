@@ -850,6 +850,38 @@
 			goodTube_player.contentWindow.postMessage('goodTube_stopVideo', '*');
 		}
 
+		// If the fallback is active
+		if (goodTube_fallbacl) {
+
+		}
+
+		// Hide the player
+		goodTube_helper_hideElement(goodTube_playerWrapper);
+	}
+
+
+	// Clear and hide the player
+	function goodTube_player_clear(clearPip = false) {
+		// If we're not in picture in picture mode (or forcing pip to clear)
+		if (!goodTube_pip || clearPip) {
+			// Clear the "hide and mute ads" fallback
+			if (goodTube_fallback) {
+				// Refetch the page api
+				goodTube_page_api = document.getElementById('movie_player');
+
+				// Make sure the API is all good
+				if (goodTube_page_api && typeof goodTube_page_api.stopVideo === 'function') {
+					// Stop the video
+					goodTube_page_api.stopVideo();
+				}
+			}
+			// Clear the regular player
+			else {
+				// Stop the video via the iframe api
+				goodTube_player.contentWindow.postMessage('goodTube_stopVideo', '*');
+			}
+		}
+
 		// Hide the player
 		goodTube_helper_hideElement(goodTube_playerWrapper);
 	}
@@ -2295,8 +2327,9 @@
 	function goodTube_hideAndMuteAdsFallback_check() {
 		// If the "hide and mute ads" fallback is active AND we're viewing a video
 		if (goodTube_fallback && window.location.href.indexOf('/watch?') !== -1) {
-			// Get the ads DOM element
+			// Get the ads DOM elements
 			let adsElement = document.querySelector('.video-ads');
+			let sponsoredAdsElement = document.querySelector('.ad-simple-attributed-string');
 
 			// We must do this to ensure the video always plays (it solves an edge case)
 			goodTube_page_api = document.getElementById('movie_player');
@@ -2305,7 +2338,7 @@
 			}
 
 			// If ads are showing
-			if (adsElement && adsElement.checkVisibility()) {
+			if ((adsElement && adsElement.checkVisibility()) || (sponsoredAdsElement && sponsoredAdsElement.checkVisibility())) {
 				// Enable the "hide and mute ads" overlay
 				goodTube_hideAndMuteAdsFallback_enable();
 			}
