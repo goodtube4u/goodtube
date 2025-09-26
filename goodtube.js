@@ -881,8 +881,11 @@
 
 	// Define the keypress function for the event listeners
 	function goodTube_shortcuts_keypress(event) {
-		// Don't do anything IF we're holding control OR alt OR the command key (mac) OR the "hide and mute ads" fallback is active OR we're not watching a video
-		if (event.ctrlKey || event.altKey || event.metaKey || goodTube_fallback || window.location.href.indexOf('/watch?') === -1) {
+		// Get the key pressed in lower case
+		let keyPressed = event.key.toLowerCase();
+
+		// Don't do anything IF we're holding control OR alt OR the command key (mac) OR we're not watching a video
+		if (event.ctrlKey || event.altKey || event.metaKey || window.location.href.indexOf('/watch?') === -1) {
 			return;
 		}
 
@@ -937,7 +940,7 @@
 		];
 
 		// Ensure we've pressed an allowed shortcut
-		if (allowedShortcuts.includes(event.key.toLowerCase())) {
+		if (allowedShortcuts.includes(keyPressed)) {
 			// Get the currently focused element
 			let focusedElement = event.srcElement;
 			let focusedElement_tag = false;
@@ -969,12 +972,28 @@
 					focusedElement_id !== 'contenteditable-root'
 				)
 			) {
-				// Prevent default actions
-				event.preventDefault();
-				event.stopImmediatePropagation();
 
-				// Pass the keyboard shortcut to the iframe
-				goodTube_player.contentWindow.postMessage('goodTube_shortcut_' + event.type + '_' + event.key + '_' + event.keyCode + '_' + event.shiftKey, '*');
+				// If the "hide and mute ads" fallback is active
+				if (goodTube_fallback) {
+					// Support the 'i' shortcut (keydown only)
+					if (keyPressed === 'i' && event.type.toLowerCase() === 'keydown') {
+						// Click the picture in picture button
+						document.querySelector('.ytp-pip-button')?.click();
+
+						// Prevent default actions
+						event.preventDefault();
+						event.stopImmediatePropagation();
+					}
+				}
+				// Otherwise, the "hide and mute ads" fallback is inactive
+				else {
+					// Prevent default actions
+					event.preventDefault();
+					event.stopImmediatePropagation();
+
+					// Pass the keyboard shortcut to the iframe
+					goodTube_player.contentWindow.postMessage('goodTube_shortcut_' + event.type + '_' + event.key + '_' + event.keyCode + '_' + event.shiftKey, '*');
+				}
 			}
 		}
 	}
@@ -2214,7 +2233,7 @@
 
 		// Disable some shortcuts while the overlay is enabled
 		function disableShortcuts(event) {
-			// Make sure we're watching a video and the overlay state is enabled
+			// Make sure we're watching a video and the overlay state is disabled
 			if (window.location.href.indexOf('/watch?') === -1 || goodTube_hideAndMuteAds_state !== 'enabled') {
 				return;
 			}
