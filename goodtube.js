@@ -844,15 +844,25 @@
 	}
 
 	// Clear and hide the player
-	function goodTube_player_clear(clearPip = false) {
-		// Stop the video via the iframe api (but not if we're in picture in picture)
+	function goodTube_player_clear(fallbackActive = false) {
+		// If we're not in picture in picture mode or forcing pip to clear
 		if (!goodTube_pip || clearPip) {
-			goodTube_player.contentWindow.postMessage('goodTube_stopVideo', '*');
-		}
+			// Clear the "hide and mute ads" fallback
+			if (fallbackActive) {
+				// Refetch the page api
+				goodTube_page_api = document.getElementById('movie_player');
 
-		// If the fallback is active
-		if (goodTube_fallbacl) {
-
+				// Make sure the API is all good
+				if (goodTube_page_api && typeof goodTube_page_api.stopVideo === 'function') {
+					// Stop the video
+					goodTube_page_api.stopVideo();
+				}
+			}
+			// Clear the regular player
+			else {
+				// Stop the video via the iframe api
+				goodTube_player.contentWindow.postMessage('goodTube_stopVideo', '*');
+			}
 		}
 
 		// Hide the player
@@ -2331,12 +2341,6 @@
 			let adsElement = document.querySelector('.video-ads');
 			let sponsoredAdsElement = document.querySelector('.ad-simple-attributed-string');
 
-			// We must do this to ensure the video always plays (it solves an edge case)
-			goodTube_page_api = document.getElementById('movie_player');
-			if (goodTube_page_api && typeof goodTube_page_api.playVideo === 'function') {
-				goodTube_page_api.playVideo();
-			}
-
 			// If ads are showing
 			if ((adsElement && adsElement.checkVisibility()) || (sponsoredAdsElement && sponsoredAdsElement.checkVisibility())) {
 				// Enable the "hide and mute ads" overlay
@@ -2490,6 +2494,12 @@
 		let existingOverlay = document.getElementById('goodTube_hideMuteAdsOverlay');
 		if (existingOverlay) {
 			existingOverlay.remove();
+		}
+
+		// We must do this to ensure the video always plays (it solves an edge case)
+		goodTube_page_api = document.getElementById('movie_player');
+		if (goodTube_page_api && typeof goodTube_page_api.playVideo === 'function') {
+			goodTube_page_api.playVideo();
 		}
 
 		// Make sure we only do this once
