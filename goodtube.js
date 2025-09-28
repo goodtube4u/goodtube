@@ -105,18 +105,6 @@
 		}
 	}
 
-	// Hide the Youtube player
-	function goodTube_helper_hideYoutubePlayer(element) {
-		// Add a wrapping div to help avoid detection
-		if (!element.closest('.goodTube_hiddenPlayer')) {
-			let parent = element.parentNode;
-			let wrapper = document.createElement('div');
-			wrapper.classList.add('goodTube_hiddenPlayer');
-			parent.replaceChild(wrapper, element);
-			wrapper.appendChild(element);
-		}
-	}
-
 	// Show the Youtube player
 	function goodTube_helper_showYoutubePlayer(element) {
 		let wrappingElement = element.closest('.goodTube_hiddenPlayer');
@@ -453,33 +441,21 @@
 			return;
 		}
 
-		// If the "hide and mute ads" fallback is active
-		if (goodTube_fallback) {
-			// Show the normal Youtube player
-			let regularPlayers = document.querySelectorAll('#player:not(.ytd-channel-video-player-renderer)');
-			regularPlayers.forEach((element) => {
-				goodTube_helper_showYoutubePlayer(element);
-			});
+		// Target the Youtube player
+		let youtubePlayer = document.getElementById('ytd-player');
 
-			// Show the full screen and theater Youtube player
-			let fullscreenPlayers = document.querySelectorAll('#full-bleed-container');
-			fullscreenPlayers.forEach((element) => {
-				goodTube_helper_showYoutubePlayer(element);
-			});
-		}
-		// Otherwise we're using the regular method
-		else {
-			// Hide the normal Youtube player
-			let regularPlayers = document.querySelectorAll('#player:not(.ytd-channel-video-player-renderer):not(.goodTube_hidden)');
-			regularPlayers.forEach((element) => {
-				goodTube_helper_hideYoutubePlayer(element);
-			});
-
-			// Remove the full screen and theater Youtube player
-			let fullscreenPlayers = document.querySelectorAll('#full-bleed-container:not(.goodTube_hidden)');
-			fullscreenPlayers.forEach((element) => {
-				goodTube_helper_hideYoutubePlayer(element);
-			});
+		// If we found the Youtube player
+		if (youtubePlayer) {
+			// If the "hide and mute ads" fallback is active
+			if (goodTube_fallback) {
+				// Show the Youtube player
+				youtubePlayer.style.visibility = 'visible';
+			}
+			// Otherwise we're using the regular method
+			else {
+				// Hide the Youtube player
+				youtubePlayer.style.visibility = 'hidden';
+			}
 		}
 
 		// Clear timeout first to solve memory leak issues
@@ -645,41 +621,20 @@
 				// Show the GoodTube player
 				goodTube_helper_showElement(goodTube_playerWrapper);
 
-				// This is used to position and size the player
-				let positionElement = false;
+				// Get the Youtube player
+				let youtubePlayer = document.querySelector('#ytd-player, .player-size');
 
-				// Theater mode
-				if (document.querySelector('ytd-watch-flexy[theater]')) {
-					positionElement = document.getElementById('player-full-bleed-container');
-
-					if (!goodTube_playerWrapper.classList.contains('goodTube_theater')) {
-						goodTube_playerWrapper.classList.add('goodTube_theater');
-					}
-				}
-				// Regular mode
-				else {
-					positionElement = document.getElementById('player');
-
-					if (goodTube_playerWrapper.classList.contains('goodTube_theater')) {
-						goodTube_playerWrapper.classList.remove('goodTube_theater');
-					}
-				}
-
-				// Use an alternative fallback position element if we can't find it
-				if (!positionElement || positionElement.offsetHeight <= 0) {
-					positionElement = document.getElementById('ytd-player');
-				}
-
-				// Position the player
-				if (positionElement && positionElement.offsetHeight > 0) {
-					// Our wrapper has "position: absolute" so take into account the window scroll
-					let rect = positionElement.getBoundingClientRect();
+				// If we found the Youtube player
+				if (youtubePlayer && youtubePlayer.offsetHeight > 0) {
+					// Make our custom player match the position of the Youtube player
+					// Note: Our custom player uses "position: absolute" so take into account the window scroll
+					let rect = youtubePlayer.getBoundingClientRect();
 					goodTube_playerWrapper.style.top = (rect.top + window.scrollY) + 'px';
 					goodTube_playerWrapper.style.left = (rect.left + window.scrollX) + 'px';
 
-					// Match the size of the position element
-					goodTube_playerWrapper.style.width = positionElement.offsetWidth + 'px';
-					goodTube_playerWrapper.style.height = positionElement.offsetHeight + 'px';
+					// Make our custom player match the size of the Youtube player
+					goodTube_playerWrapper.style.width = youtubePlayer.offsetWidth + 'px';
+					goodTube_playerWrapper.style.height = youtubePlayer.offsetHeight + 'px';
 				}
 			}
 		}
@@ -941,10 +896,6 @@
 			',',
 			// Next frame
 			'.',
-			// Volume up
-			'arrowup',
-			// Volume down
-			'arrowdown',
 			// Prev 5 seconds
 			'arrowleft',
 			// Next 5 seconds
@@ -2185,10 +2136,6 @@
 				display: none !important;
 			}
 
-			#full-bleed-container {
-				z-index: 10000 !important;
-			}
-
 			.ytp-chrome-top {
 				display: none !important;
 			}
@@ -3267,7 +3214,6 @@
 				goodTube_iframe_supportDoubleSpeed_videoElement.dispatchEvent(new PointerEvent('click', { bubbles: true, cancelable: true, button: 0 }));
 				goodTube_iframe_supportDoubleSpeed_videoElement.dispatchEvent(new PointerEvent('mouseup', { bubbles: true, cancelable: true, button: 0 }));
 				goodTube_iframe_supportDoubleSpeed_allowNextClick = false;
-				setTimeout(() => { goodTube_iframe_supportDoubleSpeed_videoElement.focus(); }, 0);
 			}
 			// Otherwise, double playback rate did happen
 			else {
