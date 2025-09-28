@@ -2558,6 +2558,11 @@
 	// Play video
 	let goodTube_hideAndMuteAdsFallback_play_timeout = setTimeout(() => {}, 0);
 	function goodTube_hideAndMuteAdsFallback_play() {
+		// Make sure that the "hide and mute ads" fallback is active AND we're viewing a video
+		if (!goodTube_fallback || window.location.href.indexOf('/watch?') === -1) {
+			return;
+		}
+
 		// Re-fetch the page api
 		goodTube_page_api = document.getElementById('movie_player');
 
