@@ -3763,9 +3763,6 @@
 
 			// If the video element exists
 			if (videoElement) {
-				// Focus the video element
-				videoElement.focus();
-
 				// Get the key event data
 				let keyData = event.data.replace('goodTube_shortcut_', '').split('_');
 				let eventType = keyData[0];
