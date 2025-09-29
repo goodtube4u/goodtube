@@ -172,6 +172,9 @@
 	// Are ads showing?
 	let goodTube_adsShowing = false;
 
+	// Is the tab in focus?
+	let goodTube_tabInFocus = document.hasFocus();
+
 	// Are shorts enabled?
 	let goodTube_shorts = goodTube_helper_getCookie('goodTube_shorts');
 	if (!goodTube_shorts) {
@@ -1054,6 +1057,18 @@
 	// Play
 	let goodTube_player_play_timeout = setTimeout(() => {}, 0);
 	function goodTube_player_play() {
+		// If the tab isn't in focus OR our player hasn't loaded
+		if (!goodTube_tabInFocus || !goodTube_playerIframeLoaded) {
+			// Clear timeout first to solve memory leak issues
+			clearTimeout(goodTube_player_play_timeout);
+
+			// Create a new timeout to try again
+			goodTube_player_play_timeout = setTimeout(goodTube_player_play, 100);
+
+			// Don't do anything else
+			return;
+		}
+
 		// If the "hide and mute ads" fallback is disabled
 		if (!goodTube_fallback) {
 			goodTube_player.contentWindow.postMessage('goodTube_play|||' + goodTube_getParams['v'], '*');
@@ -1083,7 +1098,7 @@
 
 			// Play the video
 			if (goodTube_page_api && typeof goodTube_page_api.playVideo === 'function') {
-				// Wait 100ms (this solves edge cases)
+				// Wait 100ms (this solves an edge case)
 				setTimeout(() => {
 					// Force the video to play
 					goodTube_page_api.playVideo();
@@ -1398,6 +1413,9 @@
 			return;
 		}
 		goodTube_initiated = true;
+
+		// Check the tab focus state
+		goodTube_checkTabFocus();
 
 		// Add CSS classes to hide elements (without Youtube knowing)
 		goodTube_helper_showHide_init();
@@ -2309,6 +2327,12 @@
 					});
 			});
 		}
+	}
+
+	// Check the tab focus state
+	function goodTube_checkTabFocus() {
+		window.addEventListener('focus', () => { goodTube_tabInFocus = true; });
+		window.addEventListener('blur', () => { goodTube_tabInFocus = false; });
 	}
 
 
@@ -4110,11 +4134,8 @@
 
 		// Play the video
 		if (goodTube_iframe_api && typeof goodTube_iframe_api.playVideo === 'function') {
-			// Wait 100ms (this solves edge cases)
-			setTimeout(() => {
-				// Force the video to play
-				goodTube_iframe_api.playVideo();
-			}, 100);
+			// Force the video to play
+			goodTube_iframe_api.playVideo();
 		}
 	}
 
