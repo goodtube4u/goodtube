@@ -300,11 +300,6 @@
 			.style-scope[page-subtype='channels'] ytm-shelf-renderer {
 				display: block !important;
 			}
-
-			/* Hide the youtube player */
-			#ytd-player {
-				visibility: hidden !important;
-			}
 		`;
 
 		// Debug message
@@ -444,6 +439,45 @@
 				});
 			}
 		});
+	}
+
+	// Hide all Youtube players
+	let goodTube_youtube_hidePlayers_timeout = setTimeout(() => {}, 0);
+	function goodTube_youtube_hidePlayers() {
+		// Don't do this if shorts are enabled and we're viewing a short
+		if (goodTube_shorts === 'true' && window.location.href.indexOf('/shorts') !== -1) {
+			// Clear timeout first to solve memory leak issues
+			clearTimeout(goodTube_youtube_hidePlayers_timeout);
+
+			// Loop this function
+			goodTube_youtube_hidePlayers_timeout = setTimeout(goodTube_youtube_hidePlayers, 100);
+
+			// Don't hide the players
+			return;
+		}
+
+		// Target the Youtube player
+		let youtubePlayer = document.getElementById('ytd-player');
+
+		// If we found the Youtube player
+		if (youtubePlayer) {
+			// If the "hide and mute ads" fallback is active
+			if (goodTube_fallback) {
+				// Show the Youtube player
+				youtubePlayer.style.visibility = 'visible';
+			}
+			// Otherwise we're using the regular method
+			else {
+				// Hide the Youtube player
+				youtubePlayer.style.visibility = 'hidden';
+			}
+		}
+
+		// Clear timeout first to solve memory leak issues
+		clearTimeout(goodTube_youtube_hidePlayers_timeout);
+
+		// Loop this function
+		goodTube_youtube_hidePlayers_timeout = setTimeout(goodTube_youtube_hidePlayers, 1);
 	}
 
 	// Mute and pause all Youtube videos
@@ -1387,6 +1421,9 @@
 
 		// Add CSS classes to hide elements (without Youtube knowing)
 		goodTube_helper_showHide_init();
+
+		// Hide the youtube players
+		goodTube_youtube_hidePlayers();
 
 		// Hide page elements
 		goodTube_youtube_hidePageElements();
