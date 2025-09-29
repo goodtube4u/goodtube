@@ -55,6 +55,15 @@
 		return null;
 	}
 
+	// Simulate a click (without changing focus)
+	function goodTube_helper_click(element) {
+		if (element) {
+			element.dispatchEvent(new PointerEvent('mousedown', { bubbles: true, cancelable: true, button: 0 }));
+			element.dispatchEvent(new PointerEvent('click', { bubbles: true, cancelable: true, button: 0 }));
+			element.dispatchEvent(new PointerEvent('mouseup', { bubbles: true, cancelable: true, button: 0 }));
+		}
+	}
+
 	// Add CSS classes to show or hide elements / the Youtube player
 	function goodTube_helper_showHide_init() {
 		let style = document.createElement('style');
@@ -159,6 +168,9 @@
 
 	// Is the "hide and mute ads" fallback active?
 	let goodTube_fallback = false;
+
+	// Are ads showing?
+	let goodTube_adsShowing = false;
 
 	// Are shorts enabled?
 	let goodTube_shorts = goodTube_helper_getCookie('goodTube_shorts');
@@ -503,10 +515,26 @@
 				// IF (the video is playing)
 				// AND (we're not syncing the main player OR it's not the main player)
 				if (!video.paused && (!goodTube_syncingPlayer || !video.closest('#movie_player'))) {
-					// Pause and mute the video
+					// Mute the video
 					video.muted = true;
 					video.volume = 0;
-					video.pause();
+
+					// If ads are not showing OR it's not the main player
+					if (!goodTube_adsShowing || !video.closest('#movie_player')) {
+						// Pause the video
+						video.pause();
+
+						// Restore the playback rate
+						video.playbackRate = goodTube_playbackSpeed;
+					}
+					// Otherwise, it's the main player and ads are showing
+					else {
+						// Play the video
+						video.play();
+
+						// Speed up to 2x (any faster is detected by Youtube)
+						video.playbackRate = 2;
+					}
 				}
 			}
 		});
@@ -516,6 +544,63 @@
 
 		// Loop this function
 		goodTube_youtube_pauseMuteVideos_timeout = setTimeout(goodTube_youtube_pauseMuteVideos, 1);
+	}
+
+	// Turn off autoplay
+	let goodTube_youtube_turnOffAutoplay_timeout = setTimeout(() => {}, 0);
+	function goodTube_youtube_turnOffAutoplay() {
+		// If we've already turned off autoplay, just return
+		if (goodTube_turnedOffAutoplay) {
+			return;
+		}
+
+		// Target the autoplay button
+		let autoplayButton = document.querySelector('#movie_player .ytp-autonav-toggle-button');
+
+		// If we found it
+		if (autoplayButton) {
+			// Turn off autoplay
+			if (autoplayButton.getAttribute('aria-checked') === 'true') {
+				goodTube_helper_click(autoplayButton);
+			}
+
+			// Set a variable if autoplay has been turned off
+			goodTube_turnedOffAutoplay = true;
+		}
+
+		// Keep doing this, Youtube is causing autoplay issues lately...it doesn't want to stay off?
+
+		// Clear timeout first to solve memory leak issues
+		clearTimeout(goodTube_youtube_turnOffAutoplay_timeout);
+
+		// Run actions again in 100ms to loop this function
+		goodTube_youtube_turnOffAutoplay_timeout = setTimeout(goodTube_youtube_turnOffAutoplay, 100);
+	}
+
+	// Check ads state
+	let goodTube_youtube_checkAdsState_timeout = setTimeout(() => {}, 0);
+	function goodTube_youtube_checkAdsState() {
+		// If we're viewing a video
+		if (window.location.href.indexOf('/watch?') !== -1) {
+			// Get the ads DOM elements
+			let adsElement = document.querySelector('.video-ads');
+			let sponsoredAdsElement = document.querySelector('.ad-simple-attributed-string');
+
+			// If ads are showing
+			if ((adsElement && adsElement.checkVisibility()) || (sponsoredAdsElement && sponsoredAdsElement.checkVisibility())) {
+				goodTube_adsShowing = true;
+			}
+			// Otherwise, ads are not showing
+			else {
+				goodTube_adsShowing = false;
+			}
+		}
+
+		// Clear timeout first to solve memory leak issues
+		clearTimeout(goodTube_youtube_checkAdsState_timeout);
+
+		// Run actions again in 1ms to loop this function
+		goodTube_youtube_checkAdsState_timeout = setTimeout(goodTube_youtube_checkAdsState, 1);
 	}
 
 
@@ -744,8 +829,140 @@
 		// Sync the starting time
 		goodTube_player_syncStartingTime();
 
+		// Set the Youtube player to the lowest quality
+		goodTube_player_setQualitySucceeded = false;
+		goodTube_player_setQuality('lowest');
+
 		// Show the player
 		goodTube_helper_showElement(goodTube_playerWrapper);
+
+		// Play the video (this solves some edge cases)
+		goodTube_player_play();
+	}
+
+	// Set the Youtube player quality
+	let goodTube_player_setQualitySucceeded = false;
+	let goodTube_player_setQuality_lastQuality = false;
+	let goodTube_player_setQuality_timeout = setTimeout(() => {}, 0);
+	function goodTube_player_setQuality(quality) {
+		// Only do this once
+		if (goodTube_player_setQualitySucceeded) {
+			return;
+		}
+
+		// Don't double up
+		if (goodTube_player_setQuality_lastQuality === quality) {
+			return;
+		}
+
+		// Make sure we're watching a video
+		if (window.location.href.indexOf('/watch?') === -1) {
+			return;
+		}
+
+		// If ads are showing
+		if (goodTube_adsShowing) {
+			// Clear timeout first to solve memory leak issues
+			clearTimeout(goodTube_player_setQuality_timeout);
+
+			// Create a new timeout to try again
+			goodTube_player_setQuality_timeout = setTimeout(() => { goodTube_player_setQuality(quality); }, 100);
+
+			// Don't do anything else
+			return;
+		}
+
+		// Get the video data
+		let videoData = false;
+		goodTube_page_api = document.getElementById('movie_player');
+		if (goodTube_page_api && typeof goodTube_page_api.getVideoData === 'function') {
+			videoData = goodTube_page_api.getVideoData();
+		}
+
+		// If the correct video hasn't loaded yet (based on the ID in the query params)
+		if (!videoData || goodTube_getParams['v'] !== videoData.video_id) {
+			// Clear timeout first to solve memory leak issues
+			clearTimeout(goodTube_player_setQuality_timeout);
+
+			// Create a new timeout to try again
+			goodTube_player_setQuality_timeout = setTimeout(() => { goodTube_player_setQuality(quality); }, 100);
+
+			// Don't do anything else
+			return;
+		}
+
+		// If we're setting to "lowest" and the fallback is enabled, stop
+		if (quality === 'lowest' && goodTube_fallback) {
+			return;
+		}
+
+		// If we're setting to "auto" and the fallback is disabled, stop
+		if (quality === 'auto' && !goodTube_fallback) {
+			return;
+		}
+
+		// Target the main settings button
+		let mainSettingsButton = document.querySelector('.ytp-button.ytp-settings-button');
+
+		// If we found the settings button
+		if (mainSettingsButton) {
+			// Click the settings button to open the settings menu
+			goodTube_helper_click(mainSettingsButton);
+
+			// Get the settings buttons
+			let settingsMenuButtons = document.querySelectorAll('.ytp-settings-menu .ytp-menuitem');
+
+			// For each settings menu button
+			settingsMenuButtons.forEach((settingsMenuButton) => {
+				// If it's the "Quality" menu button
+				if (settingsMenuButton.innerHTML.indexOf('Quality') !== -1) {
+					// Click the "Quality" menu button
+					goodTube_helper_click(settingsMenuButton);
+
+					// Get the quality buttons
+					let qualityButtons = document.querySelectorAll('.ytp-settings-menu .ytp-menuitem');
+
+					// If we found the quality buttons
+					if (qualityButtons.length > 0) {
+						// Setup a variable to hold the target quality button
+						let targetQualityButton = false;
+
+						// If we're setting LOWEST quality, get the second last button (above "Auto")
+						if (quality === 'lowest') {
+							targetQualityButton = qualityButtons[qualityButtons.length - 2];
+						}
+						// Otherwise, if we're setting AUTO quality, get the last button
+						else if (quality === 'auto') {
+							targetQualityButton = qualityButtons[qualityButtons.length - 1];
+						}
+
+						// If we found the target quality button
+						if (targetQualityButton) {
+							// Click the target quality button
+							goodTube_helper_click(targetQualityButton);
+
+							// Blur the main settings button (this removes the settings menu tooltip)
+							mainSettingsButton.blur();
+
+							// Indicate that we successfully set the quality
+							goodTube_player_setQualitySucceeded = true;
+
+							// Save the quality we've just set
+							goodTube_player_setQuality_lastQuality = quality;
+						}
+					}
+				}
+			});
+		}
+
+		// If we did not successfully set the quality (player is loading or in ad state)
+		if (!goodTube_player_setQualitySucceeded) {
+			// Clear timeout first to solve memory leak issues
+			clearTimeout(goodTube_player_setQuality_timeout);
+
+			// Create a new timeout to try again
+			goodTube_player_setQuality_timeout = setTimeout(() => { goodTube_player_setQuality(quality); }, 100);
+		}
 	}
 
 	// Sync the starting time
@@ -824,33 +1041,6 @@
 		goodTube_helper_hideElement(goodTube_playerWrapper);
 	}
 
-
-	// Clear and hide the player
-	function goodTube_player_clear(clearPip = false) {
-		// If we're not in picture in picture mode (or forcing pip to clear)
-		if (!goodTube_pip || clearPip) {
-			// Clear the "hide and mute ads" fallback
-			if (goodTube_fallback) {
-				// Refetch the page api
-				goodTube_page_api = document.getElementById('movie_player');
-
-				// Make sure the API is all good
-				if (goodTube_page_api && typeof goodTube_page_api.stopVideo === 'function') {
-					// Stop the video
-					goodTube_page_api.stopVideo();
-				}
-			}
-			// Clear the regular player
-			else {
-				// Stop the video via the iframe api
-				goodTube_player.contentWindow.postMessage('goodTube_stopVideo', '*');
-			}
-		}
-
-		// Hide the player
-		goodTube_helper_hideElement(goodTube_playerWrapper);
-	}
-
 	// Skip to time
 	function goodTube_player_skipTo(time, videoId = '') {
 		goodTube_player.contentWindow.postMessage('goodTube_skipTo_' + time + '|||' + videoId, '*');
@@ -862,8 +1052,44 @@
 	}
 
 	// Play
-	function goodTube_player_pause() {
-		goodTube_player.contentWindow.postMessage('goodTube_play', '*');
+	let goodTube_player_play_timeout = setTimeout(() => {}, 0);
+	function goodTube_player_play() {
+		// If the "hide and mute ads" fallback is disabled
+		if (!goodTube_fallback) {
+			goodTube_player.contentWindow.postMessage('goodTube_play|||' + goodTube_getParams['v'], '*');
+		}
+		// Otherwise, the "hide and mute ads" fallback is enabled
+		else {
+			// Re-fetch the page api
+			goodTube_page_api = document.getElementById('movie_player');
+
+			// Get the video data
+			let videoData = false;
+			if (goodTube_page_api && typeof goodTube_page_api.getVideoData === 'function') {
+				videoData = goodTube_page_api.getVideoData();
+			}
+
+			// If the correct video hasn't loaded yet (based on the ID in the query params)
+			if (!videoData || goodTube_getParams['v'] !== videoData.video_id) {
+				// Clear timeout first to solve memory leak issues
+				clearTimeout(goodTube_player_play_timeout);
+
+				// Create a new timeout to try again
+				goodTube_player_play_timeout = setTimeout(goodTube_player_play, 100);
+
+				// Don't do anything else
+				return;
+			}
+
+			// Play the video
+			if (goodTube_page_api && typeof goodTube_page_api.playVideo === 'function') {
+				// Wait 100ms (this solves edge cases)
+				setTimeout(() => {
+					// Force the video to play
+					goodTube_page_api.playVideo();
+				}, 100);
+			}
+		}
 	}
 
 
@@ -971,7 +1197,7 @@
 					// Support the 'i' shortcut (keydown only)
 					if (keyPressed === 'i' && event.type.toLowerCase() === 'keydown') {
 						// Click the picture in picture button
-						document.querySelector('.ytp-pip-button')?.click();
+						goodTube_helper_click(document.querySelector('.ytp-pip-button'));
 
 						// Prevent default actions
 						event.preventDefault();
@@ -1188,6 +1414,9 @@
 		// Init our player
 		goodTube_player_init();
 
+		// Check the ads state
+		goodTube_youtube_checkAdsState();
+
 		// Init the "hide and mute ads" fallback
 		goodTube_hideAndMuteAdsFallback_init();
 
@@ -1270,7 +1499,7 @@
 
 		// Theater mode (toggle) - this should only work when not in fullscreen
 		else if (event.data === 'goodTube_theater' && !document.fullscreenElement) {
-			document.querySelector('.ytp-size-button')?.click();
+			goodTube_helper_click(document.querySelector('.ytp-size-button'));
 		}
 
 		// Autoplay
@@ -1342,6 +1571,13 @@
 			// Sync the autoplay
 			goodTube_hideAndMuteAdsFallback_syncAutoplay();
 
+			// Set to auto quality
+			goodTube_player_setQualitySucceeded = false;
+			goodTube_player_setQuality('auto');
+
+			// Play the video (this solves some edge cases)
+			goodTube_player_play();
+
 			// If we're in fullscreen already
 			if (document.fullscreenElement) {
 				// Exit fullscreen
@@ -1351,7 +1587,7 @@
 				window.setTimeout(() => {
 					let fullscreenButton = document.querySelector('.ytp-fullscreen-button');
 					if (fullscreenButton) {
-						fullscreenButton.click();
+						goodTube_helper_click(fullscreenButton);
 					}
 				}, 100);
 			}
@@ -2075,37 +2311,6 @@
 		}
 	}
 
-	// Turn off autoplay
-	let goodTube_youtube_turnOffAutoplay_timeout = setTimeout(() => {}, 0);
-	function goodTube_youtube_turnOffAutoplay() {
-		// If we've already turned off autoplay, just return
-		if (goodTube_turnedOffAutoplay) {
-			return;
-		}
-
-		// Target the autoplay button
-		let autoplayButton = document.querySelector('#movie_player .ytp-autonav-toggle-button');
-
-		// If we found it
-		if (autoplayButton) {
-			// Turn off autoplay
-			if (autoplayButton.getAttribute('aria-checked') === 'true') {
-				autoplayButton.click();
-			}
-
-			// Set a variable if autoplay has been turned off
-			goodTube_turnedOffAutoplay = true;
-		}
-
-		// Keep doing this, Youtube is causing autoplay issues lately...it doesn't want to stay off?
-
-		// Clear timeout first to solve memory leak issues
-		clearTimeout(goodTube_youtube_turnOffAutoplay_timeout);
-
-		// Run actions again in 100ms to loop this function
-		goodTube_youtube_turnOffAutoplay_timeout = setTimeout(goodTube_youtube_turnOffAutoplay, 100);
-	}
-
 
 	/* Hide and mute ads fallback
 	------------------------------------------------------------------------------------------ */
@@ -2284,12 +2489,8 @@
 	function goodTube_hideAndMuteAdsFallback_check() {
 		// If the "hide and mute ads" fallback is active AND we're viewing a video
 		if (goodTube_fallback && window.location.href.indexOf('/watch?') !== -1) {
-			// Get the ads DOM elements
-			let adsElement = document.querySelector('.video-ads');
-			let sponsoredAdsElement = document.querySelector('.ad-simple-attributed-string');
-
 			// If ads are showing
-			if ((adsElement && adsElement.checkVisibility()) || (sponsoredAdsElement && sponsoredAdsElement.checkVisibility())) {
+			if (goodTube_adsShowing) {
 				// Enable the "hide and mute ads" overlay
 				goodTube_hideAndMuteAdsFallback_enable();
 			}
@@ -2489,7 +2690,7 @@
 		// If we found it and it's visible (this means we can now interact with it)
 		if (autoplayButton && autoplayButton.checkVisibility()) {
 			if (autoplayButton.getAttribute('aria-checked') !== goodTube_autoplay) {
-				autoplayButton.click();
+				goodTube_helper_click(autoplayButton);
 			}
 		}
 		// Otherwise, keep trying until we find the autoplay button
@@ -3060,7 +3261,7 @@
 			if (keyPressed === 'i') {
 				let pipButton = document.querySelector('.ytp-pip-button');
 				if (pipButton) {
-					pipButton.click();
+					goodTube_helper_click(pipButton);
 				}
 			}
 
@@ -3684,8 +3885,8 @@
 		}
 
 		// Play
-		else if (event.data === 'goodTube_play') {
-			goodTube_iframe_play();
+		else if (event.data.indexOf('goodTube_play|||') !== -1) {
+			goodTube_iframe_play(event.data.replace('goodTube_play|||', ''));
 		}
 
 		// Show the end screen thumbnails
@@ -3763,7 +3964,7 @@
 		// If we found it
 		if (fullscreenButton) {
 			// Click it
-			fullscreenButton.click();
+			goodTube_helper_click(fullscreenButton);
 		}
 		// Otherwise, we didn't find it
 		else {
@@ -3788,7 +3989,7 @@
 			// If the button is in the wrong state
 			if (innerButton.getAttribute('aria-checked') !== enabled) {
 				// Click it
-				autoplayButton.click();
+				goodTube_helper_click(autoplayButton);
 			}
 		}
 		// Otherwise, we didn't find it
@@ -3885,21 +4086,35 @@
 
 	// Play
 	let goodTube_iframe_play_timeout = setTimeout(() => {}, 0);
-	function goodTube_iframe_play() {
-		// Target the video
-		let videoElement = document.querySelector('video');
+	function goodTube_iframe_play(videoId) {
+		// Re-fetch the iframe api
+		goodTube_iframe_api = document.getElementById('movie_player');
 
-		// If the video exists, play the video
-		if (videoElement) {
-			videoElement.play();
+		// Get the video data
+		let videoData = false;
+		if (goodTube_iframe_api && typeof goodTube_iframe_api.getVideoData === 'function') {
+			videoData = goodTube_iframe_api.getVideoData();
 		}
-		// Otherwise retry until the video exists
-		else {
+
+		// If the correct video hasn't loaded yet (based on the ID in the query params)
+		if (!videoData || videoId !== videoData.video_id) {
 			// Clear timeout first to solve memory leak issues
 			clearTimeout(goodTube_iframe_play_timeout);
 
-			// Create a new timeout
-			goodTube_iframe_play_timeout = setTimeout(goodTube_iframe_play, 100);
+			// Create a new timeout to try again
+			goodTube_iframe_play_timeout = setTimeout(() => { goodTube_iframe_play(videoId); }, 100);
+
+			// Don't do anything else
+			return;
+		}
+
+		// Play the video
+		if (goodTube_iframe_api && typeof goodTube_iframe_api.playVideo === 'function') {
+			// Wait 100ms (this solves edge cases)
+			setTimeout(() => {
+				// Force the video to play
+				goodTube_iframe_api.playVideo();
+			}, 100);
 		}
 	}
 
