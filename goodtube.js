@@ -834,7 +834,9 @@
 
 		// Set the Youtube player to the lowest quality
 		goodTube_player_setQualitySucceeded = false;
-		goodTube_player_setQuality('lowest');
+		// DISABLE FOR NOW THIS IS CAUSING ISSUES
+		// LETS RETURN EVERYONE'S QUALITY TO HIGHEST
+		goodTube_player_setQuality('highest');
 
 		// Show the player
 		goodTube_helper_showElement(goodTube_playerWrapper);
@@ -862,6 +864,17 @@
 		if (window.location.href.indexOf('/watch?') === -1) {
 			return;
 		}
+
+		// If we're setting to "lowest" and the fallback is enabled, stop
+		if (quality === 'lowest' && goodTube_fallback) {
+			return;
+		}
+
+		// DISABLE FOR NOW AS PART OF REVERTING THIS
+		// // If we're setting to "auto" OR "highest" AND the fallback is disabled, stop
+		// if ((quality === 'auto' || quality === 'highest') && !goodTube_fallback) {
+		// 	return;
+		// }
 
 		// If ads are showing
 		if (goodTube_adsShowing) {
@@ -894,16 +907,6 @@
 			return;
 		}
 
-		// If we're setting to "lowest" and the fallback is enabled, stop
-		if (quality === 'lowest' && goodTube_fallback) {
-			return;
-		}
-
-		// If we're setting to "auto" and the fallback is disabled, stop
-		if (quality === 'auto' && !goodTube_fallback) {
-			return;
-		}
-
 		// Target the main settings button
 		let mainSettingsButton = document.querySelector('.ytp-button.ytp-settings-button');
 
@@ -922,38 +925,52 @@
 					// Click the "Quality" menu button
 					goodTube_helper_click(settingsMenuButton);
 
-					// Get the quality buttons
-					let qualityButtons = document.querySelectorAll('.ytp-settings-menu .ytp-menuitem');
+					setTimeout(() => {
+						// Get the quality buttons
+						let qualityButtons = document.querySelectorAll('.ytp-quality-menu .ytp-menuitem');
 
-					// If we found the quality buttons
-					if (qualityButtons.length > 0) {
-						// Setup a variable to hold the target quality button
-						let targetQualityButton = false;
+						// If we found the quality buttons
+						if (qualityButtons.length > 0) {
+							// Setup a variable to hold the target quality button
+							let targetQualityButton = false;
 
-						// If we're setting LOWEST quality, get the second last button (above "Auto")
-						if (quality === 'lowest') {
-							targetQualityButton = qualityButtons[qualityButtons.length - 2];
+							// If we're setting LOWEST quality, get the second last button (above "Auto")
+							if (quality === 'lowest') {
+								targetQualityButton = qualityButtons[qualityButtons.length - 2];
+							}
+							// Otherwise, if we're setting HIGHEST quality, get the first button
+							else if (quality === 'highest') {
+								targetQualityButton = qualityButtons[0];
+							}
+							// Otherwise, if we're setting AUTO quality, get the last button
+							else if (quality === 'auto') {
+								targetQualityButton = qualityButtons[qualityButtons.length - 1];
+							}
+
+							// If we found the target quality button
+							if (targetQualityButton) {
+								// Click the target quality button
+								goodTube_helper_click(targetQualityButton);
+
+								// Blur the main settings button (this removes the settings menu tooltip)
+								mainSettingsButton.blur();
+
+								// Indicate that we successfully set the quality
+								goodTube_player_setQualitySucceeded = true;
+
+								// Save the quality we've just set
+								goodTube_player_setQuality_lastQuality = quality;
+
+								// After highest, set to auto (this makes it work correctly)
+								if (quality === 'highest') {
+									setTimeout(() => {
+										goodTube_player_setQualitySucceeded = false;
+										goodTube_player_setQuality('auto');
+									}, 0);
+								}
+							}
 						}
-						// Otherwise, if we're setting AUTO quality, get the last button
-						else if (quality === 'auto') {
-							targetQualityButton = qualityButtons[qualityButtons.length - 1];
-						}
-
-						// If we found the target quality button
-						if (targetQualityButton) {
-							// Click the target quality button
-							goodTube_helper_click(targetQualityButton);
-
-							// Blur the main settings button (this removes the settings menu tooltip)
-							mainSettingsButton.blur();
-
-							// Indicate that we successfully set the quality
-							goodTube_player_setQualitySucceeded = true;
-
-							// Save the quality we've just set
-							goodTube_player_setQuality_lastQuality = quality;
-						}
-					}
+					}, 0);
 				}
 			});
 		}
@@ -1589,9 +1606,9 @@
 			// Sync the autoplay
 			goodTube_hideAndMuteAdsFallback_syncAutoplay();
 
-			// Set to auto quality
+			// Set to highest quality
 			goodTube_player_setQualitySucceeded = false;
-			goodTube_player_setQuality('auto');
+			goodTube_player_setQuality('highest');
 
 			// Play the video (this solves some edge cases)
 			goodTube_player_play();
