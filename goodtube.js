@@ -3312,7 +3312,6 @@
 	let goodTube_iframe_supportDoubleSpeed_allowNextClick = false;
 	let goodTube_iframe_supportDoubleSpeed_videoElement = document.querySelector('video');
 	let goodTube_iframe_supportDoubleSpeed_doubleSpeedElement = document.querySelector('.goodTube_doubleSpeed');
-
 	function goodTube_iframe_supportDoubleSpeed_keydown(event) {
 		// Get the key pressed (in lowercase)
 		let keyPressed = event.key.toLowerCase();
