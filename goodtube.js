@@ -1591,10 +1591,6 @@
 			// Sync the autoplay
 			goodTube_hideAndMuteAdsFallback_syncAutoplay();
 
-			// Set the Youtube player to auto quality
-			goodTube_player_setQualitySucceeded = false;
-			goodTube_player_setAutoQuality();
-
 			// Play the video (this solves some edge cases)
 			goodTube_player_play();
 
