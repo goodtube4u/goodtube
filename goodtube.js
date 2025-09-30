@@ -1109,6 +1109,14 @@
 				return;
 			}
 
+			// Make sure the video has not ended (this solves an edge case)
+			let videoElement = document.querySelector('#movie_player video');
+			if (videoElement) {
+				if (videoElement.currentTime >= videoElement.duration) {
+					return;
+				}
+			}
+
 			// Play the video
 			if (goodTube_page_api && typeof goodTube_page_api.playVideo === 'function') {
 				// Wait 100ms (this solves an edge case)
@@ -4159,6 +4167,14 @@
 
 			// Don't do anything else
 			return;
+		}
+
+		// Make sure the video has not ended (this solves an edge case)
+		let videoElement = document.querySelector('#movie_player video');
+		if (videoElement) {
+			if (videoElement.currentTime >= videoElement.duration) {
+				return;
+			}
 		}
 
 		// Play the video
