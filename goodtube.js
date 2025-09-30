@@ -210,6 +210,13 @@
 		goodTube_hideComments = 'false';
 	}
 
+	// Always play videos from the start?
+	let goodTube_alwaysStart = goodTube_helper_getCookie('goodTube_alwaysStart');
+	if (!goodTube_alwaysStart) {
+		goodTube_helper_setCookie('goodTube_alwaysStart', 'false');
+		goodTube_alwaysStart = 'false';
+	}
+
 	// Is autoplay turned on?
 	let goodTube_autoplay = goodTube_helper_getCookie('goodTube_autoplay');
 	if (!goodTube_autoplay) {
@@ -782,9 +789,11 @@
 		// Setup the starting time
 		let startTime = 0;
 
-		// Include the startime time from query params
-		if (typeof goodTube_getParams['t'] !== 'undefined') {
-			startTime = parseFloat(goodTube_getParams['t'].replace('s', ''));
+		// Include the startime time from query params (if enabled)
+		if (goodTube_alwaysStart === 'false') {
+			if (typeof goodTube_getParams['t'] !== 'undefined') {
+				startTime = parseFloat(goodTube_getParams['t'].replace('s', ''));
+			}
 		}
 
 
@@ -830,7 +839,9 @@
 		}
 
 		// Sync the starting time
-		goodTube_player_syncStartingTime();
+		if (goodTube_alwaysStart === 'false') {
+			goodTube_player_syncStartingTime();
+		}
 
 		// Set the Youtube player to auto quality
 		goodTube_player_setQualitySucceeded = false;
@@ -1726,6 +1737,11 @@
 			hideComments = ' checked';
 		}
 
+		let alwaysStart = '';
+		if (goodTube_alwaysStart === 'true') {
+			alwaysStart = ' checked';
+		}
+
 		// Add content to the menu container
 		menuContainer.innerHTML = `
 			<!-- Menu Button
@@ -1770,6 +1786,11 @@
 						<div class='goodTube_setting'>
 							<input type='checkbox' class='goodTube_option_hideComments' name='goodTube_option_hideComments' id='goodTube_option_hideComments'`+ hideComments + `>
 							<label for='goodTube_option_hideComments'>Hide comments</label>
+						</div> <!-- .goodTube_setting -->
+
+							<div class='goodTube_setting'>
+							<input type='checkbox' class='goodTube_option_alwaysStart' name='goodTube_option_alwaysStart' id='goodTube_option_alwaysStart'`+ alwaysStart + `>
+							<label for='goodTube_option_alwaysStart'>Always play videos from the start</label>
 						</div> <!-- .goodTube_setting -->
 
 						<button class='goodTube_button' id='goodTube_button_saveSettings'>Save and refresh</button>
@@ -2284,6 +2305,17 @@
 					}
 					else {
 						goodTube_helper_setCookie('goodTube_hideComments', 'false');
+					}
+				}
+
+				// Always play videos from the start
+				let goodTube_setting_alwaysStart = document.querySelector('.goodTube_option_alwaysStart');
+				if (goodTube_setting_alwaysStart) {
+					if (goodTube_setting_alwaysStart.checked) {
+						goodTube_helper_setCookie('goodTube_alwaysStart', 'true');
+					}
+					else {
+						goodTube_helper_setCookie('goodTube_alwaysStart', 'false');
 					}
 				}
 
