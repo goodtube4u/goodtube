@@ -1553,53 +1553,44 @@
 
 		// Sync main player (only if we're viewing a video page AND the "hide and mute ads" fallback is inactive)
 		else if (event.data.indexOf('goodTube_syncMainPlayer_') !== -1 && window.location.href.indexOf('/watch?') !== -1 && !goodTube_fallback) {
+			// Parse the data
+			let syncTime = parseFloat(event.data.replace('goodTube_syncMainPlayer_', ''));
+
 			// Target the youtube video element
 			let youtubeVideoElement = document.querySelector('#movie_player video');
 
-			// If we found the video element
-			if (youtubeVideoElement) {
-				// Parse the data
-				let bits = event.data.replace('goodTube_syncMainPlayer_', '').split('_');
-				let syncTime = parseFloat(bits[0]);
-				let videoDuration = parseFloat(bits[1]);
+			// Re-fetch the page API
+			goodTube_page_api = document.getElementById('movie_player');
 
+			// Make sure the API is all good
+			if (!goodTube_page_api || typeof goodTube_page_api.seekTo !== 'function' || typeof goodTube_page_api.playVideo !== 'function') {
+				return;
+			}
+
+			// If we found the video element
+			// AND we've not already synced to this point (this stops it continuing to sync when ended for no reason, we also need to round it down as it seems to be unreliable)
+			// AND ads are not showing (we don't want to touch the the time when ads are playing, this triggers detection)
+			if (youtubeVideoElement && Math.floor(youtubeVideoElement.currentTime) !== Math.floor(syncTime) && !goodTube_adsShowing) {
 				// Set a variable to indicate we're syncing the player (this stops the automatic pausing of all videos)
 				goodTube_syncingPlayer = true;
 
-				// Play the video via HTML
-				youtubeVideoElement.play();
-				youtubeVideoElement.muted = true;
+				// Play the video via the page API (this is the only reliable way)
+				goodTube_page_api.playVideo();
+
+				// Sync the current time using the page API - 500ms (this is the only reliable way)
+				goodTube_page_api.seekTo((syncTime - .5));
+
+				// Then mute the video via HTML (playing it unmutes it for some reason)
 				youtubeVideoElement.volume = 0;
+				youtubeVideoElement.muted = true;
 
-				// Play the video via the frame API
-				let youtubeFrameApi = document.querySelector('#movie_player');
-				if (youtubeFrameApi) {
-					if (typeof youtubeFrameApi.playVideo === 'function') {
-						youtubeFrameApi.playVideo();
-					}
+				// Clear timeout first to solve memory leak issues
+				clearTimeout(goodTube_receiveMessage_timeout);
 
-					if (typeof youtubeFrameApi.mute === 'function') {
-						youtubeFrameApi.mute();
-					}
-
-					if (typeof youtubeFrameApi.setVolume === 'function') {
-						youtubeFrameApi.setVolume(0);
-					}
-				}
-
-				// Make sure the durations match (we do NOT want to touch this if an ad is playing)
-				if (videoDuration === youtubeVideoElement.duration) {
-					// Sync the current time (minus 50ms)
-					youtubeVideoElement.currentTime = (syncTime - 0.05);
-
-					// Clear timeout first to solve memory leak issues
-					clearTimeout(goodTube_receiveMessage_timeout);
-
-					// After 100ms stop syncing (and let the pause actions handle the pausing)
-					goodTube_receiveMessage_timeout = setTimeout(() => {
-						goodTube_syncingPlayer = false;
-					}, 100);
-				}
+				// After 1000ms stop syncing (and let the pause actions handle the pausing)
+				goodTube_receiveMessage_timeout = setTimeout(() => {
+					goodTube_syncingPlayer = false;
+				}, 1000);
 			}
 		}
 
@@ -3295,7 +3286,7 @@
 		// When the video ends
 		videoElement.addEventListener('ended', function () {
 			// Sync the main player, this ensures videos register as finished with the little red play bars
-			goodTube_iframe_syncMainPlayer();
+			goodTube_iframe_syncMainPlayer(true);
 
 			// Tell the top frame the video ended
 			window.top.postMessage('goodTube_videoEnded', '*');
@@ -4200,14 +4191,22 @@
 	}
 
 	// Sync the main player
-	function goodTube_iframe_syncMainPlayer() {
+	function goodTube_iframe_syncMainPlayer(syncToEnd = false) {
 		// Target the video element
 		let videoElement = document.querySelector('video');
 
 		// If we found the video element
 		if (videoElement) {
-			// Tell the parent frame to sync the video (pass in the time we want to sync to and the total video duration - we use the duration to detect if an ad is playing)
-			window.top.postMessage('goodTube_syncMainPlayer_' + videoElement.currentTime + '_' + videoElement.duration, '*');
+			// Setup the sync time
+			let syncTime = videoElement.currentTime;
+
+			// If we're syncing to the end
+			if (syncToEnd) {
+				syncTime = videoElement.duration;
+			}
+
+			// Tell the top level window to sync the video
+			window.top.postMessage('goodTube_syncMainPlayer_' + syncTime, '*');
 		}
 	}
 
