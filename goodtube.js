@@ -858,6 +858,9 @@
 	let goodTube_player_setQualitySucceeded = false;
 	let goodTube_player_setQuality_timeout = setTimeout(() => {}, 0);
 	function goodTube_player_setAutoQuality(quality = 'highest') {
+		// DISABLE FOR NOW THIS IS CAUSING ISSUES
+		return;
+		
 		// Only do this once
 		if (goodTube_player_setQualitySucceeded) {
 			return;
