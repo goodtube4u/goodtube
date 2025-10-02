@@ -1566,7 +1566,7 @@
 			goodTube_page_api = document.getElementById('movie_player');
 
 			// Make sure the API is all good
-			if (!goodTube_page_api || typeof goodTube_page_api.seekTo !== 'function' || typeof goodTube_page_api.playVideo !== 'function') {
+			if (!goodTube_page_api || typeof goodTube_page_api.seekTo !== 'function' || typeof goodTube_page_api.playVideo !== 'function' || typeof goodTube_page_api.mute !== 'function' || typeof goodTube_page_api.setVolume !== 'function') {
 				return;
 			}
 
@@ -1582,6 +1582,10 @@
 
 				// Sync the current time using the page API - 500ms (this is the only reliable way)
 				goodTube_page_api.seekTo((syncTime - .5));
+
+				// Then mute the video via the page API (this helps to prevent audio flashes)
+				goodTube_page_api.mute();
+				goodTube_page_api.setVolume(0);
 
 				// Then mute the video via HTML (playing it unmutes it for some reason)
 				youtubeVideoElement.volume = 0;
