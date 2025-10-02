@@ -613,6 +613,27 @@
 		goodTube_youtube_checkAdsState_timeout = setTimeout(goodTube_youtube_checkAdsState, 1);
 	}
 
+	// Remove the "are you still watching" popup
+	function goodTube_youtube_removeAreYouStillWatchingPopup() {
+		// Get all the dialogue boxes
+		let dialogueBoxes = document.querySelectorAll('yt-confirm-dialog-renderer');
+
+		// For each dialogue box
+		dialogueBoxes.forEach((dialogueBox) => {
+			// If it has the correct text
+			if (dialogueBox.innerHTML.indexOf('Video paused. Continue watching?') !== -1) {
+				// Find the confirm button
+				let confirmButton = dialogueBox.querySelector('#confirm-button');
+
+				// If we found the confirm button
+				if (confirmButton) {
+					// Click it
+					goodTube_helper_click();
+				}
+			}
+		});
+	}
+
 
 	/* Player functions
 	------------------------------------------------------------------------------------------ */
@@ -1693,6 +1714,9 @@
 				// Turn off autoplay
 				goodTube_youtube_turnOffAutoplay();
 			}
+
+			// Remove the "are you still watching" popup
+			goodTube_youtube_removeAreYouStillWatchingPopup();
 		}
 
 		// Clear timeout first to solve memory leak issues
@@ -3463,9 +3487,7 @@
 			if (!goodTube_iframe_supportDoubleSpeed_doublePlaybackRate) {
 				// Click the video element (we must do it this way, it's the only reliable method)
 				goodTube_iframe_supportDoubleSpeed_allowNextClick = true;
-				goodTube_iframe_supportDoubleSpeed_videoElement.dispatchEvent(new PointerEvent('mousedown', { bubbles: true, cancelable: true, button: 0 }));
-				goodTube_iframe_supportDoubleSpeed_videoElement.dispatchEvent(new PointerEvent('click', { bubbles: true, cancelable: true, button: 0 }));
-				goodTube_iframe_supportDoubleSpeed_videoElement.dispatchEvent(new PointerEvent('mouseup', { bubbles: true, cancelable: true, button: 0 }));
+				goodTube_helper_click(goodTube_iframe_supportDoubleSpeed_videoElement);
 				goodTube_iframe_supportDoubleSpeed_allowNextClick = false;
 			}
 			// Otherwise, double playback rate did happen
@@ -3587,9 +3609,7 @@
 		if (!goodTube_iframe_supportDoubleSpeed_doublePlaybackRate) {
 			// Click the video element (we must do it this way, it's the only reliable method)
 			goodTube_iframe_supportDoubleSpeed_allowNextClick = true;
-			goodTube_iframe_supportDoubleSpeed_videoElement.dispatchEvent(new PointerEvent('mousedown', { bubbles: true, cancelable: true, button: 0 }));
-			goodTube_iframe_supportDoubleSpeed_videoElement.dispatchEvent(new PointerEvent('click', { bubbles: true, cancelable: true, button: 0 }));
-			goodTube_iframe_supportDoubleSpeed_videoElement.dispatchEvent(new PointerEvent('mouseup', { bubbles: true, cancelable: true, button: 0 }));
+			goodTube_helper_click(goodTube_iframe_supportDoubleSpeed_videoElement);
 			goodTube_iframe_supportDoubleSpeed_allowNextClick = false;
 			setTimeout(goodTube_iframe_supportDoubleSpeed_videoElement.focus());
 		}
