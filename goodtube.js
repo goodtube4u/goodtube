@@ -27,6 +27,25 @@
 			getParams[decode(arguments[1])] = decode(arguments[2]);
 		});
 
+		// For some users, the URL will contain the video ID as part of the URL
+		// Example - "/watch/xxxx" or "/live/xxxx"
+		// In this case, we want to add it manually as "v" (just like for /watch?v=xxxx)
+		if (goodTube_helper_watchingVideo() && typeof getParams['v'] === 'undefined') {
+			let splitString = '';
+			if (window.location.href.indexOf('/watch/') !== -1) {
+				splitString = '/watch/';
+			}
+			else {
+				splitString = '/live/';
+			}
+
+			let bits = window.location.href.split(splitString);
+			if (bits.length === 2) {
+				let endBits = bits[1].split('?');
+				getParams['v'] = endBits[endBits.length - 1];
+			}
+		}
+
 		return getParams;
 	}
 
@@ -120,6 +139,18 @@
 
 		if (wrappingElement) {
 			wrappingElement.classList.remove('goodTube_hiddenPlayer');
+		}
+	}
+
+	// Check if we're watching a video
+	function goodTube_helper_watchingVideo() {
+		// If the URL contains "/watch/" or "/watch?" or "/live/", we're viewing a video
+		if (window.location.href.indexOf('/watch/') !== -1 || window.location.href.indexOf('/watch?') !== -1 || window.location.href.indexOf('/live/') !== -1) {
+			return true;
+		}
+		// Otherwise, we're not viewing a video
+		else {
+			return false;
 		}
 	}
 
@@ -495,7 +526,7 @@
 		if (
 			(goodTube_shorts === 'true' && window.location.href.indexOf('/shorts') !== -1)
 			||
-			window.location.href.indexOf('/watch?') === -1
+			!goodTube_helper_watchingVideo()
 		) {
 			// Clear timeout first to solve memory leak issues
 			clearTimeout(goodTube_youtube_pauseMuteVideos_timeout);
@@ -591,7 +622,7 @@
 	let goodTube_youtube_checkAdsState_timeout = setTimeout(() => {}, 0);
 	function goodTube_youtube_checkAdsState() {
 		// If we're viewing a video
-		if (window.location.href.indexOf('/watch?') !== -1) {
+		if (goodTube_helper_watchingVideo()) {
 			// Get the ads DOM elements
 			let adsElement = document.querySelector('.video-ads');
 			let sponsoredAdsElement = document.querySelector('.ad-simple-attributed-string');
@@ -721,7 +752,7 @@
 	let goodTube_clearedPlayer = false;
 	function goodTube_player_positionAndSize() {
 		// If we're viewing a video
-		if (window.location.href.indexOf('/watch?') !== -1) {
+		if (goodTube_helper_watchingVideo()) {
 			// If the "hide and mute ads" fallback is inactive
 			if (goodTube_fallback) {
 				if (!goodTube_clearedPlayer) {
@@ -836,7 +867,7 @@
 		// If we're loading for the first time
 		if (goodTube_firstLoad) {
 			// If we're not viewing a video
-			if (window.location.href.indexOf('/watch?') === -1) {
+			if (!goodTube_helper_watchingVideo()) {
 				// Clear and hide the player
 				goodTube_player_clear();
 			}
@@ -879,13 +910,16 @@
 	let goodTube_player_setQualitySucceeded = false;
 	let goodTube_player_setQuality_timeout = setTimeout(() => {}, 0);
 	function goodTube_player_setAutoQuality(quality = 'highest') {
+		// DISABLE FOR NOW THIS IS CAUSING ISSUES
+		return;
+
 		// Only do this once
 		if (goodTube_player_setQualitySucceeded) {
 			return;
 		}
 
 		// Make sure we're watching a video
-		if (window.location.href.indexOf('/watch?') === -1) {
+		if (!goodTube_helper_watchingVideo()) {
 			return;
 		}
 
@@ -1165,7 +1199,7 @@
 		let keyPressed = event.key.toLowerCase();
 
 		// Don't do anything IF we're holding control OR alt OR the command key (mac) OR we're not watching a video
-		if (event.ctrlKey || event.altKey || event.metaKey || window.location.href.indexOf('/watch?') === -1) {
+		if (event.ctrlKey || event.altKey || event.metaKey || !goodTube_helper_watchingVideo()) {
 			return;
 		}
 
@@ -1573,7 +1607,7 @@
 		}
 
 		// Sync main player (only if we're viewing a video page AND the "hide and mute ads" fallback is inactive)
-		else if (event.data.indexOf('goodTube_syncMainPlayer_') !== -1 && window.location.href.indexOf('/watch?') !== -1 && !goodTube_fallback) {
+		else if (event.data.indexOf('goodTube_syncMainPlayer_') !== -1 && goodTube_helper_watchingVideo() && !goodTube_fallback) {
 			// Parse the data
 			let syncTime = parseFloat(event.data.replace('goodTube_syncMainPlayer_', ''));
 
@@ -1584,7 +1618,7 @@
 			goodTube_page_api = document.getElementById('movie_player');
 
 			// Make sure the API is all good
-			if (!goodTube_page_api || typeof goodTube_page_api.seekTo !== 'function' || typeof goodTube_page_api.playVideo !== 'function') {
+			if (!goodTube_page_api || typeof goodTube_page_api.seekTo !== 'function' || typeof goodTube_page_api.playVideo !== 'function' || typeof goodTube_page_api.mute !== 'function' || typeof goodTube_page_api.setVolume !== 'function') {
 				return;
 			}
 
@@ -1600,6 +1634,10 @@
 
 				// Sync the current time using the page API - 500ms (this is the only reliable way)
 				goodTube_page_api.seekTo((syncTime - .5));
+
+				// Then mute the video via the page API (this helps to prevent audio flashes)
+				goodTube_page_api.mute();
+				goodTube_page_api.setVolume(0);
 
 				// Then mute the video via HTML (playing it unmutes it for some reason)
 				youtubeVideoElement.volume = 0;
@@ -1684,7 +1722,7 @@
 			goodTube_getParams = goodTube_helper_setupGetParams();
 
 			// If we're viewing a video
-			if (window.location.href.indexOf('/watch?') !== -1) {
+			if (goodTube_helper_watchingVideo()) {
 				// Load the video
 				goodTube_player_load();
 
@@ -1702,7 +1740,7 @@
 		}
 
 		// If we're viewing a video
-		if (window.location.href.indexOf('/watch?') !== -1) {
+		if (goodTube_helper_watchingVideo()) {
 			// Show or hide the end screen (based on autoplay, not the setting)
 			goodTube_nav_showHideEndScreen();
 
@@ -1825,7 +1863,7 @@
 						<div class='goodTube_donation'>
 							<div class='goodTube_text'>
 								<strong>This adblocker is 100% free to use and always will be.<br>
-								It has helped over 100,000 people remove the unbearable ads from Youtube.</strong><br>
+								It has helped over 120,000 people remove the unbearable ads from Youtube.</strong><br>
 								<br>
 								This project has been made entirely by myself, as just one developer. Countless hours and late nights have gone into making this and I continue to work on updating and maintaining the project regularly. I remain dedicated to ensuring this solution continues to work for everyone (despite Youtube's best efforts to stop adblockers).<br>
 								<br>
@@ -2505,7 +2543,7 @@
 		// Disable some shortcuts while the overlay is enabled
 		function disableShortcuts(event) {
 			// Make sure we're watching a video and the overlay state is disabled
-			if (window.location.href.indexOf('/watch?') === -1 || goodTube_hideAndMuteAds_state !== 'enabled') {
+			if (!goodTube_helper_watchingVideo() || goodTube_hideAndMuteAds_state !== 'enabled') {
 				return;
 			}
 
@@ -2565,7 +2603,7 @@
 	let goodTube_hideAndMuteAdsFallback_check_timeout = setTimeout(() => {}, 0);
 	function goodTube_hideAndMuteAdsFallback_check() {
 		// If the "hide and mute ads" fallback is active AND we're viewing a video
-		if (goodTube_fallback && window.location.href.indexOf('/watch?') !== -1) {
+		if (goodTube_fallback && goodTube_helper_watchingVideo()) {
 			// If ads are showing
 			if (goodTube_adsShowing) {
 				// Enable the "hide and mute ads" overlay
@@ -2576,6 +2614,10 @@
 				// Disable the "hide and mute ads" overlay
 				goodTube_hideAndMuteAdsFallback_disable();
 			}
+		}
+		// Otherwise reset the "hide and mute ads" state
+		else {
+			goodTube_hideAndMuteAds_state = '';
 		}
 
 		// Clear timeout first to solve memory leak issues
@@ -2595,7 +2637,7 @@
 		}
 
 		// Get the Youtube video element
-		let videoElement = document.querySelector('#player video');
+		let videoElement = document.querySelector('#movie_player video');
 
 		// If we found the video element
 		if (videoElement) {
@@ -2653,7 +2695,7 @@
 		}
 
 		// Play the video (this solves an edge case)
-		goodTube_hideAndMuteAdsFallback_play();
+		goodTube_hideAndMuteAdsFallback_play(true);
 
 		// Make sure we only do this once
 		goodTube_hideAndMuteAds_state = 'enabled';
@@ -2667,23 +2709,23 @@
 		}
 
 		// Get the Youtube video element
-		let videoElement = document.querySelector('#player video');
+		let videoElement = document.querySelector('#movie_player video');
 
 		// If we found the video element
 		if (videoElement) {
 			// Restore the playback speed
 			videoElement.playbackRate = goodTube_playbackSpeed;
 
-			// Restore the volume (only if muted, otherwise leave it alone)
-			if (videoElement.volume <= 0 || videoElement.muted) {
-				videoElement.muted = false;
-				videoElement.volume = 1;
+			// Get the page API
+			goodTube_page_api = document.getElementById('movie_player');
 
-				// Get the page API
-				goodTube_page_api = document.getElementById('movie_player');
+			// Make sure we have access to the functions we need
+			if (goodTube_page_api && typeof goodTube_page_api.unMute === 'function' && typeof goodTube_page_api.setVolume === 'function' && typeof goodTube_page_api.getVolume === 'function') {
+				// Restore the volume (only if muted, otherwise leave it alone)
+				if (videoElement.volume <= 0 || videoElement.muted || goodTube_page_api.getVolume() === 0) {
+					videoElement.muted = false;
+					videoElement.volume = 1;
 
-				// Make sure we have access to the functions we need
-				if (goodTube_page_api && typeof goodTube_page_api.unMute === 'function' && typeof goodTube_page_api.setVolume === 'function') {
 					// Unmute and set the volume via the API (this is required, doing it via the <video> element alone won't work)
 					goodTube_page_api.unMute();
 					goodTube_page_api.setVolume(100);
@@ -2782,9 +2824,9 @@
 
 	// Play video
 	let goodTube_hideAndMuteAdsFallback_play_timeout = setTimeout(() => {}, 0);
-	function goodTube_hideAndMuteAdsFallback_play() {
+	function goodTube_hideAndMuteAdsFallback_play(mute = false) {
 		// Make sure that the "hide and mute ads" fallback is active AND we're viewing a video
-		if (!goodTube_fallback || window.location.href.indexOf('/watch?') === -1) {
+		if (!goodTube_fallback || !goodTube_helper_watchingVideo()) {
 			return;
 		}
 
@@ -2792,15 +2834,27 @@
 		goodTube_page_api = document.getElementById('movie_player');
 
 		// Make sure we have what we need from the API
-		if (goodTube_page_api && typeof goodTube_page_api.playVideo === 'function') {
+		if (goodTube_page_api && typeof goodTube_page_api.playVideo === 'function' && typeof goodTube_page_api.mute === 'function' && typeof goodTube_page_api.setVolume === 'function') {
+			// Get the video element
+			let videoElement = document.querySelector('#movie_player video');
+
 			// Play the video
 			goodTube_page_api.playVideo();
 
-			// Get the video element
-			let videoElement = document.querySelector('#player video');
+			if (mute) {
+				// Mute the video via the page API (playing it re-enables audio)
+				goodTube_page_api.mute();
+				goodTube_page_api.setVolume(0);
+			}
 
 			// If we found it
 			if (videoElement) {
+				if (mute) {
+					// Mute the video via HTML (playing it re-enables audio)
+					videoElement.muted = true;
+					videoElement.volume = 0;
+				}
+
 				// Save the starting video time
 				let startingVideoTime = videoElement.currentTime;
 
@@ -3294,7 +3348,7 @@
 	let goodTube_iframe_addCustomEvents_timeout = setTimeout(() => {}, 0);
 	function goodTube_iframe_addCustomEvents() {
 		// Target the video element
-		let videoElement = document.querySelector('#player video');
+		let videoElement = document.querySelector('#movie_player video');
 
 		// Make sure it exists before continuing
 		if (!videoElement) {
