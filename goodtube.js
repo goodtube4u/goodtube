@@ -32,11 +32,11 @@
 		// In this case, we want to add it manually as "v" (just like for /watch?v=xxxx)
 		if (goodTube_helper_watchingVideo() && typeof getParams['v'] === 'undefined') {
 			let splitString = '';
-			if (window.location.href.indexOf('/watch') !== -1) {
-				splitString = '/watch';
+			if (window.location.href.indexOf('/watch/') !== -1) {
+				splitString = '/watch/';
 			}
 			else {
-				splitString = '/live';
+				splitString = '/live/';
 			}
 
 			let bits = window.location.href.split(splitString);
@@ -144,8 +144,8 @@
 
 	// Check if we're watching a video
 	function goodTube_helper_watchingVideo() {
-		// If the URL contains "/watch" or "/live", we're viewing a video
-		if (window.location.href.indexOf('/watch') !== -1 || window.location.href.indexOf('/live') !== -1) {
+		// If the URL contains "/watch/" or "/watch?" or "/live/", we're viewing a video
+		if (window.location.href.indexOf('/watch/') !== -1 || window.location.href.indexOf('/watch?') !== -1 || window.location.href.indexOf('/live/') !== -1) {
 			return true;
 		}
 		// Otherwise, we're not viewing a video
