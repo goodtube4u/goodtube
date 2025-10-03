@@ -659,7 +659,7 @@
 				// If we found the confirm button
 				if (confirmButton) {
 					// Click it
-					goodTube_helper_click();
+					goodTube_helper_click(confirmButton);
 				}
 			}
 		});
@@ -913,127 +913,6 @@
 		// DISABLE FOR NOW THIS IS CAUSING ISSUES
 		return;
 
-		// Only do this once
-		if (goodTube_player_setQualitySucceeded) {
-			return;
-		}
-
-		// Make sure we're watching a video
-		if (!goodTube_helper_watchingVideo()) {
-			return;
-		}
-
-		// If ads are showing
-		if (goodTube_adsShowing) {
-			// Clear timeout first to solve memory leak issues
-			clearTimeout(goodTube_player_setQuality_timeout);
-
-			// Create a new timeout to try again
-			goodTube_player_setQuality_timeout = setTimeout(() => { goodTube_player_setAutoQuality(quality); }, 100);
-
-			// Don't do anything else
-			return;
-		}
-
-		// Get the video data
-		let videoData = false;
-		goodTube_page_api = document.getElementById('movie_player');
-		if (goodTube_page_api && typeof goodTube_page_api.getVideoData === 'function') {
-			videoData = goodTube_page_api.getVideoData();
-		}
-
-		// If the correct video hasn't loaded yet (based on the ID in the query params)
-		if (!videoData || goodTube_getParams['v'] !== videoData.video_id) {
-			// Clear timeout first to solve memory leak issues
-			clearTimeout(goodTube_player_setQuality_timeout);
-
-			// Create a new timeout to try again
-			goodTube_player_setQuality_timeout = setTimeout(() => { goodTube_player_setAutoQuality(quality); }, 100);
-
-			// Don't do anything else
-			return;
-		}
-
-		// Target the main settings button
-		let mainSettingsButton = document.querySelector('.ytp-button.ytp-settings-button');
-
-		// If we found the settings button
-		if (mainSettingsButton) {
-			// Click the settings button to open the settings menu
-			goodTube_helper_click(mainSettingsButton);
-
-			// Wait one animation frame
-			setTimeout(() => {
-				// Get the settings buttons
-				let settingsMenuButtons = document.querySelectorAll('.ytp-settings-menu .ytp-menuitem');
-
-				// For each settings menu button
-				settingsMenuButtons.forEach((settingsMenuButton) => {
-					// If it's the "Quality" menu button
-					if (settingsMenuButton.innerHTML.indexOf('Quality') !== -1) {
-						// Click the "Quality" menu button
-						goodTube_helper_click(settingsMenuButton);
-
-						// Wait one animation frame
-						setTimeout(() => {
-							// Get the quality buttons
-							let qualityButtons = document.querySelectorAll('.ytp-quality-menu .ytp-menuitem');
-
-							// If we found the quality buttons
-							if (qualityButtons.length > 0) {
-								// Setup a variable to hold the target quality button
-								let targetQualityButton = false;
-
-								// If we're setting HIGHEST quality, get the first button (first run, this then sets to "auto" which makes it work correctly)
-								if (quality === 'highest') {
-									// Find the highest (without premium enhanced bitrate)
-									let foundHighest = false;
-									qualityButtons.forEach((qualityButton) => {
-										if (!foundHighest && qualityButton.innerHTML.indexOf('Enhanced') === -1) {
-											targetQualityButton = qualityButton;
-											foundHighest = true;
-										}
-									});
-								}
-								// Otherwise, if we're setting AUTO quality, get the last button (second run)
-								else if (quality === 'auto') {
-									targetQualityButton = qualityButtons[qualityButtons.length - 1];
-								}
-
-								// If we found the target quality button
-								if (targetQualityButton) {
-									// Click the target quality button
-									goodTube_helper_click(targetQualityButton);
-
-									// Blur the main settings button (this removes the settings menu tooltip)
-									mainSettingsButton.blur();
-
-									// Indicate that we successfully set the quality
-									goodTube_player_setQualitySucceeded = true;
-
-									// After HIGHEST quality, set to AUTO quality (this makes it work correctly)
-									if (quality === 'highest') {
-										setTimeout(() => {
-											goodTube_player_setQualitySucceeded = false;
-											goodTube_player_setAutoQuality('auto');
-										}, 0);
-									}
-								}
-							}
-						}, 0);
-					}
-				});
-			}, 0);
-		}
-
-		// If we did not successfully set the quality (player is loading or in ad state)
-		if (!goodTube_player_setQualitySucceeded) {
-			// Clear timeout first to solve memory leak issues
-			clearTimeout(goodTube_player_setQuality_timeout);
-
-			// Create a new timeout to try again
-			goodTube_player_setQuality_timeout = setTimeout(() => { goodTube_player_setAutoQuality(quality); }, 100);
-		}
 	}
 
 	// Sync the starting time
