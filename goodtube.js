@@ -1740,13 +1740,15 @@
 					<div class='goodTube_title'>Make a donation <span class='goodTube_heart'>&#9829;</span></div>
 					<div class='goodTube_content'>
 						<div class='goodTube_donation'>
-							<div class='goodTube_text'>
+							<div class="goodTube_text">
 								<strong>This adblocker is 100% free to use and always will be.<br>
 								It has helped over 120,000 people remove the unbearable ads from Youtube.</strong><br>
 								<br>
+								<strong>Donations help to keep this project going and support the wider community who use it.</strong> If you would like to say thank you and can give something back, it would be greatly appreciated.<br>
+								<br>
 								This project has been made entirely by myself, as just one developer. Countless hours and late nights have gone into making this and I continue to work on updating and maintaining the project regularly. I remain dedicated to ensuring this solution continues to work for everyone (despite Youtube's best efforts to stop adblockers).<br>
 								<br>
-								Donations help to keep this project going and support the wider community who use it. If you would like to say thank you and can give something back, it would be greatly appreciated.
+								<i>Seriously everyone, I am flat broke - so small donations help a lot. If everyone donated just $1 I could finally go overseas with my partner rather than living week to week.</i> 🙏🏼
 							</div>
 							<a href='https://tiptopjar.com/goodtube' target='_blank' rel='nofollow' class='goodTube_button'>Donate now</a>
 						</div> <!-- .goodTube_donation -->
@@ -2054,6 +2056,10 @@
 				font-size: 15px;
 				padding-bottom: 16px;
 				line-height: 130%;
+			}
+
+			.goodTube_modal .goodTube_text:last-child {
+				padding-bottom: 0;
 			}
 
 			.goodTube_modal .goodTube_text a {
