@@ -967,8 +967,8 @@
 
 	// Clear and hide the player
 	function goodTube_player_clear(fallbackActive = false) {
-		// If we're not in picture in picture mode or forcing pip to clear
-		if (!goodTube_pip || clearPip) {
+		// If we're not in picture in picture mode
+		if (!goodTube_pip) {
 			// Clear the "hide and mute ads" fallback
 			if (fallbackActive) {
 				// Refetch the page api
