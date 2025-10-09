@@ -1783,7 +1783,11 @@
 					<div class='goodTube_content'>
 						<div class='goodTube_text goodTube_successText'>Your message has been sent successfully.</div>
 						<form class='goodTube_report' onSubmit='javascript:;'>
-							<div class='goodTube_text'>I am dedicated to helping every single person get this working. Everyone is important and if you have any problems at all, please let me know. I will respond and do my best to help!</div>
+							<div class='goodTube_text'>
+								I am dedicated to helping every single person get this working. Everyone is important and if you have any problems at all, please let me know. I will respond and do my best to help!<br>
+								<br>
+								<i>* Please read the FAQs above before reporting an issue.</i>
+							</div>
 							<input class='goodTube_reportEmail' type='email' placeholder='Email address' required>
 							<textarea class='goodTube_reportText' placeholder='Enter your message here...\r\rPlease note - most reported issues are caused by a conflicting extension. Please first try turning off all of your other extensions. Refresh Youtube, check if the problem is fixed. If it is, then you know something is conflicting. Turn your other extensions back on one at a time until you find the cause. Please try this first before reporting an issue!' required></textarea>
 							<input type='submit' class='goodTube_button' id='goodTube_button_submitReport' value='Submit'>
