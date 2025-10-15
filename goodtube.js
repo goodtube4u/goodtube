@@ -241,6 +241,13 @@
 		goodTube_hideComments = 'false';
 	}
 
+	// Are AI summaries enabled?
+	let goodTube_hideAiSummaries = goodTube_helper_getCookie('goodTube_hideAiSummaries');
+	if (!goodTube_hideAiSummaries) {
+		goodTube_helper_setCookie('goodTube_hideAiSummaries', 'false');
+		goodTube_hideAiSummaries = 'false';
+	}
+
 	// Always play videos from the start?
 	let goodTube_alwaysStart = goodTube_helper_getCookie('goodTube_alwaysStart');
 	if (!goodTube_alwaysStart) {
@@ -386,7 +393,6 @@
 			console.log('[GoodTube] Suggested videos removed');
 		}
 
-
 		// Hide comments if they're not enabled
 		if (goodTube_hideComments === 'true') {
 			cssOutput += `
@@ -399,6 +405,18 @@
 
 			// Debug message
 			console.log('[GoodTube] Comments removed');
+		}
+
+		// Hide AI summaries if they're not enabled
+		if (goodTube_hideAiSummaries === 'true') {
+			cssOutput += `
+				ytd-expandable-metadata-renderer[has-video-summary] {
+					display: none !important;
+				}
+			`;
+
+			// Debug message
+			console.log('[GoodTube] AI summaries removed');
 		}
 
 		// Add the styles to the page
@@ -1677,6 +1695,11 @@
 			hideComments = ' checked';
 		}
 
+		let hideAiSummaries = '';
+		if (goodTube_hideAiSummaries === 'true') {
+			hideAiSummaries = ' checked';
+		}
+
 		let alwaysStart = '';
 		if (goodTube_alwaysStart === 'true') {
 			alwaysStart = ' checked';
@@ -1728,7 +1751,12 @@
 							<label for='goodTube_option_hideComments'>Hide comments</label>
 						</div> <!-- .goodTube_setting -->
 
-							<div class='goodTube_setting'>
+						<div class='goodTube_setting'>
+							<input type='checkbox' class='goodTube_option_hideAiSummaries' name='goodTube_option_hideAiSummaries' id='goodTube_option_hideAiSummaries'`+ hideAiSummaries + `>
+							<label for='goodTube_option_hideAiSummaries'>Hide AI summaries</label>
+						</div> <!-- .goodTube_setting -->
+
+						<div class='goodTube_setting'>
 							<input type='checkbox' class='goodTube_option_alwaysStart' name='goodTube_option_alwaysStart' id='goodTube_option_alwaysStart'`+ alwaysStart + `>
 							<label for='goodTube_option_alwaysStart'>Always play videos from the start</label>
 						</div> <!-- .goodTube_setting -->
@@ -2258,6 +2286,17 @@
 					}
 					else {
 						goodTube_helper_setCookie('goodTube_hideComments', 'false');
+					}
+				}
+
+				// Hide AI summaries
+				let goodTube_setting_hideAiSummaries = document.querySelector('.goodTube_option_hideAiSummaries');
+				if (goodTube_setting_hideAiSummaries) {
+					if (goodTube_setting_hideAiSummaries.checked) {
+						goodTube_helper_setCookie('goodTube_hideAiSummaries', 'true');
+					}
+					else {
+						goodTube_helper_setCookie('goodTube_hideAiSummaries', 'false');
 					}
 				}
 
