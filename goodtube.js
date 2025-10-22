@@ -1320,7 +1320,12 @@
 		// Init the rest once the DOM is ready
 		document.addEventListener('DOMContentLoaded', goodTube_init_domReady);
 
-		// Try this to check if the DOM is ready, seems to be the only reliable method in all browsers (which is insane, I know...thanks Safari)
+		// Also check if the DOM is already loaded, as if it is, the above event listener will not trigger
+		if (document.readyState === 'interactive' || document.readyState === 'complete') {
+			goodTube_init_domReady();
+		}
+
+		// And try this to check if the DOM is ready, seems to be the only reliable method in all browsers (which is insane, I know...thanks Safari)
 		if (!document.body || !document.head) {
 			// Clear timeout first to solve memory leak issues
 			clearTimeout(goodTube_init_timeout);
@@ -2785,7 +2790,12 @@
 		// Init the rest once the DOM is ready
 		document.addEventListener('DOMContentLoaded', goodTube_iframe_init_domReady);
 
-		// Try this to check if the DOM is ready, seems to be the only reliable method in all browsers (which is insane, I know...thanks Safari)
+		// Also check if the DOM is already loaded, as if it is, the above event listener will not trigger
+		if (document.readyState === 'interactive' || document.readyState === 'complete') {
+			goodTube_iframe_init_domReady();
+		}
+
+		// And try this to check if the DOM is ready, seems to be the only reliable method in all browsers (which is insane, I know...thanks Safari)
 		if (!document.body || !document.head) {
 			// Clear timeout first to solve memory leak issues
 			clearTimeout(goodTube_iframe_init_timeout);
@@ -4274,7 +4284,12 @@
 		// Init the rest once the DOM is ready
 		document.addEventListener('DOMContentLoaded', goodTube_proxyIframe_init_domReady);
 
-		// Try this to check if the DOM is ready, seems to be the only reliable method in all browsers (which is insane, I know...thanks Safari)
+		// Also check if the DOM is already loaded, as if it is, the above event listener will not trigger
+		if (document.readyState === 'interactive' || document.readyState === 'complete') {
+			goodTube_proxyIframe_init_domReady();
+		}
+
+		// And try this to check if the DOM is ready, seems to be the only reliable method in all browsers (which is insane, I know...thanks Safari)
 		if (!document.body || !document.head) {
 			// Clear timeout first to solve memory leak issues
 			clearTimeout(goodTube_proxyIframe_init_timeout);
