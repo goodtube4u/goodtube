@@ -334,7 +334,8 @@
 
 		// Hide the main Youtube player
 		cssOutput += `
-			body:not(.goodTube_fallback) #player {
+			body:not(.goodTube_fallback) #player,
+			body:not(.goodTube_fallback) #player-full-bleed-container {
 				visibility: hidden !important;
 			}
 		`;
@@ -671,6 +672,7 @@
 		// Setup player layout
 		let playerWrapper = document.createElement('div');
 		playerWrapper.id = 'goodTube_playerWrapper';
+		playerWrapper.classList.add('goodTube_hidden');
 
 		// Add player to the page
 		document.body.appendChild(playerWrapper);
@@ -687,7 +689,6 @@
 				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
 				referrerpolicy="strict-origin-when-cross-origin"
 				allowfullscreen
-				style="display: none;"
 			></iframe>
 		`;
 
@@ -715,9 +716,6 @@
 		else {
 			goodTube_clearedPlayer = false;
 
-			// Show the GoodTube player
-			goodTube_helper_showElement(goodTube_playerWrapper);
-
 			// Get the Youtube player
 			let youtubePlayer = document.querySelector('#ytd-player, .player-size');
 
@@ -732,6 +730,9 @@
 				// Make our custom player match the size of the Youtube player
 				goodTube_playerWrapper.style.width = youtubePlayer.offsetWidth + 'px';
 				goodTube_playerWrapper.style.height = youtubePlayer.offsetHeight + 'px';
+
+				// Show the GoodTube player
+				goodTube_helper_showElement(goodTube_playerWrapper);
 			}
 		}
 	}
@@ -837,9 +838,6 @@
 		if (goodTube_alwaysStart === 'false') {
 			goodTube_player_syncStartingTime();
 		}
-
-		// Show the player
-		goodTube_helper_showElement(goodTube_playerWrapper);
 
 		// Play the video (this solves some edge cases)
 		goodTube_player_play();
@@ -1367,7 +1365,6 @@
 		// Player iframe has loaded
 		else if (event.data === 'goodTube_playerIframe_loaded') {
 			goodTube_playerIframeLoaded = true;
-			goodTube_player.style.display = 'block';
 		}
 
 		// Picture in picture
