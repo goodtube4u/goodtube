@@ -334,7 +334,7 @@
 
 		// Hide the main Youtube player
 		cssOutput += `
-			body:not(.goodTube_fallback) ytd-player {
+			body:not(.goodTube_fallback) #player {
 				visibility: hidden !important;
 			}
 		`;
