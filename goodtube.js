@@ -51,7 +51,7 @@
 
 	// Set a cookie
 	function goodTube_helper_setCookie(name, value, days = 399) {
-		document.cookie = name + "=" + encodeURIComponent(value) + ";SameSite=Lax;max-age=" + (days * 24 * 60 * 60);
+		document.cookie = name + "=" + encodeURIComponent(value) + ";SameSite=Lax;path=/;max-age=" + (days * 24 * 60 * 60);
 	}
 
 	// Get a cookie
@@ -334,7 +334,7 @@
 
 		// Hide the main Youtube player
 		cssOutput += `
-			body:not(.goodTube_fallback) #player,
+			body:not(.goodTube_fallback) #player:not(.ytd-shorts),
 			body:not(.goodTube_fallback) #player-full-bleed-container {
 				visibility: hidden !important;
 			}
@@ -421,10 +421,10 @@
 		}
 
 		// Redirect from any short to the homepage
-		if (window.location.href.indexOf('/shorts') !== -1 && !goodTube_redirectHappened) {
-			window.location.href = 'https://youtube.com';
-			goodTube_redirectHappened = true;
-		}
+		// if (window.location.href.indexOf('/shorts') !== -1 && !goodTube_redirectHappened) {
+		// 	window.location.href = 'https://youtube.com';
+		// 	goodTube_redirectHappened = true;
+		// }
 
 		// Hide shorts links (we can't mark these as "checked" to save on resources, as the URLs seem to change over time)
 		let shortsLinks = document.querySelectorAll('a:not(.goodTube_hidden)');
