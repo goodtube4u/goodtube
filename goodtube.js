@@ -1823,7 +1823,7 @@
 				transform: translate(round(-50%, 1px), 4px);
 				letter-spacing: 0.04em;
 				opacity: 0;
-				transition: opacity .2s ease-in-out, transform .2s ease-in-out;
+				transition: opacity .2s ease-in-out, top .2s ease-in-out;
 				pointer-events: none;
 				text-decoration: none;
 			}
@@ -1840,7 +1840,7 @@
 				border-right: 4px solid transparent;
 				border-top: 4px solid rgba(0, 0, 0, .9);
 				opacity: 0;
-				transition: opacity .2s ease-in-out, transform .2s ease-in-out;
+				transition: opacity .2s ease-in-out, top .2s ease-in-out;
 				pointer-events: none;
 				text-decoration: none;
 			}
@@ -1853,7 +1853,14 @@
 			.goodTube_menuButton:hover::before,
 			.goodTube_menuButton:hover::after {
 				opacity: 1;
-				transform: translate(round(-50%, 1px), 0);
+			}
+
+			.goodTube_menuButton:hover::before {
+				top: -32px;
+			}
+
+			.goodTube_menuButton:hover::after {
+				top: -11px;
 			}
 
 			.goodTube_menuClose {
@@ -1891,6 +1898,7 @@
 				transition: opacity .2s linear;
 				pointer-events: none;
 				backface-visibility: hidden;
+				min-width: 320px;
 			}
 			.goodTube_modal:not(.visible) .goodTube_button {
 				pointer-events: none;
@@ -1939,18 +1947,18 @@
 
 			.goodTube_modal .goodTube_modal_inner .goodTube_modal_closeButton {
 				position: absolute;
-				top: 12px;
+				top: 17px;
 				right: 12px;
 				color: #333;
-				font-size: 16px;
-				font-weight: 700;
+				font-size: 20px;
+				font-weight: 400;
 				text-decoration: none;
-				width: 31px;
-				height: 31px;
+				width: 40px;
+				height: 40px;
 				background: #ffffff;
 				border-radius: 9999px;
 				text-align: center;
-				line-height: 32px;
+				line-height: 40px;
 				transition: background .2s linear;
 			}
 
