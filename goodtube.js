@@ -51,11 +51,17 @@
 
 	// Set a cookie
 	function goodTube_helper_setCookie(name, value, days = 399) {
+		// Force new cookie names, we had the path attribute wrong...sorry all this will reset your settings (22/10/2025)
+		name = name + '_new';
+
 		document.cookie = name + "=" + encodeURIComponent(value) + ";SameSite=Lax;path=/;max-age=" + (days * 24 * 60 * 60);
 	}
 
 	// Get a cookie
 	function goodTube_helper_getCookie(name) {
+		// Force new cookie names, we had the path attribute wrong...sorry all this will reset your settings (22/10/2025)
+		name = name + '_new';
+
 		// Split the cookie string and get all individual name=value pairs in an array
 		let cookies = document.cookie.split(";");
 
@@ -421,10 +427,10 @@
 		}
 
 		// Redirect from any short to the homepage
-		// if (window.location.href.indexOf('/shorts') !== -1 && !goodTube_redirectHappened) {
-		// 	window.location.href = 'https://youtube.com';
-		// 	goodTube_redirectHappened = true;
-		// }
+		if (window.location.href.indexOf('/shorts') !== -1 && !goodTube_redirectHappened) {
+			window.location.href = 'https://youtube.com';
+			goodTube_redirectHappened = true;
+		}
 
 		// Hide shorts links (we can't mark these as "checked" to save on resources, as the URLs seem to change over time)
 		let shortsLinks = document.querySelectorAll('a:not(.goodTube_hidden)');
