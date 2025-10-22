@@ -683,6 +683,37 @@
 		});
 	}
 
+	// Set the video aspect ratio
+	function goodTube_youtube_setAspectRatio(widthRatio, heightRatio) {
+		// Make sure we've been passed valid data
+		if (!widthRatio || !heightRatio) {
+			return;
+		}
+
+		// Target the aspect ratio element with the CSS variables
+		let variableElement = document.querySelector('ytd-watch-flexy');
+
+		// If we found the element, we're watching a video and the "hide and mute ads" fallback is inactive
+		if (variableElement && goodTube_helper_watchingVideo() && !goodTube_fallback) {
+			// Set the aspect ratio
+			variableElement.style.setProperty("--ytd-watch-flexy-width-ratio", widthRatio);
+			variableElement.style.setProperty("--ytd-watch-flexy-height-ratio", heightRatio);
+		}
+	}
+
+	// Unset the video aspect ratio
+	function goodTube_youtube_unsetAspectRatio() {
+		// Target the aspect ratio element with the CSS variables
+		let variableElement = document.querySelector('ytd-watch-flexy');
+
+		// If we found the aspect ratio element
+		if (variableElement) {
+			// Remove the aspect ratio
+			variableElement.style.removeProperty("--ytd-watch-flexy-width-ratio");
+			variableElement.style.removeProperty("--ytd-watch-flexy-height-ratio");
+		}
+	}
+
 
 	/* Player functions
 	------------------------------------------------------------------------------------------ */
@@ -1554,6 +1585,9 @@
 		else if (event.data === 'goodTube_fallback_enable') {
 			goodTube_fallback = true;
 
+			// Unset the aspect ratio
+			goodTube_youtube_unsetAspectRatio();
+
 			// Sync the autoplay
 			goodTube_hideAndMuteAdsFallback_syncAutoplay();
 
@@ -1589,6 +1623,12 @@
 					goodTube_player.contentWindow.postMessage('goodTube_fullscreen', '*');
 				}, 100);
 			}
+		}
+
+		// Sync the aspect ratio
+		else if (event.data.indexOf('goodTube_syncAspectRatio_') !== -1) {
+			let aspectRatio = event.data.replace('goodTube_syncAspectRatio_', '').split('_');
+			goodTube_youtube_setAspectRatio(aspectRatio[0], aspectRatio[1]);
 		}
 	}
 
@@ -2901,6 +2941,9 @@
 		if (goodTube_getParams['goodTube_playlist'] !== 'undefined' && goodTube_getParams['goodTube_playlist'] === 'true') {
 			goodTube_iframe_enablePrevButton();
 		}
+
+		// Sync the aspect ratio
+		goodTube_iframe_syncAspectRatio();
 
 		// Clear timeout first to solve memory leak issues
 		clearTimeout(goodTube_iframe_actions_timeout);
@@ -4248,6 +4291,37 @@
 				// Tell the top frame to go to the previous video
 				window.top.postMessage('goodTube_prevVideo', '*');
 			});
+		}
+	}
+
+	// Sync the aspect ratio
+	function goodTube_iframe_syncAspectRatio() {
+		// Target the video element
+		let videoElement = document.querySelector('video');
+
+		// If we found the video element
+		if (videoElement) {
+			// Get the the intrinsic width and height of the video
+			let videoWidth = videoElement.videoWidth;
+			let videoHeight = videoElement.videoHeight;
+
+			// Calculate the aspect radio
+			function gcd(a, b) {
+				return (b == 0) ? a : gcd(b, a % b);
+			}
+
+			function calculateAspectRatio(w, h) {
+				var d = gcd(w, h);
+				return [w / d, h / d];
+			}
+
+			let aspectRatio = calculateAspectRatio(videoWidth, videoHeight);
+
+			// Make sure we found a valid aspect ratio
+			if (aspectRatio.length === 2 && !isNaN(aspectRatio[0]) && !isNaN(aspectRatio[1])) {
+				// Tell the top level window to sync the aspect ratio
+				window.top.postMessage('goodTube_syncAspectRatio_' + aspectRatio[0] + '_' + aspectRatio[1], '*');
+			}
 		}
 	}
 
