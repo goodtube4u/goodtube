@@ -154,6 +154,25 @@
 		}
 	}
 
+	// Check if ads are showing
+	function goodTube_helper_adsShowing() {
+		// If we're viewing a video
+		if (goodTube_helper_watchingVideo()) {
+			// Get the ads DOM elements
+			let adsElement = document.querySelector('.video-ads');
+			let sponsoredAdsElement = document.querySelector('.ad-simple-attributed-string');
+
+			// If ads are showing
+			if ((adsElement && adsElement.checkVisibility()) || (sponsoredAdsElement && sponsoredAdsElement.checkVisibility())) {
+				return true;
+			}
+			// Otherwise, ads are not showing
+			else {
+				return false;
+			}
+		}
+	}
+
 
 	/* Global variables
 	------------------------------------------------------------------------------------------ */
@@ -199,9 +218,6 @@
 
 	// Is the "hide and mute ads" fallback active?
 	let goodTube_fallback = false;
-
-	// Are ads showing?
-	let goodTube_adsShowing = false;
 
 	// Is the tab in focus?
 	let goodTube_tabInFocus = document.hasFocus();
@@ -533,7 +549,7 @@
 		clearTimeout(goodTube_youtube_hidePlayers_timeout);
 
 		// Loop this function
-		goodTube_youtube_hidePlayers_timeout = setTimeout(goodTube_youtube_hidePlayers, 1);
+		goodTube_youtube_hidePlayers_timeout = setTimeout(goodTube_youtube_hidePlayers, 100);
 	}
 
 	// Mute and pause all Youtube videos
@@ -550,7 +566,7 @@
 			clearTimeout(goodTube_youtube_pauseMuteVideos_timeout);
 
 			// Loop this function
-			goodTube_youtube_pauseMuteVideos_timeout = setTimeout(goodTube_youtube_pauseMuteVideos, 1);
+			goodTube_youtube_pauseMuteVideos_timeout = setTimeout(goodTube_youtube_pauseMuteVideos, 100);
 
 			// Don't pause or mute videos
 			return;
@@ -579,7 +595,7 @@
 					video.volume = 0;
 
 					// If ads are not showing OR it's not the main player
-					if (!goodTube_adsShowing || !video.closest('#movie_player')) {
+					if (!goodTube_helper_adsShowing() || !video.closest('#movie_player')) {
 						// Pause the video
 						video.pause();
 
@@ -602,7 +618,7 @@
 		clearTimeout(goodTube_youtube_pauseMuteVideos_timeout);
 
 		// Loop this function
-		goodTube_youtube_pauseMuteVideos_timeout = setTimeout(goodTube_youtube_pauseMuteVideos, 1);
+		goodTube_youtube_pauseMuteVideos_timeout = setTimeout(goodTube_youtube_pauseMuteVideos, 100);
 	}
 
 	// Turn off autoplay
@@ -634,32 +650,6 @@
 
 		// Run actions again in 100ms to loop this function
 		goodTube_youtube_turnOffAutoplay_timeout = setTimeout(goodTube_youtube_turnOffAutoplay, 100);
-	}
-
-	// Check ads state
-	let goodTube_youtube_checkAdsState_timeout = setTimeout(() => {}, 0);
-	function goodTube_youtube_checkAdsState() {
-		// If we're viewing a video
-		if (goodTube_helper_watchingVideo()) {
-			// Get the ads DOM elements
-			let adsElement = document.querySelector('.video-ads');
-			let sponsoredAdsElement = document.querySelector('.ad-simple-attributed-string');
-
-			// If ads are showing
-			if ((adsElement && adsElement.checkVisibility()) || (sponsoredAdsElement && sponsoredAdsElement.checkVisibility())) {
-				goodTube_adsShowing = true;
-			}
-			// Otherwise, ads are not showing
-			else {
-				goodTube_adsShowing = false;
-			}
-		}
-
-		// Clear timeout first to solve memory leak issues
-		clearTimeout(goodTube_youtube_checkAdsState_timeout);
-
-		// Run actions again in 1ms to loop this function
-		goodTube_youtube_checkAdsState_timeout = setTimeout(goodTube_youtube_checkAdsState, 1);
 	}
 
 	// Remove the "are you still watching" popup
@@ -838,8 +828,8 @@
 		// Clear timeout first to solve memory leak issues
 		clearTimeout(goodTube_player_positionAndSize_timeout);
 
-		// Create a new timeout (this must be done with setTimeout - it fixes a known major issue many users have where the function won't fire with window.requestAnimationFrame)
-		goodTube_player_positionAndSize_timeout = setTimeout(goodTube_player_positionAndSize, 0);
+		// Create a new timeout
+		goodTube_player_positionAndSize_timeout = setTimeout(goodTube_player_positionAndSize, 100);
 	}
 
 	// Populate the playlist info
@@ -1436,9 +1426,6 @@
 		// Init our player
 		goodTube_player_init();
 
-		// Check the ads state
-		goodTube_youtube_checkAdsState();
-
 		// Init the "hide and mute ads" fallback
 		goodTube_hideAndMuteAdsFallback_init();
 
@@ -1466,7 +1453,7 @@
 			clearTimeout(goodTube_receiveMessage_timeout);
 
 			// Create a new timeout
-			goodTube_receiveMessage_timeout = setTimeout(() => { goodTube_receiveMessage(event); }, 1);
+			goodTube_receiveMessage_timeout = setTimeout(() => { goodTube_receiveMessage(event); }, 100);
 		}
 
 		// Proxy iframe has loaded
@@ -1553,7 +1540,7 @@
 			// If we found the video element
 			// AND we've not already synced to this point (this stops it continuing to sync when ended for no reason, we also need to round it down as it seems to be unreliable)
 			// AND ads are not showing (we don't want to touch the the time when ads are playing, this triggers detection)
-			if (youtubeVideoElement && Math.floor(youtubeVideoElement.currentTime) !== Math.floor(syncTime) && !goodTube_adsShowing) {
+			if (youtubeVideoElement && Math.floor(youtubeVideoElement.currentTime) !== Math.floor(syncTime) && !goodTube_helper_adsShowing()) {
 				// Set a variable to indicate we're syncing the player (this stops the automatic pausing of all videos)
 				goodTube_syncingPlayer = true;
 
@@ -2576,7 +2563,7 @@
 		// If the "hide and mute ads" fallback is active AND we're viewing a video
 		if (goodTube_fallback && goodTube_helper_watchingVideo()) {
 			// If ads are showing
-			if (goodTube_adsShowing) {
+			if (goodTube_helper_adsShowing()) {
 				// Enable the "hide and mute ads" overlay
 				goodTube_hideAndMuteAdsFallback_enable();
 			}
@@ -2595,7 +2582,7 @@
 		clearTimeout(goodTube_hideAndMuteAdsFallback_check_timeout);
 
 		// Run actions again in 1ms to loop this function
-		goodTube_hideAndMuteAdsFallback_check_timeout = setTimeout(goodTube_hideAndMuteAdsFallback_check, 1);
+		goodTube_hideAndMuteAdsFallback_check_timeout = setTimeout(goodTube_hideAndMuteAdsFallback_check, 100);
 	}
 
 	// Enable the the overlay
@@ -3897,7 +3884,7 @@
 			clearTimeout(goodTube_iframe_receiveMessage_timeout);
 
 			// Create a new timeout
-			goodTube_iframe_receiveMessage_timeout = setTimeout(() => { goodTube_iframe_receiveMessage(event); }, 1);
+			goodTube_iframe_receiveMessage_timeout = setTimeout(() => { goodTube_iframe_receiveMessage(event); }, 100);
 
 			// Don't do anything else
 			return;
@@ -3919,7 +3906,7 @@
 			clearTimeout(goodTube_iframe_receiveMessage_timeout);
 
 			// Create a new timeout
-			goodTube_iframe_receiveMessage_timeout = setTimeout(() => { goodTube_iframe_receiveMessage(event); }, 1);
+			goodTube_iframe_receiveMessage_timeout = setTimeout(() => { goodTube_iframe_receiveMessage(event); }, 100);
 
 			// Don't do anything else
 			return;
@@ -3968,7 +3955,7 @@
 				clearTimeout(goodTube_iframe_receiveMessage_timeout);
 
 				// Create a new timeout
-				goodTube_iframe_receiveMessage_timeout = setTimeout(() => { goodTube_iframe_receiveMessage(event); }, 1);
+				goodTube_iframe_receiveMessage_timeout = setTimeout(() => { goodTube_iframe_receiveMessage(event); }, 100);
 
 				// Don't do anything else
 				return;
@@ -4423,7 +4410,7 @@
 			clearTimeout(goodTube_proxyIframe_receiveMessage_timeout);
 
 			// Create a new timeout
-			goodTube_proxyIframe_receiveMessage_timeout = setTimeout(() => { goodTube_proxyIframe_receiveMessage(event); }, 1);
+			goodTube_proxyIframe_receiveMessage_timeout = setTimeout(() => { goodTube_proxyIframe_receiveMessage(event); }, 100);
 		}
 
 		// Target the youtube iframe
@@ -4453,7 +4440,7 @@
 			clearTimeout(goodTube_proxyIframe_receiveMessage_timeout);
 
 			// Create a new timeout
-			goodTube_proxyIframe_receiveMessage_timeout = setTimeout(() => { goodTube_proxyIframe_receiveMessage(event); }, 1);
+			goodTube_proxyIframe_receiveMessage_timeout = setTimeout(() => { goodTube_proxyIframe_receiveMessage(event); }, 100);
 		}
 	}
 
