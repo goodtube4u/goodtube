@@ -695,6 +695,7 @@
 				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
 				referrerpolicy="strict-origin-when-cross-origin"
 				allowfullscreen
+				class="goodTube_hidden"
 			></iframe>
 		`;
 
@@ -1371,6 +1372,9 @@
 		// Player iframe has loaded
 		else if (event.data === 'goodTube_playerIframe_loaded') {
 			goodTube_playerIframeLoaded = true;
+
+			// Show the player iframe
+			goodTube_helper_showElement(goodTube_player);
 		}
 
 		// Picture in picture
