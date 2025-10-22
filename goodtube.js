@@ -1320,13 +1320,13 @@
 		// Init the rest once the DOM is ready
 		document.addEventListener('DOMContentLoaded', goodTube_init_domReady);
 
-		// Also try this to load, if the document body and head exist (this is the only reliable method for iOS Safari)
+		// Try this to check if the DOM is ready, seems to be the only reliable method in all browsers (which is insane, I know...thanks Safari)
 		if (!document.body || !document.head) {
 			// Clear timeout first to solve memory leak issues
 			clearTimeout(goodTube_init_timeout);
 
 			// Create a new timeout
-			goodTube_init_timeout = setTimeout(goodTube_init, 100);
+			goodTube_init_timeout = setTimeout(goodTube_init, 1);
 		}
 		// Otherwise, the DOM is ready
 		else {
@@ -1534,8 +1534,8 @@
 			goodTube_fallback = false;
 
 			// Remove the class from the <body>
-			if (document.body && !document.body.classList.contains('goodTube_fallback')) {
-				document.body.classList.add('goodTube_fallback');
+			if (document.body && document.body.classList.contains('goodTube_fallback')) {
+				document.body.classList.remove('goodTube_fallback');
 			}
 
 			// If we're in fullscreen already
@@ -2785,13 +2785,13 @@
 		// Init the rest once the DOM is ready
 		document.addEventListener('DOMContentLoaded', goodTube_iframe_init_domReady);
 
-		// Also try this to load, if the document body and head exist (this is the only reliable method for iOS Safari)
+		// Try this to check if the DOM is ready, seems to be the only reliable method in all browsers (which is insane, I know...thanks Safari)
 		if (!document.body || !document.head) {
 			// Clear timeout first to solve memory leak issues
 			clearTimeout(goodTube_iframe_init_timeout);
 
 			// Create a new timeout
-			goodTube_iframe_init_timeout = setTimeout(goodTube_init, 100);
+			goodTube_iframe_init_timeout = setTimeout(goodTube_iframe_init, 1);
 		}
 		// Otherwise, the DOM is ready
 		else {
@@ -2817,7 +2817,7 @@
 			clearTimeout(goodTube_iframe_init_domReady_timeout);
 
 			// Create a new timeout
-			goodTube_iframe_init_domReady_timeout = setTimeout(goodTube_iframe_init_domReady, 100);
+			goodTube_iframe_init_domReady_timeout = setTimeout(goodTube_iframe_init_domReady, 1);
 
 			return;
 		}
@@ -4274,13 +4274,13 @@
 		// Init the rest once the DOM is ready
 		document.addEventListener('DOMContentLoaded', goodTube_proxyIframe_init_domReady);
 
-		// Also try this to load, if the document body and head exist (this is the only reliable method for iOS Safari)
+		// Try this to check if the DOM is ready, seems to be the only reliable method in all browsers (which is insane, I know...thanks Safari)
 		if (!document.body || !document.head) {
 			// Clear timeout first to solve memory leak issues
 			clearTimeout(goodTube_proxyIframe_init_timeout);
 
 			// Create a new timeout
-			goodTube_proxyIframe_init_timeout = setTimeout(goodTube_proxyIframe_init, 100);
+			goodTube_proxyIframe_init_timeout = setTimeout(goodTube_proxyIframe_init, 1);
 		}
 		// Otherwise, the DOM is ready
 		else {
