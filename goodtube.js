@@ -83,37 +83,12 @@
 		}
 	}
 
-	// Add CSS classes to show or hide elements / the Youtube player
+	// Add a CSS class to show or hide elements
 	function goodTube_helper_showHide_init() {
 		let style = document.createElement('style');
 		style.textContent = `
 			.goodTube_hidden {
-				position: fixed !important;
-				top: -9999px !important;
-				left: -9999px !important;
-				transform: scale(0) !important;
-				pointer-events: none !important;
-			}
-
-			.goodTube_hiddenPlayer {
-				position: relative;
-				overflow: hidden;
-				z-index: 1;
-			}
-
-			.goodTube_hiddenPlayer::before {
-				content: '';
-				position: absolute;
-				top: 0;
-				left: 0;
-				right: 0;
-				bottom: 0;
-				background: #ffffff;
-				z-index: 998;
-			}
-
-			html[dark] .goodTube_hiddenPlayer::before {
-				background: #0f0f0f;
+				display: none !important;
 			}
 		`;
 		document.head.appendChild(style);
@@ -130,15 +105,6 @@
 	function goodTube_helper_showElement(element) {
 		if (element && element.classList.contains('goodTube_hidden')) {
 			element.classList.remove('goodTube_hidden');
-		}
-	}
-
-	// Show the Youtube player
-	function goodTube_helper_showYoutubePlayer(element) {
-		let wrappingElement = element.closest('.goodTube_hiddenPlayer');
-
-		if (wrappingElement) {
-			wrappingElement.classList.remove('goodTube_hiddenPlayer');
 		}
 	}
 
@@ -368,7 +334,7 @@
 
 		// Hide the main Youtube player
 		cssOutput += `
-			body:not('.goodTube_fallback) ytd-player {
+			body:not(.goodTube_fallback) ytd-player {
 				visibility: hidden !important;
 			}
 		`;
@@ -581,7 +547,6 @@
 	}
 
 	// Turn off autoplay
-	let goodTube_youtube_turnOffAutoplay_timeout = setTimeout(() => {}, 0);
 	function goodTube_youtube_turnOffAutoplay() {
 		// If we've already turned off autoplay, just return
 		if (goodTube_turnedOffAutoplay) {
@@ -601,14 +566,6 @@
 			// Set a variable if autoplay has been turned off
 			goodTube_turnedOffAutoplay = true;
 		}
-
-		// Keep doing this, Youtube is causing autoplay issues lately...it doesn't want to stay off?
-
-		// Clear timeout first to solve memory leak issues
-		clearTimeout(goodTube_youtube_turnOffAutoplay_timeout);
-
-		// Run actions again in 100ms to loop this function
-		goodTube_youtube_turnOffAutoplay_timeout = setTimeout(goodTube_youtube_turnOffAutoplay, 100);
 	}
 
 	// Remove the "are you still watching" popup
@@ -738,57 +695,45 @@
 		goodTube_playerWrapper = document.querySelector('#goodTube_playerWrapper');
 		goodTube_player = goodTube_playerWrapper.querySelector('iframe');
 
-		// Setup player dynamic positioning and sizing
-		goodTube_player_positionAndSize();
-
-		// Run the actions
+		// Run the actions every 100ms
 		goodTube_actions();
+		setInterval(goodTube_actions, 100);
 	}
 
 	// Position and size the player
-	let goodTube_player_positionAndSize_timeout = setTimeout(() => {}, 0);
 	let goodTube_clearedPlayer = false;
 	function goodTube_player_positionAndSize() {
-		// If we're viewing a video
-		if (goodTube_helper_watchingVideo()) {
-			// If the "hide and mute ads" fallback is inactive
-			if (goodTube_fallback) {
-				if (!goodTube_clearedPlayer) {
-					// Hide and clear the embedded player
-					goodTube_player_clear(true);
-					goodTube_clearedPlayer = true;
-				}
-			}
-			// Otherwise, the "hide and mute ads" fallback is inactive
-			else {
-				goodTube_clearedPlayer = false;
-
-				// Show the GoodTube player
-				goodTube_helper_showElement(goodTube_playerWrapper);
-
-				// Get the Youtube player
-				let youtubePlayer = document.querySelector('#ytd-player, .player-size');
-
-				// If we found the Youtube player
-				if (youtubePlayer && youtubePlayer.offsetHeight > 0) {
-					// Make our custom player match the position of the Youtube player
-					// Note: Our custom player uses "position: absolute" so take into account the window scroll
-					let rect = youtubePlayer.getBoundingClientRect();
-					goodTube_playerWrapper.style.top = (rect.top + window.scrollY) + 'px';
-					goodTube_playerWrapper.style.left = (rect.left + window.scrollX) + 'px';
-
-					// Make our custom player match the size of the Youtube player
-					goodTube_playerWrapper.style.width = youtubePlayer.offsetWidth + 'px';
-					goodTube_playerWrapper.style.height = youtubePlayer.offsetHeight + 'px';
-				}
+		// If the "hide and mute ads" fallback is inactive
+		if (goodTube_fallback) {
+			if (!goodTube_clearedPlayer) {
+				// Hide and clear the embedded player
+				goodTube_player_clear(true);
+				goodTube_clearedPlayer = true;
 			}
 		}
+		// Otherwise, the "hide and mute ads" fallback is inactive
+		else {
+			goodTube_clearedPlayer = false;
 
-		// Clear timeout first to solve memory leak issues
-		clearTimeout(goodTube_player_positionAndSize_timeout);
+			// Show the GoodTube player
+			goodTube_helper_showElement(goodTube_playerWrapper);
 
-		// Create a new timeout
-		goodTube_player_positionAndSize_timeout = setTimeout(goodTube_player_positionAndSize, 100);
+			// Get the Youtube player
+			let youtubePlayer = document.querySelector('#ytd-player, .player-size');
+
+			// If we found the Youtube player
+			if (youtubePlayer && youtubePlayer.offsetHeight > 0) {
+				// Make our custom player match the position of the Youtube player
+				// Note: Our custom player uses "position: absolute" so take into account the window scroll
+				let rect = youtubePlayer.getBoundingClientRect();
+				goodTube_playerWrapper.style.top = (rect.top + window.scrollY) + 'px';
+				goodTube_playerWrapper.style.left = (rect.left + window.scrollX) + 'px';
+
+				// Make our custom player match the size of the Youtube player
+				goodTube_playerWrapper.style.width = youtubePlayer.offsetWidth + 'px';
+				goodTube_playerWrapper.style.height = youtubePlayer.offsetHeight + 'px';
+			}
+		}
 	}
 
 	// Populate the playlist info
@@ -893,24 +838,11 @@
 			goodTube_player_syncStartingTime();
 		}
 
-		// Set the Youtube player to auto quality
-		goodTube_player_setQualitySucceeded = false;
-		goodTube_player_setAutoQuality();
-
 		// Show the player
 		goodTube_helper_showElement(goodTube_playerWrapper);
 
 		// Play the video (this solves some edge cases)
 		goodTube_player_play();
-	}
-
-	// Set the Youtube player quality
-	let goodTube_player_setQualitySucceeded = false;
-	let goodTube_player_setQuality_timeout = setTimeout(() => {}, 0);
-	function goodTube_player_setAutoQuality(quality = 'highest') {
-		// DISABLE FOR NOW THIS IS CAUSING ISSUES
-		return;
-
 	}
 
 	// Sync the starting time
@@ -1343,18 +1275,35 @@
 	------------------------------------------------------------------------------------------ */
 	// Init
 	let goodTube_initiated = false;
-	function goodTube_init() {
-		// Listen for messages from the iframes
-		window.addEventListener('message', goodTube_receiveMessage);
+	let goodTube_init_timeout = setTimeout(() => {}, 0);
+	function goodTube_init(retrying = false) {
+		// If we're not retrying
+		if (!retrying) {
+			// Listen for messages from the iframes
+			window.addEventListener('message', goodTube_receiveMessage);
 
-		// Mute and pause all Youtube videos
-		goodTube_youtube_pauseMuteVideos();
+			// Mute and pause all Youtube videos
+			goodTube_youtube_pauseMuteVideos();
 
-		// Init the rest once the DOM is ready
-		document.addEventListener('DOMContentLoaded', goodTube_init_domReady);
+			// Init the rest once the DOM is ready
+			document.addEventListener('DOMContentLoaded', goodTube_init_domReady);
 
-		// Also check if the DOM is already loaded, as if it is, the above event listener will not trigger
-		if (document.readyState === 'interactive' || document.readyState === 'complete') {
+			// Also check if the DOM is already loaded, as if it is, the above event listener will not trigger
+			if (document.readyState === 'interactive' || document.readyState === 'complete') {
+				goodTube_init_domReady();
+			}
+		}
+
+		// And try this to check if the DOM is ready, seems to be the only reliable method in all browsers (which is insane, I know...thanks Safari)
+		if (!document.body || !document.head) {
+			// Clear timeout first to solve memory leak issues
+			clearTimeout(goodTube_init_timeout);
+
+			// Create a new timeout
+			goodTube_init_timeout = setTimeout(() => { goodTube_init(true); }, 1);
+		}
+		// Otherwise, the DOM is ready
+		else {
 			goodTube_init_domReady();
 		}
 	}
@@ -1370,7 +1319,7 @@
 		// Check the tab focus state
 		goodTube_checkTabFocus();
 
-		// Add CSS classes to hide elements (without Youtube knowing)
+		// Add a CSS class to show or hide elements
 		goodTube_helper_showHide_init();
 
 		// Hide page elements
@@ -1401,7 +1350,7 @@
 		}
 
 		// Make sure the DOM is ready, if not retry (this ensures that the message will fire eventually)
-		if ((document.readyState !== 'interactive' && document.readyState !== 'complete') || !document.body || !document.head) {
+		if (!document.body || !document.head) {
 			// Clear timeout first to solve memory leak issues
 			clearTimeout(goodTube_receiveMessage_timeout);
 
@@ -1559,8 +1508,8 @@
 			goodTube_fallback = false;
 
 			// Remove the class from the <body>
-			if (document.body && !document.body.classList.contains('goodTube_fallback')) {
-				document.body.classList.add('goodTube_fallback');
+			if (document.body && document.body.classList.contains('goodTube_fallback')) {
+				document.body.classList.remove('goodTube_fallback');
 			}
 
 			// If we're in fullscreen already
@@ -1583,7 +1532,6 @@
 	}
 
 	// Actions
-	let goodTube_actions_timeout = setTimeout(() => {}, 0);
 	function goodTube_actions() {
 		// Get the previous and current URL
 
@@ -1642,16 +1590,16 @@
 
 			// Remove the "are you still watching" popup
 			goodTube_youtube_removeAreYouStillWatchingPopup();
+
+			// Position and size the player
+			goodTube_player_positionAndSize();
+
+			// Check to enable or disable the "hide and mute ads" fallback overlay
+			goodTube_hideAndMuteAdsFallback_check();
 		}
 
 		// Hide shorts (real time)
 		goodTube_youtube_hideShortsRealTime();
-
-		// Clear timeout first to solve memory leak issues
-		clearTimeout(goodTube_actions_timeout);
-
-		// Run actions again in 100ms to loop this function
-		goodTube_actions_timeout = setTimeout(goodTube_actions, 100);
 	}
 
 	// Init menu
@@ -2461,9 +2409,6 @@
 		style.textContent = cssOutput;
 		document.head.appendChild(style);
 
-		// Check to enable or disable the overlay
-		goodTube_hideAndMuteAdsFallback_check();
-
 		// Disable some shortcuts while the overlay is enabled
 		function disableShortcuts(event) {
 			// Make sure we're watching a video and the overlay state is disabled
@@ -2524,7 +2469,6 @@
 	}
 
 	// Check to enable or disable the overlay
-	let goodTube_hideAndMuteAdsFallback_check_timeout = setTimeout(() => {}, 0);
 	function goodTube_hideAndMuteAdsFallback_check() {
 		// If the "hide and mute ads" fallback is active AND we're viewing a video
 		if (goodTube_fallback && goodTube_helper_watchingVideo()) {
@@ -2543,12 +2487,6 @@
 		else {
 			goodTube_hideAndMuteAds_state = '';
 		}
-
-		// Clear timeout first to solve memory leak issues
-		clearTimeout(goodTube_hideAndMuteAdsFallback_check_timeout);
-
-		// Run actions again in 1ms to loop this function
-		goodTube_hideAndMuteAdsFallback_check_timeout = setTimeout(goodTube_hideAndMuteAdsFallback_check, 100);
 	}
 
 	// Enable the the overlay
@@ -2802,15 +2740,32 @@
 	------------------------------------------------------------------------------------------ */
 	// Init
 	let goodTube_iframe_initiated = false;
-	function goodTube_iframe_init() {
-		// Listen for messages from the parent window
-		window.addEventListener('message', goodTube_iframe_receiveMessage);
+	let goodTube_iframe_init_timeout = setTimeout(() => {}, 0);
+	function goodTube_iframe_init(retrying = false) {
+		// If we're not retrying
+		if (!retrying) {
+			// Listen for messages from the parent window
+			window.addEventListener('message', goodTube_iframe_receiveMessage);
 
-		// Init the rest once the DOM is ready
-		document.addEventListener('DOMContentLoaded', goodTube_iframe_init_domReady);
+			// Init the rest once the DOM is ready
+			document.addEventListener('DOMContentLoaded', goodTube_iframe_init_domReady);
 
-		// Also check if the DOM is already loaded, as if it is, the above event listener will not trigger
-		if (document.readyState === 'interactive' || document.readyState === 'complete') {
+			// Also check if the DOM is already loaded, as if it is, the above event listener will not trigger
+			if (document.readyState === 'interactive' || document.readyState === 'complete') {
+				goodTube_iframe_init_domReady();
+			}
+		}
+
+		// And try this to check if the DOM is ready, seems to be the only reliable method in all browsers (which is insane, I know...thanks Safari)
+		if (!document.body || !document.head) {
+			// Clear timeout first to solve memory leak issues
+			clearTimeout(goodTube_iframe_init_timeout);
+
+			// Create a new timeout
+			goodTube_iframe_init_timeout = setTimeout(() => { goodTube_iframe_init(true); }, 1);
+		}
+		// Otherwise, the DOM is ready
+		else {
 			goodTube_iframe_init_domReady();
 		}
 	}
@@ -2833,7 +2788,7 @@
 			clearTimeout(goodTube_iframe_init_domReady_timeout);
 
 			// Create a new timeout
-			goodTube_iframe_init_domReady_timeout = setTimeout(goodTube_iframe_init_domReady, 100);
+			goodTube_iframe_init_domReady_timeout = setTimeout(goodTube_iframe_init_domReady, 1);
 
 			return;
 		}
@@ -2868,15 +2823,15 @@
 		// Restore playback speed, and update it if it changes
 		goodTube_iframe_playbackSpeed();
 
-		// Run the iframe actions
+		// Run the iframe actions every 100ms
 		goodTube_iframe_actions();
+		setInterval(goodTube_iframe_actions, 100);
 
 		// Let the parent frame know it's loaded
 		window.top.postMessage('goodTube_playerIframe_loaded', '*');
 	}
 
 	// Actions
-	let goodTube_iframe_actions_timeout = setTimeout(() => {}, 0);
 	function goodTube_iframe_actions() {
 		// Check to see if the "hide and mute ads" fallback should be active
 		goodTube_iframe_hideMuteAdsFallback();
@@ -2897,12 +2852,6 @@
 
 		// Sync the aspect ratio
 		goodTube_iframe_syncAspectRatio();
-
-		// Clear timeout first to solve memory leak issues
-		clearTimeout(goodTube_iframe_actions_timeout);
-
-		// Create a new timeout
-		goodTube_iframe_actions_timeout = setTimeout(goodTube_iframe_actions, 100);
 	}
 
 	// Check to see if the "hide and mute ads" fallback should be active
@@ -3845,7 +3794,7 @@
 		}
 
 		// Make sure the DOM is ready, if not retry (this ensures that the message will fire eventually)
-		if ((document.readyState !== 'interactive' && document.readyState !== 'complete') || !document.body || !document.head) {
+		if (!document.body || !document.head) {
 			// Clear timeout first to solve memory leak issues
 			clearTimeout(goodTube_iframe_receiveMessage_timeout);
 
@@ -4282,6 +4231,7 @@
 	------------------------------------------------------------------------------------------ */
 	// Init
 	let goodTube_proxyIframe_initiated = false;
+	let goodTube_proxyIframe_init_timeout = setTimeout(() => {}, 0);
 	function goodTube_proxyIframe_init() {
 		// Listen for messages from the parent window
 		window.addEventListener('message', goodTube_proxyIframe_receiveMessage);
@@ -4291,6 +4241,19 @@
 
 		// Also check if the DOM is already loaded, as if it is, the above event listener will not trigger
 		if (document.readyState === 'interactive' || document.readyState === 'complete') {
+			goodTube_proxyIframe_init_domReady();
+		}
+
+		// And try this to check if the DOM is ready, seems to be the only reliable method in all browsers (which is insane, I know...thanks Safari)
+		if (!document.body || !document.head) {
+			// Clear timeout first to solve memory leak issues
+			clearTimeout(goodTube_proxyIframe_init_timeout);
+
+			// Create a new timeout
+			goodTube_proxyIframe_init_timeout = setTimeout(goodTube_proxyIframe_init, 1);
+		}
+		// Otherwise, the DOM is ready
+		else {
 			goodTube_proxyIframe_init_domReady();
 		}
 	}
@@ -4371,7 +4334,7 @@
 		}
 
 		// Make sure the DOM is ready, if not retry (this ensures that the message will fire eventually)
-		if (document.readyState !== 'interactive' && document.readyState !== 'complete') {
+		if (!document.body || !document.head) {
 			// Clear timeout first to solve memory leak issues
 			clearTimeout(goodTube_proxyIframe_receiveMessage_timeout);
 
