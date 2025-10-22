@@ -83,37 +83,12 @@
 		}
 	}
 
-	// Add CSS classes to show or hide elements / the Youtube player
+	// Add a CSS class to show or hide elements
 	function goodTube_helper_showHide_init() {
 		let style = document.createElement('style');
 		style.textContent = `
 			.goodTube_hidden {
-				position: fixed !important;
-				top: -9999px !important;
-				left: -9999px !important;
-				transform: scale(0) !important;
-				pointer-events: none !important;
-			}
-
-			.goodTube_hiddenPlayer {
-				position: relative;
-				overflow: hidden;
-				z-index: 1;
-			}
-
-			.goodTube_hiddenPlayer::before {
-				content: '';
-				position: absolute;
-				top: 0;
-				left: 0;
-				right: 0;
-				bottom: 0;
-				background: #ffffff;
-				z-index: 998;
-			}
-
-			html[dark] .goodTube_hiddenPlayer::before {
-				background: #0f0f0f;
+				display: none !important;
 			}
 		`;
 		document.head.appendChild(style);
@@ -130,15 +105,6 @@
 	function goodTube_helper_showElement(element) {
 		if (element && element.classList.contains('goodTube_hidden')) {
 			element.classList.remove('goodTube_hidden');
-		}
-	}
-
-	// Show the Youtube player
-	function goodTube_helper_showYoutubePlayer(element) {
-		let wrappingElement = element.closest('.goodTube_hiddenPlayer');
-
-		if (wrappingElement) {
-			wrappingElement.classList.remove('goodTube_hiddenPlayer');
 		}
 	}
 
@@ -368,7 +334,7 @@
 
 		// Hide the main Youtube player
 		cssOutput += `
-			body:not('.goodTube_fallback) ytd-player {
+			body:not(.goodTube_fallback) ytd-player {
 				visibility: hidden !important;
 			}
 		`;
@@ -1343,6 +1309,7 @@
 	------------------------------------------------------------------------------------------ */
 	// Init
 	let goodTube_initiated = false;
+	let goodTube_init_timeout = setTimeout(() => {}, 0);
 	function goodTube_init() {
 		// Listen for messages from the iframes
 		window.addEventListener('message', goodTube_receiveMessage);
@@ -1353,8 +1320,16 @@
 		// Init the rest once the DOM is ready
 		document.addEventListener('DOMContentLoaded', goodTube_init_domReady);
 
-		// Also check if the DOM is already loaded, as if it is, the above event listener will not trigger
-		if (document.readyState === 'interactive' || document.readyState === 'complete') {
+		// Also try this to load, if the document body and head exist (this is the only reliable method for iOS Safari)
+		if (!document.body || !document.head) {
+			// Clear timeout first to solve memory leak issues
+			clearTimeout(goodTube_init_timeout);
+
+			// Create a new timeout
+			goodTube_init_timeout = setTimeout(goodTube_init, 100);
+		}
+		// Otherwise, the DOM is ready
+		else {
 			goodTube_init_domReady();
 		}
 	}
@@ -1370,7 +1345,7 @@
 		// Check the tab focus state
 		goodTube_checkTabFocus();
 
-		// Add CSS classes to hide elements (without Youtube knowing)
+		// Add a CSS class to show or hide elements
 		goodTube_helper_showHide_init();
 
 		// Hide page elements
@@ -1401,7 +1376,7 @@
 		}
 
 		// Make sure the DOM is ready, if not retry (this ensures that the message will fire eventually)
-		if ((document.readyState !== 'interactive' && document.readyState !== 'complete') || !document.body || !document.head) {
+		if (!document.body || !document.head) {
 			// Clear timeout first to solve memory leak issues
 			clearTimeout(goodTube_receiveMessage_timeout);
 
@@ -2802,6 +2777,7 @@
 	------------------------------------------------------------------------------------------ */
 	// Init
 	let goodTube_iframe_initiated = false;
+	let goodTube_iframe_init_timeout = setTimeout(() => {}, 0);
 	function goodTube_iframe_init() {
 		// Listen for messages from the parent window
 		window.addEventListener('message', goodTube_iframe_receiveMessage);
@@ -2809,8 +2785,16 @@
 		// Init the rest once the DOM is ready
 		document.addEventListener('DOMContentLoaded', goodTube_iframe_init_domReady);
 
-		// Also check if the DOM is already loaded, as if it is, the above event listener will not trigger
-		if (document.readyState === 'interactive' || document.readyState === 'complete') {
+		// Also try this to load, if the document body and head exist (this is the only reliable method for iOS Safari)
+		if (!document.body || !document.head) {
+			// Clear timeout first to solve memory leak issues
+			clearTimeout(goodTube_iframe_init_timeout);
+
+			// Create a new timeout
+			goodTube_iframe_init_timeout = setTimeout(goodTube_init, 100);
+		}
+		// Otherwise, the DOM is ready
+		else {
 			goodTube_iframe_init_domReady();
 		}
 	}
@@ -3845,7 +3829,7 @@
 		}
 
 		// Make sure the DOM is ready, if not retry (this ensures that the message will fire eventually)
-		if ((document.readyState !== 'interactive' && document.readyState !== 'complete') || !document.body || !document.head) {
+		if (!document.body || !document.head) {
 			// Clear timeout first to solve memory leak issues
 			clearTimeout(goodTube_iframe_receiveMessage_timeout);
 
@@ -4282,6 +4266,7 @@
 	------------------------------------------------------------------------------------------ */
 	// Init
 	let goodTube_proxyIframe_initiated = false;
+	let goodTube_proxyIframe_init_timeout = setTimeout(() => {}, 0);
 	function goodTube_proxyIframe_init() {
 		// Listen for messages from the parent window
 		window.addEventListener('message', goodTube_proxyIframe_receiveMessage);
@@ -4289,8 +4274,16 @@
 		// Init the rest once the DOM is ready
 		document.addEventListener('DOMContentLoaded', goodTube_proxyIframe_init_domReady);
 
-		// Also check if the DOM is already loaded, as if it is, the above event listener will not trigger
-		if (document.readyState === 'interactive' || document.readyState === 'complete') {
+		// Also try this to load, if the document body and head exist (this is the only reliable method for iOS Safari)
+		if (!document.body || !document.head) {
+			// Clear timeout first to solve memory leak issues
+			clearTimeout(goodTube_proxyIframe_init_timeout);
+
+			// Create a new timeout
+			goodTube_proxyIframe_init_timeout = setTimeout(goodTube_proxyIframe_init, 100);
+		}
+		// Otherwise, the DOM is ready
+		else {
 			goodTube_proxyIframe_init_domReady();
 		}
 	}
@@ -4371,7 +4364,7 @@
 		}
 
 		// Make sure the DOM is ready, if not retry (this ensures that the message will fire eventually)
-		if (document.readyState !== 'interactive' && document.readyState !== 'complete') {
+		if (!document.body || !document.head) {
 			// Clear timeout first to solve memory leak issues
 			clearTimeout(goodTube_proxyIframe_receiveMessage_timeout);
 
