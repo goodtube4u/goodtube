@@ -695,7 +695,7 @@
 				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
 				referrerpolicy="strict-origin-when-cross-origin"
 				allowfullscreen
-				class="goodTube_hidden"
+				style="display: none;"
 			></iframe>
 		`;
 
@@ -1374,7 +1374,7 @@
 			goodTube_playerIframeLoaded = true;
 
 			// Show the player iframe
-			goodTube_helper_showElement(goodTube_player);
+			goodTube_player.style.display = 'block';
 		}
 
 		// Picture in picture
@@ -1792,7 +1792,7 @@
 				width: 48px;
 				height: 48px;
 				z-index: 999;
-				transition: background .2s linear, box-shadow .2s linear, opacity .2s linear;
+				transition: background .2s linear, opacity .2s linear, box-shadow .2s linear;
 				opacity: 1;
 			}
 
@@ -1800,7 +1800,7 @@
 				position: absolute;
 				top: 50%;
 				left: 50%;
-				transform: translate(round(-50%, 1px), round(-50%, 1px));
+				transform: translate(-50%, -50%);
 				pointer-events: none;
 				width: 26px;
 			}
@@ -1819,8 +1819,8 @@
 				padding-right: 8px;
 				position: absolute;
 				left: 50%;
-				top: -27px;
-				transform: translate(round(-50%, 1px), 4px);
+				top: -26px;
+				transform: translateX(-50%);
 				letter-spacing: 0.04em;
 				opacity: 0;
 				transition: opacity .2s ease-in-out, top .2s ease-in-out;
@@ -1833,12 +1833,12 @@
 				position: absolute;
 				top: -6px;
 				left: 50%;
-				transform: translate(round(-50%, 1px), 4px);
+				transform: translateX(-50%);
 				width: 0;
 				height: 0;
-				border-left: 4px solid transparent;
-				border-right: 4px solid transparent;
-				border-top: 4px solid rgba(0, 0, 0, .9);
+				border-left: 5px solid transparent;
+				border-right: 5px solid transparent;
+				border-top: 5px solid rgba(0, 0, 0, .9);
 				opacity: 0;
 				transition: opacity .2s ease-in-out, top .2s ease-in-out;
 				pointer-events: none;
@@ -1856,11 +1856,11 @@
 			}
 
 			.goodTube_menuButton:hover::before {
-				top: -32px;
+				top: -29px;
 			}
 
 			.goodTube_menuButton:hover::after {
-				top: -11px;
+				top: -9px;
 			}
 
 			.goodTube_menuClose {
@@ -1879,7 +1879,6 @@
 				line-height: 13px;
 				z-index: 9999;
 				box-shadow: 0 0 4px rgba(0, 0, 0, .5);
-				transition: opacity .2s linear;
 				opacity: 1;
 				text-decoration: none;
 			}
