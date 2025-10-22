@@ -3639,7 +3639,6 @@
 			goodTube_iframe_supportDoubleSpeed_allowNextClick = true;
 			goodTube_helper_click(goodTube_iframe_supportDoubleSpeed_videoElement);
 			goodTube_iframe_supportDoubleSpeed_allowNextClick = false;
-			setTimeout(goodTube_iframe_supportDoubleSpeed_videoElement.focus());
 		}
 		// Otherwise, double playback rate did happen
 		else {
