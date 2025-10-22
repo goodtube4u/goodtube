@@ -366,6 +366,12 @@
 		// Debug message
 		console.log('[GoodTube] Ads removed');
 
+		// Hide the main Youtube player
+		cssOutput += `
+			body:not('.goodTube_fallback) ytd-player {
+				visibility: hidden !important;
+			}
+		`;
 
 		// Hide the miniplayer
 		cssOutput += `
@@ -374,7 +380,6 @@
 				display: none !important;
 			}
 		`;
-
 
 		// Hide shorts if they're not enabled
 		if (goodTube_shorts === 'false') {
@@ -442,8 +447,7 @@
 	}
 
 	// Hide shorts (real time)
-	let goodTube_youtube_hideShortsRealtime_timeout = setTimeout(() => {}, 0);
-	function goodTube_youtube_hideShortsRealtime() {
+	function goodTube_youtube_hideShortsRealTime() {
 		// If shorts are enabled, don't do anything
 		if (goodTube_shorts === 'true') {
 			return;
@@ -476,12 +480,6 @@
 			// Mark this element as checked to save on resources
 			element.classList.add('goodTube_checked');
 		});
-
-		// Clear timeout first to solve memory leak issues
-		clearTimeout(goodTube_youtube_hideShortsRealtime_timeout);
-
-		// Loop this function
-		goodTube_youtube_hideShortsRealtime_timeout = setTimeout(goodTube_youtube_hideShortsRealtime, 100);
 	}
 
 	// Support timestamp links in comments
@@ -511,45 +509,6 @@
 				});
 			}
 		});
-	}
-
-	// Hide all Youtube players
-	let goodTube_youtube_hidePlayers_timeout = setTimeout(() => {}, 0);
-	function goodTube_youtube_hidePlayers() {
-		// Don't do this if shorts are enabled and we're viewing a short
-		if (goodTube_shorts === 'true' && window.location.href.indexOf('/shorts') !== -1) {
-			// Clear timeout first to solve memory leak issues
-			clearTimeout(goodTube_youtube_hidePlayers_timeout);
-
-			// Loop this function
-			goodTube_youtube_hidePlayers_timeout = setTimeout(goodTube_youtube_hidePlayers, 100);
-
-			// Don't hide the players
-			return;
-		}
-
-		// Target the Youtube player
-		let youtubePlayer = document.getElementById('ytd-player');
-
-		// If we found the Youtube player
-		if (youtubePlayer) {
-			// If the "hide and mute ads" fallback is active
-			if (goodTube_fallback) {
-				// Show the Youtube player
-				youtubePlayer.style.visibility = 'visible';
-			}
-			// Otherwise we're using the regular method
-			else {
-				// Hide the Youtube player
-				youtubePlayer.style.visibility = 'hidden';
-			}
-		}
-
-		// Clear timeout first to solve memory leak issues
-		clearTimeout(goodTube_youtube_hidePlayers_timeout);
-
-		// Loop this function
-		goodTube_youtube_hidePlayers_timeout = setTimeout(goodTube_youtube_hidePlayers, 100);
 	}
 
 	// Mute and pause all Youtube videos
@@ -1414,14 +1373,8 @@
 		// Add CSS classes to hide elements (without Youtube knowing)
 		goodTube_helper_showHide_init();
 
-		// Hide the youtube players
-		goodTube_youtube_hidePlayers();
-
 		// Hide page elements
 		goodTube_youtube_hidePageElements();
-
-		// Hide shorts (real time)
-		goodTube_youtube_hideShortsRealtime();
 
 		// Init our player
 		goodTube_player_init();
@@ -1572,6 +1525,11 @@
 		else if (event.data === 'goodTube_fallback_enable') {
 			goodTube_fallback = true;
 
+			// Add a class to the <body>
+			if (document.body && !document.body.classList.contains('goodTube_fallback')) {
+				document.body.classList.add('goodTube_fallback');
+			}
+
 			// Unset the aspect ratio
 			goodTube_youtube_unsetAspectRatio();
 
@@ -1599,6 +1557,11 @@
 		// Disable "hide and mute ads" fallback
 		else if (event.data === 'goodTube_fallback_disable') {
 			goodTube_fallback = false;
+
+			// Remove the class from the <body>
+			if (document.body && !document.body.classList.contains('goodTube_fallback')) {
+				document.body.classList.add('goodTube_fallback');
+			}
 
 			// If we're in fullscreen already
 			if (document.fullscreenElement) {
@@ -1680,6 +1643,9 @@
 			// Remove the "are you still watching" popup
 			goodTube_youtube_removeAreYouStillWatchingPopup();
 		}
+
+		// Hide shorts (real time)
+		goodTube_youtube_hideShortsRealTime();
 
 		// Clear timeout first to solve memory leak issues
 		clearTimeout(goodTube_actions_timeout);
