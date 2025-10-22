@@ -1350,6 +1350,7 @@
 		}
 
 		// Make sure the DOM is ready, if not retry (this ensures that the message will fire eventually)
+		// Use this method to check if the DOM is ready, seems to be the only reliable method in all browsers (which is insane, I know...thanks Safari)
 		if (!document.body || !document.head) {
 			// Clear timeout first to solve memory leak issues
 			clearTimeout(goodTube_receiveMessage_timeout);
@@ -3794,6 +3795,7 @@
 		}
 
 		// Make sure the DOM is ready, if not retry (this ensures that the message will fire eventually)
+		// Use this method to check if the DOM is ready, seems to be the only reliable method in all browsers (which is insane, I know...thanks Safari)
 		if (!document.body || !document.head) {
 			// Clear timeout first to solve memory leak issues
 			clearTimeout(goodTube_iframe_receiveMessage_timeout);
