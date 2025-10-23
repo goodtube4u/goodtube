@@ -675,7 +675,7 @@
 
 			/* Fix size of Youtube player (this has to do with us setting the aspect ratio inside "goodTube_youtube_setAspectRatio") */
 			body:not(.goodTube_fallback) #primary.ytd-watch-flexy {
-				max-width: 9999px !important;
+				max-width: calc(177.77777778vh - var(--ytd-watch-flexy-masthead-height) * 1.7777777778 - var(--ytd-margin-6x) * 1.7777777778 - var(--ytd-watch-flexy-space-below-player) * 1.7777777778) !important;
 			}
 		`;
 		document.head.appendChild(style);
