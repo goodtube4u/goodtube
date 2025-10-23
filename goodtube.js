@@ -672,6 +672,11 @@
 				background: #000000;
 				border-radius: 0;
 			}
+
+			/* Fix size of Youtube player (this has to do with us setting the aspect ratio inside "goodTube_youtube_setAspectRatio") */
+			body:not(.goodTube_fallback) #primary.ytd-watch-flexy {
+				max-width: 9999px !important;
+			}
 		`;
 		document.head.appendChild(style);
 
@@ -724,7 +729,7 @@
 			goodTube_clearedPlayer = false;
 
 			// Get the Youtube player
-			let youtubePlayer = document.querySelector('#ytd-player, .player-size');
+			let youtubePlayer = document.querySelector('#player.ytd-watch-flexy');
 
 			// If we found the Youtube player
 			if (youtubePlayer && youtubePlayer.offsetHeight > 0) {
