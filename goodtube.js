@@ -729,9 +729,19 @@
 		else {
 			goodTube_clearedPlayer = false;
 
+
 			// Get the Youtube player
 			// We target 3 elements here, it seems to change for different users? Weird stuff.
-			let youtubePlayer = document.querySelector('#player.ytd-watch-flexy, #ytd-player, .player-size');
+			let youtubePlayer = document.querySelector('#player.ytd-watch-flexy');
+
+			if (!youtubePlayer || youtubePlayer.offsetHeight <= 0) {
+				youtubePlayer = document.querySelector('#ytd-player');
+			}
+
+			if (!youtubePlayer || youtubePlayer.offsetHeight <= 0) {
+				youtubePlayer = document.querySelector('.player-size');
+			}
+
 
 			// If we found the Youtube player
 			if (youtubePlayer && youtubePlayer.offsetHeight > 0) {
