@@ -1118,8 +1118,14 @@
 				if (goodTube_fallback) {
 					// Support the 'i' shortcut (keydown only)
 					if (keyPressed === 'i' && event.type.toLowerCase() === 'keydown') {
-						// Click the picture in picture button
-						goodTube_helper_click(document.querySelector('.ytp-pip-button'));
+						// Find the picture in picture button
+						let pipButton = document.querySelector('.ytp-pip-button');
+
+						// If we found the picture in picture button
+						if (pipButton) {
+							// Click it
+							goodTube_helper_click(pipButton);
+						}
 
 						// Prevent default actions
 						event.preventDefault();
@@ -1435,7 +1441,14 @@
 
 		// Theater mode (toggle) - this should only work when not in fullscreen
 		else if (event.data === 'goodTube_theater' && !document.fullscreenElement) {
-			goodTube_helper_click(document.querySelector('.ytp-size-button'));
+			// Find the theater button
+			let theaterButton = document.querySelector('.ytp-size-button');
+
+			// If we found the theater button
+			if (theaterButton) {
+				// Click it
+				goodTube_helper_click(theaterButton);
+			}
 		}
 
 		// Autoplay
@@ -3573,6 +3586,9 @@
 			goodTube_iframe_supportDoubleSpeed_allowNextClick = true;
 			goodTube_helper_click(goodTube_iframe_supportDoubleSpeed_videoElement);
 			goodTube_iframe_supportDoubleSpeed_allowNextClick = false;
+
+			// Focus the video element
+			setTimeout(goodTube_iframe_supportDoubleSpeed_videoElement.focus());
 		}
 		// Otherwise, double playback rate did happen
 		else {
