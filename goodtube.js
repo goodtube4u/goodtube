@@ -444,7 +444,7 @@
 		});
 
 		// Hide shorts buttons
-		let shortsButtons = document.querySelectorAll('yt-chip-cloud-chip-renderer:not(.goodTube_hidden):not(.goodTube_checked), yt-tab-shape:not(.goodTube_hidden):not(.goodTube_checked)');
+		let shortsButtons = document.querySelectorAll('yt-chip-cloud-chip-renderer:not(.goodTube_hidden):not(.goodTube_checked), yt-tab-shape:not(.goodTube_hidden):not(.goodTube_checked), ytd-guide-entry-renderer:not(.goodTube_checked)');
 		shortsButtons.forEach((element) => {
 			if (element.innerHTML.toLowerCase().indexOf('shorts') !== -1) {
 				goodTube_helper_hideElement(element);
