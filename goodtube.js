@@ -3358,8 +3358,8 @@
 				return;
 			}
 
-			// Don't do anything if we're holding control OR alt OR the command key on mac OR the "hide and mute ads" fallback is active
-			if (event.ctrlKey || event.altKey || event.metaKey || goodTube_fallback) {
+			// Don't do anything if we're holding control OR alt OR the command key on mac
+			if (event.ctrlKey || event.altKey || event.metaKey) {
 				return;
 			}
 
@@ -3421,8 +3421,8 @@
 				return;
 			}
 
-			// Don't do anything if we're holding control OR alt OR the command key on mac OR the "hide and mute ads" fallback is active
-			if (event.ctrlKey || event.altKey || event.metaKey || goodTube_fallback) {
+			// Don't do anything if we're holding control OR alt OR the command key on mac
+			if (event.ctrlKey || event.altKey || event.metaKey) {
 				return;
 			}
 
@@ -3450,8 +3450,8 @@
 				return;
 			}
 
-			// Don't do anything if we're holding control OR alt OR the command key on mac OR the "hide and mute ads" fallback is active
-			if (event.ctrlKey || event.altKey || event.metaKey || goodTube_fallback) {
+			// Don't do anything if we're holding control OR alt OR the command key on mac
+			if (event.ctrlKey || event.altKey || event.metaKey) {
 				return;
 			}
 
@@ -3460,6 +3460,9 @@
 
 			// If double playback rate did not happen
 			if (!goodTube_iframe_supportDoubleSpeed_doublePlaybackRate) {
+				// Re-target the video element (this fixes a weird issue where the play/pause doesn't work sometimes...)
+				goodTube_iframe_supportDoubleSpeed_videoElement = document.querySelector('video');
+
 				// Click the video element (we must do it this way, it's the only reliable method)
 				goodTube_iframe_supportDoubleSpeed_allowNextClick = true;
 				goodTube_helper_click(goodTube_iframe_supportDoubleSpeed_videoElement);
@@ -3549,6 +3552,7 @@
 			return;
 		}
 
+
 		// Prevent default actions
 		event.preventDefault();
 		event.stopImmediatePropagation();
@@ -3582,6 +3586,9 @@
 
 		// If double playback rate did not happen
 		if (!goodTube_iframe_supportDoubleSpeed_doublePlaybackRate) {
+			// Re-target the video element (this fixes a weird issue where the play/pause doesn't work sometimes...)
+			goodTube_iframe_supportDoubleSpeed_videoElement = document.querySelector('video');
+
 			// Click the video element (we must do it this way, it's the only reliable method)
 			goodTube_iframe_supportDoubleSpeed_allowNextClick = true;
 			goodTube_helper_click(goodTube_iframe_supportDoubleSpeed_videoElement);
