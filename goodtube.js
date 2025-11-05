@@ -731,7 +731,7 @@
 
 
 			// Get the Youtube player
-			// We target 3 elements here, it seems to change for different users? Weird stuff.
+			// We target 4 elements here, it seems to change for different users? Weird stuff.
 			let youtubePlayer = document.querySelector('#player.ytd-watch-flexy');
 
 			if (!youtubePlayer || youtubePlayer.offsetHeight <= 0) {
@@ -740,6 +740,11 @@
 
 			if (!youtubePlayer || youtubePlayer.offsetHeight <= 0) {
 				youtubePlayer = document.querySelector('.player-size');
+			}
+
+			// This element helps during the loading of the page (if we use it we see the video a little sooner, which is nice)
+			if (!youtubePlayer || youtubePlayer.offsetHeight <= 0) {
+				youtubePlayer = document.querySelector('.html5-video-player');
 			}
 
 
