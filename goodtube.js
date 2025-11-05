@@ -4334,25 +4334,41 @@
 
 	// Hide the proxy iframe page
 	function goodTube_proxyIframe_hidePage() {
-		// Hide the DOM elements from the proxy page
-		let elements = document.querySelectorAll('body > *');
-		elements.forEach(element => {
-			element.style.display = 'none';
-			element.style.opacity = '0';
-			element.style.visibility = 'hidden';
-		});
+		// // Hide the DOM elements from the proxy page
+		// let elements = document.querySelectorAll('body > *');
+		// elements.forEach(element => {
+		// 	element.style.display = 'none';
+		// 	element.style.opacity = '0';
+		// 	element.style.visibility = 'hidden';
+		// });
 
-		// Remove scrolling
-		document.body.style.overflow = 'hidden';
+		// // Remove scrolling
+		// document.body.style.overflow = 'hidden';
 
-		// Change the background colour
-		document.body.style.background = '#000000';
+		// // Change the background colour
+		// document.body.style.background = '#000000';
+
+		let style = document.createElement('style');
+		style.textContent = `
+			body *:not(#goodTube_youtube_iframe_container):not(#goodTube_youtube_iframe) {
+				display: none !important;
+				opacity: 0 !important;
+				visibility: hidden !important;
+			}
+
+			body {
+				background: #000000 !important;
+				overflow: hidden !important;
+			}
+		`;
+		document.head.appendChild(style);
 	}
 
 	// Add the Youtube iframe
 	function goodTube_proxyIframe_addYoutubeIframe() {
 		// Create a youtube iframe
 		let youtubeIframe = document.createElement('div');
+		youtubeIframe.setAttribute('id', 'goodTube_youtube_iframe_container');
 
 		// Add the youtube iframe to the page
 		document.body.appendChild(youtubeIframe);
