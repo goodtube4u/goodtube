@@ -86,9 +86,9 @@ This plugins helps to keep this important resource free and available to everyon
 **This adblocker is 100% free to use and always will be.<br>
 It has helped over 168,000 people remove the unbearable ads from Youtube.**<br>
 
-Donations help to keep this project going and support the wider community who use it. If you would like to say thank you and can give something back, it would be greatly appreciated.<br>
-
 This project has been made entirely by myself, as just one developer. Countless hours and late nights have gone into making this and I continue to work on updating and maintaining the project regularly. I remain dedicated to ensuring this solution continues to work for everyone (despite Youtube's best efforts to stop adblockers).<br>
+
+Donations help to keep this project going and support the wider community who use it. If you would like to say thank you and can give something back, it would be greatly appreciated.<br>
 
 <i>Update - <br>
 Seriously everyone, I am flat broke - so small donations help a lot. If everyone donated just $1 I could finally go travelling with my partner rather just than living week to week.</i> 🙏🏼<br>
