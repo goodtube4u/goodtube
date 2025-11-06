@@ -243,6 +243,13 @@
 		goodTube_alwaysStart = 'false';
 	}
 
+	// Use a black background for the video player?
+	let goodTube_blackBackground = goodTube_helper_getCookie('goodTube_blackBackground');
+	if (!goodTube_blackBackground) {
+		goodTube_helper_setCookie('goodTube_blackBackground', 'true');
+		goodTube_blackBackground = 'true';
+	}
+
 	// Is autoplay turned on?
 	let goodTube_autoplay = goodTube_helper_getCookie('goodTube_autoplay');
 	if (!goodTube_autoplay) {
@@ -653,13 +660,19 @@
 			return;
 		}
 
+		// Use a black background for the video player? (This is a setting)
+		let backgroundColor = 'transparent';
+		if (goodTube_blackBackground === 'true') {
+			backgroundColor = '#000000';
+		}
+
 		// Add CSS styles for the player
 		let style = document.createElement('style');
 		style.textContent = `
 			/* Player wrapper */
 			#goodTube_playerWrapper {
 				border-radius: 12px;
-				background: transparent;
+				background: ` + backgroundColor + `;
 				position: absolute;
 				top: 0;
 				left: 0;
@@ -669,7 +682,6 @@
 
 			/* Theater mode */
 			#goodTube_playerWrapper.goodTube_theater {
-				background: #000000;
 				border-radius: 0;
 			}
 
@@ -1689,6 +1701,11 @@
 			alwaysStart = ' checked';
 		}
 
+		let blackBackground = '';
+		if (goodTube_blackBackground === 'true') {
+			blackBackground = ' checked';
+		}
+
 		// Add content to the menu container
 		menuContainer.innerHTML = `
 			<!-- Menu Button
@@ -1743,6 +1760,11 @@
 						<div class='goodTube_setting'>
 							<input type='checkbox' class='goodTube_option_alwaysStart' name='goodTube_option_alwaysStart' id='goodTube_option_alwaysStart'`+ alwaysStart + `>
 							<label for='goodTube_option_alwaysStart'>Always play videos from the start</label>
+						</div> <!-- .goodTube_setting -->
+
+							<div class='goodTube_setting'>
+							<input type='checkbox' class='goodTube_option_blackBackground' name='goodTube_option_blackBackground' id='goodTube_option_blackBackground'`+ blackBackground + `>
+							<label for='goodTube_option_blackBackground'>Use a black background for the video player</label>
 						</div> <!-- .goodTube_setting -->
 
 						<button class='goodTube_button' id='goodTube_button_saveSettings'>Save and refresh</button>
@@ -2299,6 +2321,17 @@
 					}
 					else {
 						goodTube_helper_setCookie('goodTube_alwaysStart', 'false');
+					}
+				}
+
+				// Use a black background for the video player
+				let goodTube_setting_blackBackground = document.querySelector('.goodTube_option_blackBackground');
+				if (goodTube_setting_blackBackground) {
+					if (goodTube_setting_blackBackground.checked) {
+						goodTube_helper_setCookie('goodTube_blackBackground', 'true');
+					}
+					else {
+						goodTube_helper_setCookie('goodTube_blackBackground', 'false');
 					}
 				}
 
@@ -3132,6 +3165,12 @@
 				font-size: 14px;
 				height: 23px;
 				line-height: 23px;
+			}
+
+			/* Make sure the background is transparent */
+			body,
+			.html5-video-player {
+				background: transparent !important;
 			}
 		`;
 
@@ -4339,20 +4378,7 @@
 
 	// Hide the proxy iframe page
 	function goodTube_proxyIframe_hidePage() {
-		// // Hide the DOM elements from the proxy page
-		// let elements = document.querySelectorAll('body > *');
-		// elements.forEach(element => {
-		// 	element.style.display = 'none';
-		// 	element.style.opacity = '0';
-		// 	element.style.visibility = 'hidden';
-		// });
-
-		// // Remove scrolling
-		// document.body.style.overflow = 'hidden';
-
-		// // Change the background colour
-		// document.body.style.background = '#000000';
-
+		// Hide the DOM elements from the proxy page
 		let style = document.createElement('style');
 		style.textContent = `
 			body *:not(#goodTube_youtube_iframe_container):not(#goodTube_youtube_iframe) {
@@ -4362,7 +4388,7 @@
 			}
 
 			body {
-				background: #000000 !important;
+				background: transparent !important;
 				overflow: hidden !important;
 			}
 		`;
