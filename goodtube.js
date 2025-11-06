@@ -683,6 +683,12 @@
 			/* Theater mode */
 			#goodTube_playerWrapper.goodTube_theater {
 				border-radius: 0;
+				background: #000000;
+			}
+
+			/* No black background on dark theme */
+			html[darker-dark-theme][dark] #goodTube_playerWrapper {
+				background: transparent;
 			}
 
 			/* Fix size of Youtube player (this has to do with us setting the aspect ratio inside "goodTube_youtube_setAspectRatio") */
