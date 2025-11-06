@@ -13,6 +13,7 @@ It also provides a few additional options:
 - Hide comments
 - Hide AI summaries
 - Always play videos from the start
+- Use a black background for the video player
 
 *These can be accessed via the custom settings menu. You will find this down the bottom right of Youtube when installed.*
 
@@ -83,7 +84,7 @@ This plugins helps to keep this important resource free and available to everyon
 
 ## Make a Donation
 **This adblocker is 100% free to use and always will be.<br>
-It has helped over 150,000 people remove the unbearable ads from Youtube.**<br>
+It has helped over 168,000 people remove the unbearable ads from Youtube.**<br>
 
 Donations help to keep this project going and support the wider community who use it. If you would like to say thank you and can give something back, it would be greatly appreciated.<br>
 
