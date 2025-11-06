@@ -13,7 +13,7 @@ It also provides a few additional options:
 - Hide comments
 - Hide AI summaries
 - Always play videos from the start
-- Use a black background for the video player
+- Use a black background for the video player (enabled by default)
 
 *These can be accessed via the custom settings menu. You will find this down the bottom right of Youtube when installed.*
 
