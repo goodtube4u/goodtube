@@ -1084,10 +1084,6 @@
 			'f',
 			// Toggle captions
 			'c',
-			// Start of video
-			'home',
-			// End of video
-			'end',
 			// Skip to percentage
 			'0',
 			'1',
@@ -1103,8 +1099,8 @@
 			'i'
 		];
 
-		// Ensure we've pressed an allowed shortcut
-		if (allowedShortcuts.includes(keyPressed)) {
+		// Ensure we've pressed an allowed shortcut AND the "hide and mute ads" fallback is inactive
+		if (allowedShortcuts.includes(keyPressed) && !goodTube_fallback) {
 			// Get the currently focused element
 			let focusedElement = event.srcElement;
 			let focusedElement_tag = false;
@@ -1136,34 +1132,12 @@
 					focusedElement_id !== 'contenteditable-root'
 				)
 			) {
+				// Prevent default actions
+				event.preventDefault();
+				event.stopImmediatePropagation();
 
-				// If the "hide and mute ads" fallback is active
-				if (goodTube_fallback) {
-					// Support the 'i' shortcut (keydown only)
-					if (keyPressed === 'i' && event.type.toLowerCase() === 'keydown') {
-						// Find the picture in picture button
-						let pipButton = document.querySelector('.ytp-pip-button');
-
-						// If we found the picture in picture button
-						if (pipButton) {
-							// Click it
-							goodTube_helper_click(pipButton);
-						}
-
-						// Prevent default actions
-						event.preventDefault();
-						event.stopImmediatePropagation();
-					}
-				}
-				// Otherwise, the "hide and mute ads" fallback is inactive
-				else {
-					// Prevent default actions
-					event.preventDefault();
-					event.stopImmediatePropagation();
-
-					// Pass the keyboard shortcut to the iframe
-					goodTube_player.contentWindow.postMessage('goodTube_shortcut_' + event.type + '_' + event.key + '_' + event.keyCode + '_' + event.shiftKey, '*');
-				}
+				// Pass the keyboard shortcut to the iframe
+				goodTube_player.contentWindow.postMessage('goodTube_shortcut_' + event.type + '_' + event.key + '_' + event.keyCode + '_' + event.shiftKey, '*');
 			}
 		}
 	}
