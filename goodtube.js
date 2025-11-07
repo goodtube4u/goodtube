@@ -1049,58 +1049,348 @@
 
 	// Define the keypress function for the event listeners
 	function goodTube_shortcuts_keypress(event) {
-		// Get the key pressed in lower case
-		let keyPressed = event.key.toLowerCase();
-
-		// Don't do anything IF we're holding control OR alt OR the command key (mac) OR we're not watching a video OR the "hide and mute ads" fallback is active
-		if (event.ctrlKey || event.altKey || event.metaKey || !goodTube_helper_watchingVideo() || goodTube_fallback) {
+		// If we're not watching a video OR the "hide and mute ads" fallback is active
+		if (!goodTube_helper_watchingVideo() || goodTube_fallback) {
+			// Don't do anything
 			return;
 		}
 
+
 		// Define the shortcuts we allow
 		let allowedShortcuts = [
-			// Speed up playback
-			'>',
-			// Slow down playback
-			'<',
-			// Prev frame
-			',',
-			// Next frame
-			'.',
-			// Prev 5 seconds
-			'arrowleft',
-			// Next 5 seconds
-			'arrowright',
-			// Prev 10 seconds
-			'j',
-			// Next 10 seconds
-			'l',
-			// Toggle play/pause
-			' ',
-			'k',
-			// Toggle mute
-			'm',
-			// Toggle fullscreen
-			'f',
-			// Toggle captions
-			'c',
+			// Playback speed
+			{
+				key: '>',
+				code: false,
+				ctrl: false,
+				shift: true,
+				alt: false
+			},
+			{
+				key: '<',
+				code: false,
+				ctrl: false,
+				shift: true,
+				alt: false
+			},
+
+			// Skip frame
+			{
+				key: ',',
+				code: false,
+				ctrl: false,
+				shift: false,
+				alt: false
+			},
+			{
+				key: '.',
+				code: false,
+				ctrl: false,
+				shift: false,
+				alt: false
+			},
+
+			// Skip 5 seconds
+			{
+				key: 'arrowleft',
+				code: false,
+				ctrl: false,
+				shift: false,
+				alt: false
+			},
+			{
+				key: 'arrowright',
+				code: false,
+				ctrl: false,
+				shift: false,
+				alt: false
+			},
+
+			// Skip 10 seconds
+			{
+				key: 'j',
+				code: false,
+				ctrl: false,
+				shift: false,
+				alt: false
+			},
+			{
+				key: 'l',
+				code: false,
+				ctrl: false,
+				shift: false,
+				alt: false
+			},
+
+			// Play / pause
+			{
+				key: ' ',
+				code: false,
+				ctrl: false,
+				shift: false,
+				alt: false
+			},
+			{
+				key: 'k',
+				code: false,
+				ctrl: false,
+				shift: false,
+				alt: false
+			},
+
+			// Mute
+			{
+				key: 'm',
+				code: false,
+				ctrl: false,
+				shift: false,
+				alt: false
+			},
+
+			// Fullscreen
+			{
+				key: 'f',
+				code: false,
+				ctrl: false,
+				shift: false,
+				alt: false
+			},
+
+			// Captions
+			{
+				key: 'c',
+				code: false,
+				ctrl: false,
+				shift: false,
+				alt: false
+			},
+
+			// Text opacity
+			{
+				key: 'o',
+				code: false,
+				ctrl: false,
+				shift: false,
+				alt: false
+			},
+
+			// Window opacity
+			{
+				key: 'w',
+				code: false,
+				ctrl: false,
+				shift: false,
+				alt: false
+			},
+
+			// Font size
+			{
+				key: '=',
+				code: false,
+				ctrl: false,
+				shift: false,
+				alt: false
+			},
+			{
+				key: '-',
+				code: false,
+				ctrl: false,
+				shift: false,
+				alt: false
+			},
+
+			// Panning (spherical videos)
+			{
+				key: 'w',
+				code: false,
+				ctrl: false,
+				shift: false,
+				alt: false
+			},
+			{
+				key: 'a',
+				code: false,
+				ctrl: false,
+				shift: false,
+				alt: false
+			},
+			{
+				key: 's',
+				code: false,
+				ctrl: false,
+				shift: false,
+				alt: false
+			},
+			{
+				key: 'd',
+				code: false,
+				ctrl: false,
+				shift: false,
+				alt: false
+			},
+
+			// Zooming (spherical videos)
+			{
+				key: '[',
+				code: false,
+				ctrl: false,
+				shift: false,
+				alt: false
+			},
+			{
+				key: ']',
+				code: false,
+				ctrl: false,
+				shift: false,
+				alt: false
+			},
+			{
+				key: false,
+				code: 'numpadadd',
+				ctrl: false,
+				shift: false,
+				alt: false
+			},
+			{
+				key: false,
+				code: 'numpadsubtract',
+				ctrl: false,
+				shift: false,
+				alt: false
+			},
+
 			// Skip to percentage
-			'0',
-			'1',
-			'2',
-			'3',
-			'4',
-			'5',
-			'6',
-			'7',
-			'8',
-			'9',
+			{
+				key: '0',
+				code: false,
+				ctrl: false,
+				shift: false,
+				alt: false
+			},
+			{
+				key: '1',
+				code: false,
+				ctrl: false,
+				shift: false,
+				alt: false
+			},
+			{
+				key: '2',
+				code: false,
+				ctrl: false,
+				shift: false,
+				alt: false
+			},
+			{
+				key: '3',
+				code: false,
+				ctrl: false,
+				shift: false,
+				alt: false
+			},
+			{
+				key: '4',
+				code: false,
+				ctrl: false,
+				shift: false,
+				alt: false
+			},
+			{
+				key: '5',
+				code: false,
+				ctrl: false,
+				shift: false,
+				alt: false
+			},
+			{
+				key: '6',
+				code: false,
+				ctrl: false,
+				shift: false,
+				alt: false
+			},
+			{
+				key: '7',
+				code: false,
+				ctrl: false,
+				shift: false,
+				alt: false
+			},
+			{
+				key: '8',
+				code: false,
+				ctrl: false,
+				shift: false,
+				alt: false
+			},
+			{
+				key: '9',
+				code: false,
+				ctrl: false,
+				shift: false,
+				alt: false
+			},
+
 			// Picture in picture
-			'i'
+			{
+				key: 'i',
+				code: false,
+				ctrl: false,
+				shift: false,
+				alt: false
+			},
+
+			// Seek chapters
+			{
+				key: 'arrowleft',
+				code: false,
+				ctrl: true,
+				shift: false,
+				alt: false
+			},
+			{
+				key: 'arrowright',
+				code: false,
+				ctrl: true,
+				shift: false,
+				alt: false
+			}
 		];
 
+
+		// Which key was pressed?
+		let keyPressed = event.key.toLowerCase();
+		let codePressed = event.code.toLowerCase();
+
+		// Is ctrl or meta (mac) pressed?
+		let ctrlPressed = event.ctrlKey;
+		if (event.metaKey) {
+			ctrlPressed = event.metaKey;
+		}
+
+		// Is shift pressed?
+		let shiftPressed = event.shiftKey;
+
+		// Is alt pressed?
+		let altPressed = event.altKey;
+
+
 		// Ensure we've pressed an allowed shortcut
-		if (allowedShortcuts.includes(keyPressed)) {
+		let allowKeypress = false;
+		allowedShortcuts.forEach((allowedShortcut) => {
+			if (
+				(keyPressed === allowedShortcut.key || codePressed === allowedShortcut.code) &&
+				ctrlPressed === allowedShortcut.ctrl &&
+				shiftPressed === allowedShortcut.shift &&
+				altPressed === allowedShortcut.alt
+			) {
+				allowKeypress = true;
+			}
+		});
+
+
+		// If we've allowed this keypress (because the shortcut was valid)
+		if (allowKeypress) {
 			// Get the currently focused element
 			let focusedElement = event.srcElement;
 			let focusedElement_tag = false;
@@ -1137,7 +1427,7 @@
 				event.stopImmediatePropagation();
 
 				// Pass the keyboard shortcut to the iframe
-				goodTube_player.contentWindow.postMessage('goodTube_shortcut_' + event.type + '_' + event.key + '_' + event.keyCode + '_' + event.shiftKey, '*');
+				goodTube_player.contentWindow.postMessage('goodTube_shortcut_' + event.type + '_' + event.key + '_' + event.keyCode + '_' + event.ctrlKey + '_' + event.metaKey + '_' + event.shiftKey + '_' + event.altKey, '*');
 			}
 		}
 	}
@@ -3993,26 +4283,21 @@
 			if (videoElement) {
 				// Get the key event data
 				let keyData = event.data.replace('goodTube_shortcut_', '').split('_');
+
+				// Parse the data
 				let eventType = keyData[0];
-				let keyPressed = keyData[1];
-				let keyCode = parseFloat(keyData[2]);
-				let shiftKey = keyData[3];
-				if (shiftKey === 'true') {
-					shiftKey = true;
-				}
-				else {
-					shiftKey = false;
-				}
+				let eventData = {
+					bubbles: true,
+					key: keyData[1],
+					keyCode: keyData[2],
+					ctrlKey: (keyData[3] === 'true'),
+					metaKey: (keyData[4] === 'true'),
+					shiftKey: (keyData[5] === 'true'),
+					altKey: (keyData[6] === 'true')
+				};
 
 				// Simulate the keyboard event on the video element
-				videoElement.dispatchEvent(
-					new KeyboardEvent(eventType, {
-						bubbles: true,
-						key: keyPressed,
-						keyCode: keyCode,
-						shiftKey: shiftKey
-					})
-				);
+				videoElement.dispatchEvent(new KeyboardEvent(eventType, eventData));
 			}
 		}
 
