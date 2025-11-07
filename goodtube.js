@@ -1052,8 +1052,8 @@
 		// Get the key pressed in lower case
 		let keyPressed = event.key.toLowerCase();
 
-		// Don't do anything IF we're holding control OR alt OR the command key (mac) OR we're not watching a video
-		if (event.ctrlKey || event.altKey || event.metaKey || !goodTube_helper_watchingVideo()) {
+		// Don't do anything IF we're holding control OR alt OR the command key (mac) OR we're not watching a video OR the "hide and mute ads" fallback is active
+		if (event.ctrlKey || event.altKey || event.metaKey || !goodTube_helper_watchingVideo() || goodTube_fallback) {
 			return;
 		}
 
@@ -1099,8 +1099,8 @@
 			'i'
 		];
 
-		// Ensure we've pressed an allowed shortcut AND the "hide and mute ads" fallback is inactive
-		if (allowedShortcuts.includes(keyPressed) && !goodTube_fallback) {
+		// Ensure we've pressed an allowed shortcut
+		if (allowedShortcuts.includes(keyPressed)) {
 			// Get the currently focused element
 			let focusedElement = event.srcElement;
 			let focusedElement_tag = false;
