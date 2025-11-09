@@ -2,13 +2,17 @@
 	'use strict';
 
 
-	/* Bypass CSP restrictions (introduced by the latest Chrome updates)
+	/* Setup the CSP (content security policy)
 	------------------------------------------------------------------------------------------ */
-	if (window.trustedTypes && window.trustedTypes.createPolicy && !window.trustedTypes.defaultPolicy) {
-		window.trustedTypes.createPolicy('default', {
-			createHTML: string => string,
-			createScriptURL: string => string,
-			createScript: string => string
+	// Include DOM Purify DOM Purify (https://github.com/cure53/DOMPurify/blob/main/dist/purify.min.js)
+	// We keep this inline this because fetching it from an external repo we don't control is likely unreliable in the long term.
+	!function (e, t) { "object" == typeof exports && "undefined" != typeof module ? module.exports = t() : "function" == typeof define && define.amd ? define(t) : (e = "undefined" != typeof globalThis ? globalThis : e || self).DOMPurify = t() }(this, (function () { "use strict"; const { entries: e, setPrototypeOf: t, isFrozen: n, getPrototypeOf: o, getOwnPropertyDescriptor: r } = Object; let { freeze: i, seal: a, create: l } = Object, { apply: c, construct: s } = "undefined" != typeof Reflect && Reflect; i || (i = function (e) { return e }), a || (a = function (e) { return e }), c || (c = function (e, t) { for (var n = arguments.length, o = new Array(n > 2 ? n - 2 : 0), r = 2; r < n; r++)o[r - 2] = arguments[r]; return e.apply(t, o) }), s || (s = function (e) { for (var t = arguments.length, n = new Array(t > 1 ? t - 1 : 0), o = 1; o < t; o++)n[o - 1] = arguments[o]; return new e(...n) }); const u = w(Array.prototype.forEach), m = w(Array.prototype.lastIndexOf), p = w(Array.prototype.pop), f = w(Array.prototype.push), d = w(Array.prototype.splice), h = w(String.prototype.toLowerCase), g = w(String.prototype.toString), T = w(String.prototype.match), y = w(String.prototype.replace), E = w(String.prototype.indexOf), A = w(String.prototype.trim), _ = w(Object.prototype.hasOwnProperty), b = w(RegExp.prototype.test), S = (N = TypeError, function () { for (var e = arguments.length, t = new Array(e), n = 0; n < e; n++)t[n] = arguments[n]; return s(N, t) }); var N; function w(e) { return function (t) { t instanceof RegExp && (t.lastIndex = 0); for (var n = arguments.length, o = new Array(n > 1 ? n - 1 : 0), r = 1; r < n; r++)o[r - 1] = arguments[r]; return c(e, t, o) } } function R(e, o) { let r = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : h; t && t(e, null); let i = o.length; for (; i--;) { let t = o[i]; if ("string" == typeof t) { const e = r(t); e !== t && (n(o) || (o[i] = e), t = e) } e[t] = !0 } return e } function D(e) { for (let t = 0; t < e.length; t++) { _(e, t) || (e[t] = null) } return e } function C(t) { const n = l(null); for (const [o, r] of e(t)) { _(t, o) && (Array.isArray(r) ? n[o] = D(r) : r && "object" == typeof r && r.constructor === Object ? n[o] = C(r) : n[o] = r) } return n } function v(e, t) { for (; null !== e;) { const n = r(e, t); if (n) { if (n.get) return w(n.get); if ("function" == typeof n.value) return w(n.value) } e = o(e) } return function () { return null } } const O = i(["a", "abbr", "acronym", "address", "area", "article", "aside", "audio", "b", "bdi", "bdo", "big", "blink", "blockquote", "body", "br", "button", "canvas", "caption", "center", "cite", "code", "col", "colgroup", "content", "data", "datalist", "dd", "decorator", "del", "details", "dfn", "dialog", "dir", "div", "dl", "dt", "element", "em", "fieldset", "figcaption", "figure", "font", "footer", "form", "h1", "h2", "h3", "h4", "h5", "h6", "head", "header", "hgroup", "hr", "html", "i", "img", "input", "ins", "kbd", "label", "legend", "li", "main", "map", "mark", "marquee", "menu", "menuitem", "meter", "nav", "nobr", "ol", "optgroup", "option", "output", "p", "picture", "pre", "progress", "q", "rp", "rt", "ruby", "s", "samp", "search", "section", "select", "shadow", "slot", "small", "source", "spacer", "span", "strike", "strong", "style", "sub", "summary", "sup", "table", "tbody", "td", "template", "textarea", "tfoot", "th", "thead", "time", "tr", "track", "tt", "u", "ul", "var", "video", "wbr"]), x = i(["svg", "a", "altglyph", "altglyphdef", "altglyphitem", "animatecolor", "animatemotion", "animatetransform", "circle", "clippath", "defs", "desc", "ellipse", "enterkeyhint", "exportparts", "filter", "font", "g", "glyph", "glyphref", "hkern", "image", "inputmode", "line", "lineargradient", "marker", "mask", "metadata", "mpath", "part", "path", "pattern", "polygon", "polyline", "radialgradient", "rect", "stop", "style", "switch", "symbol", "text", "textpath", "title", "tref", "tspan", "view", "vkern"]), L = i(["feBlend", "feColorMatrix", "feComponentTransfer", "feComposite", "feConvolveMatrix", "feDiffuseLighting", "feDisplacementMap", "feDistantLight", "feDropShadow", "feFlood", "feFuncA", "feFuncB", "feFuncG", "feFuncR", "feGaussianBlur", "feImage", "feMerge", "feMergeNode", "feMorphology", "feOffset", "fePointLight", "feSpecularLighting", "feSpotLight", "feTile", "feTurbulence"]), k = i(["animate", "color-profile", "cursor", "discard", "font-face", "font-face-format", "font-face-name", "font-face-src", "font-face-uri", "foreignobject", "hatch", "hatchpath", "mesh", "meshgradient", "meshpatch", "meshrow", "missing-glyph", "script", "set", "solidcolor", "unknown", "use"]), I = i(["math", "menclose", "merror", "mfenced", "mfrac", "mglyph", "mi", "mlabeledtr", "mmultiscripts", "mn", "mo", "mover", "mpadded", "mphantom", "mroot", "mrow", "ms", "mspace", "msqrt", "mstyle", "msub", "msup", "msubsup", "mtable", "mtd", "mtext", "mtr", "munder", "munderover", "mprescripts"]), M = i(["maction", "maligngroup", "malignmark", "mlongdiv", "mscarries", "mscarry", "msgroup", "mstack", "msline", "msrow", "semantics", "annotation", "annotation-xml", "mprescripts", "none"]), U = i(["#text"]), z = i(["accept", "action", "align", "alt", "autocapitalize", "autocomplete", "autopictureinpicture", "autoplay", "background", "bgcolor", "border", "capture", "cellpadding", "cellspacing", "checked", "cite", "class", "clear", "color", "cols", "colspan", "controls", "controlslist", "coords", "crossorigin", "datetime", "decoding", "default", "dir", "disabled", "disablepictureinpicture", "disableremoteplayback", "download", "draggable", "enctype", "enterkeyhint", "exportparts", "face", "for", "headers", "height", "hidden", "high", "href", "hreflang", "id", "inert", "inputmode", "integrity", "ismap", "kind", "label", "lang", "list", "loading", "loop", "low", "max", "maxlength", "media", "method", "min", "minlength", "multiple", "muted", "name", "nonce", "noshade", "novalidate", "nowrap", "open", "optimum", "part", "pattern", "placeholder", "playsinline", "popover", "popovertarget", "popovertargetaction", "poster", "preload", "pubdate", "radiogroup", "readonly", "rel", "required", "rev", "reversed", "role", "rows", "rowspan", "spellcheck", "scope", "selected", "shape", "size", "sizes", "slot", "span", "srclang", "start", "src", "srcset", "step", "style", "summary", "tabindex", "title", "translate", "type", "usemap", "valign", "value", "width", "wrap", "xmlns", "slot"]), P = i(["accent-height", "accumulate", "additive", "alignment-baseline", "amplitude", "ascent", "attributename", "attributetype", "azimuth", "basefrequency", "baseline-shift", "begin", "bias", "by", "class", "clip", "clippathunits", "clip-path", "clip-rule", "color", "color-interpolation", "color-interpolation-filters", "color-profile", "color-rendering", "cx", "cy", "d", "dx", "dy", "diffuseconstant", "direction", "display", "divisor", "dur", "edgemode", "elevation", "end", "exponent", "fill", "fill-opacity", "fill-rule", "filter", "filterunits", "flood-color", "flood-opacity", "font-family", "font-size", "font-size-adjust", "font-stretch", "font-style", "font-variant", "font-weight", "fx", "fy", "g1", "g2", "glyph-name", "glyphref", "gradientunits", "gradienttransform", "height", "href", "id", "image-rendering", "in", "in2", "intercept", "k", "k1", "k2", "k3", "k4", "kerning", "keypoints", "keysplines", "keytimes", "lang", "lengthadjust", "letter-spacing", "kernelmatrix", "kernelunitlength", "lighting-color", "local", "marker-end", "marker-mid", "marker-start", "markerheight", "markerunits", "markerwidth", "maskcontentunits", "maskunits", "max", "mask", "mask-type", "media", "method", "mode", "min", "name", "numoctaves", "offset", "operator", "opacity", "order", "orient", "orientation", "origin", "overflow", "paint-order", "path", "pathlength", "patterncontentunits", "patterntransform", "patternunits", "points", "preservealpha", "preserveaspectratio", "primitiveunits", "r", "rx", "ry", "radius", "refx", "refy", "repeatcount", "repeatdur", "restart", "result", "rotate", "scale", "seed", "shape-rendering", "slope", "specularconstant", "specularexponent", "spreadmethod", "startoffset", "stddeviation", "stitchtiles", "stop-color", "stop-opacity", "stroke-dasharray", "stroke-dashoffset", "stroke-linecap", "stroke-linejoin", "stroke-miterlimit", "stroke-opacity", "stroke", "stroke-width", "style", "surfacescale", "systemlanguage", "tabindex", "tablevalues", "targetx", "targety", "transform", "transform-origin", "text-anchor", "text-decoration", "text-rendering", "textlength", "type", "u1", "u2", "unicode", "values", "viewbox", "visibility", "version", "vert-adv-y", "vert-origin-x", "vert-origin-y", "width", "word-spacing", "wrap", "writing-mode", "xchannelselector", "ychannelselector", "x", "x1", "x2", "xmlns", "y", "y1", "y2", "z", "zoomandpan"]), F = i(["accent", "accentunder", "align", "bevelled", "close", "columnsalign", "columnlines", "columnspan", "denomalign", "depth", "dir", "display", "displaystyle", "encoding", "fence", "frame", "height", "href", "id", "largeop", "length", "linethickness", "lspace", "lquote", "mathbackground", "mathcolor", "mathsize", "mathvariant", "maxsize", "minsize", "movablelimits", "notation", "numalign", "open", "rowalign", "rowlines", "rowspacing", "rowspan", "rspace", "rquote", "scriptlevel", "scriptminsize", "scriptsizemultiplier", "selection", "separator", "separators", "stretchy", "subscriptshift", "supscriptshift", "symmetric", "voffset", "width", "xmlns"]), H = i(["xlink:href", "xml:id", "xlink:title", "xml:space", "xmlns:xlink"]), B = a(/\{\{[\w\W]*|[\w\W]*\}\}/gm), G = a(/<%[\w\W]*|[\w\W]*%>/gm), W = a(/\$\{[\w\W]*/gm), Y = a(/^data-[\-\w.\u00B7-\uFFFF]+$/), j = a(/^aria-[\-\w]+$/), X = a(/^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp|matrix):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i), q = a(/^(?:\w+script|data):/i), $ = a(/[\u0000-\u0020\u00A0\u1680\u180E\u2000-\u2029\u205F\u3000]/g), K = a(/^html$/i), V = a(/^[a-z][.\w]*(-[.\w]+)+$/i); var Z = Object.freeze({ __proto__: null, ARIA_ATTR: j, ATTR_WHITESPACE: $, CUSTOM_ELEMENT: V, DATA_ATTR: Y, DOCTYPE_NAME: K, ERB_EXPR: G, IS_ALLOWED_URI: X, IS_SCRIPT_OR_DATA: q, MUSTACHE_EXPR: B, TMPLIT_EXPR: W }); const J = 1, Q = 3, ee = 7, te = 8, ne = 9, oe = function () { return "undefined" == typeof window ? null : window }; var re = function t() { let n = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : oe(); const o = e => t(e); if (o.version = "3.3.0", o.removed = [], !n || !n.document || n.document.nodeType !== ne || !n.Element) return o.isSupported = !1, o; let { document: r } = n; const a = r, c = a.currentScript, { DocumentFragment: s, HTMLTemplateElement: N, Node: w, Element: D, NodeFilter: B, NamedNodeMap: G = n.NamedNodeMap || n.MozNamedAttrMap, HTMLFormElement: W, DOMParser: Y, trustedTypes: j } = n, q = D.prototype, $ = v(q, "cloneNode"), V = v(q, "remove"), re = v(q, "nextSibling"), ie = v(q, "childNodes"), ae = v(q, "parentNode"); if ("function" == typeof N) { const e = r.createElement("template"); e.content && e.content.ownerDocument && (r = e.content.ownerDocument) } let le, ce = ""; const { implementation: se, createNodeIterator: ue, createDocumentFragment: me, getElementsByTagName: pe } = r, { importNode: fe } = a; let de = { afterSanitizeAttributes: [], afterSanitizeElements: [], afterSanitizeShadowDOM: [], beforeSanitizeAttributes: [], beforeSanitizeElements: [], beforeSanitizeShadowDOM: [], uponSanitizeAttribute: [], uponSanitizeElement: [], uponSanitizeShadowNode: [] }; o.isSupported = "function" == typeof e && "function" == typeof ae && se && void 0 !== se.createHTMLDocument; const { MUSTACHE_EXPR: he, ERB_EXPR: ge, TMPLIT_EXPR: Te, DATA_ATTR: ye, ARIA_ATTR: Ee, IS_SCRIPT_OR_DATA: Ae, ATTR_WHITESPACE: _e, CUSTOM_ELEMENT: be } = Z; let { IS_ALLOWED_URI: Se } = Z, Ne = null; const we = R({}, [...O, ...x, ...L, ...I, ...U]); let Re = null; const De = R({}, [...z, ...P, ...F, ...H]); let Ce = Object.seal(l(null, { tagNameCheck: { writable: !0, configurable: !1, enumerable: !0, value: null }, attributeNameCheck: { writable: !0, configurable: !1, enumerable: !0, value: null }, allowCustomizedBuiltInElements: { writable: !0, configurable: !1, enumerable: !0, value: !1 } })), ve = null, Oe = null; const xe = Object.seal(l(null, { tagCheck: { writable: !0, configurable: !1, enumerable: !0, value: null }, attributeCheck: { writable: !0, configurable: !1, enumerable: !0, value: null } })); let Le = !0, ke = !0, Ie = !1, Me = !0, Ue = !1, ze = !0, Pe = !1, Fe = !1, He = !1, Be = !1, Ge = !1, We = !1, Ye = !0, je = !1, Xe = !0, qe = !1, $e = {}, Ke = null; const Ve = R({}, ["annotation-xml", "audio", "colgroup", "desc", "foreignobject", "head", "iframe", "math", "mi", "mn", "mo", "ms", "mtext", "noembed", "noframes", "noscript", "plaintext", "script", "style", "svg", "template", "thead", "title", "video", "xmp"]); let Ze = null; const Je = R({}, ["audio", "video", "img", "source", "image", "track"]); let Qe = null; const et = R({}, ["alt", "class", "for", "id", "label", "name", "pattern", "placeholder", "role", "summary", "title", "value", "style", "xmlns"]), tt = "http://www.w3.org/1998/Math/MathML", nt = "http://www.w3.org/2000/svg", ot = "http://www.w3.org/1999/xhtml"; let rt = ot, it = !1, at = null; const lt = R({}, [tt, nt, ot], g); let ct = R({}, ["mi", "mo", "mn", "ms", "mtext"]), st = R({}, ["annotation-xml"]); const ut = R({}, ["title", "style", "font", "a", "script"]); let mt = null; const pt = ["application/xhtml+xml", "text/html"]; let ft = null, dt = null; const ht = r.createElement("form"), gt = function (e) { return e instanceof RegExp || e instanceof Function }, Tt = function () { let e = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {}; if (!dt || dt !== e) { if (e && "object" == typeof e || (e = {}), e = C(e), mt = -1 === pt.indexOf(e.PARSER_MEDIA_TYPE) ? "text/html" : e.PARSER_MEDIA_TYPE, ft = "application/xhtml+xml" === mt ? g : h, Ne = _(e, "ALLOWED_TAGS") ? R({}, e.ALLOWED_TAGS, ft) : we, Re = _(e, "ALLOWED_ATTR") ? R({}, e.ALLOWED_ATTR, ft) : De, at = _(e, "ALLOWED_NAMESPACES") ? R({}, e.ALLOWED_NAMESPACES, g) : lt, Qe = _(e, "ADD_URI_SAFE_ATTR") ? R(C(et), e.ADD_URI_SAFE_ATTR, ft) : et, Ze = _(e, "ADD_DATA_URI_TAGS") ? R(C(Je), e.ADD_DATA_URI_TAGS, ft) : Je, Ke = _(e, "FORBID_CONTENTS") ? R({}, e.FORBID_CONTENTS, ft) : Ve, ve = _(e, "FORBID_TAGS") ? R({}, e.FORBID_TAGS, ft) : C({}), Oe = _(e, "FORBID_ATTR") ? R({}, e.FORBID_ATTR, ft) : C({}), $e = !!_(e, "USE_PROFILES") && e.USE_PROFILES, Le = !1 !== e.ALLOW_ARIA_ATTR, ke = !1 !== e.ALLOW_DATA_ATTR, Ie = e.ALLOW_UNKNOWN_PROTOCOLS || !1, Me = !1 !== e.ALLOW_SELF_CLOSE_IN_ATTR, Ue = e.SAFE_FOR_TEMPLATES || !1, ze = !1 !== e.SAFE_FOR_XML, Pe = e.WHOLE_DOCUMENT || !1, Be = e.RETURN_DOM || !1, Ge = e.RETURN_DOM_FRAGMENT || !1, We = e.RETURN_TRUSTED_TYPE || !1, He = e.FORCE_BODY || !1, Ye = !1 !== e.SANITIZE_DOM, je = e.SANITIZE_NAMED_PROPS || !1, Xe = !1 !== e.KEEP_CONTENT, qe = e.IN_PLACE || !1, Se = e.ALLOWED_URI_REGEXP || X, rt = e.NAMESPACE || ot, ct = e.MATHML_TEXT_INTEGRATION_POINTS || ct, st = e.HTML_INTEGRATION_POINTS || st, Ce = e.CUSTOM_ELEMENT_HANDLING || {}, e.CUSTOM_ELEMENT_HANDLING && gt(e.CUSTOM_ELEMENT_HANDLING.tagNameCheck) && (Ce.tagNameCheck = e.CUSTOM_ELEMENT_HANDLING.tagNameCheck), e.CUSTOM_ELEMENT_HANDLING && gt(e.CUSTOM_ELEMENT_HANDLING.attributeNameCheck) && (Ce.attributeNameCheck = e.CUSTOM_ELEMENT_HANDLING.attributeNameCheck), e.CUSTOM_ELEMENT_HANDLING && "boolean" == typeof e.CUSTOM_ELEMENT_HANDLING.allowCustomizedBuiltInElements && (Ce.allowCustomizedBuiltInElements = e.CUSTOM_ELEMENT_HANDLING.allowCustomizedBuiltInElements), Ue && (ke = !1), Ge && (Be = !0), $e && (Ne = R({}, U), Re = [], !0 === $e.html && (R(Ne, O), R(Re, z)), !0 === $e.svg && (R(Ne, x), R(Re, P), R(Re, H)), !0 === $e.svgFilters && (R(Ne, L), R(Re, P), R(Re, H)), !0 === $e.mathMl && (R(Ne, I), R(Re, F), R(Re, H))), e.ADD_TAGS && ("function" == typeof e.ADD_TAGS ? xe.tagCheck = e.ADD_TAGS : (Ne === we && (Ne = C(Ne)), R(Ne, e.ADD_TAGS, ft))), e.ADD_ATTR && ("function" == typeof e.ADD_ATTR ? xe.attributeCheck = e.ADD_ATTR : (Re === De && (Re = C(Re)), R(Re, e.ADD_ATTR, ft))), e.ADD_URI_SAFE_ATTR && R(Qe, e.ADD_URI_SAFE_ATTR, ft), e.FORBID_CONTENTS && (Ke === Ve && (Ke = C(Ke)), R(Ke, e.FORBID_CONTENTS, ft)), Xe && (Ne["#text"] = !0), Pe && R(Ne, ["html", "head", "body"]), Ne.table && (R(Ne, ["tbody"]), delete ve.tbody), e.TRUSTED_TYPES_POLICY) { if ("function" != typeof e.TRUSTED_TYPES_POLICY.createHTML) throw S('TRUSTED_TYPES_POLICY configuration option must provide a "createHTML" hook.'); if ("function" != typeof e.TRUSTED_TYPES_POLICY.createScriptURL) throw S('TRUSTED_TYPES_POLICY configuration option must provide a "createScriptURL" hook.'); le = e.TRUSTED_TYPES_POLICY, ce = le.createHTML("") } else void 0 === le && (le = function (e, t) { if ("object" != typeof e || "function" != typeof e.createPolicy) return null; let n = null; const o = "data-tt-policy-suffix"; t && t.hasAttribute(o) && (n = t.getAttribute(o)); const r = "dompurify" + (n ? "#" + n : ""); try { return e.createPolicy(r, { createHTML: e => e, createScriptURL: e => e }) } catch (e) { return console.warn("TrustedTypes policy " + r + " could not be created."), null } }(j, c)), null !== le && "string" == typeof ce && (ce = le.createHTML("")); i && i(e), dt = e } }, yt = R({}, [...x, ...L, ...k]), Et = R({}, [...I, ...M]), At = function (e) { f(o.removed, { element: e }); try { ae(e).removeChild(e) } catch (t) { V(e) } }, _t = function (e, t) { try { f(o.removed, { attribute: t.getAttributeNode(e), from: t }) } catch (e) { f(o.removed, { attribute: null, from: t }) } if (t.removeAttribute(e), "is" === e) if (Be || Ge) try { At(t) } catch (e) {} else try { t.setAttribute(e, "") } catch (e) {} }, bt = function (e) { let t = null, n = null; if (He) e = "<remove></remove>" + e; else { const t = T(e, /^[\r\n\t ]+/); n = t && t[0] } "application/xhtml+xml" === mt && rt === ot && (e = '<html xmlns="http://www.w3.org/1999/xhtml"><head></head><body>' + e + "</body></html>"); const o = le ? le.createHTML(e) : e; if (rt === ot) try { t = (new Y).parseFromString(o, mt) } catch (e) {} if (!t || !t.documentElement) { t = se.createDocument(rt, "template", null); try { t.documentElement.innerHTML = it ? ce : o } catch (e) {} } const i = t.body || t.documentElement; return e && n && i.insertBefore(r.createTextNode(n), i.childNodes[0] || null), rt === ot ? pe.call(t, Pe ? "html" : "body")[0] : Pe ? t.documentElement : i }, St = function (e) { return ue.call(e.ownerDocument || e, e, B.SHOW_ELEMENT | B.SHOW_COMMENT | B.SHOW_TEXT | B.SHOW_PROCESSING_INSTRUCTION | B.SHOW_CDATA_SECTION, null) }, Nt = function (e) { return e instanceof W && ("string" != typeof e.nodeName || "string" != typeof e.textContent || "function" != typeof e.removeChild || !(e.attributes instanceof G) || "function" != typeof e.removeAttribute || "function" != typeof e.setAttribute || "string" != typeof e.namespaceURI || "function" != typeof e.insertBefore || "function" != typeof e.hasChildNodes) }, wt = function (e) { return "function" == typeof w && e instanceof w }; function Rt(e, t, n) { u(e, (e => { e.call(o, t, n, dt) })) } const Dt = function (e) { let t = null; if (Rt(de.beforeSanitizeElements, e, null), Nt(e)) return At(e), !0; const n = ft(e.nodeName); if (Rt(de.uponSanitizeElement, e, { tagName: n, allowedTags: Ne }), ze && e.hasChildNodes() && !wt(e.firstElementChild) && b(/<[/\w!]/g, e.innerHTML) && b(/<[/\w!]/g, e.textContent)) return At(e), !0; if (e.nodeType === ee) return At(e), !0; if (ze && e.nodeType === te && b(/<[/\w]/g, e.data)) return At(e), !0; if (!(xe.tagCheck instanceof Function && xe.tagCheck(n)) && (!Ne[n] || ve[n])) { if (!ve[n] && vt(n)) { if (Ce.tagNameCheck instanceof RegExp && b(Ce.tagNameCheck, n)) return !1; if (Ce.tagNameCheck instanceof Function && Ce.tagNameCheck(n)) return !1 } if (Xe && !Ke[n]) { const t = ae(e) || e.parentNode, n = ie(e) || e.childNodes; if (n && t) { for (let o = n.length - 1; o >= 0; --o) { const r = $(n[o], !0); r.__removalCount = (e.__removalCount || 0) + 1, t.insertBefore(r, re(e)) } } } return At(e), !0 } return e instanceof D && !function (e) { let t = ae(e); t && t.tagName || (t = { namespaceURI: rt, tagName: "template" }); const n = h(e.tagName), o = h(t.tagName); return !!at[e.namespaceURI] && (e.namespaceURI === nt ? t.namespaceURI === ot ? "svg" === n : t.namespaceURI === tt ? "svg" === n && ("annotation-xml" === o || ct[o]) : Boolean(yt[n]) : e.namespaceURI === tt ? t.namespaceURI === ot ? "math" === n : t.namespaceURI === nt ? "math" === n && st[o] : Boolean(Et[n]) : e.namespaceURI === ot ? !(t.namespaceURI === nt && !st[o]) && !(t.namespaceURI === tt && !ct[o]) && !Et[n] && (ut[n] || !yt[n]) : !("application/xhtml+xml" !== mt || !at[e.namespaceURI])) }(e) ? (At(e), !0) : "noscript" !== n && "noembed" !== n && "noframes" !== n || !b(/<\/no(script|embed|frames)/i, e.innerHTML) ? (Ue && e.nodeType === Q && (t = e.textContent, u([he, ge, Te], (e => { t = y(t, e, " ") })), e.textContent !== t && (f(o.removed, { element: e.cloneNode() }), e.textContent = t)), Rt(de.afterSanitizeElements, e, null), !1) : (At(e), !0) }, Ct = function (e, t, n) { if (Ye && ("id" === t || "name" === t) && (n in r || n in ht)) return !1; if (ke && !Oe[t] && b(ye, t)); else if (Le && b(Ee, t)); else if (xe.attributeCheck instanceof Function && xe.attributeCheck(t, e)); else if (!Re[t] || Oe[t]) { if (!(vt(e) && (Ce.tagNameCheck instanceof RegExp && b(Ce.tagNameCheck, e) || Ce.tagNameCheck instanceof Function && Ce.tagNameCheck(e)) && (Ce.attributeNameCheck instanceof RegExp && b(Ce.attributeNameCheck, t) || Ce.attributeNameCheck instanceof Function && Ce.attributeNameCheck(t, e)) || "is" === t && Ce.allowCustomizedBuiltInElements && (Ce.tagNameCheck instanceof RegExp && b(Ce.tagNameCheck, n) || Ce.tagNameCheck instanceof Function && Ce.tagNameCheck(n)))) return !1 } else if (Qe[t]); else if (b(Se, y(n, _e, ""))); else if ("src" !== t && "xlink:href" !== t && "href" !== t || "script" === e || 0 !== E(n, "data:") || !Ze[e]) { if (Ie && !b(Ae, y(n, _e, ""))); else if (n) return !1 } else; return !0 }, vt = function (e) { return "annotation-xml" !== e && T(e, be) }, Ot = function (e) { Rt(de.beforeSanitizeAttributes, e, null); const { attributes: t } = e; if (!t || Nt(e)) return; const n = { attrName: "", attrValue: "", keepAttr: !0, allowedAttributes: Re, forceKeepAttr: void 0 }; let r = t.length; for (; r--;) { const i = t[r], { name: a, namespaceURI: l, value: c } = i, s = ft(a), m = c; let f = "value" === a ? m : A(m); if (n.attrName = s, n.attrValue = f, n.keepAttr = !0, n.forceKeepAttr = void 0, Rt(de.uponSanitizeAttribute, e, n), f = n.attrValue, !je || "id" !== s && "name" !== s || (_t(a, e), f = "user-content-" + f), ze && b(/((--!?|])>)|<\/(style|title|textarea)/i, f)) { _t(a, e); continue } if ("attributename" === s && T(f, "href")) { _t(a, e); continue } if (n.forceKeepAttr) continue; if (!n.keepAttr) { _t(a, e); continue } if (!Me && b(/\/>/i, f)) { _t(a, e); continue } Ue && u([he, ge, Te], (e => { f = y(f, e, " ") })); const d = ft(e.nodeName); if (Ct(d, s, f)) { if (le && "object" == typeof j && "function" == typeof j.getAttributeType) if (l); else switch (j.getAttributeType(d, s)) { case "TrustedHTML": f = le.createHTML(f); break; case "TrustedScriptURL": f = le.createScriptURL(f) }if (f !== m) try { l ? e.setAttributeNS(l, a, f) : e.setAttribute(a, f), Nt(e) ? At(e) : p(o.removed) } catch (t) { _t(a, e) } } else _t(a, e) } Rt(de.afterSanitizeAttributes, e, null) }, xt = function e(t) { let n = null; const o = St(t); for (Rt(de.beforeSanitizeShadowDOM, t, null); n = o.nextNode();)Rt(de.uponSanitizeShadowNode, n, null), Dt(n), Ot(n), n.content instanceof s && e(n.content); Rt(de.afterSanitizeShadowDOM, t, null) }; return o.sanitize = function (e) { let t = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : {}, n = null, r = null, i = null, l = null; if (it = !e, it && (e = "\x3c!--\x3e"), "string" != typeof e && !wt(e)) { if ("function" != typeof e.toString) throw S("toString is not a function"); if ("string" != typeof (e = e.toString())) throw S("dirty is not a string, aborting") } if (!o.isSupported) return e; if (Fe || Tt(t), o.removed = [], "string" == typeof e && (qe = !1), qe) { if (e.nodeName) { const t = ft(e.nodeName); if (!Ne[t] || ve[t]) throw S("root node is forbidden and cannot be sanitized in-place") } } else if (e instanceof w) n = bt("\x3c!----\x3e"), r = n.ownerDocument.importNode(e, !0), r.nodeType === J && "BODY" === r.nodeName || "HTML" === r.nodeName ? n = r : n.appendChild(r); else { if (!Be && !Ue && !Pe && -1 === e.indexOf("<")) return le && We ? le.createHTML(e) : e; if (n = bt(e), !n) return Be ? null : We ? ce : "" } n && He && At(n.firstChild); const c = St(qe ? e : n); for (; i = c.nextNode();)Dt(i), Ot(i), i.content instanceof s && xt(i.content); if (qe) return e; if (Be) { if (Ge) for (l = me.call(n.ownerDocument); n.firstChild;)l.appendChild(n.firstChild); else l = n; return (Re.shadowroot || Re.shadowrootmode) && (l = fe.call(a, l, !0)), l } let m = Pe ? n.outerHTML : n.innerHTML; return Pe && Ne["!doctype"] && n.ownerDocument && n.ownerDocument.doctype && n.ownerDocument.doctype.name && b(K, n.ownerDocument.doctype.name) && (m = "<!DOCTYPE " + n.ownerDocument.doctype.name + ">\n" + m), Ue && u([he, ge, Te], (e => { m = y(m, e, " ") })), le && We ? le.createHTML(m) : m }, o.setConfig = function () { Tt(arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {}), Fe = !0 }, o.clearConfig = function () { dt = null, Fe = !1 }, o.isValidAttribute = function (e, t, n) { dt || Tt({}); const o = ft(e), r = ft(t); return Ct(o, r, n) }, o.addHook = function (e, t) { "function" == typeof t && f(de[e], t) }, o.removeHook = function (e, t) { if (void 0 !== t) { const n = m(de[e], t); return -1 === n ? void 0 : d(de[e], n, 1)[0] } return p(de[e]) }, o.removeHooks = function (e) { de[e] = [] }, o.removeAllHooks = function () { de = { afterSanitizeAttributes: [], afterSanitizeElements: [], afterSanitizeShadowDOM: [], beforeSanitizeAttributes: [], beforeSanitizeElements: [], beforeSanitizeShadowDOM: [], uponSanitizeAttribute: [], uponSanitizeElement: [], uponSanitizeShadowNode: [] } }, o }(); return re }));
+
+	// Create a custom CSP policy (using DOM Purify for added security)
+	let goodTube_csp = false;
+	if (window.trustedTypes && window.trustedTypes.createPolicy && DOMPurify) {
+		goodTube_csp = window.trustedTypes.createPolicy("GoodTubePolicy", {
+			createHTML: (input) => DOMPurify.sanitize(input, { RETURN_TRUSTED_TYPE: false })
 		});
 	}
 
@@ -143,6 +147,27 @@
 				return false;
 			}
 		}
+	}
+
+	// Set HTML using our CSP policy
+	function goodTube_helper_innerHTML(element, html) {
+		// If our CSP policy exists, sanitise the HTML using it
+		if (goodTube_csp) {
+			html = goodTube_csp.createHTML(html);
+		}
+
+		// Run the innerHTML function
+		element.innerHTML = html;
+	}
+
+	function goodTube_helper_insertAdjacentHTML(element, position, html) {
+		// If our CSP policy exists, sanitise the HTML using it
+		if (goodTube_csp) {
+			html = goodTube_csp.createHTML(html);
+		}
+
+		// Run the insertAdjacentHTML function
+		element.insertAdjacentHTML(position, html);
 	}
 
 
@@ -708,24 +733,21 @@
 		document.body.appendChild(playerWrapper);
 
 		// Add video iframe embed (via proxy iframe)
-		playerWrapper.innerHTML = `
-			<iframe
-				src="\x68\x74\x74\x70\x73\x3a\x2f\x2f\x65\x6e\x2e\x77\x69\x6b\x69\x70\x65\x64\x69\x61\x2e\x6f\x72\x67\x2f\x77\x69\x6b\x69\x2f\x46\x75\x63\x6b\x3f\x67\x6f\x6f\x64\x54\x75\x62\x65\x50\x72\x6f\x78\x79\x3d\x31"
-				width="100%"
-				height="100%"
-				src=""
-				frameborder="0"
-				scrolling="yes"
-				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-				referrerpolicy="strict-origin-when-cross-origin"
-				allowfullscreen
-				style="display: none;"
-			></iframe>
-		`;
+		let proxyIframe = document.createElement('iframe');
+		proxyIframe.src = '\x68\x74\x74\x70\x73\x3a\x2f\x2f\x65\x6e\x2e\x77\x69\x6b\x69\x70\x65\x64\x69\x61\x2e\x6f\x72\x67\x2f\x77\x69\x6b\x69\x2f\x46\x75\x63\x6b\x3f\x67\x6f\x6f\x64\x54\x75\x62\x65\x50\x72\x6f\x78\x79\x3d\x31';
+		proxyIframe.setAttribute('width', '100%');
+		proxyIframe.setAttribute('height', '100%');
+		proxyIframe.setAttribute('frameborder', '0');
+		proxyIframe.setAttribute('scrolling', 'yes');
+		proxyIframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
+		proxyIframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+		proxyIframe.setAttribute('allowfullscreen', true);
+		proxyIframe.style.display = 'none';
+		playerWrapper.appendChild(proxyIframe);
 
-		// Expose the player and wrapper globally
-		goodTube_playerWrapper = document.querySelector('#goodTube_playerWrapper');
-		goodTube_player = goodTube_playerWrapper.querySelector('iframe');
+		// Expose these globally
+		goodTube_playerWrapper = playerWrapper;
+		goodTube_player = proxyIframe;
 
 		// Run the actions every 100ms
 		goodTube_actions();
@@ -1594,6 +1616,12 @@
 	function goodTube_init(retrying = false) {
 		// If we're not retrying
 		if (!retrying) {
+			// Debug message
+			if (window.top === window.self) {
+				console.log('\n==================================================\n    ______                ________      __\n   / ____/___  ____  ____/ /_  __/_  __/ /_  ___\n  / / __/ __ \\/ __ \\/ __  / / / / / / / __ \\/ _ \\\n / /_/ / /_/ / /_/ / /_/ / / / / /_/ / /_/ /  __/\n \\____/\\____/\\____/\\____/ /_/  \\____/_____/\\___/\n\n==================================================');
+				console.log('[GoodTube] Initiating...');
+			}
+
 			// Listen for messages from the iframes
 			window.addEventListener('message', goodTube_receiveMessage);
 
@@ -1977,7 +2005,7 @@
 		}
 
 		// Add content to the menu container
-		menuContainer.innerHTML = `
+		goodTube_helper_innerHTML(menuContainer, `
 			<!-- Menu Button
 			==================================================================================================== -->
 			<a href='javascript:;' class='goodTube_menuButton'>
@@ -2101,7 +2129,7 @@
 
 				</div> <!-- .goodTube_modal_inner -->
 			</div> <!-- .goodTube_modal -->
-		`;
+		`);
 
 		// Style the menu
 		let style = document.createElement('style');
@@ -2892,7 +2920,7 @@
 			overlayElement.setAttribute('id', 'goodTube_hideMuteAdsOverlay');
 
 			// Populate the overlay
-			overlayElement.innerHTML = `
+			goodTube_helper_innerHTML(overlayElement, `
 				<div class='goodTube_overlay_inner'>
 					<img src='data:image/gif;base64,R0lGODlhQAAyANU4AM1ml//MzcxlaP/LzM1maMxlZ//MzM1laMtkZspjlstkZ//Exe94ie10h8swZMwuYv+oqv+Vl/iQmdRtb8xldcphY81nl81paMpiZP/DxdZ5e80vY81pmtZ4es0wY/CImdZvcswuYf/Oz81mmfS1ts0xZM1mj8swY8xml++XqPGKjf/Q0ctklslilu51iMwxZcxmls1mlswxZP+Ym/+Zm8xlls0yZf+Ymv///wAAAAAAAAAAAAAAAAAAAAAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh/wtYTVAgRGF0YVhNUDw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDkuMS1jMDAzIDc5Ljk2OTBhODdmYywgMjAyNS8wMy8wNi0yMDo1MDoxNiAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI2LjkgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkIwRkZBNzNFQkI3RjExRjA4OTVBRDJBREJCNDlGMkY5IiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOkIwRkZBNzNGQkI3RjExRjA4OTVBRDJBREJCNDlGMkY5Ij4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6QjBGRkE3M0NCQjdGMTFGMDg5NUFEMkFEQkI0OUYyRjkiIHN0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%3D%3D'>
 					<div class='goodTube_overlay_textContainer'>
@@ -2900,7 +2928,7 @@
 						<div class='goodTube_overlay_textContainer_text'>Hang tight. Click the skip button if it appears to speed things up.</div>
 					</div>
 				</div>
-			`;
+			`);
 
 			// Add it to the page
 			let injectElement = document.querySelector('.ytp-ad-player-overlay-layout');
@@ -3542,7 +3570,9 @@
 			theaterButton.setAttribute('aria-label', 'Theater mode (t)');
 			theaterButton.setAttribute('title', 'Theater mode (t)');
 			theaterButton.setAttribute('data-tooltip-title', 'Theater mode (t)');
-			theaterButton.innerHTML = '<svg height="100%" version="1.1" viewBox="0 0 36 36" width="100%"><use class="ytp-svg-shadow" xlink:href="#ytp-id-30"></use><path d="m 28,11 0,14 -20,0 0,-14 z m -18,2 16,0 0,10 -16,0 0,-10 z" fill="#fff" fill-rule="evenodd" id="ytp-id-30"></path></svg>';
+			goodTube_helper_innerHTML(theaterButton, `
+				<svg height="100%" version="1.1" viewBox="0 0 36 36" width="100%"><use class="ytp-svg-shadow" xlink:href="#ytp-id-30"></use><path d="m 28,11 0,14 -20,0 0,-14 z m -18,2 16,0 0,10 -16,0 0,-10 z" fill="#fff" fill-rule="evenodd" id="ytp-id-30"></path></svg>
+			`)
 
 			// Add actions
 			theaterButton.addEventListener('click', function () {
@@ -3556,7 +3586,11 @@
 		let subtitlesButton = document.querySelector('.ytp-subtitles-button');
 		if (subtitlesButton) {
 			// Add button
-			subtitlesButton.insertAdjacentHTML('beforebegin', '<button class="ytp-button ytp-autonav-toggle" id="goodTube_autoplayButton"><div class="ytp-autonav-toggle-button-container"><div class="ytp-autonav-toggle-button" aria-checked="' + goodTube_getParams['goodTube_autoplay'] + '"></div></div></button>');
+			goodTube_helper_insertAdjacentHTML(
+				subtitlesButton,
+				'beforebegin',
+				'<button class="ytp-button ytp-autonav-toggle" id="goodTube_autoplayButton"><div class="ytp-autonav-toggle-button-container"><div class="ytp-autonav-toggle-button" aria-checked="' + goodTube_getParams['goodTube_autoplay'] + '"></div></div></button>'
+			);
 
 			// Add actions
 			let autoplayButton = document.querySelector('#goodTube_autoplayButton');
@@ -4058,7 +4092,7 @@
 			goodTube_iframe_supportDoubleSpeed_doubleSpeedElement.style.display = 'none';
 
 			// Populate the element
-			goodTube_iframe_supportDoubleSpeed_doubleSpeedElement.innerHTML = `
+			goodTube_helper_innerHTML(goodTube_iframe_supportDoubleSpeed_doubleSpeedElement, `
 				<div class="ytp-overlay ytp-speedmaster-overlay" data-layer="4">
 					<div class="ytp-speedmaster-user-edu ytp-speedmaster-has-icon">
 						<div class="ytp-speedmaster-label">2x</div>
@@ -4069,7 +4103,7 @@
 						</div>
 					</div>
 				</div>
-			`;
+			`);
 
 			// Add the element to the page
 			let targetElement = document.querySelector('.html5-video-player');
@@ -4631,8 +4665,8 @@
 		}
 		goodTube_proxyIframe_initiated = true;
 
-		// Hide the proxy iframe page (safety measure to ensure users never see it)
-		goodTube_proxyIframe_hidePage();
+		// Style the proxy iframe
+		goodTube_proxyIframe_style();
 
 		// Add the Youtube iframe
 		goodTube_proxyIframe_addYoutubeIframe();
@@ -4641,12 +4675,13 @@
 		window.top.postMessage('goodTube_proxyIframe_loaded', '*');
 	}
 
-	// Hide the proxy iframe page
-	function goodTube_proxyIframe_hidePage() {
+	// Style the proxy iframe
+	function goodTube_proxyIframe_style() {
 		// Hide the DOM elements from the proxy page
 		let style = document.createElement('style');
 		style.textContent = `
-			body *:not(#goodTube_youtube_iframe_container):not(#goodTube_youtube_iframe) {
+			/* Hide the page */
+			body *:not(#goodTube_youtube_iframe) {
 				display: none !important;
 				opacity: 0 !important;
 				visibility: hidden !important;
@@ -4656,41 +4691,33 @@
 				background: transparent !important;
 				overflow: hidden !important;
 			}
+
+			/* Style the Youtube iframe */
+			#goodTube_youtube_iframe {
+				position: fixed;
+				top: 0;
+				bottom: 0;
+				left: 0;
+				right: 0;
+				z-index: 99999;
+			}
 		`;
 		document.head.appendChild(style);
 	}
 
 	// Add the Youtube iframe
 	function goodTube_proxyIframe_addYoutubeIframe() {
-		// Create a youtube iframe
-		let youtubeIframe = document.createElement('div');
-		youtubeIframe.setAttribute('id', 'goodTube_youtube_iframe_container');
-
-		// Add the youtube iframe to the page
+		let youtubeIframe = document.createElement('iframe');
+		youtubeIframe.src = '';
+		youtubeIframe.setAttribute('width', '100%');
+		youtubeIframe.setAttribute('height', '100%');
+		youtubeIframe.setAttribute('frameborder', '0');
+		youtubeIframe.setAttribute('scrolling', 'yes');
+		youtubeIframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
+		youtubeIframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+		youtubeIframe.setAttribute('allowfullscreen', true);
+		youtubeIframe.setAttribute('id', 'goodTube_youtube_iframe');
 		document.body.appendChild(youtubeIframe);
-
-		// Update the content of the youtube iframe
-		youtubeIframe.innerHTML = `
-			<iframe
-				width="100%"
-				height="100%"
-				src=""
-				frameborder="0"
-				scrolling="yes"
-				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-				referrerpolicy="strict-origin-when-cross-origin"
-				allowfullscreen
-				id="goodTube_youtube_iframe"
-			></iframe>
-		`;
-
-		// Style the youtube iframe
-		youtubeIframe.style.position = 'fixed';
-		youtubeIframe.style.top = '0';
-		youtubeIframe.style.bottom = '0';
-		youtubeIframe.style.right = '0';
-		youtubeIframe.style.left = '0';
-		youtubeIframe.style.zIndex = '99999';
 	}
 
 	// Receive a message from the parent window
