@@ -8,10 +8,10 @@
 //
 //	Hello friend, welcome to GoodTube.
 //
-//	This automatically loads the latest version using the "@require" tag below.
+//	This automatically loads the latest minified version using the "@require" tag below.
 //	This means you will never need to manually update :)
 //
-//	To view the source code go here:
+//	To view the full source code go here:
 //	https://github.com/goodtube4u/goodtube/blob/main/goodtube.js
 //
 // ================================================================================
