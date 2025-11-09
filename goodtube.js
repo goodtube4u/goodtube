@@ -2149,6 +2149,7 @@
 				z-index: 999;
 				transition: background .2s linear, opacity .2s linear, box-shadow .2s linear;
 				opacity: 1;
+				cursor: pointer;
 			}
 
 			.goodTube_menuButton img {
@@ -2236,6 +2237,7 @@
 				box-shadow: 0 0 4px rgba(0, 0, 0, .5);
 				opacity: 1;
 				text-decoration: none;
+				cursor: pointer;
 			}
 
 
@@ -2314,6 +2316,7 @@
 				text-align: center;
 				line-height: 40px;
 				transition: background .2s linear;
+				cursor: pointer;
 			}
 
 			.goodTube_modal .goodTube_modal_inner .goodTube_modal_closeButton:hover {
