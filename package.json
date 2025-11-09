@@ -3,7 +3,6 @@
 		"watch": "esbuild ./goodtube.js --bundle --outfile=./goodtube.min.js --bundle --watch --minify"
 	},
 	"devDependencies": {
-		"dompurify": "^3.3.0",
 		"esbuild": "^0.26.0"
 	}
 }
