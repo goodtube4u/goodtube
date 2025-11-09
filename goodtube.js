@@ -14,7 +14,7 @@ import DOMPurify from 'DOMPurify';
 	let goodTube_csp = false;
 	if (window.trustedTypes && window.trustedTypes.createPolicy && DOMPurify) {
 		goodTube_csp = window.trustedTypes.createPolicy("GoodTubePolicy", {
-			createHTML: (input) => DOMPurify.sanitize(input, { RETURN_TRUSTED_TYPE: false })
+			createHTML: (input) => DOMPurify.sanitize(input, { RETURN_TRUSTED_TYPE: true })
 		});
 	}
 
