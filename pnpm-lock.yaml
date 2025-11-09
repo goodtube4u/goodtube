@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      dompurify:
+        specifier: ^3.3.0
+        version: 3.3.0
       esbuild:
         specifier: ^0.26.0
         version: 0.26.0
@@ -170,6 +173,12 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  '@types/trusted-types@2.0.7':
+    resolution: {integrity: sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw==}
+
+  dompurify@3.3.0:
+    resolution: {integrity: sha512-r+f6MYR1gGN1eJv0TVQbhA7if/U7P87cdPl3HN5rikqaBSBxLiCb/b9O+2eG0cxz0ghyU+mU1QkbsOwERMYlWQ==}
+
   esbuild@0.26.0:
     resolution: {integrity: sha512-3Hq7jri+tRrVWha+ZeIVhl4qJRha/XjRNSopvTsOaCvfPHrflTYTcUFcEjMKdxofsXXsdc4zjg5NOTnL4Gl57Q==}
     engines: {node: '>=18'}
@@ -254,6 +263,13 @@ snapshots:
 
   '@esbuild/win32-x64@0.26.0':
     optional: true
+
+  '@types/trusted-types@2.0.7':
+    optional: true
+
+  dompurify@3.3.0:
+    optionalDependencies:
+      '@types/trusted-types': 2.0.7
 
   esbuild@0.26.0:
     optionalDependencies:
