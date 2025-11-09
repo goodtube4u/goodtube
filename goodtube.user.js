@@ -17,6 +17,7 @@
 // ================================================================================
 
 // ==UserScript==
+
 // @name         GoodTube
 // @description  A free Youtube adblocker. Removes 100% of Youtube ads and also provides an option to disable shorts.
 // @version      3.002
@@ -33,4 +34,5 @@
 // @match        *://youtube.com/*
 // @match        *://*.wikipedia.org/*
 // @run-at       document-start
+
 // ==/UserScript==
