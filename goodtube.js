@@ -3683,14 +3683,14 @@
 				}
 			}
 
-			// Prev video (shift+p)
-			else if (keyPressed === 'p' && event.shiftKey) {
+			// Prev video ("shift+p" or "media track previous")
+			else if ((keyPressed === 'p' && event.shiftKey) || keyPressed === 'mediatrackprevious') {
 				// Tell the top window to go to the previous video
 				window.top.postMessage('goodTube_prevVideo', '*');
 			}
 
-			// Next video (shift+n)
-			else if (keyPressed === 'n' && event.shiftKey) {
+			// Next video ("shift+n" or "media track next")
+			else if ((keyPressed === 'n' && event.shiftKey) || keyPressed === 'mediatracknext') {
 				// Tell the top window to go to the next video
 				window.top.postMessage('goodTube_nextVideo', '*');
 			}
