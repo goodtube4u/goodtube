@@ -1159,6 +1159,13 @@
 				shift: false,
 				alt: false
 			},
+			{
+				key: 'mediaplaypause',
+				code: false,
+				ctrl: false,
+				shift: false,
+				alt: false
+			},
 
 			// Mute
 			{
@@ -1448,8 +1455,18 @@
 				event.preventDefault();
 				event.stopImmediatePropagation();
 
+				
+
+				// Swap media key to spacebar when we pass it down. This ensures that the play / pause works correctly
+				let event_key = event.key;
+				let event_keyCode = event.keyCode;
+				if (keyPressed === 'mediaplaypause') {
+					event_key = ' ';
+					event_keyCode = 32;
+				}
+
 				// Pass the keyboard shortcut to the iframe
-				goodTube_player.contentWindow.postMessage('goodTube_shortcut_' + event.type + '_' + event.key + '_' + event.keyCode + '_' + event.ctrlKey + '_' + event.metaKey + '_' + event.shiftKey + '_' + event.altKey, '*');
+				goodTube_player.contentWindow.postMessage('goodTube_shortcut_' + event.type + '_' + event_key + '_' + event_keyCode + '_' + event.ctrlKey + '_' + event.metaKey + '_' + event.shiftKey + '_' + event.altKey, '*');
 			}
 		}
 	}
