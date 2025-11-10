@@ -1454,9 +1454,7 @@
 				// Prevent default actions
 				event.preventDefault();
 				event.stopImmediatePropagation();
-
 				
-
 				// Swap media key to spacebar when we pass it down. This ensures that the play / pause works correctly
 				let event_key = event.key;
 				let event_keyCode = event.keyCode;
