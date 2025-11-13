@@ -826,6 +826,14 @@
 				goodTube_player_populatePlaylistInfo_timeout = setTimeout(goodTube_player_populatePlaylistInfo, 100);
 			}
 		}
+		// Otherwise, we don't have access to the frame API
+		else {
+			// Clear timeout first to solve memory leak issues
+			clearTimeout(goodTube_player_populatePlaylistInfo_timeout);
+
+			// Try again
+			goodTube_player_populatePlaylistInfo_timeout = setTimeout(goodTube_player_populatePlaylistInfo, 100);
+		}
 	}
 
 	// Load a video
@@ -1454,7 +1462,7 @@
 				// Prevent default actions
 				event.preventDefault();
 				event.stopImmediatePropagation();
-				
+
 				// Swap media key to spacebar when we pass it down. This ensures that the play / pause works correctly
 				let event_key = event.key;
 				let event_keyCode = event.keyCode;
