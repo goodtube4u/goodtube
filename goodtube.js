@@ -1541,29 +1541,33 @@
 	// Video has ended
 	let goodTube_nav_videoEnded_timeout = setTimeout(() => {}, 0);
 	function goodTube_nav_videoEnded() {
-		// Populate the playlist info
-		goodTube_player_populatePlaylistInfo();
-
-		// Make sure the playlist info exists
-		if (!goodTube_playlist || !goodTube_playlistIndex) {
-			// Clear timeout first to solve memory leak issues
-			clearTimeout(goodTube_nav_videoEnded_timeout);
-
-			// Try again
-			goodTube_nav_videoEnded_timeout = setTimeout(goodTube_nav_videoEnded, 100);
-
-			// Don't do anything else
-			return;
-		}
-
-		// If (autoplay is enabled) OR (we're viewing a playlist AND we're not on the last video)
-		if (
-			goodTube_autoplay === 'true'
-			||
-			(goodTube_playlist && (goodTube_playlistIndex < (goodTube_playlist.length - 1)))
-		) {
+		// If autoplay is enabled
+		if (goodTube_autoplay === 'true') {
 			// Play the next video
 			goodTube_nav_next();
+		}
+		// Otherwise, if we're viewing a playliust
+		else if (goodTube_playlist) {
+			// Populate the playlist info
+			goodTube_player_populatePlaylistInfo();
+
+			// Make sure the playlist info exists
+			if (!goodTube_playlist || !goodTube_playlistIndex) {
+				// Clear timeout first to solve memory leak issues
+				clearTimeout(goodTube_nav_videoEnded_timeout);
+
+				// Try again
+				goodTube_nav_videoEnded_timeout = setTimeout(goodTube_nav_videoEnded, 100);
+
+				// Don't do anything else
+				return;
+			}
+
+			// If we're not on the last video
+			if (goodTube_playlistIndex < (goodTube_playlist.length - 1)) {
+				// Play the next video
+				goodTube_nav_next();
+			}
 		}
 	}
 
