@@ -812,8 +812,30 @@
 		// Re fetch the page API
 		goodTube_page_api = document.getElementById('movie_player');
 
-		// Make sure we have access to the frame API
-		if (typeof goodTube_page_api.getPlaylist === 'function' && typeof goodTube_page_api.getPlaylistIndex === 'function') {
+
+		// Get the video data
+		let videoData = false;
+		let videoId = false;
+		if (goodTube_page_api && typeof goodTube_page_api.getVideoData === 'function') {
+			videoData = goodTube_page_api.getVideoData();
+			videoId = videoData.video_id;
+		}
+
+		// If the correct video hasn't loaded yet (based on the ID in the query params)
+		if (!videoData || videoId !== goodTube_getParams['v']) {
+			// Clear timeout first to solve memory leak issues
+			clearTimeout(goodTube_player_populatePlaylistInfo_timeout);
+
+			// Try again
+			goodTube_player_populatePlaylistInfo_timeout = setTimeout(goodTube_player_populatePlaylistInfo, 100);
+
+			// Don't do anything else
+			return;
+		}
+
+
+		// Make sure we have access to the page API
+		if (goodTube_page_api && typeof goodTube_page_api.getPlaylist === 'function' && typeof goodTube_page_api.getPlaylistIndex === 'function') {
 			goodTube_playlist = goodTube_page_api.getPlaylist();
 			goodTube_playlistIndex = goodTube_page_api.getPlaylistIndex();
 
@@ -824,6 +846,9 @@
 
 				// Try again
 				goodTube_player_populatePlaylistInfo_timeout = setTimeout(goodTube_player_populatePlaylistInfo, 100);
+
+				// Don't do anything else
+				return;
 			}
 		}
 		// Otherwise, we don't have access to the frame API
@@ -833,6 +858,9 @@
 
 			// Try again
 			goodTube_player_populatePlaylistInfo_timeout = setTimeout(goodTube_player_populatePlaylistInfo, 100);
+
+			// Don't do anything else
+			return;
 		}
 	}
 
@@ -1511,9 +1539,22 @@
 	}
 
 	// Video has ended
+	let goodTube_nav_videoEnded_timeout = setTimeout(() => {}, 0);
 	function goodTube_nav_videoEnded() {
 		// Populate the playlist info
 		goodTube_player_populatePlaylistInfo();
+
+		// Make sure the playlist info exists
+		if (!goodTube_playlist || !goodTube_playlistIndex) {
+			// Clear timeout first to solve memory leak issues
+			clearTimeout(goodTube_nav_videoEnded_timeout);
+
+			// Try again
+			goodTube_nav_videoEnded_timeout = setTimeout(goodTube_nav_videoEnded, 100);
+
+			// Don't do anything else
+			return;
+		}
 
 		// If (autoplay is enabled) OR (we're viewing a playlist AND we're not on the last video)
 		if (
