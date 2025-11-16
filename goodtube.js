@@ -1013,8 +1013,10 @@
 			goodTube_player_syncStartingTime();
 		}
 
-		// Play the video (this solves some edge cases)
-		goodTube_player_play();
+		// Play the video (this solves some edge cases in Firefox)
+		if (navigator.userAgent.toLowerCase().indexOf('firefox') !== -1) {
+			goodTube_player_play();
+		}
 	}
 
 	// Sync the starting time
@@ -1976,8 +1978,10 @@
 			// Sync the autoplay
 			goodTube_hideAndMuteAdsFallback_syncAutoplay();
 
-			// Play the video (this solves some edge cases)
-			goodTube_player_play();
+			// Play the video (this solves some edge cases in Firefox)
+			if (navigator.userAgent.toLowerCase().indexOf('firefox') !== -1) {
+				goodTube_player_play();
+			}
 
 			// If we're in fullscreen already
 			if (document.fullscreenElement) {
