@@ -2024,6 +2024,12 @@
 			let aspectRatio = event.data.replace('goodTube_syncAspectRatio_', '').split('_');
 			goodTube_youtube_setAspectRatio(aspectRatio[0], aspectRatio[1]);
 		}
+
+		// Cancel any pending play actions
+		else if (event.data === 'goodTube_cancelPlay') {
+			// Clear the re-try timeout for the "goodTube_player_play" function
+			clearTimeout(goodTube_player_play_timeout);
+		}
 	}
 
 	// Actions
@@ -2091,6 +2097,11 @@
 
 			// Check to enable or disable the "hide and mute ads" fallback overlay
 			goodTube_hideAndMuteAdsFallback_check();
+		}
+		// If we're not watching a video
+		else {
+			// Stop the video (this solves some weird edge case where the video can be playing in the background)
+			goodTube_player.contentWindow.postMessage('goodTube_stopVideo', '*')
 		}
 
 		// Hide shorts (real time)
@@ -4050,6 +4061,9 @@
 				goodTube_iframe_supportDoubleSpeed_allowNextClick = true;
 				goodTube_helper_click(goodTube_iframe_supportDoubleSpeed_videoElement);
 				goodTube_iframe_supportDoubleSpeed_allowNextClick = false;
+
+				// Tell the top level window to cancel any pending play actions
+				window.top.postMessage('goodTube_cancelPlay', '*');
 			}
 			// Otherwise, double playback rate did happen
 			else {
@@ -4179,6 +4193,9 @@
 
 			// Focus the video element
 			setTimeout(goodTube_iframe_supportDoubleSpeed_videoElement.focus());
+
+			// Tell the top level window to cancel any pending play actions
+			window.top.postMessage('goodTube_cancelPlay', '*');
 		}
 		// Otherwise, double playback rate did happen
 		else {
@@ -4409,7 +4426,7 @@
 		goodTube_iframe_api = document.getElementById('movie_player');
 
 		// Make sure the API is ready
-		if (goodTube_iframe_api && typeof goodTube_iframe_api.loadVideoById === 'function' && typeof goodTube_iframe_api.getVideoData === 'function') {
+		if (goodTube_iframe_api && typeof goodTube_iframe_api.loadVideoById === 'function') {
 			// Load the video
 			goodTube_iframe_api.loadVideoById(
 				{
@@ -4677,6 +4694,9 @@
 			// Create a new timeout
 			goodTube_iframe_pause_timeout = setTimeout(goodTube_iframe_pause, 100);
 		}
+
+		// Tell the top level window to cancel any pending play actions
+		window.top.postMessage('goodTube_cancelPlay', '*');
 	}
 
 	// Mute
