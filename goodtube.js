@@ -413,6 +413,14 @@
 			// Debug message
 			console.log('[GoodTube] Shorts removed');
 		}
+		// Otherwise, allow shorts in watch history
+		else {
+			cssOutput += `
+				ytd-item-section-renderer[page-subtype='history'] ytd-reel-shelf-renderer {
+					display: block !important;
+				}
+			`;
+		}
 
 
 		// Hide suggested videos if they're not enabled
