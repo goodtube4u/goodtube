@@ -2021,8 +2021,17 @@
 
 		// Sync the aspect ratio
 		else if (event.data.indexOf('goodTube_syncAspectRatio_') !== -1) {
-			let aspectRatio = event.data.replace('goodTube_syncAspectRatio_', '').split('_');
-			goodTube_youtube_setAspectRatio(aspectRatio[0], aspectRatio[1]);
+			// If you're viewing a short
+			if (window.location.href.indexOf('/shorts') !== -1) {
+				// Remove the aspect ratio changes
+				goodTube_youtube_unsetAspectRatio();
+			}
+			// Otherwise, for all other videos
+			else {
+				// Set the aspect ratio
+				let aspectRatio = event.data.replace('goodTube_syncAspectRatio_', '').split('_');
+				goodTube_youtube_setAspectRatio(aspectRatio[0], aspectRatio[1]);
+			}
 		}
 
 		// Cancel any pending play actions
