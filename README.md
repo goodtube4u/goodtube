@@ -12,8 +12,10 @@ It also provides a few additional options:
 - Hide sidebar suggested videos
 - Hide comments
 - Hide AI summaries
+- Hide members only videos (paid channel restricted content)
 - Always play videos from the start
 - Use a black background for the video player (enabled by default)
+- Choose how many videos to show per row on the home page
 
 *These can be accessed via the custom settings menu. You will find this down the bottom right of Youtube when installed.*
 
@@ -84,7 +86,7 @@ This plugins helps to keep this important resource free and available to everyon
 
 ## Make a Donation
 **This adblocker is 100% free to use and always will be.<br>
-It has helped over 170,000 people remove the unbearable ads from Youtube.**<br>
+It has helped over 175,000 people remove the unbearable ads from Youtube.**<br>
 
 This project has been made entirely by myself, as just one developer. Countless hours and late nights have gone into making this and I continue to work on updating and maintaining the project regularly. I remain dedicated to ensuring this solution continues to work for everyone (despite Youtube's best efforts to stop adblockers).<br>
 
