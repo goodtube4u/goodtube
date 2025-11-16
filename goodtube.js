@@ -477,39 +477,28 @@
 		if (goodTube_videosPerRow !== 'default') {
 			// Debug message
 			console.log('[GoodTube] Videos per row on the home page set to ' + goodTube_videosPerRow);
+
+			let fixedWidthPercentage = (100 / parseFloat(goodTube_videosPerRow)) + '%';
+
+			cssOutput += `
+				ytd-rich-item-renderer[rendered-from-rich-grid] {
+					width: calc(` + fixedWidthPercentage + ` - ((var(--ytd-rich-grid-item-margin) / 2)) / ` + parseFloat(goodTube_videosPerRow - 1) + ` * ` + (parseFloat(goodTube_videosPerRow - 1) * 2) + ` ) !important;
+					width: calc(` + fixedWidthPercentage + ` - ((var(--ytd-rich-grid-item-margin) / 2)) / ` + parseFloat(goodTube_videosPerRow - 1) + ` * ` + (parseFloat(goodTube_videosPerRow - 1) * 2) + ` ) !important;
+					margin-left: calc(var(--ytd-rich-grid-item-margin) / 2) !important;
+					margin-right: calc(var(--ytd-rich-grid-item-margin) / 2) !important;
+				}
+
+				#contents.ytd-rich-grid-renderer {
+					padding-right: 24px !important;
+					box-sizing: border-box !important;
+				}
+			`;
 		}
 
 		// Add the styles to the page
 		let style = document.createElement('style');
 		style.textContent = cssOutput;
 		document.head.appendChild(style);
-	}
-
-	// Set videos per row on the home page
-	let goodTube_youtube_setVideosPerRow_timeout = setTimeout(() => {}, 0);
-	function goodTube_youtube_setVideosPerRow(videosPerRow) {
-		// Make sure we're on the home page
-		let currentUrl = window.location.href;
-		currentUrl = currentUrl.replace('https://', '').replace('http://', '');
-		let bits = currentUrl.split('/');
-		if (bits.length <= 2) {
-			// Target the aspect ratio element with the CSS variables
-			let variableElement = document.querySelector('ytd-rich-grid-renderer #contents');
-
-			// Make sure we found the variable element, if not retry
-			if (!variableElement) {
-				clearTimeout(goodTube_youtube_setVideosPerRow_timeout);
-				goodTube_youtube_setVideosPerRow_timeout = setTimeout(() => { goodTube_youtube_setVideosPerRow(videosPerRow); }, 100);
-				return;
-			}
-
-			// Set the videos per row
-			variableElement.style.setProperty("--ytd-rich-grid-items-per-row", videosPerRow);
-			variableElement.style.setProperty("--ytd-rich-grid-posts-per-row", videosPerRow);
-			variableElement.style.setProperty("--ytd-rich-grid-slim-items-per-row", videosPerRow);
-			variableElement.style.setProperty("--ytd-rich-grid-game-cards-per-row", videosPerRow);
-			variableElement.style.setProperty("--ytd-rich-grid-mini-game-cards-per-row", videosPerRow);
-		}
 	}
 
 	// Hide members only videos
@@ -2116,12 +2105,6 @@
 		else {
 			// Stop the video (this solves some weird edge case where the video can be playing in the background)
 			goodTube_player.contentWindow.postMessage('goodTube_stopVideo', '*');
-
-			// Videos per row on the home page
-			if (goodTube_videosPerRow !== 'default') {
-				// Set videos per row on the home page
-				goodTube_youtube_setVideosPerRow(goodTube_videosPerRow);
-			}
 		}
 
 		// Hide shorts (real time)
@@ -2193,6 +2176,8 @@
 		let videosPerRow_4 = '';
 		let videosPerRow_5 = '';
 		let videosPerRow_6 = '';
+		let videosPerRow_7 = '';
+		let videosPerRow_8 = '';
 		if (videosPerRow_default === 'default') {
 			videosPerRow_default = ' selected';
 		}
@@ -2210,6 +2195,12 @@
 		}
 		else if (goodTube_videosPerRow === '6') {
 			videosPerRow_6 = ' selected';
+		}
+		else if (goodTube_videosPerRow === '7') {
+			videosPerRow_7 = ' selected';
+		}
+		else if (goodTube_videosPerRow === '8') {
+			videosPerRow_8 = ' selected';
 		}
 
 		// Add content to the menu container
@@ -2286,6 +2277,8 @@
 								<option` + videosPerRow_4 + `>4</option>
 								<option` + videosPerRow_5 + `>5</option>
 								<option` + videosPerRow_6 + `>6</option>
+								<option` + videosPerRow_7 + `>7</option>
+								<option` + videosPerRow_8 + `>8</option>
 							</select>
 							<label for='goodTube_option_videosPerRow'>Videos per row on the home page</label>
 						</div> <!-- .goodTube_setting -->
