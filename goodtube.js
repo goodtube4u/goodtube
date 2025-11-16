@@ -475,9 +475,6 @@
 
 		// Videos per row on the home page
 		if (goodTube_videosPerRow !== 'default') {
-			// Set videos per row on the home page
-			goodTube_youtube_setVideosPerRow(goodTube_videosPerRow);
-
 			// Debug message
 			console.log('[GoodTube] Videos per row on the home page set to ' + goodTube_videosPerRow);
 		}
@@ -2118,7 +2115,13 @@
 		// If we're not watching a video
 		else {
 			// Stop the video (this solves some weird edge case where the video can be playing in the background)
-			goodTube_player.contentWindow.postMessage('goodTube_stopVideo', '*')
+			goodTube_player.contentWindow.postMessage('goodTube_stopVideo', '*');
+
+			// Videos per row on the home page
+			if (goodTube_videosPerRow !== 'default') {
+				// Set videos per row on the home page
+				goodTube_youtube_setVideosPerRow(goodTube_videosPerRow);
+			}
 		}
 
 		// Hide shorts (real time)
