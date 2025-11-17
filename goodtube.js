@@ -285,7 +285,7 @@
 	// Videos per row on the home page
 	let goodTube_videosPerRow = goodTube_helper_getCookie('goodTube_videosPerRow');
 	if (!goodTube_videosPerRow) {
-		goodTube_helper_setCookie('goodTube_videosPerRow', 'true');
+		goodTube_helper_setCookie('goodTube_videosPerRow', 'default');
 		goodTube_videosPerRow = 'default';
 	}
 
@@ -473,8 +473,8 @@
 			console.log('[GoodTube] Members only videos removed');
 		}
 
-		// Videos per row on the home page
-		if (goodTube_videosPerRow !== 'default') {
+		// Videos per row on the home page (check if default, also make sure it's a number)
+		if (goodTube_videosPerRow !== 'default' && goodTube_videosPerRow == parseFloat(goodTube_videosPerRow)) {
 			// Debug message
 			console.log('[GoodTube] Videos per row on the home page set to ' + goodTube_videosPerRow);
 
@@ -583,12 +583,7 @@
 	let goodTube_youtube_pauseMuteVideos_timeout = setTimeout(() => {}, 0);
 	function goodTube_youtube_pauseMuteVideos() {
 		// IF if shorts are enabled and we're viewing a short
-		// OR we're not viewing a video
-		if (
-			(goodTube_shorts === 'true' && window.location.href.indexOf('/shorts') !== -1)
-			||
-			!goodTube_helper_watchingVideo()
-		) {
+		if (goodTube_shorts === 'true' && window.location.href.indexOf('/shorts') !== -1) {
 			// Clear timeout first to solve memory leak issues
 			clearTimeout(goodTube_youtube_pauseMuteVideos_timeout);
 
@@ -615,8 +610,8 @@
 			// Otherwise, the "hide and mute" ads fallback is inactive
 			else {
 				// IF (the video is playing)
-				// AND (we're not syncing the main player OR it's not the main player)
-				if (!video.paused && (!goodTube_syncingPlayer || !video.closest('#movie_player'))) {
+				// AND (we're not syncing the main player OR it's not the main player OR we're not watching a video)
+				if (!video.paused && (!goodTube_syncingPlayer || !video.closest('#movie_player') || !goodTube_helper_watchingVideo())) {
 					// Mute the video
 					video.muted = true;
 					video.volume = 0;
