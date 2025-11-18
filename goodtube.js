@@ -170,6 +170,88 @@
 		element.insertAdjacentHTML(position, html);
 	}
 
+	// Trigger a keyboard shortcut
+	function goodTube_helper_shortcut(shortcut) {
+		let theKey = false;
+		let keyCode = false;
+		let shiftKey = false;
+
+		if (shortcut === 'next') {
+			theKey = 'n';
+			keyCode = 78;
+			shiftKey = true;
+		}
+		else if (shortcut === 'previous') {
+			theKey = 'p';
+			keyCode = 80;
+			shiftKey = true;
+		}
+
+		let e = false;
+		e = new window.KeyboardEvent('focus', {
+			bubbles: true,
+			key: theKey,
+			keyCode: keyCode,
+			shiftKey: shiftKey,
+			charCode: 0,
+		});
+		document.dispatchEvent(e);
+
+		e = new window.KeyboardEvent('keydown', {
+			bubbles: true,
+			key: theKey,
+			keyCode: keyCode,
+			shiftKey: shiftKey,
+			charCode: 0,
+		});
+		document.dispatchEvent(e);
+
+		e = new window.KeyboardEvent('beforeinput', {
+			bubbles: true,
+			key: theKey,
+			keyCode: keyCode,
+			shiftKey: shiftKey,
+			charCode: 0,
+		});
+		document.dispatchEvent(e);
+
+		e = new window.KeyboardEvent('keypress', {
+			bubbles: true,
+			key: theKey,
+			keyCode: keyCode,
+			shiftKey: shiftKey,
+			charCode: 0,
+		});
+		document.dispatchEvent(e);
+
+		e = new window.KeyboardEvent('input', {
+			bubbles: true,
+			key: theKey,
+			keyCode: keyCode,
+			shiftKey: shiftKey,
+			charCode: 0,
+		});
+		document.dispatchEvent(e);
+
+		e = new window.KeyboardEvent('change', {
+			bubbles: true,
+			key: theKey,
+			keyCode: keyCode,
+			shiftKey: shiftKey,
+			charCode: 0,
+		});
+		document.dispatchEvent(e);
+
+		e = new window.KeyboardEvent('keyup', {
+			bubbles: true,
+			key: theKey,
+			keyCode: keyCode,
+			shiftKey: shiftKey,
+			charCode: 0,
+		});
+		document.dispatchEvent(e);
+	}
+
 
 	/* Global variables
 	------------------------------------------------------------------------------------------ */
@@ -609,14 +691,17 @@
 			}
 			// Otherwise, the "hide and mute" ads fallback is inactive
 			else {
-				// IF (the video is playing)
-				// AND (we're not syncing the main player OR it's not the main player OR we're not watching a video)
-				if (!video.paused && (!goodTube_syncingPlayer || !video.closest('#movie_player') || !goodTube_helper_watchingVideo())) {
+				if (
+					!video.paused &&
+					(!goodTube_syncingPlayer && video.closest('#movie_player'))
+					&&
+					!video.closest('#inline_player')
+				) {
 					// Mute the video
 					video.muted = true;
 					video.volume = 0;
 
-					// If ads are not showing OR it's not the main player
+					// If ads are not showing OR it's not the main player AND not the inline player
 					if (!goodTube_helper_adsShowing() || !video.closest('#movie_player')) {
 						// Pause the video
 						video.pause();
@@ -1570,15 +1655,18 @@
 	/* Navigation
 	------------------------------------------------------------------------------------------ */
 	// Play the next video
-	function goodTube_nav_next(shuffleLoopMethod = false) {
-		// Re fetch the page API
-		goodTube_page_api = document.getElementById('movie_player');
+	function goodTube_nav_next() {
+		// // Re fetch the page API
+		// goodTube_page_api = document.getElementById('movie_player');
 
-		// Make sure it exists
-		if (goodTube_page_api && typeof goodTube_page_api.nextVideo === 'function') {
-			// Play the previous video
-			goodTube_page_api.nextVideo();
-		}
+		// // Make sure it exists
+		// if (goodTube_page_api && typeof goodTube_page_api.nextVideo === 'function') {
+		// 	// Play the previous video
+		// 	goodTube_page_api.nextVideo();
+		// }
+
+		// Let's try this, see if we can evade detection better
+		goodTube_helper_shortcut('next');
 
 		// Debug message
 		console.log('[GoodTube] Playing next video...');
@@ -1586,14 +1674,17 @@
 
 	// Play the previous video
 	function goodTube_nav_prev() {
-		// Re fetch the page API
-		goodTube_page_api = document.getElementById('movie_player');
+		// // Re fetch the page API
+		// goodTube_page_api = document.getElementById('movie_player');
 
-		// Make sure it exists
-		if (goodTube_page_api && typeof goodTube_page_api.previousVideo === 'function') {
-			// Play the previous video
-			goodTube_page_api.previousVideo();
-		}
+		// // Make sure it exists
+		// if (goodTube_page_api && typeof goodTube_page_api.previousVideo === 'function') {
+		// 	// Play the previous video
+		// 	goodTube_page_api.previousVideo();
+		// }
+
+		// Let's try this, see if we can evade detection better
+		goodTube_helper_shortcut('previous');
 
 		// Debug message
 		console.log('[GoodTube] Playing previous video...');
