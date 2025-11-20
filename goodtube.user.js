@@ -38,60 +38,59 @@
 
 
 (function () {
-    'use strict';
+	'use strict';
+
+
 	/* Configure CSP
 	---------------------------------------------------------------------------------------------------- */
 	// Create a custom CSP policy
 	let goodTube_csp = false;
 	if (window.trustedTypes && window.trustedTypes.createPolicy) {
 		goodTube_csp = window.trustedTypes.createPolicy("GoodTubePolicy", {
-            createScript: s => s
+			createScript: string => string
 		});
 	}
 
-    /* Load GoodTube with hash verification
-    ---------------------------------------------------------------------------------------------------- */
-    async function goodTube_load(loadAttempts = 0) {
-        // Only re-attempt to load the GoodTube 10 times
-        if (loadAttempts >= 9) {
-            if (window.top === window.self) {
-                console.log('[GoodTube] GoodTube could not be loaded');
-                alert('GoodTube could not be loaded! Please refresh the page to try again.');
-            }
-            return;
-        }
 
-        // Increment the load attempts
-        loadAttempts++;
+	/* Load GoodTube
+	---------------------------------------------------------------------------------------------------- */
+	function goodTube_load(loadAttempts = 0) {
+		// Only re-attempt to load the GoodTube 10 times
+		if (loadAttempts >= 9) {
+			if (window.top === window.self) {
+				// Debug message
+				console.log('[GoodTube] GoodTube could not be loaded');
 
-        try {
-            const response = await fetch('https://raw.githubusercontent.com/goodtube4u/goodtube/refs/heads/main/goodtube.min.js');
-            const data = await response.text();
+				// Show prompt
+				alert('GoodTube could not be loaded! Please refresh the page to try again.');
+			}
 
-            // Verify script hash
-            const expectedHash = 'sha256-kPAWZtY3UZGsWD8uHpQ0th6QvgDKPv4AEnf8PI7RdAk=';
-            const encoder = new TextEncoder();
-            const uint8 = encoder.encode(data);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', uint8);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            const actualHash = btoa(String.fromCharCode(...hashArray));
+			return;
+		}
 
-            if (`sha256-${actualHash}` !== expectedHash) {
-                console.error('Hash verification failed! Goodtube could not be loaded!')
-            }
+		// Increment the load attempts
+		loadAttempts++;
 
-            // Append script if hash matches
-            let script = document.createElement('script');
-            script.textContent = goodTube_csp.createScript(data);
-            document.head.appendChild(script);
+		// Get the GoodTube minified code
+		fetch('https://raw.githubusercontent.com/goodtube4u/goodtube/refs/heads/main/goodtube.min.js')
+			// Success
+			.then(response => response.text())
+			.then(data => {
+				// Load the GoodTube code into a <script> tag
+            	let script = document.createElement('script');
+            	script.textContent = goodTube_csp.createScript(data);
+            	document.head.appendChild(script);
 
-        } catch (error) {
-            setTimeout(() => {
-                goodTube_load(loadAttempts);
-            }, 500);
-        }
-    }
+			})
+			// Error
+			.catch((error) => {
+				// Try again after 500ms
+				setTimeout(function () {
+					goodTube_load(loadAttempts);
+				}, 500);
+			});
+	}
 
-    // Let's go!
-    goodTube_load();
+	// Let's go!
+	goodTube_load();
 })();
