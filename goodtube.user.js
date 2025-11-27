@@ -43,10 +43,8 @@
 
 	/* Configure CSP
 	---------------------------------------------------------------------------------------------------- */
-	// Create a custom CSP policy
-	let goodTube_csp = false;
 	if (window.trustedTypes && window.trustedTypes.createPolicy) {
-		goodTube_csp = window.trustedTypes.createPolicy("GoodTubePolicy", {
+		window.trustedTypes.createPolicy("default", {
 			createScript: string => string
 		});
 	}
@@ -77,10 +75,9 @@
 			.then(response => response.text())
 			.then(data => {
 				// Load the GoodTube code into a <script> tag
-            	let script = document.createElement('script');
-            	script.textContent = goodTube_csp.createScript(data);
+				let script = document.createElement('script');
+            	script.textContent = data
             	document.head.appendChild(script);
-
 			})
 			// Error
 			.catch((error) => {
