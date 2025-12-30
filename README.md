@@ -143,8 +143,8 @@ You can leave your adlockers on for other websites, they just need to be turned 
 <br>
 
 ## Copyright
-The source code of this repository is open source and you are allowed to copy and change it for personal use.
+The source code of this repository is available for personal use only. If you would like to copy and modify it for your own personal use, you're welcome to do so without any limitations.
 
-However, this source code should not copied and then repackaged or rebranded as your own. Publishing a copy of this code without express permission is strictly forbidden.
+However, the source code within this repository cannot be copied and then repackaged or rebranded as your own. Publishing any version of this code without express permission, even with minor modifications, is strictly forbidden.
 
 © Copyright, all rights reserved 2025.
