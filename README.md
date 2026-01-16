@@ -58,6 +58,14 @@ This extension gives you a 7 day free trial. After that it costs $2, once only, 
 
 <br>
 
+## IMPORTANT (16th Jan, 2026): GoodTube is currently under threat / facing new issues.
+
+Youtube are changing their interface yet again and new security policies have recently been added by Wikipedia (which this uses). The new extension is currently being updated to fix these problems, but unfortunately this old version may not continue to work for much longer as a result.
+
+Please update to the official extension as soon as possible. I am doing everything I can to keep it up and running. The Wikipedia issues have been fixed and I am now completely rebuilding the existing video player so we can keep it looking the same as it always has. It's not an easy task, but I'm going to release this as soon as possible. Thanks for your patience and support everyone.<br>
+
+<br>
+
 ## 🎉 UPDATE (13th Dec, 2025) - GoodTube becomes an official browser extension!!
 
 Well - it's now been around one year since GoodTube was first released. What started out as a small personal project quickly gained popularity and has now grown to being used by almost 200,000 people from all over the world!
