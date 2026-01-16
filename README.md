@@ -60,7 +60,7 @@ This extension gives you a 7 day free trial. After that it costs $2, once only, 
 
 ## IMPORTANT (16th Jan, 2026): GoodTube is currently under threat / facing new issues.
 
-Youtube are changing their interface yet again and new security policies have recently been added by Wikipedia (which this uses). The new extension is currently being updated to fix these problems, but unfortunately this old version may not continue to work for much longer as a result.
+Youtube are changing their interface yet again and new security policies have recently been added by Wikipedia (which this uses). The new extension is currently being updated to fix these problems, but unfortunately the old/legacy version may not continue to work for much longer as a result.
 
 Please update to the official extension as soon as possible. I am doing everything I can to keep it up and running. The Wikipedia issues have been fixed and I am now completely rebuilding the existing video player so we can keep it looking the same as it always has. It's not an easy task, but I'm going to release this as soon as possible. Thanks for your patience and support everyone.<br>
 
